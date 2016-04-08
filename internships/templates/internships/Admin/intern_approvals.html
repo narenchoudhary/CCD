@@ -141,7 +141,17 @@
                         {% if rel.intern_init %}
                             {% if rel.intern_approved  == True%}
                                 {% if rel.ppo_init == True%}
-                                    <p>PPO Request initiated by recruiter.</p>
+                                    {% if rel.ppo_approved == True%}
+                                    {% elif rel.ppo_approved == False%}
+                                    {% else %}
+                                        <p>PPO request required approval</p>
+                                        <p>
+                                            <a href="{% url 'internships:admin_intern_ppo' rel.id %}"
+                                                class="btn">Approve</a>
+                                            <a href="{% url 'internships:admin_reject_ppo' rel.id %}"
+                                                class="btn">Reject</a>
+                                        </p>
+                                    {% endif %}
                                 {% else %}
                                     <p>PPO request not initiated by recruiter yet.</p>
                                 {% endif %}
@@ -149,6 +159,12 @@
                                 <p>Intern hiring request rejected by Admin.</p>
                             {% else %}
                                 <p>Inten hiring request requires approval.</p>
+                                <p>
+                                    <a href="{% url 'internships:admin_intern_intern' rel.id %}"
+                                        class="btn">Approve</a>
+                                    <a href="{% url 'internships:admin_reject_intern' rel.id %}"
+                                        class="btn">Reject</a>
+                                </p>
                             {% endif %}
                         {% else %}
                             <p>Candidate not selected for intern hiring yet.</p>
@@ -157,6 +173,12 @@
                         <p>Shortlist Request Rejected By Admin.</p>
                     {% else %}
                         <p>Shortlist request required approval.</p>
+                        <p>
+                            <a href="{% url 'internships:admin_intern_shortlist' rel.id %}"
+                                class="btn">Approve</a>
+                            <a href="{% url 'internships:admin_reject_shortlist' rel.id %}"
+                                class="btn">Reject</a>
+                        </p>
                     {% endif %}
                 {% else %}
                     <p>Not Shortlisted yet. No approval Reqquired.</p>

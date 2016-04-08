@@ -19,10 +19,7 @@
             <br>
             <br>
             <br>
-            {% endif %}
-
             <div class="col-md-12">
-            {% for stud_rel in stud_rel_list %}
                 <table class="table">
                     <thead>
                         <tr>
@@ -35,6 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
+            {% for stud_rel in stud_rel_list %}
                         <tr>
                             <td>{{ stud_rel.stud.first_name | capfirst}} {{ stud_rel.stud.middle_name | capfirst }} {{ stud_rel.stud.last_name | capfirst}}</td>
                             <td>{{ stud_rel.stud.roll_no }}</td>
@@ -72,11 +70,12 @@
                             </td>
                             <td><a href="{% url 'internships:rec_intern_rel' stud_rel.id %}" class="btn btn-xs btn-info">Student Profile</a></td>
                         </tr>
+            {% endfor %}
                     </tbody>
                 </table>
-            {% empty %}
-                <h4>No student have applied for this position.</h4>
-            {% endfor %}
             </div>
+            {% else %}
+                <h4>No student have applied for this position.</h4>
+            {% endif %}
         </div>
 {% endblock %}

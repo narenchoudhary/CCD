@@ -64,7 +64,8 @@ def company_add_intern(request):
 def company_intern_details(request, internid):
     intern_instance = get_object_or_404(IndInternship, id=internid)
     prog_list = ProgrammeInternRelation.objects.filter(intern=intern_instance)
-    args = dict(intern=intern_instance, prog_list=prog_list)
+    prog_empty = True if (len(prog_list) == 1 and prog_list[0].year is None) else False
+    args = dict(intern=intern_instance, prog_list=prog_list, prog_empty=prog_empty)
     return render(request, 'internships/Company/intern_details.html', args)
 
 
@@ -115,13 +116,13 @@ def company_intern_drop(request, internid):
     stud_rels = list(StudentInternRelation.objects.filter(intern=intern_instance, dropped=False))
     approval_pending = False
     for rel in stud_rels:
-        if rel.shortlist_init is True and rel.shortlist_approved is not True:
+        if rel.shortlist_init is True and rel.shortlist_approved is None:
             approval_pending = True
             break
-        if rel.intern_init is True and rel.intern_approved is not True:
+        if rel.intern_init is True and rel.intern_approved is None:
             approval_pending = True
             break
-        if rel.ppo_init is True:
+        if rel.ppo_init is True and rel.intern_approved is None:
             approval_pending = True
             break
     if not approval_pending:
@@ -129,6 +130,8 @@ def company_intern_drop(request, internid):
             rel.round += 1
             if rel.shortlist_init is False:
                 rel.dropped = True
+            if rel.shortlist_init is True and rel.intern_init is False:
+                rel.shortlist_init = False
             rel.save()
     return redirect('internships:rec_intern_candidates', internid=internid)
 
@@ -157,7 +160,7 @@ def company_intern_ppo(request, relid):
     if not rel_instance.dropped:
         if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is True:
             if rel_instance.intern_init is True and rel_instance.intern_approved is True:
-                if rel_instance.ppo_init is False and rel_instance.ppo_approved is not True:
+                if rel_instance.ppo_init is False and rel_instance.ppo_approved is None:
                     rel_instance.ppo_init = True
                     rel_instance.save()
     return redirect('internships:rec_intern_rel', relid=rel_instance.id)
@@ -171,7 +174,8 @@ def admin_all_interns(request):
 def admin_intern_details(request, internid):
     intern_instance = get_object_or_404(IndInternship, id=internid)
     progs_list = ProgrammeInternRelation.objects.filter(intern=intern_instance)
-    args = dict(intern=intern_instance, progs_list=progs_list)
+    prog_empty = True if (len(progs_list) == 1 and progs_list[0].year is None) else False
+    args = dict(intern=intern_instance, progs_list=progs_list, prog_empty=prog_empty)
     return render(request, 'internships/Admin/intern_details.html', args)
 
 
@@ -188,6 +192,12 @@ def admin_edit_intern(request, internid):
     else:
         args = dict(form=edit_form, internid=intern_instance.id)
         return render(request, 'internships/Admin/edit_intern.html', args)
+
+
+def admin_delete_intern(request, internid):
+    intern_instance = get_object_or_404(IndInternship, id=internid)
+    intern_instance.delete()
+    return redirect('internships:admin_all_interns')
 
 
 def admin_add_progs(request, internid):
@@ -224,17 +234,36 @@ def admin_approve_shortlist(request, relid):
         if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is not True:
             rel_instance.shortlist_approved = True
             rel_instance.save()
-    return redirect('internships:', relid=relid)
+    return redirect('internships:admin_intern_rel', relid=relid)
+
+
+def admin_reject_shortlist(request, relid):
+    rel_instance = get_object_or_404(StudentInternRelation, id=relid)
+    if not rel_instance.dropped:
+        if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is None:
+            rel_instance.shortlist_approved = False
+            rel_instance.save()
+    return redirect('internships:admin_intern_rel', relid=relid)
 
 
 def admin_approve_intern(request, relid):
     rel_instance = get_object_or_404(StudentInternRelation, id=relid)
     if not rel_instance.dropped:
         if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is True:
-            if rel_instance.intern_init is True and rel_instance.intern_approved is not True:
+            if rel_instance.intern_init is True and rel_instance.intern_approved is None:
                 rel_instance.intern_approved = True
                 rel_instance.save()
-    return redirect('internships:', relid=relid)
+    return redirect('internships:admin_intern_rel', relid=relid)
+
+
+def admin_reject_intern(request, relid):
+    rel_instance = get_object_or_404(StudentInternRelation, id=relid)
+    if not rel_instance.dropped:
+        if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is True:
+            if rel_instance.intern_init is True and rel_instance.intern_approved is None:
+                rel_instance.intern_approved = False
+                rel_instance.save()
+    return redirect('internships:admin_intern_rel', relid=relid)
 
 
 def admin_approve_ppo(request, relid):
@@ -242,10 +271,21 @@ def admin_approve_ppo(request, relid):
     if not rel_instance.dropped:
         if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is True:
             if rel_instance.intern_init is True and rel_instance.intern_approved is True:
-                if rel_instance.ppo_init is True and rel_instance.ppo_approved is not True:
+                if rel_instance.ppo_init is True and rel_instance.ppo_approved is None:
                     rel_instance.ppo_approved = True
                     rel_instance.save()
-    return redirect('internships:', relid=relid)
+    return redirect('internships:admin_intern_rel', relid=relid)
+
+
+def admin_reject_ppo(request, relid):
+    rel_instance = get_object_or_404(StudentInternRelation, id=relid)
+    if not rel_instance.dropped:
+        if rel_instance.shortlist_init is True and rel_instance.shortlist_approved is True:
+            if rel_instance.intern_init is True and rel_instance.intern_approved is True:
+                if rel_instance.ppo_init is True and rel_instance.ppo_approved is None:
+                    rel_instance.ppo_approved = False
+                    rel_instance.save()
+    return redirect('internships:admin_intern_rel', relid=relid)
 
 
 def stud_all_interns(request):
@@ -297,3 +337,11 @@ def stud_intern_applied_for(request):
     stud_intern_rel_list = StudentInternRelation.objects.get(stud=student_instance)
     args = dict(stud_intern_rel_list=stud_intern_rel_list)
     return render(request, 'internships/Students/interns_applied.html', args)
+
+
+def stud_intern_deapply(request, internid):
+    stud_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
+    intern_instance = get_object_or_404(IndInternship, id=internid)
+    rel_instance = StudentInternRelation.objects.get(stud=stud_instance, intern=intern_instance)
+    rel_instance.delete()
+    return redirect('internships:stud_intern_details', internid=intern_instance.id)

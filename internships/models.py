@@ -49,4 +49,4 @@ class ProgrammeInternRelation(models.Model):
     prog = ChainedForeignKey(Programme, chained_field='dept', chained_model_field='dept', show_all=False, null=True)
 
     def __unicode__(self):
-        return self.prog
+        return self.intern.designation

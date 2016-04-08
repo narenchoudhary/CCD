@@ -614,8 +614,7 @@ def admin_approvals(request, object_type):
             placed_init=True, placed_approved__isnull=True
         )
         args = dict(job_shortlist=job_shortlist, job_place_list=job_place_list)
-        return render(request, 'jobportal/Admin/unapprv_progress.html', args)
-    elif str(object_type) == "intern_progress":
+        # return render(request, 'jobportal/Admin/unapprv_progress.html', args)
         intern_shortlist = StudentInternRelation.objects.all().filter(
             shortlist_init=True, shortlist_approved__isnull=True
         )

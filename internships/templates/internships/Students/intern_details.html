@@ -64,7 +64,7 @@
         {% if stud_rel %}
             {% if deadline_gone %}
             {% else %}
-                <p><a class="btn btn-danger" href="#"><span>Remove Application</span></a></p>
+                <p><a class="btn btn-danger" href="{% url 'internships:stud_intern_deapply' intern.id %}"><span>Remove Application</span></a></p>
             {% endif %}
         {% else %}
             {% if nocv %}

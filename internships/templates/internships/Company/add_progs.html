@@ -14,10 +14,11 @@
 {% block content %}
 <h2 class="sub-header">Add Programmes</h2>
 <hr/>
+
 <div class="col-md-12">
     <h3>JobProgFormSet</h3>
     <form id='myForm' action="{% url 'internships:rec_add_progs' internid %}" method="post" accept-charset="utf-8">
-        <table>
+        <table class="table table-striped tablesorter table-hover">
             {% csrf_token %}
             {{ formset.management_form }}
             <tbody>

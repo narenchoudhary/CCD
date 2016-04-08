@@ -8,7 +8,9 @@
 {% block content %}
         <h2 class="sub-header">All Internships:</h2>
         <hr>
+        {% if intern_list.count > 0 %}
         <div class="col-md-12">
+
             <div class="col-md-3 input-group pull-right form-group" >
                 <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
                 <input type="text" class="filter form-control" placeholder="What you looking for?">
@@ -45,4 +47,7 @@
                 </tbody>
             </table>
         </div>
+        {% else %}
+            <h4>Bummer, there is nothing here yet.</h4>
+        {% endif %}
 {% endblock %}

@@ -38,6 +38,7 @@
     </table>
 
     <h4>Programmes List:</h4>
+    {% if prog_empty == False%}
     {% if progs_list.count > 0 and progs_list.0.year != None %}
         <table class="table table-bordered">
             <thead>
@@ -60,7 +61,9 @@
     {% else %}
         <p>No programmes listed.</p>
     {% endif %}
-
+    {% else %}
+        <h4>Recruiter hasn't added any programme to this internship yet.</h4>
+    {% endif %}
     <h4><a href="{% url 'internships:admin_add_progs' intern.id %}" class="btn btn-info">Add Progs</a></h4>
 </div>
 
@@ -74,7 +77,7 @@
 
     <h4><a href="{% url 'internships:admin_edit_intern' intern.id %}" class="btn btn-warning">Edit</a></h4>
 
-    <h4><a href="#" class="btn btn-danger">Delete</a></h4>
+    <h4><a href="{% url 'internships:admin_delete_intern' intern.id %}" class="btn btn-danger">Delete</a></h4>
 
 </div>
 
