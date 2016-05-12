@@ -11,13 +11,14 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import update_session_auth_hash
-from .models import *
-from .forms import *
 
-COMPANY_LOGIN_URL = reverse_lazy('jobportal/companylogin')
+from .models import Student, Job, Company, StudentJobRelation, ProgrammeJobRelation, Alumni, Event
+from .forms import CompanySignupForm, CompanyProfileEdit, JobEditForm, JobProgFormSet
+from alumnijobs.models import AlumJobRelation
+
+COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
 # Signup
@@ -42,54 +43,6 @@ def signup_confirm(request):
     return render(request, 'jobportal/Company/signupconfirm.html', args)
 
 
-def company_login(request):
-    """
-    Company login.
-    :param request: HttpRequest object
-    :return: HttpResponse object
-    """
-    if request.method == 'POST':
-        company_login_data = CompanyLoginForm(request.POST)
-        if company_login_data.is_valid():
-            username = company_login_data.cleaned_data['username']
-            password = company_login_data.cleaned_data['password']
-            # check authentication
-            user = auth.authenticate(username=username, password=password)
-            # if User exists
-            if user is not None:
-                # get User instance
-                current_user = User.objects.get(username=username)
-                # get UserProfile instance
-                user_profile_instance = UserProfile.objects.get(user=current_user)
-                # if UserProfile is Company
-                if user_profile_instance.login_type == 'Company':
-                    # login Company
-                    auth.login(request, user)
-                    # get Company instance
-                    company_instance = Company.objects.get(user=user_profile_instance)
-                    # Set session variables
-                    request.session['company_instance_id'] = company_instance.id
-                    request.session['user_type'] = 'Company'
-                    return redirect('companyhome')
-                # User exists but is not Company
-                # TODO : Add redirect to correct login page
-                else:
-                    args = dict(login_form=company_login_data)
-                    return render(request, 'jobportal/Company/login.html', args)
-            # either username-password mismatch or User doesn't exist
-            else:
-                args = dict(login_form=company_login_data)
-                return render(request, 'jobportal/Company/login.html', args)
-        # invalid form submission
-        else:
-            args = dict(login_form=company_login_data)
-            return render(request, 'jobportal/Company/login.html', args)
-    else:
-        args = dict(login_form=CompanyLoginForm())
-        return render(request, 'jobportal/Company/login.html', args)
-
-
-# Recruiters' logout
 @login_required(login_url=COMPANY_LOGIN_URL)
 def company_logout(request):
     auth.logout(request)
@@ -159,9 +112,7 @@ def company_edit_profile(request, companyid):
 def view_jobs(request):
     company_instance = Company.objects.get(id=request.session['company_instance_id'])
     job_list = Job.objects.all().filter(company_owner=company_instance)
-    args = {}
-    args.update(csrf(request))
-    args['job_list'] = job_list
+    args = {'job_list': job_list}
     return render(request, 'jobportal/Company/postedjobs.html', args)
 
 

@@ -1,0 +1,8 @@
+Django==1.8.3
+django-crispy-forms==1.6.0
+django-recaptcha==1.0.5
+django-smart-selects==1.2.2
+django-versatileimagefield==1.4
+Pillow==3.2.0
+reportlab==3.3.0
+six==1.10.0

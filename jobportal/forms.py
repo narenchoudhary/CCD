@@ -14,7 +14,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 # Captcha
-from captcha.fields import CaptchaField
+from captcha.fields import ReCaptchaField
+
 
 # Date Widget
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
@@ -22,10 +23,10 @@ DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 JobProgFormSet = inlineformset_factory(Job, ProgrammeJobRelation, fields=('year', 'dept', 'prog'), extra=10)
 
 
-class StudentLoginForm(forms.Form):
+class LoginForm(forms.Form):
     username = forms.CharField(required=True, label='Webmail', max_length=25)
     password = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
-    # captcha = CaptchaField()
+    captcha = ReCaptchaField()
 
 
 class EditStudProfileForm(ModelForm):
@@ -140,15 +141,6 @@ class AlumLoginForm(forms.Form):
     username = forms.CharField(required=True, label='Webmail', max_length=25)
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
     # captcha = CaptchaField()
-
-
-class EditAlumProfileForm(forms.Form):
-    iitg_webmail = forms.CharField(label="Webmail", max_length=50, required=True)
-    alternate_email = forms.EmailField(label="Alternate Email", required=True)
-    dept = forms.ModelChoiceField(queryset=Department.objects.all(), required=True)
-    prog = forms.ModelChoiceField(queryset=Programme.objects.all(), required=True)
-
-    linkedin_link = forms.EmailField(max_length=254, required=False, label='LinkedIn')
 
 
 class JobEditForm(ModelForm):
@@ -390,18 +382,6 @@ class CompanySignupForm(ModelForm):
         )
 
 
-class CompanyLoginForm(forms.Form):
-    username = forms.CharField(required=True, label='Webmail', max_length=25)
-    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
-    # captcha = CaptchaField()
-
-
-class AdminLoginForm(forms.Form):
-    username = forms.CharField(required=True, label="Username", max_length=25)
-    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
-    # captcha = CaptchaField()
-
-
 class CompanyProfileEdit(ModelForm):
     company_name = forms.CharField(max_length=30,
                                    label="Company Name",
@@ -616,3 +596,15 @@ class AvatarSignForm(ModelForm):
     class Meta:
         model = Student
         fields = ['avatar', 'signature']
+
+
+class AlumniProfileForm(ModelForm):
+    class Meta:
+        model = Alumni
+        exclude = ['user', 'cv']
+
+
+class AlumCVUpload(ModelForm):
+    class Meta:
+        model = Alumni
+        fields = ['cv']

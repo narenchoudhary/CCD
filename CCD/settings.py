@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'captcha',
     'mentormentee',
     'internships',
+    'alumnijobs',
     'jobportal',
 )
 
@@ -135,3 +136,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 # CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 # CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
 CAPTCHA_TEST_MODE = True
+
+# Django recaptcha settings
+RECAPTCHA_PUBLIC_KEY = '6Lf7jhcTAAAAAPJpQs1NehJVlYKyIzt9XNJwLEV8'
+RECAPTCHA_PRIVATE_KEY = '6Lf7jhcTAAAAADn1F8xLQ7uPydJXrLtOarPzczrp'
+NOCAPTCHA = True
+RECAPTCHA_USE_SSL = True
+RECAPTCHA_PROXY = 'http://n.choudhary:naren@202.141.80.24:3128'

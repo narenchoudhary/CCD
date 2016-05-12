@@ -6,57 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import *
 from django.contrib.auth.models import User
-from .models import UserProfile, Student, Alumni, Job, StudentJobRelation, AlumJobRelation
-from .forms import AlumLoginForm, EditAlumProfileForm, JobEditForm
+from .models import UserProfile, Student, Alumni, Job, StudentJobRelation
+from .forms import AlumCVUpload, AlumniProfileForm, JobEditForm
 
-ALUM_LOGIN_URL = reverse_lazy('jobportal/alum_login')
-
-
-def alum_login(request):
-    """
-    Alumni login.
-    :param request: HttpRequest object
-    :return: HttpResponse object
-    """
-    if request.method == "POST":
-        alum_login_form_data = AlumLoginForm(request.POST)
-        if alum_login_form_data.is_valid():
-            username = alum_login_form_data.cleaned_data['username']
-            password = alum_login_form_data.cleaned_data['password']
-            # check authentication
-            user = auth.authenticate(username=username, password=password)
-            # if User exists
-            if user is not None:
-                # get User instance
-                current_user = User.objects.get(username=username)
-                # get UserProfile instance
-                user_profile = UserProfile.objects.get(user=current_user)
-                # if UserProfile is Alumni
-                if user_profile.login_type == "Alumni":
-                    # login Alumni
-                    auth.login(request, user)
-                    # get Alumni instance
-                    alum_instance = Alumni.objects.get(user=user_profile)
-                    # set session variables
-                    request.session['alum_instance_id'] = alum_instance.id
-                    request.session['user_type'] = 'Alumni'
-                    return redirect('alum_home')
-                # User exists but is not Alumni
-                # TODO : Add redirect to correct login page
-                else:
-                    args = dict(login_form=alum_login_form_data)
-                    return render(request, 'jobportal/Alumni/alum_login.html', args)
-            # either username-password mismatch or User doesn't exist
-            else:
-                args = dict(login_form=alum_login_form_data)
-                return render(request, 'jobportal/Alumni/alum_login.html', args)
-        # invalid form submission
-        else:
-            args = dict(login_form=alum_login_form_data)
-            return render(request, 'jobportal/Alumni/alum_login.html', args)
-    else:
-        args = dict(login_form=AlumLoginForm())
-        return render(request, 'jobportal/Alumni/alum_login.html', args)
+ALUM_LOGIN_URL = reverse_lazy('login')
 
 
 @login_required(login_url=ALUM_LOGIN_URL)
@@ -80,7 +33,7 @@ def alum_home(request):
     """
     username = request.user.username
     args = {'username': username}
-    return render(request, 'jobportal/Alumni/alum_home.html', args)
+    return render(request, 'jobportal/Alumni/home.html', args)
 
 
 @login_required(login_url=ALUM_LOGIN_URL)
@@ -285,12 +238,12 @@ def alum_candidates(request, jobid):
 def alum_apply(request, jobid):
     alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
     job_instance = get_object_or_404(Job, id=jobid)
-    relation_instance = AlumJobRelation(
-        alum=alum_instance,
-        job=job_instance,
-        shortlist_status=False
-    )
-    relation_instance.save()
+    # relation_instance = AlumJobRelation(
+    #     alum=alum_instance,
+    #     job=job_instance,
+    #     shortlist_status=False
+    # )
+    # relation_instance.save()
     return redirect('alum_jobdetails', jobid=jobid)
 
 
@@ -299,8 +252,8 @@ def alum_apply(request, jobid):
 def alum_deapply(request, jobid):
     alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
     job_instance = get_object_or_404(Job, id=jobid)
-    relation_instance = get_object_or_404(AlumJobRelation, alum=alum_instance, job=job_instance)
-    relation_instance.delete()
+    # relation_instance = get_object_or_404(AlumJobRelation, alum=alum_instance, job=job_instance)
+    # relation_instance.delete()
     return redirect('alum_jobdetails', jobid=jobid)
 
 
@@ -327,11 +280,12 @@ def alum_jobdetails(request, jobid):
     alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
     job_instance = get_object_or_404(Job, id=jobid)
     args = {'job_instance': job_instance}
-    try:
-        relation_instance = AlumJobRelation.objects.get(alum=alum_instance, job=job_instance)
-        args['relation_instance'] = relation_instance
-    except ObjectDoesNotExist:
-        args['relation_instance'] = None
+    # try:
+    #     relation_instance = AlumJobRelation.objects.get(alum=alum_instance, job=job_instance)
+    #     args['relation_instance'] = relation_instance
+    # except ObjectDoesNotExist:
+    #     args['relation_instance'] = None
+    args['relation_instance'] = None
     return render(request, 'jobportal/Alumni/jobdetails.html', args)
 
 
@@ -384,51 +338,40 @@ def job_unplace(request, relationid):
     return redirect("alum_jobaction", jobid=relation_instance.job.id, studid=relation_instance.stud.id)
 
 
-# Alum Job Relation Views
 @login_required(login_url=ALUM_LOGIN_URL)
-def job_alum_relation(request, jobid, alumid):
-    alum_instance = get_object_or_404(Alumni, id=alumid)
-    job_instance = get_object_or_404(Job, id=jobid)
-    relation_instance = get_object_or_404(AlumJobRelation, alum=alum_instance, job=job_instance)
-    args = {
-        'relation_instance': relation_instance,
-        'alum_instance': alum_instance,
-        'job_instance': job_instance
-    }
-    return render(request, "jobportal/Alumni/jobactions.html", args)
+def view_profile(request):
+    alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
+    args = dict(alum_instance=alum_instance)
+    return render(request, 'jobportal/Alumni/profile.html', args)
 
 
-# Alumni: Shortlist
 @login_required(login_url=ALUM_LOGIN_URL)
-def job_shortlist2(request, relationid):
-    relation_instance = get_object_or_404(AlumJobRelation, id=relationid)
-    relation_instance.shortlist_status = True
-    relation_instance.save()
-    return redirect("alum_jobaction2", jobid=relation_instance.job.id, alumid=relation_instance.alum.id)
+def edit_profile(request):
+    alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
+    form = AlumniProfileForm(request.POST or None, instance=alum_instance)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('alum_view_profile')
+        else:
+            args = dict(form=form, alum_instance=alum_instance)
+            return render(request, 'jobportal/Alumni/edit_profile.html', args)
+    else:
+        args = dict(form=form, alum_instance=alum_instance)
+        return render(request, 'jobportal/Alumni/edit_profile.html', args)
 
 
-# Alumni: Unshortlist
 @login_required(login_url=ALUM_LOGIN_URL)
-def job_unshortlist2(request, relationid):
-    relation_instance = get_object_or_404(AlumJobRelation, id=relationid)
-    relation_instance.shortlist_status = False
-    relation_instance.save()
-    return redirect("alum_jobaction2", jobid=relation_instance.job.id, alumid=relation_instance.alum.id)
-
-
-# Alumni: Place
-@login_required(login_url=ALUM_LOGIN_URL)
-def job_place2(request, relationid):
-    relation_instance = get_object_or_404(AlumJobRelation, id=relationid)
-    relation_instance.placed_init = True
-    relation_instance.save()
-    return redirect("alum_jobaction2", jobid=relation_instance.job.id, alumid=relation_instance.alum.id)
-
-
-# Alumni: Unplace
-@login_required(login_url=ALUM_LOGIN_URL)
-def job_unplace2(request, relationid):
-    relation_instance = get_object_or_404(AlumJobRelation, id=relationid)
-    relation_instance.placed_init = False
-    relation_instance.save()
-    return redirect("alum_jobaction2", jobid=relation_instance.job.id, alumid=relation_instance.alum.id)
+def upload_cv(request):
+    alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
+    form = AlumCVUpload(request.POST or None, request.FILES or None, instance=alum_instance)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('alum_cv_upload')
+        else:
+            args = dict(form=form, alum_instance=alum_instance)
+            return render(request, 'jobportal/Alumni/uploadcv.html', args)
+    else:
+        args = dict(form=form, alum_instance=alum_instance)
+        return render(request, 'jobportal/Alumni/uploadcv.html', args)

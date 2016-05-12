@@ -1,0 +1,22 @@
+{% extends 'base_company.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+    <p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+
+{% block content %}
+        <h2 class="sub-header">Add alum job:</h2>
+        <hr/>
+		<div class="col-md-10">
+            <div class="well">
+                <form action="{% url 'alumnijobs:rec_add_alum_job' %}" method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    {{ form  | crispy }}
+                    <input type="submit" value="Post" class = "btn btn-success">
+                </form>
+            </div>
+		</div>
+{% endblock %}

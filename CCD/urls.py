@@ -20,11 +20,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^captcha/', include('captcha.urls')),
+    # url(r'^captcha/', include('captcha.urls')),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^jobportal/', include('jobportal.urls')),
     url(r'^mentormentee/', include('mentormentee.urls', namespace="mentormentee", app_name="mentormentee")),
     url(r'^internships/', include('internships.urls', namespace="internships", app_name="internships")),
+    url(r'^alumnijobs/', include('alumnijobs.urls', namespace="alumnijobs", app_name="alumnijobs")),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

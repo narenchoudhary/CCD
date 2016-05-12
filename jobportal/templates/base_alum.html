@@ -3,14 +3,12 @@
 {% block menu %}
 <li class="account-nav-head">Alumni <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
 <li><a href="{% url 'alum_home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-<li><a href="{% url 'availablejobs' %}"><span class="glyphicon glyphicon-briefcase"></span> Jobs/Internship</a></li>
-<li><a href="{% url 'alum_jobsappliedfor' %}" title=""><span class="glyphicon glyphicon-ok"></span> Jobs applied for</a>
+<li><a href="{% url 'alum_view_profile' %}"><span class="glyphicon glyphicon-home"></span> Profile</a></li>
+<li><a href="{% url 'alum_edit_profile' %}"><span class="glyphicon glyphicon-home"></span> Edit Profile</a></li>
+<li><a href="{% url 'alum_cv_upload' %}"><span class="glyphicon glyphicon-home"></span> Upload CV</a></li>
+<li><a href="{% url 'alumnijobs:alum_all_alum_jobs' %}">
+    <span class="glyphicon glyphicon-home"></span>All Jobs</a>
 </li>
-<li><a href="{% url 'postalumjob' %}" title="Post a new job"><span class="glyphicon glyphicon-plus"></span> Post a new Job</a></li>
-<li><a href="{% url 'viewalumjob' %}" title="View posted jobs">View posted jobs</a></li>
-<li><a href="{% url 'mentormentee:add_proposal' %}" title="Add a new proposal"><span class="glyphicon glyphicon-plus"></span> Add new research proposal</a></li>
-<li><a href="{% url 'mentormentee:alum_proposals' %}" title="View all proposals">View proposals</a></li>
-<li><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></li>
 {% endblock %}
 
 {% block level_0 %}

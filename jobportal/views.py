@@ -1,13 +1,3 @@
-# Author:
-# Name: Narendra Choudhary
-# Email : n.choudhary@iitg.ernet.in
-
-# Warning:
-# DO NOT try to optimize the code before reading the complete documentation
-# at least 2 times.
-# DO NOT make any assumption about anything. Double check the documentation.
-
-
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404
@@ -15,23 +5,21 @@ from django.contrib import auth
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
-from .models import *
-from .forms import *
+
 from datetime import datetime
 from reportlab.pdfgen import canvas
 from io import BytesIO
 
-STUD_LOGIN_URL = reverse_lazy('jobportal/stud_login')
-ALUM_LOGIN_URL = reverse_lazy('jobportal/alum_login')
-COMPANY_LOGIN_URL = reverse_lazy('jobportal/companylogin')
+from .models import Company, Student, Alumni, Admin, StudentJobRelation, User, Event, Job, \
+    ProgrammeJobRelation, UserProfile
+from .forms import LoginForm, StudCVForm, EditStudProfileForm, RequestEventForm, SelectCVForm, AvatarSignForm
+
+STUD_LOGIN_URL = reverse_lazy('login')
+ALUM_LOGIN_URL = reverse_lazy('login')
+COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
 def get_questions(studid):
-    """
-    Returns list of student's CV to be selected before application
-    :param studid: id of Student instance
-    :return: list of CVs uploaded
-    """
     stud_instance = get_object_or_404(Student, id=studid)
     questions = []
     if bool(stud_instance.cv1):
@@ -41,24 +29,8 @@ def get_questions(studid):
     return questions
 
 
-def index(request):
-    """
-    Serves the landing page.
-    :param request: HTTP Request object
-    :return: HTTP Response object
-    """
-    args = {}
-    args.update(csrf(request))
-    return render(request, 'jobportal/index.html', args)
-
-
 def login(request):
-    """
-    Handles logins.
-    :param request: HTTP Request object
-    :return: HTTP Repsonse object
-    """
-    form = StudentLoginForm(request.POST or None)
+    form = LoginForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -95,7 +67,7 @@ def login(request):
                     request.session['user_type'] = 'Admin'
                     return redirect('admin_home')
                 else:
-                    # this case should never happen
+                    # this case should never happen unless new users are added
                     args = dict(form=form)
                     return render(request, 'jobportal/login.html', args)
             else:
@@ -109,70 +81,14 @@ def login(request):
         return render(request, 'jobportal/login.html', args)
 
 
-def stud_login(request):
-    """
-    Handles student login functionality.
-    :param request: HTTP Request object
-    :return: HTTP Response object
-    """
-    if request.method == "POST":
-        student_login_form_data = StudentLoginForm(request.POST)
-        if student_login_form_data.is_valid():
-            # get username
-            username = student_login_form_data.cleaned_data['username']
-            password = student_login_form_data.cleaned_data['password']
-            # authenticate
-            user = auth.authenticate(username=username, password=password)
-            # if authenticated
-            if user is not None:
-                # get username from User instance
-                current_user = User.objects.get(username=username)
-                # get corresponding UserProfile instance
-                user_profile = UserProfile.objects.get(user=current_user)
-                # if UserProfile instance is Student
-                if user_profile.login_type == "Current Student":
-                    # login User
-                    auth.login(request, user)
-                    student_instance = Student.objects.get(user=user_profile)
-                    request.session['student_instance_id'] = student_instance.id
-                    request.session['user_type'] = 'Student'
-                    return redirect('stud_home')
-                # User exists but is not Student
-                # TODO : Add redirect to correct login page
-                else:
-                    args = dict(login_form=student_login_form_data)
-                    return render(request, 'jobportal/Student/stud_login.html', args)
-            # either username-password mismatch or User doesn't exist
-            else:
-                args = dict(login_form=student_login_form_data)
-                return render(request, 'jobportal/Student/stud_login.html', args)
-        # invalid form submission
-        else:
-            args = dict(login_form=student_login_form_data)
-            return render(request, 'jobportal/Student/stud_login.html', args)
-    else:
-        args = dict(login_form=StudentLoginForm())
-        return render(request, 'jobportal/Student/stud_login.html', args)
-
-
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_logout(request):
-    """
-    Logout Student.
-    :param request: HTTP Request object
-    :return: HTTP Response object
-    """
     auth.logout(request)
     return render(request, 'jobportal/logout.html')
 
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_home(request):
-    """
-    Render Student home.
-    :param request: HTTP Request object
-    :return: HTTP Response object
-    """
     try:
         student_instance = Student.objects.get(id=request.session['student_instance_id'])
     except:
@@ -185,7 +101,6 @@ def stud_home(request):
 def edit_stud_profile(request):
     student_instance = Student.objects.get(id=request.session['student_instance_id'])
     edit_stud_form_data = EditStudProfileForm(request.POST or None, instance=student_instance)
-    # print(edit_stud_form_data)
     if request.method == "POST":
         if edit_stud_form_data.is_valid():
             stud = edit_stud_form_data.save(commit=False)
@@ -201,11 +116,6 @@ def edit_stud_profile(request):
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_viewjobs(request):
-    """
-    Fetch jobs open for application.
-    :param request: HTTP Request object
-    :return: HTTP Response object
-    """
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     stud_prog = student_instance.prog
     job_list = set([e.job for e in ProgrammeJobRelation.objects.filter(prog=stud_prog)])
@@ -214,12 +124,6 @@ def stud_viewjobs(request):
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_applyjob(request, jobid):
-    """
-    Apply for an open job
-    :param request: HttpRequest object
-    :param jobid: Id of Job instance
-    :return: HttpResponse object
-    """
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_instance = get_object_or_404(Job, id=jobid)
     form = SelectCVForm(request.POST or None, extra=get_questions(student_instance.id))
@@ -244,12 +148,6 @@ def stud_applyjob(request, jobid):
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_deapplyjob(request, jobid):
-    """
-    Remove application from a job.
-    :param request: HttpRequest object
-    :param jobid: id of Job instance
-    :return: HttpResponse object
-    """
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_instance = Job.objects.get(id=jobid)
     relation_instance = get_object_or_404(StudentJobRelation, stud=student_instance, job=job_instance)
@@ -259,11 +157,6 @@ def stud_deapplyjob(request, jobid):
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_jobsappliedfor(request):
-    """
-    Fetch all Jobs to which Student has applied,
-    :param request: HttpRequest object
-    :return: HttpResponse object
-    """
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_list = [e.job for e in StudentJobRelation.objects.filter(stud=student_instance)]
     args = {'job_list': job_list}
@@ -272,12 +165,6 @@ def stud_jobsappliedfor(request):
 
 @login_required(login_url=STUD_LOGIN_URL)
 def stud_jobdetails(request, jobid):
-    """
-    Details of a job instance
-    :param request: HttpRequest instance
-    :param jobid: id of Job instance
-    :return: HttpResponse object
-    """
     job_instance = get_object_or_404(Job, id=jobid)
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     deadline_gone = True if job_instance.application_deadline < datetime.now().date() else False
@@ -331,7 +218,6 @@ def del_cv(request, cvno):
     return redirect("viewcvs")
 
 
-# Loads event form via template and saves the vent data
 def requestevent(request):
     alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
     if request.method == 'POST':

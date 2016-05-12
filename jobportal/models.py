@@ -9,6 +9,11 @@ from smart_selects.db_fields import ChainedForeignKey
 from versatileimagefield.fields import VersatileImageField
 
 
+def generate_alum_cvname(instance, filename):
+    url = "alum_cv/%s" % str(instance.iitg_webmail)
+    return url
+
+
 def generate_cv1filename(instance, filename):
     url = "cv1/%s" % str(instance.roll_no)
     return url
@@ -130,16 +135,15 @@ class Alumni(models.Model):
     user = models.OneToOneField(UserProfile, blank=True, null=True)
     iitg_webmail = models.CharField(max_length=50, blank=True, verbose_name="IITG Webmail")
     alternate_email = models.EmailField(max_length=254, blank=True, verbose_name="Alternate Email")
-    department = models.CharField(max_length=25, choices=DEPARTMENTS, blank=True, verbose_name="Department")
-    programme = models.CharField(max_length=10, choices=PROGRAMMES, blank=True)
-    linkedin_link = models.URLField(max_length=254, blank=True, null=True)
     # Foreign Keys
-    prog = models.ForeignKey(Programme, null=True)
-    dept = models.ForeignKey(Department, null=True)
+    year = models.ForeignKey(Year, null=True)
+    dept = ChainedForeignKey(Department, chained_field='year', chained_model_field='year', show_all=False)
+    prog = ChainedForeignKey(Programme, chained_field='dept', chained_model_field='dept', show_all=False)
+    year_passing = models.ForeignKey(Year, null=True, related_name='year_passing')
+
+    cv = models.FileField(null=True, upload_to=generate_alum_cvname, blank=True)
 
     class Meta:
-        ordering = ["user", "iitg_webmail", "alternate_email", "department"]
-        verbose_name_plural = "Alumni"
         managed = True
 
     def __unicode__(self):
@@ -283,7 +287,6 @@ class ProgrammeJobRelation(models.Model):
 
 class StudentJobRelation(models.Model):
     # status variables
-    # placement process initiated by company
     round = models.IntegerField(default=1)
     placed_init = models.BooleanField(default=False)
     shortlist_init = models.BooleanField(default=False)
@@ -295,23 +298,6 @@ class StudentJobRelation(models.Model):
     cv2 = models.BooleanField(default=False)
     # Foreign Keys
     stud = models.ForeignKey(Student, null=True, blank=True)
-    job = models.ForeignKey(Job, null=True, blank=True)
-
-    def __unicode__(self):
-        return str(self.id)
-
-
-# TODO: Ask Prarthana for guidelines
-class AlumJobRelation(models.Model):
-    # status variables
-    # placement approved by alumni/company
-    placed_init = models.BooleanField(default=False)
-    # placement approved by admin
-    placed_approved = models.BooleanField(default=False)
-    # shortlisting status
-    shortlist_status = models.BooleanField(default=False)
-    # Foreign Keys
-    alum = models.ForeignKey(Alumni, null=True, blank=True)
     job = models.ForeignKey(Job, null=True, blank=True)
 
     def __unicode__(self):
@@ -361,3 +347,4 @@ class CompanyReg(models.Model):
 
     def __unicode__(self):
         return str(self.company_name_reg)
+
