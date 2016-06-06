@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, inlineformset_factory
+from django.forms import ModelForm, inlineformset_factory, Textarea
 from functools import partial
 # Project imports
 from models import *
@@ -16,6 +16,9 @@ class RecruiterAddInternShip(ModelForm):
     class Meta:
         model = IndInternship
         fields = ['designation', 'description', 'stipend', 'profile', 'duration']
+        widgets = {
+            'description': Textarea(attrs=dict(rows=4, cols=15))
+        }
 
 
 class AdminEditInternShip(ModelForm):

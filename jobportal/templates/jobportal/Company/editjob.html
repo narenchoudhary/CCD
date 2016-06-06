@@ -2,20 +2,9 @@
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
-    <p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
     <p><a href="#" title="">My Account</a></p>
 {% endblock%}
-
-{% block menu %}
-    <li class="account-nav-head">Recruiter <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
-    <li><a href="{% url 'companyhome' %}" title="Company Home">Home</a></li>
-    <li><a href="{% url 'companyprofile' %}" title="Profile">Company Profile</a></li>
-    <li><a href="{% url 'companyaddjob' %}" title="View Jobs">Post New Jobs</a></li>
-    <li><a href="{% url 'companyviewjobs' %}" title="View Jobs">View Jobs</a></li>
-    <li><a href="{% url 'companyrequestevent' %}" title="Request Event">Request Events</a></li>
-    <li><a href="{% url 'companyeventsandstatus' %}" title="Events and Status">Events and Status</a></li>
-    <li><a href="{% url 'password_change_company' %}" title="Change Password">Change Password</a></li>
-{% endblock %}
 
 {% block content %}
     <h2 class="sub-header">Edit Job</h2>

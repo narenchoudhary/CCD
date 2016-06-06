@@ -6,6 +6,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 2.7.11+ (/usr/bin/python2.7)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="drf_tutorial" />
+    <orderEntry type="module" module-name="fittect" />
   </component>
 </module>

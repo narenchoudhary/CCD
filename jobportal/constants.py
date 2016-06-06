@@ -6,22 +6,6 @@ SEX = (
     ('F', 'Female'),
 )
 
-BOOL_CHOICES = (
-    ('True', 'YES'),
-    ('False', 'No')
-)
-
-JOB_AUDIENCE = (
-    ('BTECH1', 'B. Tech 1st Year'),
-    ('BTECH2', 'B. Tech 2nd Year'),
-    ('BTECH3', 'B. Tech 3rd Year'),
-    ('BTECH4', 'B. Tech 4th Year'),
-    ('MTECH1', 'B. Tech 1st Year'),
-    ('MTECH2', 'B. Tech 2nd Year'),
-    ('PHD', 'Ph.D.'),
-    ('ALUM', 'Alumni'),
-)
-
 CATEGORY = (
     ('GEN', 'GEN'),
     ('OBC', 'OBC'),
@@ -30,6 +14,14 @@ CATEGORY = (
     ('PH', 'PH'),
     ('Foreign', 'Foreign')
 )
+
+USER_TYPE = (
+    ('student', 'student'),
+    ('alumni', 'alumni'),
+    ('admin', 'admin'),
+    ('company', 'company'),
+)
+
 
 USER_CATEGORY = (
     ('Current Student', 'Current Student'),
@@ -55,12 +47,6 @@ DEPARTMENTS = (
 
 DEPARTMENTS_JOBCHOICE = DEPARTMENTS + (('ALL', 'All Departments'),)
 
-CV_REQUIRED = (
-    ('CV1', 'CV1'),
-    ('CV2', 'CV2'),
-    ('CV12', 'CV12')
-)
-
 PROGRAMMES = (
     ('BTECH', 'B.Tech.'),
     ('MTECH', 'M.Tech.'),
@@ -77,23 +63,11 @@ HOSTELS = (
     ('Kapili', 'Kapili'),
     ('Lohit', 'Lohit'),
     ('Manas', 'Manas'),
-    ("Married Scholar's Hostel", "Married Scholar's Hostel"),
+    ("Married Scholars Hostel", "Married Scholars Hostel"),
     ('Siang', 'Siang'),
     ('Subansiri', 'Subansiri'),
     ('Umiam', 'Umiam'),
     ('Other', 'Other'),
-)
-
-JOB_TYPE = (
-    ('Internship', 'Internship'),
-    ('Full Time', 'Full Time'),
-)
-
-CURRENT_YEAR = (
-    ('1', 'FIRST'),
-    ('2', 'SECOND'),
-    ('3', 'THIRD'),
-    ('4', 'FOURTH')
 )
 
 ORGANIZATION_TYPE = (

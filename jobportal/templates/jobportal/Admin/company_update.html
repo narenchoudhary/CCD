@@ -1,0 +1,16 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+        <h2 class="sub-header">Add Company</h2>
+        <hr>
+        <div class="col-md-6">
+            <form method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                <div class="well">
+                    {% crispy form form.helper %}
+                    <input type="submit" class="btn btn-primary" value="Add Profile">
+                </div>
+            </form>
+        </div>
+{% endblock %}

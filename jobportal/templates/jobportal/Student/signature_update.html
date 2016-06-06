@@ -1,0 +1,21 @@
+{% extends 'base_student.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Upload new signature</h2>
+<hr/>
+<div class="col-md-9">
+    <form enctype="multipart/form-data" method="post" accept-charset="utf-8">
+        <div class="well">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input type="submit" class="btn btn-primary" value="Upload">
+        </div>
+    </form>
+</div>
+{% endblock %}

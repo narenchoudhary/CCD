@@ -20,7 +20,7 @@
             <th>Designation</th>
             <th>Profile</th>
             <th>Stipend</th>
-            <th>Duration(in months)</th>
+            <th>Duration</th>
             <th>Opening Date</th>
             <th>Deadline</th>
             <th>Detials</th>
@@ -31,10 +31,8 @@
         <tr>
             <td>{{ intern.designation }}</td>
             <td>{{ intern.profile }}</td>
-            <td>
-                {{ intern.stipend }}
-            </td>
-            <td>{{ intern.duration }}</td>
+            <td>{{ intern.stipend }}</td>
+            <td>{{ intern.duration }} month(s)</td>
             <td>{{ intern.opening_date | date:'d-N-Y' }}</td>
             <td>{{ intern.closing_date | date:'d-N-Y'}}</td>
             <td><a href="{% url 'internships:stud_intern_details' intern.id %}" class="btn btn-info btn-xs">Details</a></td>
@@ -45,6 +43,7 @@
     {% else %}
         <p>No internship matches your profile.</p>
     {% endif %}
+    <br>
     <br>
 </div>
 {% endblock %}

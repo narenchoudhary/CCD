@@ -10,7 +10,7 @@
 <li><a href="{% url 'viewalumjob' %}" title="View posted jobs">View posted jobs</a></li>
 <li><a href="{% url 'mentormentee:add_proposal' %}" title="Add a new proposal" class="glyphicon glyphicon-plus">Add new research proposal</a></li>
 <li><a href="{% url 'mentormentee:alum_proposals' %}" title="View all proposals">View proposals</a></li>
-<li><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></li>
+<li><a href="{% url 'logout' %}" title="logout">Logout</a></li>
 {% endblock %}
 
 {% block content %}
@@ -69,6 +69,6 @@
 <p>No Alumni have applied for this position.</p>
 {% endfor %}
 <p><a href="{% url 'alum_home' %}" title="">Home</a></p>
-<p><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></p>
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 
 {% endblock %}

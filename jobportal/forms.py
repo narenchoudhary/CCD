@@ -1,20 +1,16 @@
-# TODO: Replace forms.Form with ModelForm wherever possible
-# TODO: Add CSS classes to form inputs (Naveen)
-# (http://stackoverflow.com/questions/401025/define-css-class-in-django-forms)
+from functools import partial
 
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, inlineformset_factory
-from functools import partial
-# Project imports
-from models import *
-from constants import *
-# Crispy Widget
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
-# Captcha
-from captcha.fields import ReCaptchaField
+
+from models import *
+from constants import *
 
 
 # Date Widget
@@ -26,14 +22,13 @@ JobProgFormSet = inlineformset_factory(Job, ProgrammeJobRelation, fields=('year'
 class LoginForm(forms.Form):
     username = forms.CharField(required=True, label='Webmail', max_length=25)
     password = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
-    captcha = ReCaptchaField()
 
 
 class EditStudProfileForm(ModelForm):
 
     class Meta:
         model = Student
-        exclude = ['user', 'avatar', 'signature', 'cv1', 'cv2', 'placed', 'inter2', 'intern3', 'ppo']
+        exclude = ['user', 'placed', 'inter2', 'intern3', 'ppo']
 
     def __init__(self, *args, **kwargs):
         super(EditStudProfileForm, self).__init__(*args, **kwargs)
@@ -48,66 +43,35 @@ class EditStudProfileForm(ModelForm):
         #     self.fields['prog'].widget.attrs['disabled'] = 'disabled'
         self.helper = FormHelper()
         self.helper.form_tag = False
-        # TODO: See inheriting layouts
-        # TODO: http://django-crispy-forms.readthedocs.org/en/d-0/layouts.html#inheriting-layouts
         self.helper.layout = Layout(
             TabHolder(
                 Tab(
                     'Student Information',
-                    'roll_no',
-                    AppendedText('iitg_webmail', '@iitg.ernet.in'),
-                    'first_name',
-                    'middle_name',
-                    'last_name',
-                    'dob',
-                    'sex',
-                    'category',
-                    'nationality',
-                    'year',
-                    'dept',
-                    'prog',
-                    'minor_programme',
-                    'hostel',
-                    'room_no'
+                    'roll_no', AppendedText('iitg_webmail', '@iitg.ernet.in'),
+                    'first_name', 'middle_name', 'last_name', 'dob',
+                    'sex', 'category', 'nationality', 'year', 'dept',
+                    'prog', 'minor_programme', 'hostel', 'room_no'
                 ),
                 Tab(
                     'Contact Information',
-                    PrependedText('linkedin_link', 'https://'),
-                    'alternative_email',
-                    'mobile_campus',
-                    'mobile_campus_alternative',
-                    'mobile_home'
+                    PrependedText('linkedin_link', 'https://'), 'alternative_email',
+                    'mobile_campus', 'mobile_campus_alternative', 'mobile_home'
                 ),
                 Tab(
                     'Home Address',
-                    'address_line1',
-                    'address_line2',
-                    'address_line3',
-                    'pin_code'
+                    'address_line1', 'address_line2',
+                    'address_line3', 'pin_code'
                 ),
                 Tab(
                     'Academic',
-                    'jee_air_rank',
-                    'percentage_x',
-                    'percentage_xii',
-                    'board_x',
-                    'board_xii',
-                    'medium_x',
-                    'medium_xii',
-                    'passing_year_x',
-                    'passing_year_xii',
-                    'gap_in_study',
-                    'gap_reason',
+                    'jee_air_rank', 'percentage_x', 'percentage_xii',
+                    'board_x', 'board_xii', 'medium_x', 'medium_xii', 'passing_year_x',
+                    'passing_year_xii', 'gap_in_study', 'gap_reason',
                 ),
                 Tab(
                     'CPI',
-                    'cpi',
-                    'spi_1_sem',
-                    'spi_2_sem',
-                    'spi_3_sem',
-                    'spi_4_sem',
-                    'spi_5_sem',
-                    'spi_6_sem',
+                    'cpi', 'spi_1_sem', 'spi_2_sem', 'spi_3_sem',
+                    'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
                 )
             )
         )
@@ -137,13 +101,7 @@ class EditStudProfileForm(ModelForm):
     #         return self.cleaned_data['prog']
 
 
-class AlumLoginForm(forms.Form):
-    username = forms.CharField(required=True, label='Webmail', max_length=25)
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    # captcha = CaptchaField()
-
-
-class JobEditForm(ModelForm):
+class CompanyJobForm(ModelForm):
     class Meta:
         model = Job
         exclude = ['alum_owner', 'company_owner', 'posted_by_alumnus', 'posted_by_company',
@@ -151,14 +109,7 @@ class JobEditForm(ModelForm):
                    'application_deadline']
 
     def __init__(self, *args, **kwargs):
-        """
-        Init function.
-        Form layout is defined here.
-        :param args: args
-        :param kwargs:kwargs
-        :return:void
-        """
-        super(JobEditForm, self).__init__(*args, **kwargs)
+        super(CompanyJobForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.fields['bond_link'].help_text = 'Upload bond document to Drive/Dropbox and add link here.'
@@ -262,21 +213,15 @@ class AdminJobEditForm(ModelForm):
             TabHolder(
                 Tab(
                     'Basic Information',
-                    'description',
-                    'designation',
-                    'profile_name',
-                    'num_openings',
+                    'description', 'designation', 'profile_name', 'num_openings',
                     HTML("""
                         <a class="btn btn-primary btnNext" >Next</a>
                     """)
                 ),
                 Tab(
                     'Requirements',
-                    'cpi_shortlist',
-                    'minimum_cpi',
-                    'percentage_x',
-                    'percentage_xii',
-                    'other_requirements',
+                    'cpi_shortlist', 'minimum_cpi', 'percentage_x',
+                    'percentage_xii', 'other_requirements',
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -284,20 +229,11 @@ class AdminJobEditForm(ModelForm):
                 ),
                 Tab(
                     'Salary/Incentives',
-                    'currency',
-                    'ctc_btech',
-                    'ctc_mtech',
-                    'ctc_phd',
-                    'ctc_msc',
-                    'ctc_ma',
-                    'gross_btech',
-                    'gross_mtech',
-                    'gross_phd',
-                    'gross_msc',
-                    'gross_ma',
-                    'take_home_during_training',
-                    'take_home_after_training',
-                    'bonus',
+
+                    'currency', 'ctc_btech', 'ctc_mtech', 'ctc_phd', 'ctc_msc', 'ctc_ma',
+                    'gross_btech', 'gross_mtech', 'gross_phd', 'gross_msc', 'gross_ma',
+                    'take_home_during_training', 'take_home_after_training', 'bonus',
+
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -305,8 +241,9 @@ class AdminJobEditForm(ModelForm):
                 ),
                 Tab(
                     'Bond',
-                    'bond',
-                    'bond_link',
+
+                    'bond', 'bond_link',
+
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -314,9 +251,9 @@ class AdminJobEditForm(ModelForm):
                 ),
                 Tab(
                     'Settings',
-                    'opening_date',
-                    'application_deadline',
-                    'approved',
+
+                    'opening_date', 'application_deadline', 'approved',
+
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <input type="submit" class="btn btn-primary" value="Save" >
@@ -335,9 +272,6 @@ class RequestEventForm(forms.Form):
 
 class CompanySignupForm(ModelForm):
 
-    # Captcha Field
-    # captcha = CaptchaField()
-
     class Meta:
         model = CompanyReg
         exclude = []
@@ -350,6 +284,7 @@ class CompanySignupForm(ModelForm):
             TabHolder(
                 Tab(
                     'General Details',
+
                     'company_name_reg',
                     'description_reg',
                     'postal_address_reg',
@@ -399,24 +334,16 @@ class CompanyProfileEdit(ModelForm):
             TabHolder(
                 Tab(
                     'General Details',
-                    'company_name',
-                    'description',
-                    'postal_address',
-                    'website',
-                    'organization_type',
-                    'industry_sector'
+
+                    'company_name', 'description', 'postal_address',
+                    'website', 'organization_type', 'industry_sector'
                 ),
                 Tab(
                     'HR Details',
-                    'head_hr_name',
-                    'head_hr_email',
-                    'head_hr_designation',
-                    'head_hr_mobile',
+
+                    'head_hr_name', 'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
                     'head_hr_fax',
-                    'first_hr_name',
-                    'first_hr_email',
-                    'first_hr_designation',
-                    'first_hr_mobile',
+                    'first_hr_name', 'first_hr_email', 'first_hr_designation', 'first_hr_mobile',
                     'first_hr_fax'
                 )
             )
@@ -438,7 +365,10 @@ class AddStudent(ModelForm):
 
     class Meta:
         model = Student
-        exclude = ['user', 'avatar', 'signature', 'placed', 'cv1', 'cv2', 'intern2', 'intern3', 'ppo']
+        exclude = ['user', 'placed', 'cv1', 'cv2', 'intern2', 'intern3', 'ppo']
+        widgets = {
+            'gap_reason': forms.Textarea(attrs=dict(rows=4, cols=15))
+        }
 
 
 class AddCompany(ModelForm):
@@ -533,7 +463,7 @@ class EditStudentAdmin(ModelForm):
 
     class Meta:
         model = Student
-        exclude = ['username', 'password', 'avatar', 'signature']
+        exclude = ['username', 'password']
 
 
 class AddEditDepartment(ModelForm):
@@ -592,12 +522,6 @@ class StudCVForm(forms.Form):
             raise ValidationError("Provide at least one file.")
 
 
-class AvatarSignForm(ModelForm):
-    class Meta:
-        model = Student
-        fields = ['avatar', 'signature']
-
-
 class AlumniProfileForm(ModelForm):
     class Meta:
         model = Alumni
@@ -608,3 +532,61 @@ class AlumCVUpload(ModelForm):
     class Meta:
         model = Alumni
         fields = ['cv']
+
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = Avatar
+        exclude = ['stud']
+
+
+class SignatureForm(forms.ModelForm):
+    class Meta:
+        model = Signature
+        exclude = ['stud']
+
+
+class CompanySignup(forms.ModelForm):
+
+    class Meta:
+        model = Company
+        exclude = ['user', 'approved']
+
+
+class UserProfileForm(forms.ModelForm):
+    error_messages = {
+        'password_mismatch': "The two password fields didn't match.",
+    }
+
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Password Confirmation", widget=forms.PasswordInput,
+                                help_text="Enter the same password as before, for verification.")
+
+    class Meta:
+        model = UserProfile
+        fields = ['username']
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch',
+            )
+        self.instance.username = self.cleaned_data.get('username')
+        return password2
+
+    def save(self, commit=True):
+        username = self.cleaned_data['username']
+        password = self.cleaned_data['password1']
+        user = UserProfile.objects.create_user(username=username, password=password)
+        return user
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
+        super(CustomPasswordChangeForm, self).__init__(request.user, *args, **kwargs)
+

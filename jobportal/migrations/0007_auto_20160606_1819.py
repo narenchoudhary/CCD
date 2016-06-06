@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobportal', '0006_auto_20160313_1333'),
+        ('jobportal', '0006_remove_job_sent_back'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='student',
-            name='company_count',
-            field=models.DecimalField(default=0, null=True, max_digits=30, decimal_places=0, blank=True),
+            model_name='job',
+            name='posted_on',
+            field=models.DateTimeField(null=True, blank=True),
         ),
     ]

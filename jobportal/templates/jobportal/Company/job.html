@@ -1,7 +1,7 @@
 {% extends 'base_company.html' %}
 
 {% block account_setting%}
-<p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
@@ -45,6 +45,7 @@
     </table>
     <p><a href="{% url 'company_add_progs' job_instance.id %}" class="btn btn-primary">Add Programmes</a></p>
     <p><a href="{% url 'companycandidates' job_instance.id %}" class="btn btn-primary">View Candidates</a></p>
+    <p><a href="{% url 'companyeditjob' job_instance.id %}" class="btn btn-primary">Edit Job</a></p>
 </div>
 
 {% endblock %}

@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'jobportal.UserProfile'
 
 # Application definition
 
@@ -37,10 +38,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'versatileimagefield',
     'crispy_forms',
     'smart_selects',
     'captcha',
+    'django_cleanup',
+
     'mentormentee',
     'internships',
     'alumnijobs',

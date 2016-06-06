@@ -135,3 +135,6 @@ fabric.properties
 
 ## Database File
 db.*
+
+#Django media files
+media/*

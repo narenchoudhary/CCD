@@ -1,0 +1,133 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block account_setting%}
+<p><a href="#" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+
+<h2 class="sub-header">Company Details</h2>
+<hr>
+<div class="col-md-12">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Company Profile</a>
+            </li>
+            <li role="presentation">
+                <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a>
+            </li>
+            <li role="presentation">
+                <a href="#status" aria-controls="messages" role="tab" data-toggle="tab">Status</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <div role="tabpanel" class="tab-pane active" id="profile">
+                <table class="table table-striped">
+                    <tr>
+                    <td> Company Name: </td><td> {{ company.company_name }}</td>
+                    </tr><tr>
+                    <td>Description: </td><td> {{ company.description }}</td>
+                    </tr><tr>
+                    <td>Postal Address: </td><td> {{ company.postal_address }}</td>
+                    </tr><tr>
+                    <td>Website: </td><td> {{ company.website }}</td>
+                    </tr><tr>
+                    <td>Organization Type: </td><td> {{ company.organization_type }}</td>
+                    </tr><tr>
+                    <td>Industry Sector: </td><td> {{ company.industry_sector }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="hrdetails">
+                <table class="table table-striped">
+                    <tr><td>Head HR Name</td><td> {{ company.head_hr_name }}</td></tr>
+                    <tr><td>Head HR Email</td><td> {{ company.head_hr_email }}</td></tr>
+                    <tr><td>Head HR Designation</td><td> {{ company.head_hr_designation }}</td></tr>
+                    <tr><td>Head HR Mobile</td><td> {{ company.head_hr_mobile }}</td></tr>
+                    <tr><td>Head HR Fax</td><td> {{ company.head_hr_fax }}</td></tr>
+                    <tr><td>First HR Name</td><td> {{ company.first_hr_name }}</td></tr>
+                    <tr><td>First HR Designation</td><td> {{ company.first_hr_designation }}</td></tr>
+                    <tr><td>First HR Mobile</td><td> {{ company.first_hr_mobile }}</td></tr>
+                    <tr><td>First HR Email</td><td> {{ company.first_hr_email }}</td></tr>
+                    <tr><td>First HR Fax</td><td> {{ company.first_hr_fax }}</td></tr>
+                </table>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="status">
+                <table class="table table-striped">
+                    <tr><td>Approved</td>
+                    <td>{{ company.approved | yesno | capfirst}}</td></tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div>
+    {% if job_list.count > 0 %}
+        <h4>Jobs posted from this recruiter profile:</h4>
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>Designation</th>
+                    <th>Posted On</th>
+                    <th>Approved</th>
+                    <th>Details</th>
+                </tr>
+                {% for job in job_list %}
+                    <tr>
+                        <td>{{ job.designation }}</td>
+                        <td>{{ job.posted_on }}</td>
+                        <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
+                        <td><a class="btn btn-xs btn-primary" href="#">Details</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+    {% endif %}
+    </div>
+
+    <div>
+    {% if intern_list.count > 0 %}
+        <h4>Internships posted from this recruiter profile:</h4>
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>Designation</th>
+                    <th>Posted On</th>
+                    <th>Approved</th>
+                    <th>Details</th>
+                </tr>
+                {% for intern in intern_list %}
+                    <tr>
+                        <td>{{ intern.designation }}</td>
+                        <td>{{ intern.posted_on }}</td>
+                        <td>{{ intern.approved | yesno:"Approved, Not Approved"}}</td>
+                        <td>
+                            <a href="#"
+                            class="btn btn-xs brn-primary">Details</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+    {% endif %}
+    </div>
+
+</div>
+
+<div class="col-md-12">
+    <p><a class="btn btn-info" href="{% url 'admin-company-update' company.id %}"> Edit Company Profile</a></p>
+</div>
+
+{% endblock %}

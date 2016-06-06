@@ -7,12 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobportal', '0022_auto_20160315_0558'),
+        ('jobportal', '0007_auto_20160606_1819'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='studentjobrelation',
-            name='cv_field',
+        migrations.AddField(
+            model_name='company',
+            name='signup_date',
+            field=models.DateTimeField(null=True, blank=True),
         ),
     ]

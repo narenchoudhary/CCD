@@ -1,11 +1,10 @@
 from django.shortcuts import render
-
-# Create your views here.
+from django.contrib import messages
 
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse_lazy
 from django.utils import timezone
-import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from jobportal.models import Company, Student
@@ -19,11 +18,6 @@ STUD_LOGIN_URL = reverse_lazy('jobportal/stud_login')
 
 
 def get_questions(studid):
-    """
-    Returns list of student's CV to be selected before application
-    :param studid: id of Student instance
-    :return: list of CVs uploaded
-    """
     stud_instance = get_object_or_404(Student, id=studid)
     questions = []
     if bool(stud_instance.cv1):
@@ -47,10 +41,10 @@ def company_add_intern(request):
             with transaction.atomic():
                 intern_instance = add_form.save(commit=False)
                 intern_instance.company_owner = company_instance
-                intern_instance.posted_on = datetime.datetime.now()
+                intern_instance.posted_on = datetime.now()
                 intern_instance.last_updated = timezone.now()
-                intern_instance.opening_date = timezone.now() + datetime.timedelta(days=30)
-                intern_instance.closing_date = timezone.datetime.now() + datetime.timedelta(days=50)
+                intern_instance.opening_date = timezone.now() + timedelta(days=30)
+                intern_instance.closing_date = timezone.datetime.now() + timedelta(days=50)
                 intern_instance.save()
                 intern_prog_rel = ProgrammeInternRelation(intern=intern_instance)
                 intern_prog_rel.save()
@@ -133,6 +127,10 @@ def company_intern_drop(request, internid):
             if rel.shortlist_init is True and rel.intern_init is False:
                 rel.shortlist_init = False
             rel.save()
+    else:
+        message = "Some approvals are not yet cleared by administrator. " \
+                  "Round cannot be completed at this moment."
+        messages.add_message(request, messages.WARNING, message)
     return redirect('internships:rec_intern_candidates', internid=internid)
 
 
@@ -299,7 +297,10 @@ def stud_all_interns(request):
 def stud_intern_details(request, internid):
     stud_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     intern_instance = get_object_or_404(IndInternship, id=internid)
-    deadline_gone = True if intern_instance.closing_date < timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone()) else False
+
+    timezone_aware = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    deadline_gone = True if intern_instance.closing_date < timezone_aware else False
+
     nocv = True if not bool(stud_instance.cv1) and not bool(stud_instance.cv2) else False
     try:
         stud_rel = StudentInternRelation.objects.get(stud=stud_instance, intern=intern_instance)

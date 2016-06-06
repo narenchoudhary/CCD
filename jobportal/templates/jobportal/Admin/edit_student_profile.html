@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
-    <p><a href="{% url 'admin_logout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
     <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
@@ -24,7 +24,7 @@
     <div class="row">
         <h3 class="sub-header">Links</h3>
         <div class="col-md-9">
-            <p><a href="{% url 'admin_logout' %}">  Logout</a></p>
+            <p><a href="{% url 'logout' %}">  Logout</a></p>
             <p><a href="{% url 'admin_home' %}">  Home</a></p>
             <p><a href="{% url 'companies' %}">Companies</a></p>
             <p><a href="{% url 'jobs' %}">Jobs/Internships</a></p>

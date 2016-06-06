@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CCD.iml" filepath="$PROJECT_DIR$/.idea/CCD.iml" />
       <module fileurl="file://$PROJECT_DIR$/../drf_tutorial/.idea/drf_tutorial.iml" filepath="$PROJECT_DIR$/../drf_tutorial/.idea/drf_tutorial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../GitHub/fittect/.idea/fittect.iml" filepath="$PROJECT_DIR$/../../GitHub/fittect/.idea/fittect.iml" />
     </modules>
   </component>
 </project>

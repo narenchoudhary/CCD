@@ -12,7 +12,7 @@ Login
 <a href="{% url 'login' %}">
     <li>Login</li>
 </a>
-<a href="{% url 'signup' %}">
+<a href="{% url 'company-signup' %}">
     <li>Recruiters Signup</li>
 </a>
 {% endblock %}
@@ -25,8 +25,14 @@ Login
     <form action="{% url 'login' %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
         <div class="well">
+            {% if form.non_field_errors %}
+                <ul class='form-errors'>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             {{ form.field_errors }}
-            {{ form.non_field_errors }}
             {{ form | crispy }}
             <input type="submit" class="btn btn-primary" value="Log In">
         </div>

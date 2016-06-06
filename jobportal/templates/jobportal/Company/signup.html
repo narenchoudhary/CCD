@@ -3,8 +3,8 @@
 
 {% block menu %}
     <a href="/jobportal"><li>Welcome</li></a>
-    <a href="{% url 'stud_login' %}"><li>Login</li></a>
-    <a href="{% url 'signup' %}"><li>Recruiters Signup</li></a>
+    <a href="{% url 'login' %}"><li>Login</li></a>
+    <a href="{% url 'company-signup' %}"><li>Recruiters Signup</li></a>
 {% endblock %}
 
 {% block content %}
@@ -12,11 +12,14 @@
         <hr/>
         <h4>Fill all the required details:</h4>
         <div class="col-md-10">
-            <form action="{% url 'signup' %}" method="post" accept-charset="utf-8">
+            <form action="{% url 'company-signup' %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}
                 <div class="well">
-                    {% crispy signup_form signup_form.helper %}
-                    <!--<input type="submit" class="btn btn-primary" value="Sign Up" >-->
+                    {{ userform | crispy}}
+                </div>
+                <div class="well">
+                    {{ companyform | crispy}}
+                    <input type="submit" class="btn btn-primary" value="Sign Up" >
                 </div>
             </form>
         </div>

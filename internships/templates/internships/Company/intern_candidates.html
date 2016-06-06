@@ -8,18 +8,23 @@
 {% block content %}
         <h2 class="sub-header">Interested candidates</h2>
         <hr/>
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
+                  <a class="close" data-dismiss="alert" href="#">&times;</a>
+                  {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <div class="col-md-12">
-            <h4><strong>Students:</strong></h4>
-            {% if stud_rel_list.count > 0%}
-                <div class="col-md-12">
+            <div class="well">
+                {% if stud_rel_list.count > 0 %}
                 <div class="pull-right span4">
                     <a class="btn btn-info" href="{% url 'internships:rec_intern_drop' intern.id %}">Complete Round</a>
                 </div>
-            </div>
-            <br>
-            <br>
-            <br>
-            <div class="col-md-12">
+                <br>
+                <br>
+                <br>
                 <table class="table">
                     <thead>
                         <tr>
@@ -32,7 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
-            {% for stud_rel in stud_rel_list %}
+                        {% for stud_rel in stud_rel_list %}
                         <tr>
                             <td>{{ stud_rel.stud.first_name | capfirst}} {{ stud_rel.stud.middle_name | capfirst }} {{ stud_rel.stud.last_name | capfirst}}</td>
                             <td>{{ stud_rel.stud.roll_no }}</td>
@@ -68,14 +73,18 @@
                                     {% endif %}
                                 {% endif %}
                             </td>
-                            <td><a href="{% url 'internships:rec_intern_rel' stud_rel.id %}" class="btn btn-xs btn-info">Student Profile</a></td>
+                            <td>
+                                <a href="{% url 'internships:rec_intern_rel' stud_rel.id %}" class="btn btn-xs btn-info">
+                                    Student Profile
+                                </a>
+                            </td>
                         </tr>
             {% endfor %}
                     </tbody>
                 </table>
-            </div>
             {% else %}
                 <h4>No student have applied for this position.</h4>
             {% endif %}
+            </div>
         </div>
 {% endblock %}

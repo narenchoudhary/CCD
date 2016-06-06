@@ -1,14 +1,9 @@
 {% extends 'base_company.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
-<p><a href="#" title="">My Account</a></p>
-{% endblock%}
-
 {% block menu %}
 <a href="/jobportal"><li>Welcome</li></a>
-<a href="{% url 'stud_login' %}"><li>Login</li></a>
-<a href="{% url 'signup' %}"><li>Recruiters Signup</li></a>
+<a href="{% url 'login' %}"><li>Login</li></a>
+<a href="{% url 'company-signup' %}"><li>Recruiters Signup</li></a>
 {% endblock %}
 
 {% block content %}

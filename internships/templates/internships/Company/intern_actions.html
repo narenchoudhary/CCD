@@ -9,8 +9,6 @@
         <h2 class="sub-header">Internship Actions</h2>
         <hr>
         <div class="col-md-9">
-            <!--Student Candidate-->
-            {% if rel %}
             <h4>Student Details</h4>
             <table class="table table-striped">
                     <tr>
@@ -132,63 +130,60 @@
             </table>
                 <!--TODO: Add more student details-->
                 <!--TODO: Add CV links-->
-                <h4>Change Application Status:</h4>
-                {% if rel.dropped == True%}
+            <div class="panel panel-info">
+                <div class="panel-heading">Application Status Actions:</div>
+                <div class="panel-body">
+                    {% if rel.dropped == True%}
                     <p>Candidate was dropped in Round #{{rel.round}}</p>
-                {% else%}
-                    {% if rel.shortlist_init == True %}
-                        <p>Student shortlisted.</p>
-                        {% if rel.shortlist_approved == True %}
-                            <p>Shortlist request Approved</p>
-                            {% if rel.intern_init == True %}
-                                {% if rel.intern_approved == True%}
-                                    <p>Intern hiring request approved</p>
-                                    {% if rel.ppo_init == True %}
-                                        {% if rel.ppo_approved == True %}
-                                            <p>PPO Approved</p>
-                                        {% elif rel.ppo_approved == False %}
-                                            <p>PPO Approval request declined</p>
-                                        {% else %}
-                                            <p>PPO Approval awaiting</p>
-                                        {% endif %}
-
-                                    {% else %}
-                                        <p>Student not picked for PPO.</p>
-                                        <p>
-                                            <a href="{% url 'internships:rec_intern_ppo' rel.id %}" class="btn btn-success">
-                                                Offer PPO
-                                            </a>
-                                        </p>
-                                    {% endif %}
-
-                                {% elif rel.intern_approved == False %}
-                                    <p>Intern hiring request declined.</p>
-                                {% else %}
-                                    <p>Intern hiring approval pending.</p>
-                                {% endif %}
-
-                            {% else %}
-                                <p>Candidate not marked for hiring yet.</p>
-                                <p>
-                                    <a href="{% url 'internships:rec_intern_intern' rel.id %}" class="btn btn-success">
-                                        Hire
-                                    </a>
-                                </p>
-                            {% endif %}
-                        {% elif rel.shortlist_approved == False %}
-                            <p>Shortlist approval request declined</p>
-                        {% else %}
-                            <p>Shortlist approval awaiting</p>
-                        {% endif %}
                     {% else%}
-                        <p>Candidate not Shortlisted</p>
-                        <p>
-                            <a href="{% url 'internships:rec_intern_shortlist' rel.id %}" class="btn btn-success">
-                                Shortlist
-                            </a>
-                        </p>
+                        {% if rel.shortlist_init == True %}
+                            {% if rel.shortlist_approved == True %}
+                                {% if rel.intern_init == True %}
+                                    {% if rel.intern_approved == True%}
+                                        {% if rel.ppo_init == True %}
+                                            {% if rel.ppo_approved == True %}
+                                                <p><mark>PPO Approved.</mark></p>
+                                            {% elif rel.ppo_approved == False %}
+                                                <p><mark>PPO Approval request declined.</mark></p>
+                                            {% else %}
+                                                <p><mark>PPO Approval awaiting.</mark></p>
+                                            {% endif %}
+                                        {% else %}
+                                        <p>Student not picked for PPO.</p>
+                                            <p>
+                                                <a href="{% url 'internships:rec_intern_ppo' rel.id %}" class="btn btn-success">
+                                                    Offer PPO
+                                                </a>
+                                            </p>
+                                        {% endif %}
+                                    {% elif rel.intern_approved == False %}
+                                        <p><mark>Intern hiring request declined.</mark></p>
+                                    {% else %}
+                                        <p><mark>Intern hiring approval pending.</mark></p>
+                                    {% endif %}
+                                {% else %}
+                                <p>Candidate not marked for hiring yet.</p>
+                                    <p>
+                                        <a href="{% url 'internships:rec_intern_intern' rel.id %}" class="btn btn-success">
+                                            Hire
+                                        </a>
+                                    </p>
+                                {% endif %}
+                            {% elif rel.shortlist_approved == False %}
+                                <h4><mark>Shortlist approval request declined</mark></h4>
+                            {% else %}
+                                <h4><mark>Shortlist approval awaiting</mark></h4>
+                            {% endif %}
+                        {% else%}
+                            <p>Candidate not Shortlisted</p>
+                            <p>
+                                <a href="{% url 'internships:rec_intern_shortlist' rel.id %}" class="btn btn-success">
+                                    Shortlist
+                                </a>
+                            </p>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-            {% endif %}
+                </div>
+            </div>
         </div>
 {% endblock %}

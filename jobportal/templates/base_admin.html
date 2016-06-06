@@ -2,20 +2,17 @@
 
 {% block menu %}
 <li class="account-nav-head">Admin <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
-    <li><a href="{% url 'admin_home' %}">Home</a></li>
-    <li><a href="{% url 'companies' %}">Companies</a><span class="badge">{{ companiescount }}</span></li>
-    <li><a href="{% url 'signup_requests' %}">SignUp Requests</a><span class="badge">{{ requestscount }}</span></li>
-    <!--
-    TODO: Make a drop down of approvals.
-    -->
-    <li><a href="{% url 'jobs' %}">Jobs</a><span class="badge">{{ jobscount }}</span></li>
+    <li><a href="{% url 'admin-home' %}">Home</a></li>
+    <li><a href="{% url 'admin-company-list' %}">Companies</a><span class="badge">{{ companiescount }}</span></li>
+    <li><a href="{% url 'admin-company-signup-list' %}">SignUp Requests</a><span class="badge">{{ requestscount }}</span></li>
+    <li><a href="{% url 'admin-job-list' %}">Jobs</a></li>
     <li><a href="{% url 'alumnijobs:admin_all_alum_jobs' %}">Alum Jobs</a></li>
     <li><a href="{% url 'internships:admin_all_interns' %}">Internships</a></li>
     <li><a href="{% url 'admin_approval' 'job' %}">Approvals: Jobs</a></li>
     <li><a href="{% url 'admin_approval' 'job_progress' %}">Approvals: Progress</a></li>
-    <li><a href="{% url 'departments' %}">Departments</a></li>
-    <li><a href="{% url 'programmes' %}">Programmes</a></li>
-    <li><a href="{% url 'years' %}">Years</a></li>
+    <li><a href="{% url 'department-list' %}">Departments</a></li>
+    <li><a href="{% url 'programme-list' %}">Programmes</a></li>
+    <li><a href="{% url 'year-list' %}">Years</a></li>
     <li><a href="{% url 'admin_manage' %}">Manage Users</a></li>
 {% endblock %}
 

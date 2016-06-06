@@ -1,0 +1,118 @@
+{% extends 'base_company.html' %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Company Account information</h2>
+<hr/>
+<div class="col-md-6">
+    {% if company.approved == True %}
+    <div class="bs-callout bs-callout-success">
+        <h4>Account status:</h4>
+        <p style="color:green">Approved</p>
+    </div>
+    {% elif company.sent_back == True %}
+    <div class="bs-callout bs-callout-warning">
+        <h4>Account status:</h4>
+        <p style="color:yellow">Some information is incorrect/incomplete.</p>
+    </div>
+    {% else %}
+    <div class="bs-callout bs-callout-danger">
+        <h4>Account status:</h4>
+        <p style="color: red">Account has not been approved yet.</p>
+    </div>
+    {% endif %}
+
+</div>
+<div class="col-md-12">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Company Profile</a>
+        </li>
+        <li role="presentation">
+            <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="profile">
+            <table class="table table-striped">
+                <tr>
+                    <td> Company Name:</td>
+                    <td> {{ company.company_name }}</td>
+                </tr>
+                <tr>
+                    <td>Description:</td>
+                    <td> {{ company.description }}</td>
+                </tr>
+                <tr>
+                    <td>Postal Address:</td>
+                    <td> {{ company.postal_address }}</td>
+                </tr>
+                <tr>
+                    <td>Website:</td>
+                    <td> {{ company.website }}</td>
+                </tr>
+                <tr>
+                    <td>Organization Type:</td>
+                    <td> {{ company.organization_type }}</td>
+                </tr>
+                <tr>
+                    <td>Industry Sector:</td>
+                    <td> {{ company.industry_sector }}</td>
+                </tr>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="hrdetails">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <td>Head HR Name</td>
+                    <td> {{ company.head_hr_name }}</td>
+                </tr>
+                <tr>
+                    <td>Head HR Email</td>
+                    <td> {{ company.head_hr_email }}</td>
+                </tr>
+                <tr>
+                    <td>Head HR Designation</td>
+                    <td> {{ company.head_hr_designation }}</td>
+                </tr>
+                <tr>
+                    <td>Head HR Mobile</td>
+                    <td> {{ company.head_hr_mobile }}</td>
+                </tr>
+                <tr>
+                    <td>Head HR Fax</td>
+                    <td> {{ company.head_hr_fax }}</td>
+                </tr>
+                <tr>
+                    <td>First HR Name</td>
+                    <td> {{ company.first_hr_name }}</td>
+                </tr>
+                <tr>
+                    <td>First HR Designation</td>
+                    <td> {{ company.first_hr_designation }}</td>
+                </tr>
+                <tr>
+                    <td>First HR Mobile</td>
+                    <td> {{ company.first_hr_mobile }}</td>
+                </tr>
+                <tr>
+                    <td>First HR Email</td>
+                    <td> {{ company.first_hr_email }}</td>
+                </tr>
+                <tr>
+                    <td>First HR Fax</td>
+                    <td> {{ company.first_hr_fax }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <h3>Edit Profile</h3>
+    <h4><a class="btn btn-info" href="{% url 'company-profile-update' %}">Edit Profile</a></h4>
+</div>
+{% endblock %}

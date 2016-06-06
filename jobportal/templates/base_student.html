@@ -2,15 +2,16 @@
 
 {% block menu %}
 <li class="account-nav-head">Student <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
-<li><a href="{% url 'stud_home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-<li><a href="{% url 'editstudprofile' %}"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a></li>
-<li><a href="{% url 'studviewjobs' %}"><span class="glyphicon glyphicon-briefcase"></span>All Jobs</a></li>
-<li><a href="{% url 'stud_jobsappliedfor' %}" title=""><span class="glyphicon glyphicon-ok"></span>Selected Jobs</a>
+<li><a href="{% url 'stud-home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+<li><a href="{% url 'stud-profile-update' %}"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a></li>
+<li><a href="{% url 'stud-job-list' %}"><span class="glyphicon glyphicon-briefcase"></span> All Jobs</a></li>
+<li><a href="{% url 'stud-jobrel-list' %}" title=""><span class="glyphicon glyphicon-ok"></span> Selected Jobs</a>
 </li>
-<li><a href="{% url 'internships:stud_all_interns' %}"><span class="glyphicon glyphicon-briefcase"></span>All Internhips</a></li>
-<li><a href="{% url 'viewcvs' %}"><span class="glyphicon glyphicon-upload"></span> Upload CV</a></li>
-<li><a href="{% url 'viewavatar' %}"><span class="glyphicon glyphicon-upload"></span> Upload Avatar</a></li>
-<li><a href="{% url 'viewevents' %}"><span class="glyphicon glyphicon-calendar"></span> Calendar</a></li>
+<li><a href="{% url 'internships:stud_all_interns' %}"><span class="glyphicon glyphicon-briefcase"></span> All Internhips</a></li>
+<li><a href="{% url 'stud-cv-detail' %}"><span class="glyphicon glyphicon-upload"></span>Student CV</a></li>
+<li><a href="{% url 'stud-avatar-detail' %}"><span class="glyphicon glyphicon-upload"></span>Avatar</a></li>
+<li><a href="{% url 'stud-sign-detail' %}"><span class="glyphicon glyphicon-upload"></span>Signature</a></li>
+<li><a href="{% url 'stud-event-list' %}"><span class="glyphicon glyphicon-calendar"></span> Calendar</a></li>
 <li><a href="{% url 'mentormentee:stud_proposals' %}"><span class="glyphicon glyphicon-inbox"></span> Research Proposals</a>
 </li>
 {% endblock %}

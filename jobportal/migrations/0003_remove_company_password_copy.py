@@ -7,12 +7,12 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobportal', '0021_auto_20160315_0556'),
+        ('jobportal', '0002_auto_20160605_1305'),
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='programme',
-            unique_together=set([('year', 'dept', 'name')]),
+        migrations.RemoveField(
+            model_name='company',
+            name='password_copy',
         ),
     ]

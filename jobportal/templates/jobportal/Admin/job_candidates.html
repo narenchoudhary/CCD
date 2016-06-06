@@ -1,7 +1,7 @@
 {% extends 'base_admin.html' %}
 
 {% block account_setting%}
-    <p><a href="{% url 'admin_logout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
     <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
@@ -10,17 +10,10 @@
         <hr>
         <div class="col-md-12">
 
-            <h4>Job: {{ job_instance.designation }}</h4>
-            <h4>Owner:
-                {% if job_instance.alum_owner %}
-                    {{ job_instance.alum_owner | capfirst}} [Alumni]
-                {% else %}
-                    {{ job_instance.company_owner | capfirst }} [Recruiter]
-                {% endif %}
-            </h4>
+            <h4>Job Designation: {{ job_instance.designation }}</h4>
+            <h4>Owner:{{ job_instance.company_owner | capfirst }} [Recruiter]</h4>
             <br>
             {% if  relation_list_stud %}
-                <!--Student Applicants-->
                 <h4 class="sub-header">Studnet Applicants</h4>
                 <table class="table table-striped">
                     <thead>
@@ -65,36 +58,7 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>No student applicant.</p>
-            {% endif %}
-            <!--Alumni Applicants-->
-            {% if relation_list_alum %}
-                <h4 class="sub-header">Alumni Applicants</h4>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Webmail</th>
-                        <th>Shortlist</th>
-                        <th>Placed_init</th>
-                        <th>Placed_approced</th>
-                        <th>Approve</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for relation in  relation_list_alum %}
-                        <tr>
-                            <td>{{ relation.alum.iitg_webmail }}</td>
-
-                            <td>{{ relation.shortlist_status | yesno }}</td>
-                            <td>{{ relation.placed_init | yesno }}</td>
-                            <td>{{ relation.placed_approved | yesno }}</td>
-
-                            <td><a href="{% url 'approve_action' 'alum' relation.id %}">Approval</a></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
+                <h4>Bummer. No student applicant.</h4>
             {% endif %}
         </div>
 {% endblock %}

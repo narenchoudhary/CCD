@@ -1,18 +1,15 @@
-from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, Http404
-from django.contrib import auth
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
-
 from datetime import datetime
-from reportlab.pdfgen import canvas
-from io import BytesIO
 
-from .models import Company, Student, Alumni, Admin, StudentJobRelation, User, Event, Job, \
-    ProgrammeJobRelation, UserProfile
-from .forms import LoginForm, StudCVForm, EditStudProfileForm, RequestEventForm, SelectCVForm, AvatarSignForm
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView,
+                                  UpdateView, RedirectView)
+
+from .models import (UserProfile, Admin, Student, Company, Alumni, StudentJobRelation,
+                     Event, Job, ProgrammeJobRelation, Avatar, Signature, CV)
+from .forms import LoginForm, EditStudProfileForm, SelectCVForm, AvatarForm, SignatureForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
 ALUM_LOGIN_URL = reverse_lazy('login')
@@ -35,37 +32,37 @@ def login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            # authenticate
             user = auth.authenticate(username=username, password=password)
-            # user exists
             if user is not None:
-                current_user = User.objects.get(username=username)
-                user_profile = UserProfile.objects.get(user=current_user)
-                if user_profile.login_type == 'Current Student':
+                user_profile = UserProfile.objects.get(username=username)
+                if user_profile.user_type == 'student':
                     auth.login(request, user)
                     student_instance = Student.objects.get(user=user_profile)
                     request.session['student_instance_id'] = student_instance.id
-                    request.session['user_type'] = 'Student'
-                    return redirect('stud_home')
-                elif user_profile.login_type == 'Company':
+                    request.session['login_type'] = 'student'
+                    return redirect('stud-home')
+
+                elif user_profile.user_type == 'company':
                     auth.login(request, user)
                     company_instance = Company.objects.get(user=user_profile)
                     request.session['company_instance_id'] = company_instance.id
-                    request.session['user_type'] = 'Company'
-                    return redirect('companyhome')
-                elif user_profile.login_type == 'Alumni':
+                    request.session['login_type'] = 'company'
+                    return redirect('company-home')
+
+                elif user_profile.user_type == 'alumni':
                     auth.login(request, user)
                     alum_instance = Alumni.objects.get(user=user_profile)
                     request.session['alum_instance_id'] = alum_instance.id
-                    request.session['user_type'] = 'Alumni'
+                    request.session['login_type'] = 'alumni'
                     return redirect('alum_home')
-                elif user_profile.login_type == 'Admin':
+
+                elif user_profile.user_type == 'admin':
                     auth.login(request, user)
                     admin_instance = Admin.objects.get(user=user_profile)
-                    # set session variables
                     request.session['admin_instance_id'] = admin_instance.id
-                    request.session['user_type'] = 'Admin'
-                    return redirect('admin_home')
+                    request.session['login_type'] = 'admin'
+                    return redirect('admin-home')
+
                 else:
                     # this case should never happen unless new users are added
                     args = dict(form=form)
@@ -81,48 +78,7 @@ def login(request):
         return render(request, 'jobportal/login.html', args)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def stud_logout(request):
-    auth.logout(request)
-    return render(request, 'jobportal/logout.html')
-
-
-@login_required(login_url=STUD_LOGIN_URL)
-def stud_home(request):
-    try:
-        student_instance = Student.objects.get(id=request.session['student_instance_id'])
-    except:
-        raise Http404("Error 404")
-    args = dict(stud=student_instance)
-    return render(request, 'jobportal/Student/stud_home.html', args)
-
-
-@login_required(login_url=STUD_LOGIN_URL)
-def edit_stud_profile(request):
-    student_instance = Student.objects.get(id=request.session['student_instance_id'])
-    edit_stud_form_data = EditStudProfileForm(request.POST or None, instance=student_instance)
-    if request.method == "POST":
-        if edit_stud_form_data.is_valid():
-            stud = edit_stud_form_data.save(commit=False)
-            stud.save()
-            return redirect('stud_home')
-        else:
-            args = dict(edit_stud_profile_form=edit_stud_form_data)
-            return render(request, 'jobportal/Student/editstudprofile.html', args)
-    else:
-        args = dict(edit_stud_profile_form=edit_stud_form_data)
-        return render(request, 'jobportal/Student/editstudprofile.html', args)
-
-
-@login_required(login_url=STUD_LOGIN_URL)
-def stud_viewjobs(request):
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    stud_prog = student_instance.prog
-    job_list = set([e.job for e in ProgrammeJobRelation.objects.filter(prog=stud_prog)])
-    return render(request, 'jobportal/Student/studjobs.html', dict(job_list=job_list, stud_prog=stud_prog))
-
-
-@login_required(login_url=STUD_LOGIN_URL)
+@login_required(login_url=reverse_lazy('login'))
 def stud_applyjob(request, jobid):
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_instance = get_object_or_404(Job, id=jobid)
@@ -146,7 +102,7 @@ def stud_applyjob(request, jobid):
         return render(request, 'jobportal/Student/apply.html', args)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
+@login_required(login_url=reverse_lazy('login'))
 def stud_deapplyjob(request, jobid):
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_instance = Job.objects.get(id=jobid)
@@ -155,7 +111,7 @@ def stud_deapplyjob(request, jobid):
     return redirect('jobdetails', jobid=jobid)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
+@login_required(login_url=reverse_lazy('login'))
 def stud_jobsappliedfor(request):
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
     job_list = [e.job for e in StudentJobRelation.objects.filter(stud=student_instance)]
@@ -163,7 +119,7 @@ def stud_jobsappliedfor(request):
     return render(request, 'jobportal/Student/appliedfor.html', args)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
+@login_required(login_url=reverse_lazy('login'))
 def stud_jobdetails(request, jobid):
     job_instance = get_object_or_404(Job, id=jobid)
     student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
@@ -178,166 +134,183 @@ def stud_jobdetails(request, jobid):
     return render(request, "jobportal/Student/jobdetail.html", args)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def view_cvs(request):
-    student_instance = Student.objects.get(id=request.session['student_instance_id'])
-    args = {'student_instance': student_instance}
-    return render(request, 'jobportal/Student/viewcvs.html', args)
+class LogoutView(View):
+
+    def get(self, request):
+        if request.user and request.user.is_authenticated():
+            auth.logout(request)
+        return redirect('index')
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def cv_upload(request):
-    stud_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    if request.method == "POST":
-        cv_data = StudCVForm(request.POST, request.FILES or None)
-        if cv_data.is_valid():
-            stud_instance.cv1 = cv_data.cleaned_data['cv1']
-            stud_instance.cv2 = cv_data.cleaned_data['cv2']
-            stud_instance.save()
-            return redirect("viewcvs")
-        else:
-            args = {'cv_upload_form': cv_data}
-            return render(request, 'jobportal/Student/cvupload.html', args)
-    else:
-        args = {'cv_upload_form': StudCVForm(initial={
-            'cv1': stud_instance.cv1,
-            'cv2': stud_instance.cv2
-        })}
-        return render(request, 'jobportal/Student/cvupload.html', args)
+class HomeView(TemplateView):
+
+    template_name = 'jobportal/Student/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['stud'] = Student.objects.get(user=self.request.user)
+        return context
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def del_cv(request, cvno):
-    stud_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    if str(cvno) == "1":
-        stud_instance.cv1.delete()
-        stud_instance.save()
-    if str(cvno) == "2":
-        stud_instance.cv2.delete()
-        stud_instance.save()
-    return redirect("viewcvs")
+class ProfileDetail(DetailView):
+    model = Student
+    template_name = 'jobportal/Student/profile_detail.html'
 
 
-def requestevent(request):
-    alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
-    if request.method == 'POST':
-        event_form_data = RequestEventForm(request.POST)
-        if event_form_data.is_valid():
-            event_instance = Event(
-                alum_owner=alum_instance,
-                title=event_form_data.cleaned_data['title'],
-                date1=event_form_data.cleaned_data['date1'],
-                date2=event_form_data.cleaned_data['date2'],
-                date3=event_form_data.cleaned_data['date3']
-            )
-            event_instance.save()
-            return redirect('alum_home')
-        else:
-            args = {'event_form': event_form_data}
-            return render(request, 'jobportal/Alumni/requestevent.html', args)
-    else:
-        args = {}
-        args.update(csrf(request))
-        args['event_form'] = RequestEventForm()
+class ProfileUpdate(UpdateView):
+    form_class = EditStudProfileForm
+    template_name = 'jobportal/Student/profile_update.html'
+    success_url = reverse_lazy('stud-home')
 
-        return render(request, 'jobportal/Alumni/requestevent.html', args)
+    def get_object(self, queryset=None):
+        return get_object_or_404(Student, id=self.request.session['student_instance_id'])
 
 
-def eventsandstatus(request):
-    alum_instance = Alumni.objects.get(id=request.session['alum_instance_id'])
-    args = {'event_list': Event.objects.filter(alum_owner=alum_instance)}
-    return render(request, 'jobportal/Alumni/eventsandstatus.html', args)
+class JobList(ListView):
+    queryset = Job.objects.all()
+    template_name = 'jobportal/Student/job_list.html'
+    context_object_name = 'job_list'
 
 
-# ---------------------
-# Experiments
-# ---------------------
-
-@login_required
-def stud_pdf(request):
-    response = HttpResponse(content_type="application/pdf")
-
-    response['Content-Disposition'] = 'filename = "student_jobs.pdf"'
-
-    byte_buffer = BytesIO()
-
-    p = canvas.Canvas(byte_buffer)
-
-    p.drawString(50, 50, 'Hello World')
-
-    p.showPage()
-    p.save()
-
-    pdf = byte_buffer.getvalue()
-    byte_buffer.close()
-    response.write(pdf)
-
-    return response
+class JobDetail(DetailView):
+    model = Job
+    template_name = 'jobportal/Student/job_detail.html'
 
 
-"""
+class JobRelList(ListView):
+    template_name = 'jobportal/Student/jobrel_list.html'
 
-Company view
-
-"""
-
-
-@login_required(login_url=COMPANY_LOGIN_URL)
-def company_requestevent(request):
-    try:
-        company_instance = Company.objects.get(id=request.session['company_instance_id'])
-    except:
-        raise Http404("404 Error.")
-    if request.method == 'POST':
-        event_form_data = RequestEventForm(request.POST)
-
-        if event_form_data.is_valid():
-            event_instance = Event(
-                company_owner=company_instance,
-                title=event_form_data.cleaned_data['title'],
-                date1=event_form_data.cleaned_data['date1'],
-                date2=event_form_data.cleaned_data['date2'],
-                date3=event_form_data.cleaned_data['date3']
-            )
-            event_instance.save()
-            return redirect('companyhome')
-        else:
-            args = {'event_form': event_form_data}
-            return render(request, 'jobportal/Company/requestevent.html', args)
-    else:
-        args = {}
-        args.update(csrf(request))
-        args['event_form'] = RequestEventForm()
-        return render(request, 'jobportal/Company/requestevent.html', args)
+    def get_queryset(self):
+        stud_object = Student.objects.get(user=self.request.user)
+        return StudentJobRelation.objects.filter(stud=stud_object)
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def eventlist(request):
-    event_list = Event.objects.filter(finalised=True)
-    args = {'event_list': event_list}
-    return render(request, 'jobportal/Student/event.html', args)
+class JobRelDetail(DetailView):
+    model = ProgrammeJobRelation
+    template_name = 'jobportal/Student/jobrel_detail.html'
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def view_avatar(request):
-    student_instance = Student.objects.get(id=request.session['student_instance_id'])
-    args = {'student_instance': student_instance}
-    return render(request, 'jobportal/Student/viewavatar.html', args)
+class EventList(ListView):
+    queryset = Event.objects.all()
+    template_name = 'jobportal/Student/event_list.html'
+    context_object_name = 'event_list'
 
 
-@login_required(login_url=STUD_LOGIN_URL)
-def upload_avatar_sign(request):
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    avatar_sign_form = AvatarSignForm(request.POST or None, request.FILES or None, instance=student_instance)
-    if request.method == 'POST':
-        if avatar_sign_form.is_valid():
-            print avatar_sign_form.cleaned_data['avatar']
-            print avatar_sign_form.cleaned_data['signature']
-            avatar_sign_form.save()
-            return render(request, 'jobportal/Student/stud_home.html', dict(stud=student_instance))
-        else:
-            args = dict(avatar_sign_form=avatar_sign_form, stud=student_instance)
-            return render(request, 'jobportal/Student/upload_avatar_sign.html', args)
-    else:
-        args = dict(avatar_sign_form=avatar_sign_form, stud=student_instance)
-        return render(request, 'jobportal/Student/upload_avatar_sign.html', args)
+class EventDetail(DetailView):
+    model = Event
+    template_name = 'jobportal/Student/event_detail.html'
+
+
+class AvatarDetail(DetailView):
+    model = Avatar
+    template_name = 'jobportal/Student/avatar_detail.html'
+    context_object_name = 'avatar'
+
+    def get_object(self, queryset=None):
+        try:
+            avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
+        except Avatar.DoesNotExist:
+            avatar = None
+        return avatar
+
+
+class AvatarUpdate(UpdateView):
+    form_class = AvatarForm
+    template_name = 'jobportal/Student/avatar_update.html'
+    success_url = reverse_lazy('stud-avatar-detail')
+
+    def get_object(self, queryset=None):
+        try:
+            avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
+        except Avatar.DoesNotExist:
+            avatar = None
+        return avatar
+
+
+class AvatarCreate(CreateView):
+    model = Avatar
+    fields = ['avatar']
+    template_name = 'jobportal/Student/avatar_create.html'
+    success_url = reverse_lazy('stud-avatar-detail')
+
+    def form_valid(self, form):
+        avatar = form.save(commit=False)
+        avatar.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        return super(AvatarCreate, self).form_valid(form)
+
+
+class SignatureDetail(DetailView):
+    model = Signature
+    template_name = 'jobportal/Student/signature_detail.html'
+    context_object_name = 'signature'
+
+    def get_object(self, queryset=None):
+        try:
+            signature = Signature.objects.get(stud__id=self.request.session['student_instance_id'])
+        except Signature.DoesNotExist:
+            signature = None
+        return signature
+
+
+class SignatureCreate(CreateView):
+    model = Signature
+    fields = ['signature']
+    template_name = 'jobportal/Student/signature_create.html'
+    success_url = reverse_lazy('stud-sign-detail')
+
+    def form_valid(self, form):
+        signature = form.save(commit=False)
+        signature.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        return super(SignatureCreate, self).form_valid(form)
+
+
+class SignatureUpdate(UpdateView):
+    form_class = SignatureForm
+    template_name = 'jobportal/Student/signature_create.html'
+    success_url = reverse_lazy('stud-sign-detail')
+
+    def get_object(self, queryset=None):
+        try:
+            signature = Signature.objects.get(stud__id=self.request.session['student_instance_id'])
+        except Avatar.DoesNotExist:
+            signature = None
+        return signature
+
+
+class CVDetail(DetailView):
+    model = CV
+    template_name = 'jobportal/Student/cv_detail.html'
+    context_object_name = 'cv'
+
+    def get_object(self, queryset=None):
+        try:
+            cv = CV.objects.get(stud__id=self.request.session['student_instance_id'])
+        except CV.DoesNotExist:
+            cv = None
+        return cv
+
+
+class CVCreate(CreateView):
+    model = CV
+    fields = ['cv1', 'cv2']
+    template_name = 'jobportal/Student/cv_create.html'
+    success_url = reverse_lazy('stud-cv-detail')
+
+    def form_valid(self, form):
+        cv = form.save(commit=False)
+        cv.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        return super(CVCreate, self).form_valid(form)
+
+
+class CVUpdate(UpdateView):
+    model = CV
+    fields = ['cv1', 'cv2']
+    template_name = 'jobportal/Student/cv_update.html'
+    success_url = reverse_lazy('stud-cv-detail')
+
+    def get_object(self, queryset=None):
+        try:
+            cv = CV.objects.get(stud__id=self.request.session['student_instance_id'])
+        except CV.DoesNotExist:
+            cv = None
+        return cv

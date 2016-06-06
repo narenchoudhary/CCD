@@ -7,13 +7,12 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobportal', '0031_auto_20160407_0553'),
+        ('jobportal', '0005_auto_20160606_1814'),
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.RemoveField(
             model_name='job',
-            name='profile_name',
-            field=models.CharField(max_length=15, null=True),
+            name='sent_back',
         ),
     ]
