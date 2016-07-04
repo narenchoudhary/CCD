@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'smart_selects',
     'captcha',
     'django_cleanup',
+    'bootstrap3_datetime',
 
     'mentormentee',
     'internships',
@@ -107,6 +108,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# Sessions settings
+# https://docs.djangoproject.com/en/1.9/ref/settings/#sessions
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_AGE = 6000
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

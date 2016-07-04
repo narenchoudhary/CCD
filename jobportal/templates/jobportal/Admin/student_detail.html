@@ -1,0 +1,99 @@
+{% extends 'base_admin.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+    <div class="col-md-12 row">
+        <h4>Avatar and Signature</h4>
+        <hr>
+        {% if avatar.avatar %}
+            <div class="col-md-6"><img src="{{ avatar.avatar.url }}" class="thumbnail"></div>
+        {% endif %}
+
+        {% if signature.signature %}
+            <div class="col-md-6"><img src="{{ signature.signature.url }}" class="thumbnail"></div>
+        {% endif %}
+
+        <h4>CV</h4>
+        <hr>
+        {% if cv.cv1 %}
+            <p class="view_cv_box">
+                <a href="{{ cv.cv1.url }}" title="" target="_blank">
+                    <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV1
+                </a>
+            </p>
+        {% endif %}
+
+        {% if cv.cv2 %}
+            <p class="view_cv_box">
+                <a href="{{ cv.cv2.url }}" title="" target="_blank">
+                    <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV2
+                </a>
+            </p>
+        {% endif %}
+
+        {% if student %}
+            <div class="col-md-12">
+
+                <h4>Basic Information</h4>
+                <hr>
+                <p>Web-mail : {{ student.iitg_webmail }}</p>
+                <p>Roll No: {{ student.roll_no }}</p>
+                <p>
+                    Name: {{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</p>
+                <p>Dob: {{ student.dob }}</p>
+                <p>Sex: {{ student.sex }}</p>
+                <p>Category: {{ student.category }}</p>
+                <p>Nationality: {{ student.nationality }}</p>
+                <p>Minor Programme: {{ student.minor_programme }}</p>
+                <p>JEE Rank(AIR) : {{ student.jee_air_rank }}</p>
+                <p>Hostel: {{ student.hostel }}</p>
+                <p>Room No: {{ student.room_no }}</p>
+                <p>Alternate Email: {{ student.alternative_email }}</p>
+                <p>Programme : {{ student.prog }}</p>
+                <p>Dept: {{ student.dept }}</p>
+                <p>Year: {{ student.year }}</p>
+                <p>Mobile No (Campus) : {{ student.mobile_campus }}</p>
+                <p>Mobile IITG(Alternative) : {{ student.mobile_campus_alternative }}</p>
+                <p>Mobile No (Home) : {{ student.mobile_home }}</p>
+
+                <h4>Permanent Address</h4>
+                <hr>
+                <p>Address Line1: {{ student.address_line1 }}</p>
+                <p>Address Line2: {{ student.address_line2 }}</p>
+                <p>Address Line3: {{ student.address_line3 }}</p>
+                <p>PinCode: {{ student.pin_code }}</p>
+
+                <h4>Acacdemic Results</h4>
+                <hr>
+                <p>Percentage X : {{ student.percentage_x }}</p>
+                <p>Percentage XII : {{ student.percentage_xii }}</p>
+                <p>Board X: {{ student.board_x }}</p>
+                <p>Board XII: {{ student.board_xii }}</p>
+                <p>Medium X: {{ student.medium_x }}</p>
+                <p>Medium XII: {{ student.medium_xii }}</p>
+                <p>Passing Year X : {{ student.passing_year_x }}</p>
+                <p>Passing Year XII : {{ student.passing_year_xii }}</p>
+                <p>Gap in study: {{ student_instacne.gap_in_study }}</p>
+                <p>Gap Reason: {{ student.gap_reason }}</p>
+
+                <h4>Placement Status</h4>
+                <hr>
+                <p>LinkedIn: {{ student.linkedin_link }}</p>
+                <p>Placed: {{ student.placed }}</p>
+                <p>Intern2: {{ student.intern2 }}</p>
+                <p>Intern3: {{ student.intern3 }}</p>
+                <p>Company Count: {{ student.company_count }}</p>
+                <p>PPO: {{ student.ppo }}</p>
+                <p>CPI : {{ student.cpi }}</p>
+
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base_company.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+
+    {% if prog_minor_list.count > 0 %}
+        <h4>Minor programmers open for placement</h4>
+        <p>These minor programmes are open for placement for this session.</p>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Department</th>
+                    <th>Programme</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prog in prog_minor_list %}
+                    <tr>
+                        <td>{{ prog.year }}</td>
+                        <td>{{ prog.dept }}</td>
+                        <td>{{ prog.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h4>Bummer! There isn't anythig here yet.</h4>
+    {% endif %}
+
+    {% if prog_major_list.count > 0 %}
+        <h4>Majors programmes open for placement</h4>
+        <p>These major programmes are open for placement for this session.</p>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Department</th>
+                    <th>Programme</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prog in prog_major_list %}
+                    <tr>
+                        <td>{{ prog.year }}</td>
+                        <td>{{ prog.dept }}</td>
+                        <td>{{ prog.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h4>Bummer! There isn't anythig here yet.</h4>
+    {% endif %}
+{% endblock %}

@@ -97,3 +97,9 @@ INDUSTRY_SECTOR = (
     ('Telecom', 'Telecom'),
     ('Other', 'Other')
 )
+
+EVENT_TYPE = (
+    ('Pre Placement Talk', 'Pre Placement Talk'),
+    ('Workshop', 'Workshop'),
+    ('Promotional Event', 'Promotional Event'),
+)

@@ -11,9 +11,25 @@
             <h4>Please Choose from the following options:</h4>
 
         <div class="col-md-8 col-md-offset-2 well">
-            <h4><a class="btn btn-block btn-info" href="{% url 'search_students' %}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search students</a></h4>
-            <h4><a class="btn btn-block btn-info" href="{% url 'add_student' %}"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Add student(s)</a></h4>
-            <h4><a class="btn btn-block btn-info" href="{% url 'add_company' %}"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> Add Company</a></h4>
-            <h4><a class="btn btn-block btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Flush Databases</a></h4>
+            <h4>
+                <a class="btn btn-block btn-info" href="{% url 'admin-student-list' %}">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search students
+                </a>
+            </h4>
+            <h4>
+                <a class="btn btn-block btn-info" href="#">
+                    <span class="glyphicon glyphicon-education" aria-hidden="true"></span> Add student(s)
+                </a>
+            </h4>
+            <h4>
+                <a class="btn btn-block btn-info" href="#">
+                    <span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> Add Company
+                </a>
+            </h4>
+            <h4>
+                <a class="btn btn-block btn-danger" href="#">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Flush Databases
+                </a>
+            </h4>
         </div>
 {% endblock %}

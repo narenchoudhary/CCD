@@ -1,0 +1,22 @@
+{% extends 'base_student.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+        <h2 class="sub-header">Select CVs</h2>
+        <hr>
+        <div class="col-md-6">
+            <form method="post" action="{% url 'stud-jobrel-create' job.id %}">
+                <div class="well">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <input class="btn btn-primary" value="Apply" type="submit">
+                </div>
+            </form>
+        </div>
+
+{% endblock %}

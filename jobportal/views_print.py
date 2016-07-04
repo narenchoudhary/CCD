@@ -1,14 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
 from django.shortcuts import get_object_or_404, get_list_or_404, render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404
 from models import Company, Job, StudentJobRelation
+
 import csv
 
-from views_admin import ADMIN_LOGIN_URL
-
-from .forms import RequestEventForm
 from .models import Event, Alumni, Student
 
 
@@ -37,7 +34,6 @@ def candidates_stud_csv(request, jobid):
     return response
 
 
-@login_required(login_url=ADMIN_LOGIN_URL)
 def companies_csv(request):
     companies = get_list_or_404(Company)
     response = HttpResponse(content_type="text/csv")
@@ -70,87 +66,6 @@ def companies_csv(request):
                 company.first_hr_fax
             ]
         )
-
-    return response
-
-
-def company_requestevent(request):
-    try:
-        company_instance = Company.objects.get(id=request.session['company_instance_id'])
-    except:
-        raise Http404("404 Error.")
-    if request.method == 'POST':
-        event_form_data = RequestEventForm(request.POST)
-
-        if event_form_data.is_valid():
-            event_instance = Event(
-                company_owner=company_instance,
-                title=event_form_data.cleaned_data['title'],
-                date1=event_form_data.cleaned_data['date1'],
-                date2=event_form_data.cleaned_data['date2'],
-                date3=event_form_data.cleaned_data['date3']
-            )
-            event_instance.save()
-            return redirect('companyhome')
-        else:
-            args = {'event_form': event_form_data}
-            return render(request, 'jobportal/Company/requestevent.html', args)
-    else:
-        args = {}
-        args.update(csrf(request))
-        args['event_form'] = RequestEventForm()
-        return render(request, 'jobportal/Company/requestevent.html', args)
-
-
-def requestevent(request):
-    alum_instance = get_object_or_404(Alumni, id=request.session['alum_instance_id'])
-    if request.method == 'POST':
-        event_form_data = RequestEventForm(request.POST)
-        if event_form_data.is_valid():
-            event_instance = Event(
-                alum_owner=alum_instance,
-                title=event_form_data.cleaned_data['title'],
-                date1=event_form_data.cleaned_data['date1'],
-                date2=event_form_data.cleaned_data['date2'],
-                date3=event_form_data.cleaned_data['date3']
-            )
-            event_instance.save()
-            return redirect('alum_home')
-        else:
-            args = {'event_form': event_form_data}
-            return render(request, 'jobportal/Alumni/requestevent.html', args)
-    else:
-        args = {}
-        args.update(csrf(request))
-        args['event_form'] = RequestEventForm()
-
-        return render(request, 'jobportal/Alumni/requestevent.html', args)
-
-
-def eventsandstatus(request):
-    alum_instance = Alumni.objects.get(id=request.session['alum_instance_id'])
-    args = {'event_list': Event.objects.filter(alum_owner=alum_instance)}
-    return render(request, 'jobportal/Alumni/eventsandstatus.html', args)
-
-
-@login_required
-def stud_pdf(request):
-    response = HttpResponse(content_type="application/pdf")
-
-    response['Content-Disposition'] = 'filename = "student_jobs.pdf"'
-
-    byte_buffer = BytesIO()
-
-    p = canvas.Canvas(byte_buffer)
-
-    p.drawString(50, 50, 'Hello World')
-
-    p.showPage()
-    p.save()
-
-    pdf = byte_buffer.getvalue()
-    byte_buffer.close()
-    response.write(pdf)
 
     return response
 

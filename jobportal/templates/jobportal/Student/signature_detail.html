@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <h2 class="sub-header">Upload Avatars</h2>
+    <h2 class="sub-header">Upload Signature</h2>
         <hr/>
     <div class="col-md-12">
 
@@ -16,10 +16,16 @@
             <p><img src="{{ signature.signature.url }}" class="thumbnail"></p>
         {% endif %}
 
-        {% if signature.signature %}
+        {% if signature and signature.signature %}
             <h4>
                 <a class="btn btn-lg btn-info" href="{% url 'stud-sign-update' %}">
                     <span class="glyphicon glyphicon-cloud-upload"></span>Upload new image
+                </a>
+            </h4>
+        {% elif signature %}
+            <h4>
+                <a class="btn btn-lg btn-info" href="{% url 'stud-sign-update' %}">
+                    <span class="glyphicon glyphicon-cloud-upload"></span>Upload image
                 </a>
             </h4>
         {% else %}

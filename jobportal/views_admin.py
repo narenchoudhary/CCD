@@ -1,198 +1,38 @@
-from datetime import datetime
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.views.generic import (View, ListView, CreateView, DetailView, TemplateView,
                                   UpdateView, DeleteView, RedirectView)
 
-from .models import (Admin, Student, Job, StudentJobRelation, Company, Department, Year,
-                     Programme, ProgrammeJobRelation, UserProfile)
-from .forms import (AddCompany, AddEditDepartment, AddEditProgramme, AddEditYear, AdminJobEditForm,
-                    AddStudent, JobProgFormSet, EditStudentAdmin, StudentSearchForm, EditCompany)
+from .models import (Admin, Student, Company, Job, StudentJobRelation, CV, Avatar, Signature, Department,
+                     Year, Programme, ProgrammeJobRelation, UserProfile, MinorProgrammeJobRelation)
+from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet, AdminJobRelForm,
+                    StudentSearchForm, EditCompany, JobProgMinorFormSet, ProgrammeForm)
+
 from internships.models import IndInternship, StudentInternRelation
 
-ADMIN_LOGIN_URL = reverse_lazy('login')
 
+class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
-def edit_progs(request, jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    formset = JobProgFormSet(request.POST or None, instance=job_instance)
-    if request.method == 'POST':
-        if formset.is_valid():
-            formset.save()
-            return redirect('review_job', jobid=job_instance.id)
-        else:
-            args = dict(formset=formset, job_instance=job_instance)
-            return render(request, 'jobportal/Admin/edit_progs_formset.html', args)
-    else:
-        args = dict(formset=formset, job_instance=job_instance)
-        return render(request, 'jobportal/Admin/edit_progs_formset.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def approve_job(request, jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    job_instance.approved = True
-    job_instance.approved_on = datetime.now()
-    job_instance.save()
-    return redirect('review_job', jobid=job_instance.id)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def sent_back_job(jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    job_instance.sent_back = True
-    job_instance.save()
-    return redirect('review_job', jobid=job_instance.id)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def admin_manage(request):
-    return render(request, 'jobportal/Admin/manage.html')
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def add_student(request):
-    add_student_form = AddStudent(request.POST or None)
-    if request.method == "POST":
-        if add_student_form.is_valid():
-            username = add_student_form.cleaned_data['username']
-            password = add_student_form.cleaned_data['password']
-            user = User.objects.create_user(username=username, password=password)
-            user_profile_instance = UserProfile.objects.create(user=user, login_type="Current Student")
-            student_instance = add_student_form.save(commit=False)
-            student_instance.user = user_profile_instance
-            student_instance.save()
-            args = dict(created='Student', webmail=username)
-            return render(request, 'jobportal/Admin/manage.html', args)
-        else:
-            args = dict(add_student_form=add_student_form)
-            return render(request, 'jobportal/Admin/add_student.html', args)
-    else:
-        args = dict(add_student_form=add_student_form)
-        return render(request, 'jobportal/Admin/add_student.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def search_students(request):
-    studentsearch_form = StudentSearchForm(request.POST or None)
-    if request.method == "POST":
-        if studentsearch_form.is_valid():
-            student_programme = studentsearch_form.cleaned_data['programme']
-            student_year = studentsearch_form.cleaned_data['year']
-            student_departent = studentsearch_form.cleaned_data['department']
-            students_list = Student.objects.all().filter(
-                prog__name=student_programme).filter(
-                dept__dept_code=student_departent).filter(
-                year__current_year=student_year)
-
-            args = dict(students_list=students_list, student_search_form=studentsearch_form)
-            return render(request, 'jobportal/Admin/all_users.html', args)
-        else:
-            args = dict(student_search_form=studentsearch_form)
-            return render(request, 'jobportal/Admin/all_users.html', args)
-    else:
-        args = dict(student_search_form=studentsearch_form)
-        return render(request, 'jobportal/Admin/all_users.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def review_stud_profile(request, studid):
-    student_instance = get_object_or_404(Student, id=studid)
-    args = dict(edited='Student', student_instance=student_instance)
-    return render(request, 'jobportal/Admin/review_profile.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def edit_student(request, studid):
-    student_instance = get_object_or_404(Student, id=studid)
-    edit_student_form = EditStudentAdmin(request.POST or None, instance=student_instance)
-    if request.method == "POST":
-        if edit_student_form.is_valid():
-            edit_student_form.save()
-            return redirect('review_stud_profile', studid=studid)
-        else:
-            args = dict(student_profile_edit_form=edit_student_form, studid=studid)
-            return render(request, 'jobportal/Admin/edit_student_profile.html', args)
-    else:
-        args = dict(student_profile_edit_form=edit_student_form, studid=studid)
-        return render(request, 'jobportal/Admin/edit_student_profile.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def job_candidates(request, jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    relation_list_stud = StudentJobRelation.objects.all().filter(job=job_instance)
-    args = dict(relation_list_stud=relation_list_stud, job_instance=job_instance)
-    return render(request, 'jobportal/Admin/job_candidates.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def approve_action(request, applicant_type, relationid):
-    if applicant_type == "stud":
-        relation_instance = get_object_or_404(StudentJobRelation, id=relationid)
-    else:
-        relation_instance = None
-    args = dict(relation_instance=relation_instance, applicant_type=applicant_type)
-    return render(request, 'jobportal/Admin/approve_actions.html', args)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def approve_stud_relation(request, relationid):
-    relation_instance = get_object_or_404(StudentJobRelation, id=relationid)
-
-    if relation_instance.placed_init is True:
-        if relation_instance.placed_approved is not True:
-            relation_instance.placed_approved = True
-            relation_instance.save()
-
-    if relation_instance.shortlist_init is True:
-        if relation_instance.shortlist_approved is not True:
-            relation_instance.shortlist_approved = True
-            relation_instance.save()
-    return redirect("approve_action", applicant_type="stud", relationid=relationid)
-
-
-@login_required(login_url=ADMIN_LOGIN_URL)
-def admin_approvals(request, object_type):
-    if str(object_type) == "job":
-        job_list = Job.objects.all().filter(approved__isnull=True)
-        intern_list = IndInternship.objects.all().filter(approved__isnull=True)
-        args = dict(intern_list=intern_list, job_list=job_list)
-        return render(request, 'jobportal/Admin/unapprv_job.html', args)
-    elif str(object_type) == "job_progress":
-        # job_shortlist = StudentJobRelation.objects.all().filter(
-        #     shortlist_init=True, shortlist_approved__isnull=True
-        # )
-        # job_place_list = StudentJobRelation.objects.all().filter(
-        #     placed_init=True, placed_approved__isnull=True
-        # )
-        intern_shortlist = StudentInternRelation.objects.all().filter(
-            shortlist_init=True, shortlist_approved__isnull=True
-        )
-        intern_hire = StudentInternRelation.objects.all().filter(
-            intern_init=True, intern_approved__isnull=True
-        )
-        intern_ppo = StudentInternRelation.objects.all().filter(
-            ppo_init=True, ppo_approved__isnull=True
-        )
-        args = dict(intern_hire=intern_hire, intern_ppo=intern_ppo, intern_shortlist=intern_shortlist)
-        return render(request, 'jobportal/Admin/unapprv_progress.html', args)
-    else:
-        return redirect("admin-home")
-
-
-class HomeView(TemplateView):
-
+    login_url = reverse_lazy('login')
+    raise_exception = True
     template_name = 'jobportal/Admin/home.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['admin'] = Admin.objects.get(user=self.request.user)
         return context
+
+
+class AdminManage(TemplateView):
+
+    template_name = 'jobportal/Admin/manage.html'
 
 
 class YearList(ListView):
@@ -202,7 +42,8 @@ class YearList(ListView):
 
 
 class YearCreate(CreateView):
-    form_class = AddEditYear
+    model = Year
+    fields = '__all__'
     template_name = 'jobportal/Admin/year_create.html'
     success_url = reverse_lazy('year-list')
 
@@ -224,13 +65,15 @@ class DepartmentDetail(DetailView):
 
 
 class DepartmentCreate(CreateView):
-    form_class = AddEditDepartment
+    model = Department
+    fields = '__all__'
     template_name = 'jobportal/Admin/department_create.html'
     success_url = reverse_lazy('department-list')
 
 
 class DepartmentUpdate(UpdateView):
-    form_class = AddEditDepartment
+    model = Department
+    fields = '__all__'
     template_name = 'jobportal/Admin/department_update.html'
     success_url = reverse_lazy('department-list')
 
@@ -254,13 +97,14 @@ class ProgrammeList(ListView):
 
 
 class ProgrammeCreate(CreateView):
-    form_class = AddEditProgramme
+    form_class = ProgrammeForm
     template_name = 'jobportal/Admin/programme_create.html'
     success_url = reverse_lazy('programme-list')
 
 
 class ProgrammeUpdate(UpdateView):
-    form_class = AddEditProgramme
+    model = Programme
+    fields = '__all__'
     template_name = 'jobportal/Admin/programme_update.html'
     success_url = reverse_lazy('programme-list')
 
@@ -274,6 +118,49 @@ class ProgrammeDelete(DeleteView):
 
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+
+class ProgrammePlacementList(ListView):
+    template_name = 'jobportal/Admin/programme_placement_list.html'
+    context_object_name = 'programme_list'
+
+    def get_queryset(self):
+        return Programme.objects.filter(open_for_placement=True)
+
+
+class ProgrammeInternshipList(ListView):
+
+    template_name = 'jobportal/Admin/programme_internship_list.html'
+    context_object_name = 'programme_list'
+
+    def get_queryset(self):
+        return Programme.objects.filter(open_for_internship=True)
+
+
+class ProgrammePlacementDelete(View):
+
+    def get(self, request, pk):
+        prog = get_object_or_404(Programme, id=pk)
+        if prog.open_for_placement:
+            prog.open_for_placement = False
+            prog.save()
+        return redirect('admin-programme-placement-list')
+
+
+class ProgrammeInternshipDelete(View):
+
+    def get(self, request, pk):
+        prog = get_object_or_404(Programme, id=pk)
+        if prog.open_for_internship:
+            prog.open_for_internship = False
+            prog.save()
+        return redirect('admin-programme-internship-list')
+
+
+class CompanySignupList(ListView):
+    queryset = Company.objects.filter(approved=None)
+    template_name = 'jobportal/Admin/company_signup_list.html'
+    context_object_name = 'company_list'
 
 
 class CompanyList(ListView):
@@ -313,9 +200,33 @@ class CompanyUpdate(UpdateView):
         return reverse_lazy('admin-company-detail', args=(self.object.id,))
 
 
-class CompanyDelete(DeleteView):
-    model = Company
-    success_url = reverse_lazy('company-list')
+class CompanyApprove(View):
+
+    def get(self, request, pk):
+        company = Company.objects.get(id=pk)
+        user = company.user
+        print company
+        print company.user
+        if user is not None and user.is_active is False:
+            user.is_active = True
+            user.save()
+        if company.approved is not True:
+            company.approved = True
+            company.approval_date = timezone.now()
+            company.save()
+        return redirect('admin-company-detail', pk=company.id)
+
+
+class CompanyDelete(View):
+
+    url = reverse_lazy('admin-company-list')
+
+    def get(self, request, pk):
+        company = get_object_or_404(Company, id=pk)
+        company.is_deleted = True
+        company.deletion_date = timezone.now()
+        company.save()
+        return redirect('admin-company-detail', pk=pk)
 
 
 class JobList(ListView):
@@ -327,6 +238,12 @@ class JobList(ListView):
 class JobDetail(DetailView):
     model = Job
     template_name = 'jobportal/Admin/job_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(JobDetail, self).get_context_data(**kwargs)
+        context['prog_list'] = ProgrammeJobRelation.objects.filter(job=self.object.id)
+        context['prog_minor_list'] = MinorProgrammeJobRelation.objects.filter(job=self.object.id)
+        return context
 
 
 class JobUpdate(UpdateView):
@@ -340,20 +257,154 @@ class JobUpdate(UpdateView):
         return get_object_or_404(Job, id=self.kwargs['pk'])
 
 
-class CompanySignupList(ListView):
-    queryset = Company.objects.filter(approved=False)
-    template_name = 'jobportal/Admin/company_signup_list.html'
-    context_object_name = 'company_list'
-
-
-class CompanyApproveView(View):
+class JobApprove(View):
 
     def get(self, request, pk):
-        company = Company.objects.get(id=pk)
-        user = company.user
-        if user is not None and user.is_active is False:
-            user.is_active = True
-            user.save()
-        company.approved = True
-        company.save()
-        return redirect('admin-company-detail', pk=company.id)
+        job = get_object_or_404(Job, id=pk)
+        if job.approved is not True:
+            job.approved = True
+            job.approved_on = timezone.now()
+            job.save()
+        return redirect('admin-job-detail', pk=pk)
+
+
+class JobRelList(ListView):
+    template_name = 'jobportal/Admin/jobrel_list.html'
+    context_object_name = 'rel_list'
+
+    def get_queryset(self):
+        return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
+
+
+class JobRelUpdate(UpdateView):
+    form_class = AdminJobRelForm
+    template_name = 'jobportal/Admin/jobrel_update.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(StudentJobRelation, id=self.kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse_lazy('admin-jobrel-update', args=(self.object.id,))
+
+
+class StudentList(View):
+
+    template = 'jobportal/Admin/student_list.html'
+
+    def get(self, request):
+        form = StudentSearchForm()
+        args = dict(form=form)
+        return render(request, self.template, args)
+
+    def post(self, request):
+        form = StudentSearchForm(request.POST)
+        if form.is_valid():
+            year = form.cleaned_data['year']
+            dept_code = form.cleaned_data['dept_code']
+            dept_code = dept_code.upper()
+            programme = form.cleaned_data['programme']
+            minor_status = form.cleaned_data['minor_status']
+            try:
+                prog = Programme.objects.get(year__current_year=year, dept__dept_code=dept_code,
+                                             name=programme, minor_status=minor_status)
+                stud_list = Student.objects.filter(prog=prog)
+                args = dict(form=form, stud_list=stud_list)
+                return render(request, self.template, args)
+            except Programme.DoesNotExist:
+                messages.error(request, 'No such programe exists.')
+                return render(request, self.template, dict(form=form))
+        else:
+            return render(request, self.template, dict(form=form))
+
+
+class StudentDetail(DetailView):
+    model = Student
+    template_name = 'jobportal/Admin/student_detail.html'
+    context_object_name = 'student'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Student, id=self.kwargs['pk'])
+    
+    def get_context_data(self, **kwargs):
+        context = super(StudentDetail, self).get_context_data(**kwargs)
+        context['job_list'] = StudentJobRelation.objects.filter(stud__id=self.object.id)
+        try:
+            context['cv'] = CV.objects.get(stud__id=self.object.id)
+        except CV.DoesNotExist:
+            context['cv'] = None
+        try:
+            context['avatar'] = Avatar.objects.get(stud__id=self.object.id)
+        except Avatar.DoesNotExist:
+            context['avatar'] = None
+        try:
+            context['signature'] = Signature.objects.get(stud__id=self.object.id)
+        except Signature.DoesNotExist:
+            context['signature'] = None
+
+        return context
+
+
+class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = StudentJobRelation
+    template_name = 'jobportal/Admin/jobrel_list_unapproved.html'
+    context_object_name = 'rel_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get_queryset(self):
+        return StudentJobRelation.objects.filter(Q(shortlist_approved__isnull=True) | Q(placed_approved__isnull=True))
+
+
+class JobProgUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template = 'jobportal/Admin/jobprog_update.html'
+
+    def test_func(self):
+        self.request.user.user_type == 'admin'
+
+    def get(self, request, pk):
+        job = get_object_or_404(Job, id=pk)
+        formset = JobProgFormSet(instance=job)
+        args = dict(formset=formset, job=job)
+        return render(request, self.template, args)
+
+    def post(self, request, pk):
+        job = get_object_or_404(Job, id=pk)
+        formset = JobProgFormSet(request.POST, instance=job)
+        if formset.is_valid():
+            formset.save()
+            return redirect('admin-job-detail', pk=job.id)
+        else:
+            args = dict(formset=formset, job=job)
+            return render(request, self.template, args)
+
+
+class JobProgMinorUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template = 'jobportal/Admin/jobprog_minor_update.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request, pk):
+        job = get_object_or_404(Job, id=pk)
+        formset = JobProgMinorFormSet(instance=job)
+        args = dict(formset=formset, job=job)
+        return render(request, self.template, args)
+
+    def post(self, request, pk):
+        job = get_object_or_404(Job, id=pk)
+        formset = JobProgMinorFormSet(request.POST, instance=job)
+        if formset.is_valid():
+            formset.save()
+            return redirect('admin-job-detail', pk=job.id)
+        else:
+            args = dict(formset=formset, job=job)
+            return render(request, self.template, args)

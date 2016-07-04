@@ -20,10 +20,13 @@
     <!--Callout-->
     <link rel="stylesheet" href="{% static 'css/callout.css' %}">
     <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-switch/bootstrap-switch.css' %}">
     <!--TODO: Performance Issue Here-->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+
     {% block head_extra %}
     {% endblock %}
 </head>
@@ -62,28 +65,17 @@
 
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
-
-
+<script src="{% static 'bootstrap-switch/bootstrap-switch.js' %}"></script>
 <!--Sorter-->
 <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
 <script>
     $(document).ready(function () {
         $("table").tablesorter();
     });
-
-
 </script>
 <!--Custom Search Script-->
 <script src="{% static 'js/table_search.js' %}"></script>
-<script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
-<script>
-    $(document).ready(function () {
-        $('.datepicker').datepicker({
-            format: 'dd-mm-yyyy'
-        });
-    });
 
-</script>
 <script>
     $('.btnNext').click(function(){
         $('.nav-tabs > .active').next('li').find('a').trigger('click');
@@ -93,7 +85,5 @@
         $('.nav-tabs > .active').prev('li').find('a').trigger('click');
     });
 </script>
-{% block extra_scripts %}
-{% endblock %}
 </body>
 </html>

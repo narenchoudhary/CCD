@@ -50,8 +50,8 @@
         </tr>
     </table>
 
-    <h4>Programmes List:</h4>
-    {% if progs_list.count > 0 %}
+    <h4>Minor Programmes List:</h4>
+    {% if prog_minor_list.count > 0 %}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -61,7 +61,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for prog in progs_list %}
+                {% for prog in prog_minor_list %}
                     <tr>
                         <td>{{prog.year}}</td>
                         <td>{{prog.dept}}</td>
@@ -71,16 +71,41 @@
             </tbody>
         </table>
     {% else %}
-        <p>No programmes listed.</p>
+        <p>No minor programmes listed.</p>
     {% endif %}
 
-    <h4><a href="#" class="btn btn-info">Add Progs</a></h4>
+    <h4>Programmes List:</h4>
+    {% if prog_list.count > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Dept</th>
+                    <th>Prog</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prog in prog_list %}
+                    <tr>
+                        <td>{{prog.year}}</td>
+                        <td>{{prog.dept}}</td>
+                        <td>{{prog.prog}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No major programmes listed.</p>
+    {% endif %}
+
+    <h4><a href="{% url 'admin-jobprog-update'%}" class="btn btn-info">Add Major Progs</a></h4>
+    <h4><a href="{% url 'admin-jobprog-minor-update'%}" class="btn btn-info">Add Minor Progs</a></h4>
 </div>
 
 <div class="col-md-6">
     <h3>Applicants Data</h3>
     <hr>
-    <h4><a href="#" class="btn btn-primary">Applicants' List</a></h4>
+    <h4><a href="{% url 'admin-jobrel-list' job.id %}" class="btn btn-primary">Applicants' List</a></h4>
     <h4><a href="#" class="btn btn-primary">Download Applicants' Data</a></h4>
 </div>
 

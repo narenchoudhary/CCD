@@ -7,16 +7,16 @@
 {% endblock%}
 
 {% block content %}
-        <h2 class="sub-header">Edit Details and Click Save</h2>
-        <hr>
-        <div class="col-md-9">
+    <h2 class="sub-header">Edit Details and Click Save</h2>
+    <hr>
+    <div class="col-md-8">
+        <div class="well">
             <form method="post" accept-charset="utf-8">
                 {% csrf_token %}
-                <div class="well">
-                    {{ edit_job_form.errors }}
-                    {{ edit_job_form.non_field_errors }}
-                    {% crispy form form.helper %}
-                </div>
+                {{ form.errors }}
+                {{ form.non_field_errors }}
+                {% crispy form form.helper %}
             </form>
         </div>
+    </div>
 {% endblock %}

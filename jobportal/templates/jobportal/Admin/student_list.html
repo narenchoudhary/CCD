@@ -1,0 +1,63 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+
+    <div class="col-md-12">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-danger alert" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        <form action="{% url 'admin-student-list' %}" method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            <div class="well">
+                {{ form | crispy }}
+                <input type="submit" class="btn btn-primary" value="Search">
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-12">
+    {% if stud_list.count > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Username</td>
+                    <td>Year</td>
+                    <td>Dept</td>
+                    <td>Programme</td>
+                    <td>Details</td>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for stud in stud_list %}
+                <tr>
+                    <td>{{ stud.first_name }}</td>
+                    <td>{{ stud.user.username }}</td>
+                    <td>{{ stud.year }}</td>
+                    <td>{{ stud.dept }}</td>
+                    <td>{{ stud.prog }}</td>
+                    <td>
+                        <a class="btn btn-info btn-xs" href="{% url 'admin-student-detail' stud.id %}">
+                            <span class="glyphicon glyphicon-plus"></span>Details
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    </div>
+
+{% endblock%}

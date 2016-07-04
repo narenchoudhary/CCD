@@ -16,10 +16,16 @@
             <p><img src="{{ avatar.avatar.url }}" class="thumbnail"></p>
         {% endif %}
 
-        {% if avatar.avatar %}
+        {% if avatar and avatar.avatar %}
             <h4>
                 <a class="btn btn-lg btn-info" href="{% url 'stud-avatar-update' %}">
                     <span class="glyphicon glyphicon-cloud-upload"></span>Upload new image
+                </a>
+            </h4>
+        {% elif avatar %}
+            <h4>
+                <a class="btn btn-lg btn-info" href="{% url 'stud-avatar-update' %}">
+                    <span class="glyphicon glyphicon-cloud-upload"></span>Upload image
                 </a>
             </h4>
         {% else %}

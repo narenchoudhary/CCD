@@ -1,140 +1,81 @@
-from datetime import datetime
-
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView,
-                                  UpdateView, RedirectView)
+from django.utils import timezone
+from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView, UpdateView)
 
 from .models import (UserProfile, Admin, Student, Company, Alumni, StudentJobRelation,
                      Event, Job, ProgrammeJobRelation, Avatar, Signature, CV)
-from .forms import LoginForm, EditStudProfileForm, SelectCVForm, AvatarForm, SignatureForm
+from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
 ALUM_LOGIN_URL = reverse_lazy('login')
 COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
-def get_questions(studid):
-    stud_instance = get_object_or_404(Student, id=studid)
-    questions = []
-    if bool(stud_instance.cv1):
-        questions.append("cv1")
-    if bool(stud_instance.cv2):
-        questions.append("cv2")
-    return questions
-
-
 def login(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST':
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = auth.authenticate(username=username, password=password)
-            if user is not None:
-                user_profile = UserProfile.objects.get(username=username)
-                if user_profile.user_type == 'student':
-                    auth.login(request, user)
-                    student_instance = Student.objects.get(user=user_profile)
-                    request.session['student_instance_id'] = student_instance.id
-                    request.session['login_type'] = 'student'
-                    return redirect('stud-home')
+        # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
+        print request.session.test_cookie_worked()
+        if request.session.test_cookie_worked():
+            request.session.delete_test_cookie()
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password']
+                user = auth.authenticate(username=username, password=password)
+                if user is not None and user.is_active is True:
+                    user_profile = UserProfile.objects.get(username=username)
+                    if user_profile.user_type == 'student':
+                        auth.login(request, user)
+                        student_instance = Student.objects.get(user=user_profile)
+                        request.session['student_instance_id'] = student_instance.id
+                        request.session['login_type'] = 'student'
+                        return redirect('stud-home')
 
-                elif user_profile.user_type == 'company':
-                    auth.login(request, user)
-                    company_instance = Company.objects.get(user=user_profile)
-                    request.session['company_instance_id'] = company_instance.id
-                    request.session['login_type'] = 'company'
-                    return redirect('company-home')
+                    elif user_profile.user_type == 'company':
+                        auth.login(request, user)
+                        company_instance = Company.objects.get(user=user_profile)
+                        request.session['company_instance_id'] = company_instance.id
+                        request.session['login_type'] = 'company'
+                        return redirect('company-home')
 
-                elif user_profile.user_type == 'alumni':
-                    auth.login(request, user)
-                    alum_instance = Alumni.objects.get(user=user_profile)
-                    request.session['alum_instance_id'] = alum_instance.id
-                    request.session['login_type'] = 'alumni'
-                    return redirect('alum_home')
+                    elif user_profile.user_type == 'alumni':
+                        auth.login(request, user)
+                        alum_instance = Alumni.objects.get(user=user_profile)
+                        request.session['alum_instance_id'] = alum_instance.id
+                        request.session['login_type'] = 'alumni'
+                        return redirect('alum_home')
 
-                elif user_profile.user_type == 'admin':
-                    auth.login(request, user)
-                    admin_instance = Admin.objects.get(user=user_profile)
-                    request.session['admin_instance_id'] = admin_instance.id
-                    request.session['login_type'] = 'admin'
-                    return redirect('admin-home')
+                    elif user_profile.user_type == 'admin':
+                        auth.login(request, user)
+                        admin_instance = Admin.objects.get(user=user_profile)
+                        request.session['admin_instance_id'] = admin_instance.id
+                        request.session['login_type'] = 'admin'
+                        return redirect('admin-home')
 
+                    else:
+                        # this case should never happen unless new users are added
+                        args = dict(form=form)
+                        return render(request, 'jobportal/login.html', args)
                 else:
-                    # this case should never happen unless new users are added
                     args = dict(form=form)
                     return render(request, 'jobportal/login.html', args)
             else:
                 args = dict(form=form)
                 return render(request, 'jobportal/login.html', args)
         else:
-            args = dict(form=form)
-            return render(request, 'jobportal/login.html', args)
+            return HttpResponse("Please enable cookies and try again.")
     else:
-        args = dict(form=form)
-        return render(request, 'jobportal/login.html', args)
+        # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
+        request.session.set_test_cookie()
+        return render(request, 'jobportal/login.html', dict(form=form))
 
 
-@login_required(login_url=reverse_lazy('login'))
-def stud_applyjob(request, jobid):
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    job_instance = get_object_or_404(Job, id=jobid)
-    form = SelectCVForm(request.POST or None, extra=get_questions(student_instance.id))
-    if request.method == "POST":
-        if form.is_valid():
-            relation_instance = StudentJobRelation(
-                stud=student_instance,
-                job=job_instance
-            )
-            relation_instance.save()
-            for (question, answer) in form.extra_answers():
-                setattr(relation_instance, question, answer)
-            relation_instance.save()
-            return redirect('jobdetails', jobid=jobid)
-        else:
-            args = dict(form=form, jobid=jobid)
-            return render(request, 'jobportal/Student/apply.html', args)
-    else:
-        args = dict(form=form, jobid=jobid)
-        return render(request, 'jobportal/Student/apply.html', args)
-
-
-@login_required(login_url=reverse_lazy('login'))
-def stud_deapplyjob(request, jobid):
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    job_instance = Job.objects.get(id=jobid)
-    relation_instance = get_object_or_404(StudentJobRelation, stud=student_instance, job=job_instance)
-    relation_instance.delete()
-    return redirect('jobdetails', jobid=jobid)
-
-
-@login_required(login_url=reverse_lazy('login'))
-def stud_jobsappliedfor(request):
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    job_list = [e.job for e in StudentJobRelation.objects.filter(stud=student_instance)]
-    args = {'job_list': job_list}
-    return render(request, 'jobportal/Student/appliedfor.html', args)
-
-
-@login_required(login_url=reverse_lazy('login'))
-def stud_jobdetails(request, jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    student_instance = get_object_or_404(Student, id=request.session['student_instance_id'])
-    deadline_gone = True if job_instance.application_deadline < datetime.now().date() else False
-    nocv = True if not bool(student_instance.cv1) and not bool(student_instance.cv2) else False
-    args = {'job_instance': job_instance, 'deadline_gone': deadline_gone, 'nocv': nocv}
-    try:
-        relation_instance = StudentJobRelation.objects.get(stud=student_instance, job=job_instance)
-    except StudentJobRelation.DoesNotExist:
-        relation_instance = None
-    args['relation_instance'] = relation_instance
-    return render(request, "jobportal/Student/jobdetail.html", args)
-
-
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('login')
 
     def get(self, request):
         if request.user and request.user.is_authenticated():
@@ -142,9 +83,14 @@ class LogoutView(View):
         return redirect('index')
 
 
-class HomeView(TemplateView):
+class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
+    login_url = reverse_lazy('login')
+    raise_exception = True
     template_name = 'jobportal/Student/home.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
@@ -152,60 +98,219 @@ class HomeView(TemplateView):
         return context
 
 
-class ProfileDetail(DetailView):
+class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Student
     template_name = 'jobportal/Student/profile_detail.html'
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
-class ProfileUpdate(UpdateView):
+
+class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     form_class = EditStudProfileForm
     template_name = 'jobportal/Student/profile_update.html'
     success_url = reverse_lazy('stud-home')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
         return get_object_or_404(Student, id=self.request.session['student_instance_id'])
 
 
-class JobList(ListView):
-    queryset = Job.objects.all()
+class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     template_name = 'jobportal/Student/job_list.html'
     context_object_name = 'job_list'
 
+    def get_queryset(self):
+        return Job.objects.filter(approved=True, is_deleted=False)
 
-class JobDetail(DetailView):
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+
+class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Job
     template_name = 'jobportal/Student/job_detail.html'
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
-class JobRelList(ListView):
+    def get_context_data(self, **kwargs):
+        context = super(JobDetail, self).get_context_data(**kwargs)
+        context['stud_cv'] = self.student_cv()
+        context['now'] = timezone.now()
+        context['jobrel'] = self.get_jobrel_or_none(self.kwargs['pk'])
+        return context
+
+    def student_cv(self):
+        cv = get_object_or_404(CV, stud__id=self.request.session['student_instance_id'])
+        if cv.cv1 is None and cv.cv2 is None:
+            return True
+        return False
+
+    def get_jobrel_or_none(self, jobid):
+        try:
+            jobrel = StudentJobRelation.objects.get(job__id=jobid,
+                                                    stud__id=self.request.session['student_instance_id'])
+            return jobrel
+        except StudentJobRelation.DoesNotExist:
+            return None
+
+
+class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     template_name = 'jobportal/Student/jobrel_list.html'
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
     def get_queryset(self):
-        stud_object = Student.objects.get(user=self.request.user)
-        return StudentJobRelation.objects.filter(stud=stud_object)
+        return StudentJobRelation.objects.filter(stud__id=self.request.session['student_instance_id'])
 
 
-class JobRelDetail(DetailView):
+class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = ProgrammeJobRelation
     template_name = 'jobportal/Student/jobrel_detail.html'
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
-class EventList(ListView):
+
+class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    stud = None
+    job = None
+    template = 'jobportal/Student/jobrel_create.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get(self, request, pk):
+        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        self.job = get_object_or_404(Job, id=pk)
+        stud_check = self.check_stud_credentials()
+        job_check = self.check_job_credentials()
+        print stud_check
+        print job_check
+        if stud_check and job_check:
+            form = SelectCVForm(extra=self.get_questions())
+            return render(request, self.template, dict(form=form, job=self.job))
+        else:
+            return redirect('stud-job-list')
+
+    def post(self, request, pk):
+        self.job = get_object_or_404(Job, id=pk)
+        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        stud_check = self.check_stud_credentials()
+        job_check = self.check_job_credentials()
+        if stud_check and job_check:
+            form = SelectCVForm(request.POST, extra=self.get_questions())
+            if form.is_valid():
+                jobrel = StudentJobRelation(stud=self.stud, job=self.job)
+                jobrel.save()
+                for (question, answer) in form.extra_answers():
+                    setattr(jobrel, question, answer)
+                jobrel.save()
+                return redirect('stud-job-detail', pk=self.job.id)
+        return redirect('stud-job-list')
+
+    def get_questions(self):
+        cv = get_object_or_404(CV, stud=self.stud)
+        questions = []
+        if bool(cv.cv1):
+            questions.append("cv1")
+        if bool(cv.cv2):
+            questions.append("cv2")
+        return questions
+
+    def check_stud_credentials(self):
+        try:
+            cv = CV.objects.get(stud=self.stud)
+        except CV.DoesNotExist:
+            return False
+        if bool(cv.cv1) or bool(cv.cv2):
+            return True
+        else:
+            return False
+
+    def check_job_credentials(self):
+        time_now = timezone.now().date()
+        opening_date_check = self.job.opening_date < time_now
+        deadline_check = self.job.application_deadline > time_now
+        approved_check = self.job.approved is True
+        delete_check = self.job.is_deleted is False
+        return opening_date_check and deadline_check and approved_check and delete_check
+
+
+class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    stud = None
+    job = None
+    jobrel = None
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get(self, request, pk):
+        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        self.job = get_object_or_404(Job, id=pk)
+        self.jobrel = get_object_or_404(StudentJobRelation, stud=self.stud, job=self.job)
+
+        job_check = self.check_job_credentials()
+        print job_check
+        if job_check:
+            self.jobrel.delete()
+            return redirect('stud-job-detail', pk=self.job.id)
+        else:
+            return redirect('stud-job-detail', pk=self.job.id)
+
+    def check_job_credentials(self):
+        time_now = timezone.now().date()
+        opening_date_check = self.job.opening_date < time_now
+        deadline_check = self.job.application_deadline > time_now
+        approved_check = self.job.approved is True
+        delete_check = self.job.is_deleted is False
+        return opening_date_check and deadline_check and approved_check and delete_check
+
+
+class EventList(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Event.objects.all()
     template_name = 'jobportal/Student/event_list.html'
     context_object_name = 'event_list'
 
 
-class EventDetail(DetailView):
+class EventDetail(LoginRequiredMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Event
     template_name = 'jobportal/Student/event_detail.html'
 
 
-class AvatarDetail(DetailView):
+class AvatarDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Avatar
     template_name = 'jobportal/Student/avatar_detail.html'
     context_object_name = 'avatar'
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
     def get_object(self, queryset=None):
         try:
             avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
@@ -214,11 +319,17 @@ class AvatarDetail(DetailView):
         return avatar
 
 
-class AvatarUpdate(UpdateView):
-    form_class = AvatarForm
+class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = Avatar
+    fields = ['avatar']
     template_name = 'jobportal/Student/avatar_update.html'
     success_url = reverse_lazy('stud-avatar-detail')
 
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
     def get_object(self, queryset=None):
         try:
             avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
@@ -227,11 +338,16 @@ class AvatarUpdate(UpdateView):
         return avatar
 
 
-class AvatarCreate(CreateView):
+class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Avatar
     fields = ['avatar']
     template_name = 'jobportal/Student/avatar_create.html'
     success_url = reverse_lazy('stud-avatar-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def form_valid(self, form):
         avatar = form.save(commit=False)
@@ -239,10 +355,15 @@ class AvatarCreate(CreateView):
         return super(AvatarCreate, self).form_valid(form)
 
 
-class SignatureDetail(DetailView):
+class SignatureDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Signature
     template_name = 'jobportal/Student/signature_detail.html'
     context_object_name = 'signature'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
         try:
@@ -252,11 +373,16 @@ class SignatureDetail(DetailView):
         return signature
 
 
-class SignatureCreate(CreateView):
+class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Signature
     fields = ['signature']
     template_name = 'jobportal/Student/signature_create.html'
     success_url = reverse_lazy('stud-sign-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def form_valid(self, form):
         signature = form.save(commit=False)
@@ -264,10 +390,16 @@ class SignatureCreate(CreateView):
         return super(SignatureCreate, self).form_valid(form)
 
 
-class SignatureUpdate(UpdateView):
-    form_class = SignatureForm
-    template_name = 'jobportal/Student/signature_create.html'
+class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = Signature
+    fields = ['signature']
+    template_name = 'jobportal/Student/signature_update.html'
     success_url = reverse_lazy('stud-sign-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
         try:
@@ -277,10 +409,15 @@ class SignatureUpdate(UpdateView):
         return signature
 
 
-class CVDetail(DetailView):
+class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = CV
     template_name = 'jobportal/Student/cv_detail.html'
     context_object_name = 'cv'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
         try:
@@ -290,11 +427,15 @@ class CVDetail(DetailView):
         return cv
 
 
-class CVCreate(CreateView):
-    model = CV
-    fields = ['cv1', 'cv2']
+class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    form_class = CVForm
     template_name = 'jobportal/Student/cv_create.html'
     success_url = reverse_lazy('stud-cv-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def form_valid(self, form):
         cv = form.save(commit=False)
@@ -302,11 +443,16 @@ class CVCreate(CreateView):
         return super(CVCreate, self).form_valid(form)
 
 
-class CVUpdate(UpdateView):
+class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = CV
     fields = ['cv1', 'cv2']
     template_name = 'jobportal/Student/cv_update.html'
     success_url = reverse_lazy('stud-cv-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
         try:

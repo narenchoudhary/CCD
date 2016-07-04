@@ -1,0 +1,39 @@
+{% extends 'base_student.html' %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Jobs Details:</h2>
+<hr/>
+<div class="col-md-12">
+    <table class="table table-striped">
+        <tr>
+            <td>Description</td>
+            <td>{{job.description}}</td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td>{{job.designation}}</td>
+        </tr>
+        <tr>
+            <td>Approved</td>
+            <td>{{ job.approved | yesno:"Approved, Rejected, Approval Pending"}}</td>
+        </tr>
+    </table>
+    <br>
+    {% if jobrel %}
+        <a href="{% url 'stud-jobrel-delete' job.id %}">
+            <button class="btn-xs btn btn-danger"> Remove Application</button>
+        </a>
+    {% else %}
+        <a href="{% url 'stud-jobrel-create' job.id %}">
+            <button class="btn-xs btn btn-info">Apply</button>
+        </a>
+
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -8,6 +8,7 @@
 {% block content %}
         <h2 class="sub-header">Signup Requests</h2>
         <hr/>
+
         <div class="col-md-12">
         {% if company_list %}
             {% if messages %}
@@ -34,7 +35,11 @@
                             <td>{{ company.company_name }}</td>
                             <td><a class="btn btn-info btn-xs" href = "{% url 'admin-company-detail' company.id %}"><span class="glyphicon glyphicon-list-alt"></span>&nbspRequest Profile</a></td>
                             <td>{{ company.first_hr_email }}</td>
-                            <td><a class="btn btn-info btn-xs" href="#"><span class="glyphicon glyphicon-plus"></span>&nbspAdd Credentials</a></td>
+                            <td>
+                                <a class="btn btn-info btn-xs" href="#">
+                                    <span class="glyphicon glyphicon-plus"></span>&nbspAdd Credentials
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

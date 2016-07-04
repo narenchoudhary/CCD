@@ -24,7 +24,33 @@
         </tr>
     </table>
     <br>
-    <h4>Programmes</h4>
+    {% if rel_minor_list.count > 0 %}
+    <h4>Minor Programmes</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Dept</th>
+                <th>Prog</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prog in rel_minor_list %}
+                <tr>
+                    <td>{{prog.year}}</td>
+                    <td>{{prog.dept}}</td>
+                    <td>{{prog.prog}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h4>No Minor Programmes</h4>
+    {% endif %}
+    <p><a href="{% url 'company-jobprog-minor-update' job.id %}" class="btn btn-primary">Add Minor Programmes</a></p>
+
+    {% if rel_list.count > 0 %}
+    <h4>Major Programmes</h4>
     <table class="table">
         <thead>
             <tr>
@@ -43,7 +69,14 @@
             {% endfor %}
         </tbody>
     </table>
-    <p><a href="#" class="btn btn-primary">Add Programmes</a></p>
+    {% else %}
+        <h4>No Major Programmes</h4>
+    {% endif %}
+    <p><a href="{% url 'company-jobprog-update' job.id %}" class="btn btn-primary">Add Major Programmes</a></p>
+
+    <h3>Actions</h3>
+    <hr>
+
     <p><a href="{% url 'company-jobrel-list' job.id %}" class="btn btn-primary">View Candidates</a></p>
     <p><a href="{% url 'company-job-update' job.id %}" class="btn btn-primary">Edit Job</a></p>
     <p><a href="{% url 'company-job-delete' job.id %}" class="btn btn-primary">Delete Job</a></p>

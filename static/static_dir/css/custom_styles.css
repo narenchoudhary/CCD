@@ -49,20 +49,20 @@ span.badge{
 
 /**********BUTTONS************/
 .btn{
-	background: transparent;
+	/*background: transparent;*/
 	/*box-shadow: 0px 2px grey;*/
-	color: #00b6b6;
-	border: 1px solid #00b6b6;
+	/*color: #00b6b6;*/
+	/*border: 1px solid #00b6b6;*/
 }
 .btn:hover{
 	/*transform:translate(0px,1px);*/
 	/*box-shadow: 0px 1px grey;*/
-	background-color: #00b6b6;
-	border: 1px solid #00b6b6;
+	/*background-color: #00b6b6;*/
+	/*border: 1px solid #00b6b6;*/
 }
 .btn:focus, .btn:active{
-	background-color: #00b6b6;
-	border: 1px solid #00b6b6;
+	/*background-color: #00b6b6;*/
+	/*border: 1px solid #00b6b6;*/
 	/*transform:translate(0px,2px);*/
 	/*box-shadow: none;*/
 	/*outline: none !important;*/

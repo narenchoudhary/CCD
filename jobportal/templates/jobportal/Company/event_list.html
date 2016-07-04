@@ -1,0 +1,22 @@
+{% extends 'base_company.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="col-md-12">
+    <h4>All events</h4>
+    <hr/>
+    {% if event_list.count < 1 %}
+        <h4>No events</h4>
+    {% endif %}
+    {% for event in event_list %}
+        <h4>{{ event.title }}</h4>
+    {% endfor %}
+</div>
+
+{% endblock %}

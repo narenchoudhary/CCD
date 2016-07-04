@@ -1,9 +1,8 @@
 {% extends 'base_admin.html' %}
 {% load crispy_forms_tags %}
 
-
 {% block account_setting%}
-<p><a href="#" title="logout">Logout</a></p>
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
@@ -12,6 +11,32 @@
 <h2 class="sub-header">Company Details</h2>
 <hr>
 <div class="col-md-12">
+
+    {% if company.approved == True %}
+        <div class="alert alert-success" role="alert">
+            <h4>This profile was approved by Administrator on {{ company.approval_date }}.</h4>
+        </div>
+    {% elif company.approved == False %}
+        <div class="alert alert-danger" role="alert">
+            <h4>
+                This signup request is rejected by Administrator. Please check this
+                profile again and make sure it was intentional.
+            </h4>
+        </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <h4>
+                <strong>Warning! </strong> It is an unapproved signup request. Check the signup details
+                and approve this profile.
+            </h4>
+            <p>
+                <a class="btn btn-warning" href="{% url 'admin-company-approve' company.id %}">
+                    Approve
+                </a>
+            </p>
+        </div>
+    {% endif %}
+
     <div class="col-md-12">
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
@@ -19,9 +44,6 @@
             </li>
             <li role="presentation">
                 <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a>
-            </li>
-            <li role="presentation">
-                <a href="#status" aria-controls="messages" role="tab" data-toggle="tab">Status</a>
             </li>
         </ul>
 
@@ -57,13 +79,6 @@
                     <tr><td>First HR Mobile</td><td> {{ company.first_hr_mobile }}</td></tr>
                     <tr><td>First HR Email</td><td> {{ company.first_hr_email }}</td></tr>
                     <tr><td>First HR Fax</td><td> {{ company.first_hr_fax }}</td></tr>
-                </table>
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="status">
-                <table class="table table-striped">
-                    <tr><td>Approved</td>
-                    <td>{{ company.approved | yesno | capfirst}}</td></tr>
                 </table>
             </div>
 
