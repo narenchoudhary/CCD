@@ -10,7 +10,6 @@ from crispy_forms.bootstrap import *
 
 from models import *
 from widgets import CheckBoxBootstrapSwitch
-from django.conf import settings
 
 
 class CustomJobProgFormSet(BaseInlineFormSet):
@@ -36,7 +35,14 @@ class EditStudProfileForm(ModelForm):
 
     class Meta:
         model = Student
-        exclude = ['user', 'placed', 'intern2', 'intern3', 'ppo']
+        fields = ['roll_no', 'first_name', 'middle_name', 'last_name', 'dob', 'sex', 'category',
+                  'nationality', 'minor_year', 'minor_dept', 'minor_prog', 'year', 'dept', 'prog',
+                  'hostel', 'room_no', 'iitg_webmail', 'alternative_email', 'mobile_campus',
+                  'mobile_campus_alternative', 'mobile_home', 'address_line1', 'address_line2',
+                  'address_line3', 'pin_code', 'percentage_x', 'percentage_xii', 'board_x', 'board_xii',
+                  'medium_x', 'medium_xii', 'passing_year_x', 'passing_year_xii', 'gap_in_study',
+                  'gap_reason', 'jee_air_rank', 'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
+                  'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem']
 
     def __init__(self, *args, **kwargs):
         super(EditStudProfileForm, self).__init__(*args, **kwargs)
@@ -51,6 +57,11 @@ class EditStudProfileForm(ModelForm):
         self.fields['minor_year'].disabled = True
         self.fields['minor_dept'].disabled = True
         self.fields['minor_prog'].disabled = True
+        self.fields['jee_air_rank'].label = 'JEE AIR Rank'
+        self.fields['percentage_x'].label = 'Percentage X'
+        self.fields['percentage_xii'].label = 'Percentage XII'
+        self.fields['board_x'].label = 'X Examination Board'
+        self.fields['board_xii'].label = 'XII Examination Board'
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -109,18 +120,19 @@ class EditStudProfileForm(ModelForm):
 class CompanyJobForm(ModelForm):
     class Meta:
         model = Job
-        exclude = ['alum_owner', 'company_owner', 'posted_by_alumnus', 'posted_by_company',
-                   'posted_on', 'approved', 'approved_on', 'last_updated', 'opening_date',
-                   'application_deadline']
+        fields = ['description', 'designation', 'profile_name', 'cpi_shortlist', 'minimum_cpi',
+                  'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
+                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
+                  'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
+                  'bonus', 'bond', 'bond_link']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.fields['bond_link'].help_text = 'Upload bond document to Drive/Dropbox and add link here.'
-        self.fields['bond_link'].label = 'URL of bond document'
-        self.fields['cpi_shortlist'].label = 'CPI Shortlist'
-        self.fields['cpi_shortlist'].help_text = 'Select this if CPI filtering is needed.'
+        self.fields['cpi_shortlist'].help_text = 'Select if CPI-based filtering is needed.'
+
         self.helper.layout = Layout(
             TabHolder(
                 Tab(
@@ -135,16 +147,8 @@ class CompanyJobForm(ModelForm):
                 ),
                 Tab(
                     'Requirements',
-                    # 'cpi_shortlist',
-                    # 'minimum_cpi',
-                    # 'percentage_x',
-                    # 'percentage_xii',
-                    # Field('percentage_x', css_class='col-md-6'),
-                    # Field('percentage_xii', css_class='col-md-6'),
                     HTML('<h4>CPI</h4>'),
                     Div(
-                        # Div('cpi_shortlist', css_class='col-md-12'),
-                        # Div('minimum_cpi', css_class='col-md-12'),
                         Field('cpi_shortlist'),
                         Field('minimum_cpi'),
                         css_class='col-md-12'
@@ -152,26 +156,18 @@ class CompanyJobForm(ModelForm):
 
                     HTML('<h4>Percentage</h4>'),
                     Div(
-                        # Div('percentage_x', css_class='col-md-12'),
-                        # Div('percentage_xii', css_class='col-md-12'),
                         Field('percentage_x'),
                         Field('percentage_xii'),
                         css_class='col-md-12'
                     ),
-
-                    'other_requirements',
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
                     """)
                 ),
                 Tab(
-                    'Salary/Incentives',
-                    # MultiField(
-                    #     'B.Tech',
-                    #     'ctc_btech',
-                    #     'gross_btech',
-                    # ),
+                    'Salary Breakdown',
+
                     'currency',
                     'ctc_btech',
                     'ctc_mtech',
@@ -205,12 +201,15 @@ class CompanyJobForm(ModelForm):
 
 
 class AdminJobEditForm(ModelForm):
-    opening_date = forms.DateInput(format=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = Job
-        exclude = ['alum_owner', 'company_owner', 'posted_by_alumnus', 'posted_by_company',
-                   'posted_on', 'approved_on', 'last_updated']
+        fields = ['description', 'designation', 'profile_name', 'cpi_shortlist', 'minimum_cpi',
+                  'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
+                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
+                  'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
+                  'bonus', 'bond', 'bond_link', 'approved', 'opening_date', 'application_deadline',
+                  ]
         widgets = {
             'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
             'application_deadline': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False})
@@ -232,7 +231,7 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Requirements',
                     'cpi_shortlist', 'minimum_cpi', 'percentage_x',
-                    'percentage_xii', 'other_requirements',
+                    'percentage_xii',
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -288,7 +287,10 @@ class CompanyProfileEdit(ModelForm):
 
     class Meta:
         model = Company
-        exclude = ['user', 'password_copy', 'approved']
+        fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
+                  'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
+                  'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
+                  'first_hr_mobile', 'first_hr_fax']
 
     def __init__(self, *args, **kwargs):
         super(CompanyProfileEdit, self).__init__(*args, **kwargs)
@@ -298,13 +300,11 @@ class CompanyProfileEdit(ModelForm):
             TabHolder(
                 Tab(
                     'General Details',
-
                     'company_name', 'description', 'postal_address',
                     'website', 'organization_type', 'industry_sector'
                 ),
                 Tab(
                     'HR Details',
-
                     'head_hr_name', 'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
                     'head_hr_fax',
                     'first_hr_name', 'first_hr_email', 'first_hr_designation', 'first_hr_mobile',
@@ -384,7 +384,10 @@ class EditCompany(ModelForm):
 
     class Meta:
         model = Company
-        exclude = ['username', 'password']
+        fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
+                  'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
+                  'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
+                  'first_hr_mobile', 'first_hr_fax', 'approved']
 
     def __init__(self, *args, **kwargs):
         super(EditCompany, self).__init__(*args, **kwargs)

@@ -11,3 +11,14 @@ handle is_active logic
 - [ ] Convert Internships view to CBVs
 - [ ] Fee payment structure
 - [ ] File size limitation on CV, profile picture, signature, etc.
+- [ ] views.JobList : Implement Complex QuerySet to filter Jobs based on student profile, add
+percentage_x/xii, CPI Shortlist, Minimum CPI, department, etc.
+- [ ] views.JobDetail : same as above
+- [ ] views.JobRelCreate : same as above
+- [ ] Add Accordian/Tabs in Job Details Page
+- [ ] What are aria-controls? *job_details.html*
+- [ ] JobRelCreate has been modified (job_check = True) to show Jobs in student account as of
+now. Change this in production.
+- [ ] Doubt: What details must be shown in student-job detail page? take-home-*-training for
+differnet programmes?
+

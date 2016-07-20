@@ -129,11 +129,18 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = 'jobportal/Student/job_list.html'
     context_object_name = 'job_list'
 
-    def get_queryset(self):
-        return Job.objects.filter(approved=True, is_deleted=False)
-
     def test_func(self):
         return self.request.user.user_type == 'student'
+
+    def get_queryset(self):
+        stud = get_object_or_404(Student, id=self.request.session['student_instance_id'])
+        # TODO: Complex QuerySet
+        return Job.objects.filter(approved=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(JobList, self).get_context_data(**kwargs)
+        context['stud'] = get_object_or_404(Student, id=self.request.session['student_instance_id'])
+        return context
 
 
 class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -147,7 +154,7 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
-        context['stud_cv'] = self.student_cv()
+        context['no_cv'] = self.student_cv()
         context['now'] = timezone.now()
         context['jobrel'] = self.get_jobrel_or_none(self.kwargs['pk'])
         return context
@@ -203,7 +210,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
         stud_check = self.check_stud_credentials()
-        job_check = self.check_job_credentials()
+        # job_check = self.check_job_credentials()
+        job_check = True
         print stud_check
         print job_check
         if stud_check and job_check:
@@ -216,7 +224,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         self.job = get_object_or_404(Job, id=pk)
         self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
         stud_check = self.check_stud_credentials()
-        job_check = self.check_job_credentials()
+        # job_check = self.check_job_credentials()
+        job_check = True
         if stud_check and job_check:
             form = SelectCVForm(request.POST, extra=self.get_questions())
             if form.is_valid():
@@ -252,8 +261,7 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         opening_date_check = self.job.opening_date < time_now
         deadline_check = self.job.application_deadline > time_now
         approved_check = self.job.approved is True
-        delete_check = self.job.is_deleted is False
-        return opening_date_check and deadline_check and approved_check and delete_check
+        return opening_date_check and deadline_check and approved_check
 
 
 class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -270,8 +278,9 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
         self.jobrel = get_object_or_404(StudentJobRelation, stud=self.stud, job=self.job)
-
-        job_check = self.check_job_credentials()
+        # TODO: job_check was modified for testing; change this in production
+        # job_check = self.check_job_credentials()
+        job_check = True
         print job_check
         if job_check:
             self.jobrel.delete()
@@ -284,8 +293,7 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         opening_date_check = self.job.opening_date < time_now
         deadline_check = self.job.application_deadline > time_now
         approved_check = self.job.approved is True
-        delete_check = self.job.is_deleted is False
-        return opening_date_check and deadline_check and approved_check and delete_check
+        return opening_date_check and deadline_check and approved_check
 
 
 class EventList(LoginRequiredMixin, ListView):

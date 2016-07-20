@@ -14,7 +14,7 @@
 
     {% if company.approved == True %}
         <div class="alert alert-success" role="alert">
-            <h4>This profile was approved by Administrator on {{ company.approval_date }}.</h4>
+            <h4>This profile was approved by {{company.approver }} on {{ company.approval_date }}.</h4>
         </div>
     {% elif company.approved == False %}
         <div class="alert alert-danger" role="alert">
@@ -102,7 +102,8 @@
                         <td>{{ job.designation }}</td>
                         <td>{{ job.posted_on }}</td>
                         <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
-                        <td><a class="btn btn-xs btn-primary" href="#">Details</a></td>
+                        <td><a class="btn btn-xs btn-primary"
+                               href="{% url 'admin-job-detail' job.id %}">Details</a></td>
                     </tr>
                 {% endfor %}
             </table>

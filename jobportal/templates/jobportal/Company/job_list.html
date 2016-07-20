@@ -14,30 +14,30 @@
         <thead>
         <tr>
             <th>Designation</th>
-            <th>Openings</th>
-            <th>Posted On</th>
-            <th>View Candidates</th>
-            <th>Details</th>
+            <th>Profile</th>
             <th>Open</th>
             <th>Close</th>
+            <th>Status</th>
+            <th>Details</th>
+            <th>Candidates</th>
         </tr>
         </thead>
         <tbody>
         {% for job in job_list %}
         <tr>
-            <td>{{ job.designation | capfirst }}</td>
-            <td>{{ job.num_openings }}</td>
-            <td>{{ job.posted_on }}</td>
+            <td> {{ job.designation | capfirst }} </td>
+            <td> {{ job.profile_name }} </td>
+            <td> {{ job.opening_date }} </td>
+            <td> {{ job.application_deadline }} </td>
+            <td> {{ job.approved | yesno:"Approved, Rejected, Approval Pending" }} </td>
+            <td>
+                <a href="{% url 'company-job-detail' job.id %}" class="btn btn-xs btn-primary">Details</a>
+            </td>
             <td>
                 <a class="btn btn-xs btn-info" href="{% url 'company-jobrel-list' job.id %}" title="">
                     View Candidates
                 </a>
             </td>
-            <td>
-                <a href="{% url 'company-job-detail' job.id %}" class="btn btn-xs btn-primary">Details</a>
-            </td>
-            <td> {{ job.opening_date }}</td>
-            <td> {{ job.application_deadline }}</td>
         </tr>
         {% endfor %}
         </tbody>

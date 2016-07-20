@@ -164,7 +164,7 @@ class CompanySignupList(ListView):
 
 
 class CompanyList(ListView):
-    queryset = Company.objects.all()
+    queryset = Company.objects.filter(approved=True)
     template_name = 'jobportal/Admin/company_list.html'
     context_object_name = 'company_list'
 
@@ -200,7 +200,13 @@ class CompanyUpdate(UpdateView):
         return reverse_lazy('admin-company-detail', args=(self.object.id,))
 
 
-class CompanyApprove(View):
+class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get(self, request, pk):
         company = Company.objects.get(id=pk)
@@ -212,6 +218,7 @@ class CompanyApprove(View):
             user.save()
         if company.approved is not True:
             company.approved = True
+            company.approver = Admin.objects.get(id=self.request.session['admin_instance_id'])
             company.approval_date = timezone.now()
             company.save()
         return redirect('admin-company-detail', pk=company.id)
@@ -230,8 +237,14 @@ class CompanyDelete(View):
 
 
 class JobList(ListView):
-    queryset = Job.objects.all()
+    queryset = Job.objects.filter(approved=True)
     template_name = 'jobportal/Admin/job_list.html'
+    context_object_name = 'job_list'
+
+
+class JobListUnapproved(ListView):
+    queryset = Job.objects.filter(approved=None)
+    template_name = 'jobportal/Admin/job_list_unapproved.html'
     context_object_name = 'job_list'
 
 
@@ -347,9 +360,8 @@ class StudentDetail(DetailView):
 class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     raise_exception = True
-    model = StudentJobRelation
-    template_name = 'jobportal/Admin/jobrel_list_unapproved.html'
     context_object_name = 'rel_list'
+    template_name = 'jobportal/Admin/jobrel_list_unapproved.html'
 
     def test_func(self):
         return self.request.user.user_type == 'admin'

@@ -247,7 +247,7 @@ class JobList(ListView):
     context_object_name = 'job_list'
 
     def get_queryset(self):
-        return Job.objects.filter(company_owner__id=self.request.session['company_instance_id'], is_deleted=False)
+        return Job.objects.filter(company_owner__id=self.request.session['company_instance_id'])
 
 
 class JobCreate(CreateView):
@@ -328,20 +328,21 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     raise_exception = True
     template_name = 'jobportal/Company/jobrel_list.html'
     context_object_name = 'rel_list'
+    job = None
 
     def test_func(self):
         return self.request.user.user_type == 'company'
 
     def get_queryset(self):
-        job = Job.objects.get(id=self.kwargs['pk'])
-        if job.company_owner.id == self.request.session['company_instance_id']:
+        self.job = Job.objects.get(id=self.kwargs['pk'])
+        if self.job.company_owner.id == self.request.session['company_instance_id'] and self.job.approved:
             return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
         else:
             return Http404()
 
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
-        context['date_now'] = timezone.now().date()
+        context['hide'] = timezone.now().date() <= self.job.application_deadline
         return context
 
 

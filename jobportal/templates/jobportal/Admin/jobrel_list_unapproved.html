@@ -1,4 +1,4 @@
-{% extends 'base_company.html' %}
+{% extends 'base_admin.html' %}
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
@@ -6,7 +6,7 @@
 {% endblock%}
 
 {% block content %}
-        <h2 class="sub-header">Candidates:</h2>
+        <h2 class="sub-header">Candidates Status Approval Requests:</h2>
         <hr/>
         <div class="col-md-12">
             <div class="well">
@@ -28,10 +28,11 @@
                             <tr>
                                 <td>{{ rel.stud.first_name | capfirst}} {{ rel.stud.middle_name | capfirst }} {{ rel.stud.last_name | capfirst}}</td>
                                 <td>{{ rel.stud.roll_no }}</td>
-                                <td>{{rel.stud.dept}}</td>
+                                <td>{{ rel.stud.dept }}</td>
                                 <td>Status</td>
                                 <td>
-                                    <a class="btn btn-xs btn-info" class='inline' href="{% url 'admin-jobrel-update' rel.id %}">
+                                    <a class="btn btn-xs btn-info" class='inline'
+                                       href="{% url 'admin-jobrel-update' rel.id %}">
                                         Action
                                     </a>
                                 </td>
@@ -41,9 +42,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <p><a class="btn btn-info " href="#">Print Student Details</a></p>
             {% else %}
-                <p>No student have applied for this position.</p>
+                <p>No unapproved requests.</p>
             {% endif %}
             </div>
         </div>

@@ -9,21 +9,131 @@
 <h2 class="sub-header">Jobs Details:</h2>
 <hr/>
 <div class="col-md-12">
-    <table class="table table-striped">
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#basicinfo" role="tab" data-toggle="tab">Basic Information</a>
+        </li>
+        <li role="presentation">
+            <a href="#requirements" role="tab" data-toggle="tab">Requirements</a>
+        </li>
+        <li role="presentation">
+            <a href="#salary" role="tab" data-toggle="tab">Salary Breakdown</a>
+        </li>
+        <li role="presentation">
+            <a href="#bond" role="tab" data-toggle="tab">Legal Bond</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="basicinfo">
+        <table class="table table-striped">
+            <tr>
+                <td>Description</td>
+                <td>{{job.description}}</td>
+            </tr>
+            <tr>
+                <td>Designation</td>
+                <td>{{job.designation}}</td>
+            </tr>
+            <tr>
+                <td>Profile Name</td>
+                <td>{{job.profile_name}}</td>
+            </tr>
+            <tr>
+                <td>Number of openings</td>
+                <td>{{job.num_openings}}</td>
+            </tr>
+            <tr>
+                <td>Approval Status</td>
+                <td>{{job.approved|yesno:"Approved, Rejected, Approval Pending"}}</td>
+            </tr>
+            <tr>
+                <td>Opening Date</td>
+                <td>{{job.opening_date}}</td>
+            </tr>
+            <tr>
+                <td>Application Deadline</td>
+                <td>{{job.application_deadline}}</td>
+            </tr>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="requirements">
+        <table class="table table-striped">
         <tr>
-            <td>Description</td>
-            <td>{{job.description}}</td>
+            <td>CPI Shortlist</td>
+            <td>{{job.cpi_shortlist|yesno}}</td>
         </tr>
         <tr>
-            <td>Designation</td>
-            <td>{{job.designation}}</td>
+            <td>Minimum CPI</td>
+            <td>
+                {% if job.cpi_shortlist %}
+                    {{job.minimum_cpi}}
+                {% else %}
+                    No CPI shortlisting
+                {% endif %}
+            </td>
         </tr>
         <tr>
-            <td>Approved</td>
-            <td>{{ job.approved | yesno:"Approved, Rejected, Approval Pending"}}</td>
+            <td>Percentage X</td>
+            <td>{{job.percentage_x}}</td>
         </tr>
-    </table>
+        <tr>
+            <td>Percentage XII</td>
+            <td>{{job.percentage_xii}}</td>
+        </tr>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="salary">
+        <table class="table table-striped">
+            <tr>
+                <td>Currency</td>
+                <td>{{job.currency}}</td>
+            </tr>
+            <tr>
+                <td>CTC BTech</td>
+                <td>{{job.ctc_btech}}</td>
+            </tr>
+            <tr>
+                <td>CTC MTech</td>
+                <td>{{job.ctc_mtech}}</td>
+            </tr>
+            <tr>
+                <td>CTC MSc</td>
+                <td>{{job.ctc_msc}}</td>
+            </tr>
+            <tr>
+                <td>CTC MA</td>
+                <td>{{job.ctc_ma}}</td>
+            </tr>
+            <tr>
+                <td>CTC PhD</td>
+                <td>{{job.ctc_phd}}</td>
+            </tr>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="bond">
+        <table class="table table-striped">
+            <tr>
+                <td>Bond</td>
+                <td>{{job.bond|yesno}}</td>
+            </tr>
+            <tr>
+                <td>Bond Document URL</td>
+                <td>
+                    {% if job.bond %}
+                        {{job.bond_link}}
+                    {% else %}
+                        No legal bond document provided.
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
     <br>
+
     {% if rel_minor_list.count > 0 %}
     <h4>Minor Programmes</h4>
     <table class="table">
@@ -79,7 +189,6 @@
 
     <p><a href="{% url 'company-jobrel-list' job.id %}" class="btn btn-primary">View Candidates</a></p>
     <p><a href="{% url 'company-job-update' job.id %}" class="btn btn-primary">Edit Job</a></p>
-    <p><a href="{% url 'company-job-delete' job.id %}" class="btn btn-primary">Delete Job</a></p>
 </div>
 
 {% endblock %}

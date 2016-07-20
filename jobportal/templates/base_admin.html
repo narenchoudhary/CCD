@@ -1,21 +1,80 @@
 {% extends 'base_jobportal.html' %}
 
 {% block menu %}
-<li class="account-nav-head">Admin <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
-    <li><a href="{% url 'admin-home' %}">Home</a></li>
-    <li><a href="{% url 'admin-company-list' %}">Companies</a></li>
-    <li><a href="{% url 'admin-company-signup-list' %}">SignUp Requests</a></li>
-    <li><a href="{% url 'admin-job-list' %}">Jobs</a></li>
-    <li><a href="{% url 'alumnijobs:admin_all_alum_jobs' %}">Alum Jobs</a></li>
-    <li><a href="{% url 'internships:admin_all_interns' %}">Internships</a></li>
-    <li><a href="{% url 'admin-jobrel-list-unapproved' %}">Approvals: JOBS</a></li>
-    <li><a href="#">Approvals: Progress</a></li>
-    <li><a href="{% url 'year-list' %}">Years</a></li>
-    <li><a href="{% url 'department-list' %}">Departments</a></li>
-    <li><a href="{% url 'programme-list' %}">Programmes</a></li>
-    <li><a href="{% url 'admin-programme-placement-list' %}">Placement Programmes</a></li>
-    <li><a href="{% url 'admin-programme-internship-list' %}">Internship Programmes</a></li>
-    <li><a href="{% url 'admin-manage' %}">Manage Users</a></li>
+<li class="account-nav-head">
+    Admin<span class="glyphicon glyphicon-triangle-bottom pull-right"></span>
+</li>
+<li>
+    <a href="{% url 'admin-home' %}">
+        Home
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-company-list' %}">
+        Companies
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-company-signup-list' %}">
+        SignUp Requests
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-job-list' %}">
+        Jobs
+    </a>
+</li>
+<li>
+    <a href="{% url 'alumnijobs:admin_all_alum_jobs' %}">
+        Alum Jobs
+    </a>
+</li>
+<li>
+    <a href="{% url 'internships:admin_all_interns' %}">
+        Internships
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-job-list-unapproved' %}">
+        Approvals: Jobs
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-jobrel-list-unapproved' %}">
+        Approvals: Progress
+    </a>
+</li>
+<li>
+    <a href="{% url 'year-list' %}">
+        Years
+    </a>
+</li>
+<li>
+    <a href="{% url 'department-list' %}">
+        Departments
+    </a>
+</li>
+<li>
+    <a href="{% url 'programme-list' %}">
+        Programmes
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-programme-placement-list' %}">
+        Placement Programmes
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-programme-internship-list' %}">
+        Internship Programmes
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-manage' %}">
+        Manage Users
+    </a>
+</li>
+
 {% endblock %}
 
 {% block level_0 %}

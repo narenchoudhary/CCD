@@ -104,6 +104,8 @@ urlpatterns = [
     url(r'^admin/company/(?P<pk>\d+)/delete/$', views_admin.CompanyDelete.as_view(), name='admin-company-delete'),
 
     url(r'^admin/job/list/$', views_admin.JobList.as_view(), name='admin-job-list'),
+    url(r'^admin/job/list/unapproved$', views_admin.JobListUnapproved.as_view(),
+        name='admin-job-list-unapproved'),
     url(r'^admin/job/(?P<pk>\d+)/detail/$', views_admin.JobDetail.as_view(), name='admin-job-detail'),
     url(r'^admin/job/(?P<pk>\d+)/update/$', views_admin.JobUpdate.as_view(), name='admin-job-update'),
     url(r'^admin/job/(?P<pk>\d+)/approve/$', views_admin.JobApprove.as_view(), name='admin-job-approve'),
