@@ -138,3 +138,7 @@ db.*
 
 #Django media files
 media/*
+
+# Idea folder
+.idea/
+
