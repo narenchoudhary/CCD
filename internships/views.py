@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
 from jobportal.models import Company, Student
 from .models import IndInternship, ProgrammeInternRelation, StudentInternRelation
 from .forms import RecruiterAddInternShip, AdminEditInternShip, InternProgFormSet

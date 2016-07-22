@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse_lazy
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
 from jobportal.models import Alumni, Student
 from .models import StudentProposalRelation, ResearchProposal
 from .forms import AddProposal, EditProposal, StudApply, ReportForm
