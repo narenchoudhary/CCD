@@ -69,7 +69,10 @@ urlpatterns = [
         name='company-jobprog-minor-update'),
 
     url(r'^company/(?P<pk>\d+)/jobrel/list/$', views_company.JobRelList.as_view(), name='company-jobrel-list'),
-    url(r'^company/job/jobrel/(?P<pk>\d+)/list/$', views_company.JobRelUpdate.as_view(), name='company-jobrel-update'),
+    url(r'^company/job/(?P<jobpk>\d+)/jobrel/(?P<pk>\d+)/list/$', views_company.JobRelUpdate.as_view(),
+        name='company-jobrel-update'),
+    url(r'^company/job/(?P<pk>\d+)/jobrel/update/round/$', views_company.JobRelUpdateRound.as_view(),
+        name='company-jobrel-update-round'),
 
 
     url(r'^company/event/list/$', views_company.EventList.as_view(), name='company-event-list'),

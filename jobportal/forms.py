@@ -539,14 +539,19 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 class CompanyJobRelForm(forms.ModelForm):
     class Meta:
         model = StudentJobRelation
-        fields = ['shortlist_init', 'shortlist_approved', 'placed_init', 'placed_approved']
+        fields = ['shortlist_init', 'shortlist_approved', 'placed_init', 'placed_approved', 'dropped']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobRelForm, self).__init__(*args, **kwargs)
+        # recruiter can not changed dropped status in the form
+        # so 'dropped' field is not needed in the form.
+        # It is included to unset 'dropped' on re-shortlisting.
+        self.fields['dropped'].widget = forms.HiddenInput()
         self.fields['shortlist_approved'].disabled = True
         self.fields['placed_approved'].disabled = True
         instance = getattr(self, 'instance', None)
 
+        # disable fields based on what approvals are pending
         if instance and instance.pk:
             if instance.shortlist_init is True:
                 if instance.shortlist_approved is None:
@@ -562,6 +567,27 @@ class CompanyJobRelForm(forms.ModelForm):
                 self.fields['shortlist_init'].disabled = True
                 if instance.placed_approved is not None:
                     self.fields['placed_init'].disabled = True
+
+        # add radio-button widget for nullboolean fields
+        # shortlist_approved = self.fields['shortlist_approved']
+        # shortlist_approved.widget = forms.RadioSelect(choices=shortlist_approved.widget.choices)
+        # shortlist_approved.initial = '1'
+
+    def save(self, commit=True):
+        instance = super(CompanyJobRelForm, self).save(commit=False)
+        # unset dropped value only if
+        # 1. current value of 'dropped' is True
+        # 2. form has changed, i.e. recruiter has tried to reshortlist student
+
+        if self.has_changed() and instance.dropped is True:
+            # Optimized version of above code can be this
+            # Instead of checking all fields, only check the shortlist_init field
+            # self.fields['shortlist_init].has_changed()
+            instance.dropped = False
+        # save the changes
+        if commit:
+            instance.save()
+        return instance
 
 
 class AdminJobRelForm(forms.ModelForm):

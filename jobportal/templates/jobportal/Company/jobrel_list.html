@@ -9,14 +9,32 @@
         <h2 class="sub-header">Interested candidates</h2>
         <hr/>
         <div class="col-md-12">
+            {% for message in messages %}
+                <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible"{% endif %}
+                     role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4>{{ message }}</h4>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-12">
             <div class="well">
+
+                <a class="btn btn-info pull-right" role="button"
+                   href="{% url 'company-jobrel-update-round' jobid %}" >Complete Round</a>
+                <br><br><br>
+
             {% if rel_list.count > 0 %}
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Roll No</th>
+                            <th>Programme</th>
                             <th>Department</th>
+                            <th>Round</th>
+                            <th>Status</th>
                             <th>Details</th>
                             <th>CV1</th>
                             <th>CV2</th>
@@ -26,15 +44,42 @@
                         {% for rel in rel_list %}
                             <tr>
                                 <td>{{ rel.stud.first_name | capfirst}} {{ rel.stud.middle_name | capfirst }} {{ rel.stud.last_name | capfirst}}</td>
-                                <td>{{ rel.stud.roll_no }}</td>
-                                <td>{{rel.stud.dept}}</td>
+                                <td>{{ rel.stud.prog }}</td>
+                                <td>{{ rel.stud.dept}}</td>
+                                <td>{{ rel.round }}</td>
+                                <td>
+                                    {% if rel.dropped %}
+                                        Dropped
+                                    {% else %}
+                                        {% if rel.shortlist_init %}
+                                            {% if rel.shortlist_approved == True %}
+                                                {% if rel.placed_init %}
+                                                    Placed Init
+                                                {% else %}
+                                                    Shortlist Approved
+                                                {% endif %}
+                                            {% elif rel.shortlist_approved == False %}
+                                                Shortlist Request Rejected
+                                            {% else %}
+                                                Shortlist Approval Pending
+                                            {% endif %}
+                                        {% else %}
+                                            Not Shortlisted
+                                        {% endif%}
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if rel.job.application_deadline < datenow %}
-                                        <a class="btn btn-xs btn-info" class='inline' href="{% url 'company-jobrel-update' rel.id %}">
+                                        <a class="btn btn-xs btn-info" class='inline'
+                                           href="{% url 'company-jobrel-update' jobid rel.id %}">
                                             Action
                                         </a>
                                     {% else %}
-                                        HIDE
+                                        <!--HIDE-->
+                                        <a class="btn btn-xs btn-info" class='inline'
+                                           href="{% url 'company-jobrel-update' jobid rel.id %}">
+                                            Action
+                                        </a>
                                     {% endif %}
                                 </td>
                                 <td>

@@ -342,6 +342,7 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
+        context['jobid'] = self.job.id
         context['hide'] = timezone.now().date() <= self.job.application_deadline
         return context
 
@@ -358,8 +359,67 @@ class JobRelUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_object(self, queryset=None):
         return get_object_or_404(StudentJobRelation, id=self.kwargs['pk'])
 
+    def form_valid(self, form):
+        form.save()
+        stud_name = self.object.stud.first_name + " " + self.object.stud.last_name
+        msg = 'Status of ' + stud_name + " has been updated successfully."
+        messages.add_message(self.request, messages.SUCCESS, msg)
+        return redirect('company-jobrel-list', pk=self.kwargs['jobpk'])
+
     def get_success_url(self):
         return reverse_lazy('company-jobrel-update', args=(self.object.id,))
+
+
+class JobRelUpdateRound(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Company/jobrel_list.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
+
+    def get(self, request, pk):
+        job = get_object_or_404(Job, id=pk)
+        if job.company_owner.id == request.session['company_instance_id']:
+            rel_list = StudentJobRelation.objects.filter(job__id=pk)
+            # check if jobrel approval is pending
+            if self.get_rel_status(rel_list):
+                # change status of jobrels
+                rel_list = self.change_rel_status(rel_list)
+            else:
+                # message to inform pending approvals
+                messages.add_message(request, messages.ERROR, 'Some approvals are pending.')
+            # return render(request, self.template_name, dict(rel_list=rel_list, jobid=job.id))
+            return redirect('company-jobrel-list', pk=job.id)
+        else:
+            return Http404()
+
+    @staticmethod
+    def get_rel_status(jobrel_list):
+        status = True
+        for rel in jobrel_list:
+            if rel.shortlist_init is True and rel.shortlist_approved is None:
+                status = False
+                break
+            elif rel.placed_init is True and rel.placed_approved is None:
+                status = False
+                break
+        return status
+
+    @staticmethod
+    def change_rel_status(jobrel_list):
+        for rel in jobrel_list:
+            # unshortlisted or shortlist+rejected => dropped
+            if rel.shortlist_init is False and rel.shortlist_approved is not True:
+                rel.dropped = True
+                rel.save()
+            # shortlist+approved => unshortlisted+unapproved
+            elif rel.shortlist_init is True and rel.shortlist_approved is True:
+                rel.shortlist_init = False
+                rel.shortlist_approved = None
+                rel.round += 1
+                rel.save()
+        return rel
 
 
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
