@@ -135,20 +135,24 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         stud = get_object_or_404(Student, id=self.request.session['student_instance_id'])
-        # filter based on opening/closing_date, percentage_x/xii, cpi
-        obj_list1 = Job.objects.filter(
-            approved=True).filter(
-            opening_date__lte=timezone.now().date()).filter(
-            application_deadline__gt=timezone.now().date()).filter(
-            percentage_x__gte=stud.percentage_x).filter(
-            percentage_xii__gte=stud.percentage_xii).filter(
-            Q(cpi_shortlist=False) | Q(cpi_shortlist=True, minimum_cpi__lte=stud.cpi))
-        # filter based on major programme
-        obj_list2 = [e.job for e in ProgrammeJobRelation.objects.filter(prog=stud.prog)]
-        # filter based on minor programme
-        obj_list3 = [e.job for e in MinorProgrammeJobRelation.objects.filter(prog=stud.minor_prog)]
-        # union followed by intersection
-        return list(set(obj_list1) & (set(obj_list2) | set(obj_list3)))
+        # Ref: http://stackoverflow.com/a/12600950/3679857
+        major = ProgrammeJobRelation.objects.filter(prog=stud.prog)
+        minor = MinorProgrammeJobRelation.objects.filter(prog=stud.minor_prog)
+        return Job.objects.filter(
+            Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
+        ).filter(
+            Q(cpi_shortlist=False) | Q(cpi_shortlist=True, minimum_cpi__lte=stud.cpi)
+        ).filter(
+            approved=True
+        ).filter(
+            opening_date__lte=timezone.now().date()
+        ).filter(
+            application_deadline__gt=timezone.now().date()
+        ).filter(
+            percentage_x__gte=stud.percentage_x
+        ).filter(
+            percentage_xii__gte=stud.percentage_xii
+        )
 
     def get_context_data(self, **kwargs):
         context = super(JobList, self).get_context_data(**kwargs)
