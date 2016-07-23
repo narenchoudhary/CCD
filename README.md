@@ -11,8 +11,9 @@ handle is_active logic
 - [ ] Convert Internships view to CBVs
 - [ ] Fee payment structure
 - [ ] File size limitation on CV, profile picture, signature, etc.
-- [ ] views.JobList : Implement Complex QuerySet to filter Jobs based on student profile, add
-percentage_x/xii, CPI Shortlist, Minimum CPI, department, etc.
+- [x] views.JobList: Implement Complex QuerySet to filter Jobs based on percentage_x/xii, 
+CPI Shortlist, Minimum CPI.
+- [x] views.JobList: Filter based on major and minor programme.
 - [ ] views.JobDetail : same as above
 - [ ] views.JobRelCreate : same as above
 - [ ] Add Accordian/Tabs in Job Details Page
