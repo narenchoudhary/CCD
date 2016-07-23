@@ -200,9 +200,9 @@ class Student(models.Model):
                                      verbose_name='Permanent Address Line3')
     pin_code = models.DecimalField(max_digits=10, decimal_places=0, default=781039, verbose_name='PIN Code')
     # board exams
-    percentage_x = models.DecimalField(blank=True, max_digits=5, decimal_places=2, null=True,
+    percentage_x = models.DecimalField(blank=True, max_digits=5, decimal_places=2, default=40,
                                        verbose_name='Percentage X')
-    percentage_xii = models.DecimalField(blank=True, max_digits=5, decimal_places=2, null=True,
+    percentage_xii = models.DecimalField(blank=True, max_digits=5, decimal_places=2, default=40,
                                          verbose_name='Percentage XII')
     board_x = models.CharField(max_length=30, blank=True, default="CBSE", null=True,
                                verbose_name='X Examination Board')
