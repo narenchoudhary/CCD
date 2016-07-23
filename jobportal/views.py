@@ -223,7 +223,7 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
         stud_check = self.check_stud_credentials()
-        # job_check = self.check_job_credentials()
+        job_check = self.check_job_credentials()
         job_check = True
         print stud_check
         print job_check
@@ -271,8 +271,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def check_job_credentials(self):
         time_now = timezone.now().date()
-        opening_date_check = self.job.opening_date < time_now
-        deadline_check = self.job.application_deadline > time_now
+        opening_date_check = self.job.opening_date <= time_now
+        deadline_check = self.job.application_deadline >= time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check
 
@@ -291,9 +291,7 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
         self.jobrel = get_object_or_404(StudentJobRelation, stud=self.stud, job=self.job)
-        # TODO: job_check was modified for testing; change this in production
-        # job_check = self.check_job_credentials()
-        job_check = True
+        job_check = self.check_job_credentials()
         print job_check
         if job_check:
             self.jobrel.delete()
@@ -303,7 +301,7 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def check_job_credentials(self):
         time_now = timezone.now().date()
-        opening_date_check = self.job.opening_date < time_now
+        opening_date_check = self.job.opening_date <= time_now
         deadline_check = self.job.application_deadline > time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check
