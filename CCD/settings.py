@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+from django.contrib import messages
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -142,6 +144,14 @@ FILE_UPLOAD_HANDLERS = (
 
 # Max upload size
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
 
 # Crispy Forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
