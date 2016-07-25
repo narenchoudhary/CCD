@@ -1,4 +1,6 @@
 Django==1.9.8
+django-bootstrap3-datetimepicker==2.3
+django-cleanup==0.4.2
 django-crispy-forms==1.6.0
 django-recaptcha==1.0.5
 django-smart-selects==1.2.2
