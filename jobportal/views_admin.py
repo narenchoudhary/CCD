@@ -5,12 +5,12 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.generic import (View, ListView, CreateView, DetailView, TemplateView,
-                                  UpdateView, DeleteView, RedirectView)
+                                  UpdateView, DeleteView, RedirectView, FormView)
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV, Avatar, Signature, Department,
-                     Year, Programme, ProgrammeJobRelation, UserProfile, MinorProgrammeJobRelation)
+                     Year, Programme, ProgrammeJobRelation, UserProfile, MinorProgrammeJobRelation, Event)
 from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet, AdminJobRelForm,
-                    StudentSearchForm, EditCompany, JobProgMinorFormSet, ProgrammeForm)
+                    StudentSearchForm, EditCompany, JobProgMinorFormSet, ProgrammeForm, AdminEventForm)
 
 from internships.models import IndInternship, StudentInternRelation
 
@@ -420,3 +420,52 @@ class JobProgMinorUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             args = dict(formset=formset, job=job)
             return render(request, self.template, args)
+
+
+class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = Event
+    template_name = 'jobportal/Admin/event_list.html'
+    context_object_name = 'event_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get_queryset(self):
+        return Event.objects.all().order_by('-creation_datetime')
+
+
+class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = Event
+    template_name = 'jobportal/Admin/event_detail.html'
+    context_object_name = 'event'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Event, id=self.kwargs['pk'])
+
+
+class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    form_class = AdminEventForm
+    template_name = 'jobportal/Admin/event_update.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Event, id=self.kwargs['pk'])
+
+    def get_success_url(self):
+        # return reverse_lazy('admin-event-detail', args=(self.object.id,))
+        return reverse_lazy('admin-event-list')
+
+    def form_valid(self, form):
+        form.save()
+        return super(EventUpdate, self).form_valid(form)

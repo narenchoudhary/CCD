@@ -277,7 +277,7 @@ class CompanyEventForm(forms.Form):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'event_date', 'event_type']
+        fields = ['title', 'event_type', 'event_date1', 'event_date2']
 
 
 class CompanyProfileEdit(ModelForm):
@@ -609,16 +609,48 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'event_date', 'event_time']
+        fields = ['title', 'event_type', 'event_date1', 'event_date2']
         widgets = {
-            'event_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            'event_time': DateTimePicker(options={'format': 'hh mm A', "pickSeconds": False, 'stepping': 30}),
+            'event_date1': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+            'event_date2': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+            # 'event_time': DateTimePicker(options={'format': 'hh mm A', "pickSeconds": False, 'stepping': 30}),
         }
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+
+class AdminEventForm(forms.ModelForm):
+
+    class Meta:
+        model = Event
+        fields = ['title', 'event_type', 'event_date1', 'event_date2', 'is_approved', 'final_date']
+        widgets = {
+            'event_date1': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+            'event_date2': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+            'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AdminEventForm, self).__init__(*args, **kwargs)
+        self.fields['title'].disabled = True
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+    def clean(self):
+        cleaned_data = super(AdminEventForm, self).clean()
+        is_approved = cleaned_data.get('is_approved')
+        final_date = cleaned_data.get('final_date')
+
+        if is_approved is None and final_date is None:
+            return cleaned_data
+        elif is_approved is not None and final_date is not None:
+            return cleaned_data
+        else:
+            err_msg = "Either update both 'Approval Status' and 'Approved Date' or leave both unupdated."
+            raise forms.ValidationError(err_msg)
 
 
 class ProgrammeForm(forms.ModelForm):

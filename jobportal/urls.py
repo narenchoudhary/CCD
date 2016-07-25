@@ -77,7 +77,7 @@ urlpatterns = [
 
     url(r'^company/event/list/$', views_company.EventList.as_view(), name='company-event-list'),
     url(r'^company/event/create/$', views_company.EventCreate.as_view(), name='company-event-create'),
-    url(r'^company/event/(?P<pk>\d+)/detail/$', views_company.EventList.as_view(), name='company-event-detail'),
+    url(r'^company/event/(?P<pk>\d+)/detail/$', views_company.EventDetail.as_view(), name='company-event-detail'),
 
     # Job Actions : Students
     # url(r'^company/jobrel/stud/(?P<relationid>\d+)/shortlist/$', views_company.job_shortlist, name='shortlist'),
@@ -122,6 +122,9 @@ urlpatterns = [
     url(r'^admin/job/(?P<pk>\d+)/jobrel/list/$', views_admin.JobRelList.as_view(), name='admin-jobrel-list'),
     url(r'^admin/job/jobrel/(?P<pk>\d+)/update/$', views_admin.JobRelUpdate.as_view(), name='admin-jobrel-update'),
 
+    url(r'^admin/event/list/$', views_admin.EventList.as_view(), name='admin-event-list'),
+    url(r'^admin/event/(?P<pk>\d+)/detail/$', views_admin.EventDetail.as_view(), name='admin-event-detail'),
+    url(r'^admin/event/(?P<pk>\d+)/update/$', views_admin.EventUpdate.as_view(), name='admin-event-update'),
 
     url(r'^admin/department/list/$', views_admin.DepartmentList.as_view(), name="department-list"),
     url(r'^admin/department/create/$', views_admin.DepartmentCreate.as_view(), name="department-create"),

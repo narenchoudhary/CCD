@@ -1,4 +1,4 @@
-{% extends 'base_company.html' %}
+{% extends 'base_admin.html' %}
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
@@ -15,21 +15,25 @@
         <table class="table table-responsive">
             <thead>
                 <th>Event Title</th>
+                <th>Company</th>
                 <th>Event Type</th>
                 <th>Preferred Date(1st)</th>
                 <th>Preferred Date(2nd)</th>
-                <th>Details</th>
+                <th>Approved</th>
+                <th>Update</th>
             </thead>
             <tbody>
                 {% for event in event_list %}
                 <tr>
                     <td>{{event.title}}</td>
+                    <td>{{event.company_owner}}</td>
                     <td>{{event.event_type}}</td>
                     <td>{{event.event_date1}}</td>
                     <td>{{event.event_date2}}</td>
+                    <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
                     <td>
                         <a class="btn btn-xs btn-info" role="button"
-                           href="{% url 'company-event-detail' event.id %}">Details</a>
+                           href="{% url 'admin-event-update' event.id %}">Update</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -37,10 +41,7 @@
         </table>
     {% else %}
         <h4>
-            Bummer there isn't anything here. Please follow
-            <a href="{% url 'company-event-create' %}">
-                <span style="color: #00b6b6">this</span>
-            </a> to create a new event.
+            Bummer there isn't anything here yet.
         </h4>
     {% endif %}
 </div>

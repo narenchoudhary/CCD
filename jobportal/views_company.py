@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import update_session_auth_hash
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, get_list_or_404, render, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -422,6 +422,16 @@ class JobRelUpdateRound(LoginRequiredMixin, UserPassesTestMixin, View):
         return rel
 
 
+class ProgrammeList(View):
+    template_name = 'jobportal/Company/programme_list.html'
+
+    def get(self, request):
+        prog_minor_list = Programme.objects.filter(open_for_placement=True, minor_status=True)
+        prog_major_list = Programme.objects.filter(open_for_placement=True, minor_status=False)
+        args = dict(prog_major_list=prog_major_list, prog_minor_list=prog_minor_list)
+        return render(request, self.template_name, args)
+
+
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     raise_exception = True
@@ -449,24 +459,26 @@ class EventCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return reverse_lazy('company-event-detail', args=(self.object.id,))
 
     def form_valid(self, form):
-        form = form.save(commit=False)
-        form.company_owner = get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        instance = form.save(commit=False)
+        instance.company_owner = get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        instance.save()
+        return super(EventCreate, self).form_valid(form)
 
 
-class EventDetail(DetailView):
+class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     model = Event
     template_name = 'jobportal/Company/event_detail.html'
     context_object_name = 'event'
 
+    def test_func(self):
+        return self.request.user.user_type == 'company'
+
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs['pk'])
-
-
-class ProgrammeList(View):
-    template_name = 'jobportal/Company/programme_list.html'
-
-    def get(self, request):
-        prog_minor_list = Programme.objects.filter(open_for_placement=True, minor_status=True)
-        prog_major_list = Programme.objects.filter(open_for_placement=True, minor_status=False)
-        args = dict(prog_major_list=prog_major_list, prog_minor_list=prog_minor_list)
-        return render(request, self.template_name, args)
+        event = get_object_or_404(Event, id=self.kwargs['pk'])
+        if event.company_owner.pk is self.request.session['company_instance_id']:
+            return event
+        else:
+            # HTTP ERROR 403
+            return HttpResponseForbidden()

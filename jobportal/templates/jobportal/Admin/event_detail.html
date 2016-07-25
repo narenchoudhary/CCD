@@ -1,4 +1,4 @@
-{% extends 'base_company.html' %}
+{% extends 'base_admin.html' %}
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
@@ -7,11 +7,12 @@
 {% endblock%}
 
 {% block content %}
+
 <div class="col-md-12">
     <h2 class="sub-header">Event Detail</h2>
-    <hr/>
+    <hr>
     <div class="col-md-8">
-        <table class="table table-responsive table-striped">
+        <table class="table table-responsive">
             <tr>
                 <td>Title</td>
                 <td>{{event.title}}</td>
@@ -30,20 +31,13 @@
             </tr>
             <tr>
                 <td>Approval Status</td>
-                <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
+                <td>{{event.is_approved}}</td>
             </tr>
             <tr>
                 <td>Approved Date</td>
-                <td>
-                    {% if event.is_approved == True %}
-                        {{event.final_date}}
-                    {% else %}
-                        ----
-                    {% endif %}
-                </td>
+                <td>{{event.final_date}}</td>
             </tr>
         </table>
     </div>
 </div>
-
 {% endblock %}
