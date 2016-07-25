@@ -306,9 +306,9 @@ class CompanyEventForm(forms.Form):
 
 
 class CompanyProfileEdit(ModelForm):
-    company_name = forms.CharField(max_length=30,
-                                   label="Company Name",
-                                   widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    # company_name = forms.CharField(max_length=30,
+    #                                label="Company Name",
+    #                                widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Company
@@ -319,6 +319,11 @@ class CompanyProfileEdit(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CompanyProfileEdit, self).__init__(*args, **kwargs)
+        self.fields['company_name'].disabled = True
+        self.fields['postal_address'].disabled = True
+        self.fields['website'].disabled = True
+        self.fields['organization_type'].disabled = True
+        self.fields['industry_sector'].disabled = True
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
