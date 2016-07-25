@@ -14,7 +14,7 @@
                 <p><span style="color: red">The job has been already approved. It can't be edited now.</span></p>
                 <p><span style="color: red">Contact administrator for more information.</span></p>
             {% else %}
-                <form method="post" accept-charset="utf-8">
+                <form method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% crispy form form.helper %}
                 </form>

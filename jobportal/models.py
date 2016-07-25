@@ -280,34 +280,35 @@ class Job(models.Model):
     # Salary
     currency = models.CharField(default="INR", max_length=15, null=True)
     ctc_btech = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                    verbose_name='CTC BTech')
+                                    blank=True, verbose_name='CTC BTech')
     ctc_mtech = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                    verbose_name='CTC MTech')
+                                    blank=True, verbose_name='CTC MTech')
     ctc_msc = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                  verbose_name='CTC MSc')
+                                  blank=True, verbose_name='CTC MSc')
     ctc_ma = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                 verbose_name='CTC MA')
+                                 blank=True, verbose_name='CTC MA')
     ctc_phd = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                  verbose_name='CTC PhD')
+                                  blank=True, verbose_name='CTC PhD')
     gross_btech = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                      verbose_name='Gross BTech')
+                                      blank=True, verbose_name='Gross BTech')
     gross_mtech = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                      verbose_name='Gross MTech')
+                                      blank=True, verbose_name='Gross MTech')
     gross_msc = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                    verbose_name='Gross MSc')
+                                    blank=True, verbose_name='Gross MSc')
     gross_ma = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                   verbose_name='Gross MA')
+                                   blank=True, verbose_name='Gross MA')
     gross_phd = models.DecimalField(max_digits=16, decimal_places=2, default=0.00, null=True,
-                                    verbose_name='Gross PhD')
+                                    blank=True, verbose_name='Gross PhD')
     take_home_during_training = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, null=True,
-                                                    verbose_name='Take Home During Training')
+                                                    blank=True, verbose_name='Take Home During Training')
     take_home_after_training = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, null=True,
-                                                   verbose_name='Take Home After Training')
+                                                   blank=True, verbose_name='Take Home After Training')
     bonus = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Bonus/Incentives",
-                                null=True)
+                                null=True, blank=True)
     # Job description
-    bond = models.NullBooleanField(default=None, verbose_name='Legal Bond')
-    bond_link = models.URLField(null=True, blank=True, verbose_name='Bond Document Link')
+    # bond = models.BooleanField(default=False, verbose_name='Legal Bond')
+    # bond_link = models.URLField(null=True, blank=True, verbose_name='Bond Document Link')
+    bond_link = models.FileField(null=True, blank=True, verbose_name='Legal Bond Document')
     # Dates and Status
     posted_on = models.DateTimeField(blank=True, null=True, verbose_name='Creation Date')
     last_updated = models.DateTimeField(null=True, blank=True, verbose_name='Last Updatation Date')

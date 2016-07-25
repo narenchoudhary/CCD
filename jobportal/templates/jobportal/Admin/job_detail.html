@@ -120,18 +120,15 @@
         <div role="tabpanel" class="tab-pane" id="bond">
             <table class="table table-striped">
                 <tr>
-                    <td>Bond</td>
-                    <td>{{job.bond|yesno}}</td>
-                </tr>
-                <tr>
                     <td>Bond Document URL</td>
                     <td>
-                        {% if job.bond %}
-                            {{job.bond_link}}
-                        {% else %}
-                            No legal bond document provided.
-                        {% endif %}
-                    </td>
+                    {% if job.bond_link %}
+                        <a href="{{job.bond_link.url}}" target="_blank"
+                        class="btn btn-info">Download Bond Document</a>
+                    {% else %}
+                        No bond document uploaded
+                    {% endif %}
+                </td>
                 </tr>
             </table>
         </div>

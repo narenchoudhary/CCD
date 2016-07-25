@@ -124,13 +124,13 @@ class CompanyJobForm(ModelForm):
                   'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
                   'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond', 'bond_link']
+                  'bonus', 'bond_link']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields['bond_link'].help_text = 'Upload bond document to Drive/Dropbox and add link here.'
+        self.fields['bond_link'].help_text = 'Upload the bond document.'
         self.fields['cpi_shortlist'].help_text = 'Select if CPI-based filtering is needed.'
 
         self.helper.layout = Layout(
@@ -169,19 +169,43 @@ class CompanyJobForm(ModelForm):
                     'Salary Breakdown',
 
                     'currency',
-                    'ctc_btech',
-                    'ctc_mtech',
-                    'ctc_phd',
-                    'ctc_msc',
-                    'ctc_ma',
-                    'gross_btech',
-                    'gross_mtech',
-                    'gross_phd',
-                    'gross_msc',
-                    'gross_ma',
-                    'take_home_during_training',
-                    'take_home_after_training',
-                    'bonus',
+                    HTML('<h4>B.Tech</h4>'),
+                    Div(
+                        Field('ctc_btech'),
+                        Field('gross_btech'),
+                        css_class='col-md-12'
+                    ),
+                    HTML('<h4>M.Tech</h4>'),
+                    Div(
+                        Field('ctc_mtech'),
+                        Field('gross_mtech'),
+                        css_class='col-md-12'
+                    ),
+                    HTML('<h4>Ph.D.</h4>'),
+                    Div(
+                        Field('ctc_phd'),
+                        Field('gross_phd'),
+                        css_class='col-md-12'
+                    ),
+                    HTML('<h4>M.Sc.</h4>'),
+                    Div(
+                        Field('ctc_msc'),
+                        Field('gross_msc'),
+                        css_class='col-md-12'
+                    ),
+                    HTML('<h4>M.A.</h4>'),
+                    Div(
+                        Field('ctc_ma'),
+                        Field('gross_ma'),
+                        css_class='col-md-12'
+                    ),
+                    HTML('<h4>Summary</h4>'),
+                    Div(
+                        Field('take_home_during_training'),
+                        Field('take_home_after_training'),
+                        Field('bonus'),
+                        css_class='col-md-12'
+                    ),
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -189,7 +213,7 @@ class CompanyJobForm(ModelForm):
                 ),
                 Tab(
                     'Bond',
-                    'bond',
+                    # 'bond',
                     Field('bond_link', placeholder='Leave empty if no bond is needed'),
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
@@ -208,7 +232,7 @@ class AdminJobEditForm(ModelForm):
                   'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
                   'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond', 'bond_link', 'approved', 'opening_date', 'application_deadline',
+                  'bonus', 'bond_link', 'approved', 'opening_date', 'application_deadline',
                   ]
         widgets = {
             'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
@@ -252,7 +276,8 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Bond',
 
-                    'bond', 'bond_link',
+                    # 'bond',
+                    'bond_link',
 
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>

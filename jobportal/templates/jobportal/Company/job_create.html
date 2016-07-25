@@ -11,9 +11,8 @@
         <hr/>
 		<div class="col-md-9">
             <div class="well">
-                <form method="post" accept-charset="utf-8">
+                <form method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form.non_field_errors }}
                     {% crispy form form.helper %}
                     <!--<input type="submit" value="Post" class = "btn btn-success">-->
                 </form>
