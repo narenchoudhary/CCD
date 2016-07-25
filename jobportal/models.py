@@ -365,12 +365,11 @@ class Event(models.Model):
     title = models.CharField(max_length=30, null=True, verbose_name='Event Title')
     event_type = models.CharField(max_length=30, choices=EVENT_TYPE, blank=True, null=True,
                                   verbose_name='Event Type')
-    event_date = models.DateField(null=True, blank=True,
-                                  verbose_name='Event Date')
-    event_time = models.TimeField(null=True, blank=True,
-                                  verbose_name='Event Time')
-    is_approved = models.NullBooleanField(default=None,
-                                          verbose_name='Approval Status')
+    event_date1 = models.DateField(null=True, verbose_name='Preferred Date (1st)')
+    event_date2 = models.DateField(null=True, blank=True,
+                                   verbose_name='Preferred Date (2nd)')
+    final_date = models.DateField(null=True, blank=True, verbose_name='Approved Date')
+    is_approved = models.NullBooleanField(default=None, verbose_name='Approval Status')
     creation_datetime = models.DateTimeField(editable=False, null=True,
                                              verbose_name='Creation DateTime')
 
