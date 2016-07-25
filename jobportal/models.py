@@ -267,8 +267,8 @@ class Job(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name='Job Description')
     designation = models.CharField(blank=True, max_length=50, null=True, verbose_name='Job Designation')
     profile_name = models.CharField(max_length=15, null=True, verbose_name='Profile Name')
-    num_openings = models.DecimalField(max_digits=3, decimal_places=0, null=True, default=10,
-                                       verbose_name='Number of Openings')
+    num_openings = models.DecimalField(max_digits=3, decimal_places=0, null=True, blank=True,
+                                       default=10, verbose_name='Number of Openings')
     # requirements
     cpi_shortlist = models.BooleanField(default=False, verbose_name='CPI-Shortlist')
     minimum_cpi = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
