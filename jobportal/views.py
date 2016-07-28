@@ -5,10 +5,12 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView, UpdateView)
+from django.views.generic import (View, ListView, TemplateView, DetailView,
+                                  CreateView, UpdateView)
 
-from .models import (UserProfile, Admin, Student, Company, Alumni, StudentJobRelation, Event, Job,
-                     ProgrammeJobRelation, MinorProgrammeJobRelation, Avatar, Signature, CV)
+from .models import (UserProfile, Admin, Student, Company, Alumni,
+                     StudentJobRelation, Event, Job, ProgrammeJobRelation,
+                     MinorProgrammeJobRelation, Avatar, Signature, CV)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
@@ -31,14 +33,16 @@ def login(request):
                     user_profile = UserProfile.objects.get(username=username)
                     if user_profile.user_type == 'student':
                         auth.login(request, user)
-                        student_instance = Student.objects.get(user=user_profile)
+                        student_instance = Student.objects.get(user=
+                                                               user_profile)
                         request.session['student_instance_id'] = student_instance.id
                         request.session['login_type'] = 'student'
                         return redirect('stud-home')
 
                     elif user_profile.user_type == 'company':
                         auth.login(request, user)
-                        company_instance = Company.objects.get(user=user_profile)
+                        company_instance = Company.objects.get(user=
+                                                               user_profile)
                         request.session['company_instance_id'] = company_instance.id
                         request.session['login_type'] = 'company'
                         return redirect('company-home')
@@ -58,7 +62,7 @@ def login(request):
                         return redirect('admin-home')
 
                     else:
-                        # this case should never happen unless new users are added
+                        # this should never happen unless new users are added
                         args = dict(form=form)
                         return render(request, 'jobportal/login.html', args)
                 else:
@@ -121,7 +125,9 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Student, id=self.request.session['student_instance_id'])
+        return get_object_or_404(
+            Student,
+            id=self.request.session['student_instance_id'])
 
 
 class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -134,14 +140,16 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'student'
 
     def get_queryset(self):
-        stud = get_object_or_404(Student, id=self.request.session['student_instance_id'])
+        stud = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
         # Ref: http://stackoverflow.com/a/12600950/3679857
         major = ProgrammeJobRelation.objects.filter(prog=stud.prog)
         minor = MinorProgrammeJobRelation.objects.filter(prog=stud.minor_prog)
         return Job.objects.filter(
             Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
         ).filter(
-            Q(cpi_shortlist=False) | Q(cpi_shortlist=True, minimum_cpi__lte=stud.cpi)
+            Q(cpi_shortlist=False) | Q(cpi_shortlist=True,
+                                       minimum_cpi__lte=stud.cpi)
         ).filter(
             approved=True
         ).filter(
@@ -156,7 +164,8 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(JobList, self).get_context_data(**kwargs)
-        context['stud'] = get_object_or_404(Student, id=self.request.session['student_instance_id'])
+        context['stud'] = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
         return context
 
 
@@ -177,15 +186,17 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context
 
     def student_cv(self):
-        cv = get_object_or_404(CV, stud__id=self.request.session['student_instance_id'])
+        cv = get_object_or_404(
+            CV, stud__id=self.request.session['student_instance_id'])
         if cv.cv1 is None and cv.cv2 is None:
             return True
         return False
 
     def get_jobrel_or_none(self, jobid):
         try:
-            jobrel = StudentJobRelation.objects.get(job__id=jobid,
-                                                    stud__id=self.request.session['student_instance_id'])
+            jobrel = StudentJobRelation.objects.get(
+                job__id=jobid,
+                stud__id=self.request.session['student_instance_id'])
             return jobrel
         except StudentJobRelation.DoesNotExist:
             return None
@@ -200,7 +211,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'student'
 
     def get_queryset(self):
-        return StudentJobRelation.objects.filter(stud__id=self.request.session['student_instance_id'])
+        return StudentJobRelation.objects.filter(
+            stud__id=self.request.session['student_instance_id'])
 
 
 class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -224,7 +236,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         return self.request.user.user_type == 'student'
 
     def get(self, request, pk):
-        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        self.stud = get_object_or_404(
+            Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
         stud_check = self.check_stud_credentials()
         job_check = self.check_job_credentials()
@@ -239,7 +252,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def post(self, request, pk):
         self.job = get_object_or_404(Job, id=pk)
-        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        self.stud = get_object_or_404(
+            Student, id=request.session['student_instance_id'])
         stud_check = self.check_stud_credentials()
         # job_check = self.check_job_credentials()
         job_check = True
@@ -292,9 +306,11 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         return self.request.user.user_type == 'student'
 
     def get(self, request, pk):
-        self.stud = get_object_or_404(Student, id=request.session['student_instance_id'])
+        self.stud = get_object_or_404(
+            Student, id=request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=pk)
-        self.jobrel = get_object_or_404(StudentJobRelation, stud=self.stud, job=self.job)
+        self.jobrel = get_object_or_404(StudentJobRelation,
+                                        stud=self.stud, job=self.job)
         job_check = self.check_job_credentials()
         print job_check
         if job_check:
@@ -336,7 +352,8 @@ class AvatarDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
+            avatar = Avatar.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except Avatar.DoesNotExist:
             avatar = None
         return avatar
@@ -355,7 +372,8 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_object(self, queryset=None):
         try:
-            avatar = Avatar.objects.get(stud__id=self.request.session['student_instance_id'])
+            avatar = Avatar.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except Avatar.DoesNotExist:
             avatar = None
         return avatar
@@ -374,7 +392,8 @@ class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         avatar = form.save(commit=False)
-        avatar.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        avatar.stud = Student.objects.get(
+            id=self.request.session['student_instance_id'])
         return super(AvatarCreate, self).form_valid(form)
 
 
@@ -390,7 +409,8 @@ class SignatureDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            signature = Signature.objects.get(stud__id=self.request.session['student_instance_id'])
+            signature = Signature.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except Signature.DoesNotExist:
             signature = None
         return signature
@@ -409,7 +429,8 @@ class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         signature = form.save(commit=False)
-        signature.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        signature.stud = Student.objects.get(
+            id=self.request.session['student_instance_id'])
         return super(SignatureCreate, self).form_valid(form)
 
 
@@ -426,7 +447,8 @@ class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_object(self, queryset=None):
         try:
-            signature = Signature.objects.get(stud__id=self.request.session['student_instance_id'])
+            signature = Signature.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except Avatar.DoesNotExist:
             signature = None
         return signature
@@ -444,7 +466,8 @@ class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            cv = CV.objects.get(stud__id=self.request.session['student_instance_id'])
+            cv = CV.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except CV.DoesNotExist:
             cv = None
         return cv
@@ -462,7 +485,8 @@ class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         cv = form.save(commit=False)
-        cv.stud = Student.objects.get(id=self.request.session['student_instance_id'])
+        cv.stud = Student.objects.get(
+            id=self.request.session['student_instance_id'])
         return super(CVCreate, self).form_valid(form)
 
 
@@ -479,7 +503,8 @@ class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_object(self, queryset=None):
         try:
-            cv = CV.objects.get(stud__id=self.request.session['student_instance_id'])
+            cv = CV.objects.get(
+                stud__id=self.request.session['student_instance_id'])
         except CV.DoesNotExist:
             cv = None
         return cv
