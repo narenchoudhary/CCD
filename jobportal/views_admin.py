@@ -4,13 +4,17 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.views.generic import (View, ListView, CreateView, DetailView, TemplateView,
-                                  UpdateView, DeleteView, RedirectView, FormView)
+from django.views.generic import (View, ListView, CreateView, DetailView,
+                                  TemplateView, UpdateView, DeleteView,
+                                  RedirectView, FormView)
 
-from .models import (Admin, Student, Company, Job, StudentJobRelation, CV, Avatar, Signature, Department,
-                     Year, Programme, ProgrammeJobRelation, UserProfile, MinorProgrammeJobRelation, Event)
-from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet, AdminJobRelForm,
-                    StudentSearchForm, EditCompany, JobProgMinorFormSet, ProgrammeForm, AdminEventForm)
+from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
+                     Avatar, Signature, Department, Year, Programme,
+                     ProgrammeJobRelation, UserProfile,
+                     MinorProgrammeJobRelation, Event)
+from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet,
+                    AdminJobRelForm, StudentSearchForm, EditCompany,
+                    JobProgMinorFormSet, ProgrammeForm, AdminEventForm)
 
 from internships.models import IndInternship, StudentInternRelation
 
@@ -184,8 +188,10 @@ class CompanyDetail(DetailView):
         context = super(CompanyDetail, self).get_context_data(**kwargs)
         company_instance = Company.objects.get(id=self.kwargs['pk'])
         context['company'] = company_instance
-        context['intern_list'] = IndInternship.objects.filter(company_owner=company_instance)
-        context['job_list'] = Job.objects.filter(company_owner=company_instance)
+        context['intern_list'] = IndInternship.objects.filter(company_owner=
+                                                              company_instance)
+        context['job_list'] = Job.objects.filter(company_owner=
+                                                 company_instance)
         return context
 
 
@@ -218,7 +224,8 @@ class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
             user.save()
         if company.approved is not True:
             company.approved = True
-            company.approver = Admin.objects.get(id=self.request.session['admin_instance_id'])
+            company.approver = Admin.objects.get(
+                id=self.request.session['admin_instance_id'])
             company.approval_date = timezone.now()
             company.save()
         return redirect('admin-company-detail', pk=company.id)
@@ -254,8 +261,10 @@ class JobDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
-        context['prog_list'] = ProgrammeJobRelation.objects.filter(job=self.object.id)
-        context['prog_minor_list'] = MinorProgrammeJobRelation.objects.filter(job=self.object.id)
+        context['prog_list'] = ProgrammeJobRelation.objects.filter(
+            job=self.object.id)
+        context['prog_minor_list'] = MinorProgrammeJobRelation.objects.filter(
+            job=self.object.id)
         return context
 
 
@@ -318,8 +327,10 @@ class StudentList(View):
             programme = form.cleaned_data['programme']
             minor_status = form.cleaned_data['minor_status']
             try:
-                prog = Programme.objects.get(year__current_year=year, dept__dept_code=dept_code,
-                                             name=programme, minor_status=minor_status)
+                prog = Programme.objects.get(year__current_year=year,
+                                             dept__dept_code=dept_code,
+                                             name=programme,
+                                             minor_status=minor_status)
                 stud_list = Student.objects.filter(prog=prog)
                 args = dict(form=form, stud_list=stud_list)
                 return render(request, self.template, args)
@@ -340,7 +351,8 @@ class StudentDetail(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super(StudentDetail, self).get_context_data(**kwargs)
-        context['job_list'] = StudentJobRelation.objects.filter(stud__id=self.object.id)
+        context['job_list'] = StudentJobRelation.objects.filter(stud__id=
+                                                                self.object.id)
         try:
             context['cv'] = CV.objects.get(stud__id=self.object.id)
         except CV.DoesNotExist:
@@ -350,7 +362,8 @@ class StudentDetail(DetailView):
         except Avatar.DoesNotExist:
             context['avatar'] = None
         try:
-            context['signature'] = Signature.objects.get(stud__id=self.object.id)
+            context['signature'] = Signature.objects.get(stud__id=
+                                                         self.object.id)
         except Signature.DoesNotExist:
             context['signature'] = None
 
@@ -367,7 +380,9 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
-        return StudentJobRelation.objects.filter(Q(shortlist_approved__isnull=True) | Q(placed_approved__isnull=True))
+        return StudentJobRelation.objects.filter(
+            Q(shortlist_approved__isnull=True) |
+            Q(placed_approved__isnull=True))
 
 
 class JobProgUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -377,7 +392,7 @@ class JobProgUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
     template = 'jobportal/Admin/jobprog_update.html'
 
     def test_func(self):
-        self.request.user.user_type == 'admin'
+        return self.request.user.user_type == 'admin'
 
     def get(self, request, pk):
         job = get_object_or_404(Job, id=pk)
