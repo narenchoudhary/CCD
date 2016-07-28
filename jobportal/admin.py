@@ -1,8 +1,30 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import *
 
-admin.site.register(UserProfile)
+
+class UserProfileChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = UserProfile
+
+
+class UserProfileCreationForm(UserCreationForm):
+
+    class Meta(UserCreationForm.Meta):
+        model = UserProfile
+
+
+class UserProfileAdmin(UserAdmin):
+    form = UserProfileChangeForm
+    add_form = UserProfileCreationForm
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('user_type',)}),
+    )
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
 
 admin.site.register(Admin)
 admin.site.register(Company)
