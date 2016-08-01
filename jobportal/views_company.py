@@ -9,16 +9,19 @@ from django.contrib.auth.views import update_session_auth_hash
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, get_list_or_404, render, redirect
+from django.shortcuts import (get_object_or_404, get_list_or_404, render,
+                              redirect)
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (View, TemplateView, RedirectView, CreateView,
                                   UpdateView, ListView, DetailView, FormView)
 
-from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation, Alumni,
-                     Event, Programme, MinorProgrammeJobRelation)
-from .forms import (CompanyProfileEdit, CompanyJobForm, JobProgFormSet, CompanySignup,
-                    UserProfileForm, CompanyJobRelForm, EventForm, JobProgMinorFormSet)
+from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation,
+                     Alumni, Event, Programme, MinorProgrammeJobRelation)
+from .forms import (CompanyProfileEdit, CompanyJobForm, JobProgFormSet,
+                    CompanySignup, UserProfileForm, CompanyJobRelForm,
+                    EventForm, JobProgMinorFormSet)
+
 from .mixins import CurrentAppMixin
 
 COMPANY_LOGIN_URL = reverse_lazy('login')
@@ -36,9 +39,11 @@ def password_change_company(request):
             return redirect("companyhome")
         else:
             args = {'form': form}
-            return render(request, 'jobportal/Company/passwordchange.html', args)
+            return render(request, 'jobportal/Company/passwordchange.html',
+                          args)
     else:
-        company_instance = get_object_or_404(Company, id=request.session['company_instance_id'])
+        company_instance = get_object_or_404(
+            Company, id=request.session['company_instance_id'])
         form = PasswordChangeForm(request)
         args = {'form': form, 'company_instance': company_instance}
         return render(request, 'jobportal/Company/passwordchange.html', args)
@@ -54,7 +59,8 @@ def add_progs(request, jobid):
             return redirect('companyjob', jobid=job_instance.id)
         else:
             args = dict(formset=formset, job_instance=job_instance)
-            return render(request, 'jobportal/Company/add_job_progs.html', args)
+            return render(request, 'jobportal/Company/add_job_progs.html',
+                          args)
     else:
         args = dict(formset=formset, job_instance=job_instance)
         return render(request, 'jobportal/Company/add_job_progs.html', args)
@@ -106,7 +112,8 @@ class JobProgMinorUpdate(View):
 def job_drop(request, jobid):
     # TODO: Check no shortlist bug
     job_instance = get_object_or_404(Job, id=jobid)
-    stud_rels = list(StudentJobRelation.objects.get(job=job_instance, dropped=False))
+    stud_rels = list(StudentJobRelation.objects.get(job=job_instance,
+                                                    dropped=False))
     approval_error = False
     for rel in stud_rels:
         if rel.shortlist_init is True and rel.shortlist_approved is not True:
@@ -154,7 +161,8 @@ def download_cvs(request, jobid):
 
     zf.close()
 
-    response = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+    response = HttpResponse(s.getvalue(),
+                            content_type="application/x-zip-compressed")
     response['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 
     return response
@@ -203,7 +211,8 @@ class ProfileDetail(DetailView):
     context_object_name = 'company'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        return get_object_or_404(Company,
+                                 id=self.request.session['company_instance_id'])
 
 
 class ProfileUpdate(UpdateView):
@@ -212,7 +221,8 @@ class ProfileUpdate(UpdateView):
     success_url = reverse_lazy('company-profile-detail')
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        return get_object_or_404(
+            Company, id=self.request.session['company_instance_id'])
 
 
 class PasswordChangeView(CurrentAppMixin, UpdateView):
@@ -247,7 +257,8 @@ class JobList(ListView):
     context_object_name = 'job_list'
 
     def get_queryset(self):
-        return Job.objects.filter(company_owner__id=self.request.session['company_instance_id'])
+        return Job.objects.filter(
+            company_owner__id=self.request.session['company_instance_id'])
 
 
 class JobCreate(CreateView):
@@ -258,7 +269,8 @@ class JobCreate(CreateView):
         job = form.save(commit=False)
         job.posted_by_alumnus = False
         job.posted_by_company = True
-        job.company_owner = Company.objects.get(id=self.request.session['company_instance_id'])
+        job.company_owner = Company.objects.get(
+            id=self.request.session['company_instance_id'])
         return super(JobCreate, self).form_valid(form)
 
     def get_success_url(self):
@@ -272,7 +284,8 @@ class JobDetail(DetailView):
 
     def get_object(self, queryset=None):
         job = get_object_or_404(Job, id=self.kwargs['pk'])
-        company = get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        company = get_object_or_404(
+            Company, id=self.request.session['company_instance_id'])
         if job.company_owner == company:
             return job
         else:
@@ -280,8 +293,10 @@ class JobDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
-        context['rel_list'] = ProgrammeJobRelation.objects.filter(job=self.object.id)
-        context['rel_minor_list'] = MinorProgrammeJobRelation.objects.filter(job=self.object.id)
+        context['rel_list'] = ProgrammeJobRelation.objects.filter(
+            job=self.object.id)
+        context['rel_minor_list'] = MinorProgrammeJobRelation.objects.filter(
+            job=self.object.id)
         return context
 
 
@@ -296,7 +311,8 @@ class JobUpdate(UpdateView):
 
     def get_object(self, queryset=None):
         job = get_object_or_404(Job, id=self.kwargs['pk'])
-        company = Company.objects.get(id=self.request.session['company_instance_id'])
+        company = Company.objects.get(
+            id=self.request.session['company_instance_id'])
         if job.company_owner == company:
             return job
         else:
@@ -335,7 +351,9 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         self.job = Job.objects.get(id=self.kwargs['pk'])
-        if self.job.company_owner.id == self.request.session['company_instance_id'] and self.job.approved:
+        owner_id = self.job.company_owner.id
+        user_id = self.request.session['company_instance_id']
+        if owner_id == user_id and self.job.approved:
             return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
         else:
             return Http404()
@@ -343,7 +361,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
         context['jobid'] = self.job.id
-        context['hide'] = timezone.now().date() <= self.job.application_deadline
+        deadline = self.job.application_deadline
+        context['hide'] = timezone.now().date() <= deadline
         return context
 
 
@@ -361,7 +380,8 @@ class JobRelUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.save()
-        stud_name = self.object.stud.first_name + " " + self.object.stud.last_name
+        stud_name = self.object.stud.first_name + \
+                    self.object.stud.middle_name + self.object.stud.last_name
         msg = 'Status of ' + stud_name + " has been updated successfully."
         messages.add_message(self.request, messages.SUCCESS, msg)
         return redirect('company-jobrel-list', pk=self.kwargs['jobpk'])
@@ -388,7 +408,8 @@ class JobRelUpdateRound(LoginRequiredMixin, UserPassesTestMixin, View):
                 rel_list = self.change_rel_status(rel_list)
             else:
                 # message to inform pending approvals
-                messages.add_message(request, messages.ERROR, 'Some approvals are pending.')
+                messages.add_message(request, messages.ERROR,
+                                     'Some approvals are pending.')
             # return render(request, self.template_name, dict(rel_list=rel_list, jobid=job.id))
             return redirect('company-jobrel-list', pk=job.id)
         else:
@@ -426,9 +447,12 @@ class ProgrammeList(View):
     template_name = 'jobportal/Company/programme_list.html'
 
     def get(self, request):
-        prog_minor_list = Programme.objects.filter(open_for_placement=True, minor_status=True)
-        prog_major_list = Programme.objects.filter(open_for_placement=True, minor_status=False)
-        args = dict(prog_major_list=prog_major_list, prog_minor_list=prog_minor_list)
+        prog_minor_list = Programme.objects.filter(open_for_placement=True,
+                                                   minor_status=True)
+        prog_major_list = Programme.objects.filter(open_for_placement=True,
+                                                   minor_status=False)
+        args = dict(prog_major_list=prog_major_list,
+                    prog_minor_list=prog_minor_list)
         return render(request, self.template_name, args)
 
 
@@ -443,7 +467,8 @@ class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'company'
 
     def get_queryset(self):
-        return Event.objects.filter(company_owner__id=self.request.session['company_instance_id'])
+        return Event.objects.filter(
+            company_owner__id=self.request.session['company_instance_id'])
 
 
 class EventCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -460,7 +485,8 @@ class EventCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         instance = form.save(commit=False)
-        instance.company_owner = get_object_or_404(Company, id=self.request.session['company_instance_id'])
+        instance.company_owner = get_object_or_404(
+            Company, id=self.request.session['company_instance_id'])
         instance.save()
         return super(EventCreate, self).form_valid(form)
 
