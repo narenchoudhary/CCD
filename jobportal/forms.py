@@ -515,8 +515,12 @@ class CVForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(CVForm, self).clean()
-        if not bool(cleaned_data['cv1']) and not bool(cleaned_data['cv2']):
-            raise ValidationError("Provide at least one file.", code='invalid')
+        cv1 = bool(cleaned_data['cv1'])
+        cv2 = bool(cleaned_data['cv2'])
+        if not cv1 and not cv2:
+            raise ValidationError("Select one option.", code='invalid')
+        if cv1 and cv2:
+            raise ValidationError("Select only one option.", code='invalid')
 
 
 class CompanySignup(forms.ModelForm):
@@ -653,6 +657,10 @@ class EventFormAfterApproval(forms.ModelForm):
         model = Event
         fields = ['title', 'event_type', 'duration', 'logistics', 'remark']
 
+        widgets = {
+            'logistics': forms.CheckboxSelectMultiple
+        }
+
     def __init__(self, *args, **kwargs):
         super(EventFormAfterApproval, self).__init__(*args, **kwargs)
         self.fields['title'].disabled = True
@@ -671,6 +679,7 @@ class AdminEventForm(forms.ModelForm):
         widgets = {
             'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
                                                   'pickTime': False}),
+            'logistics': forms.CheckboxSelectMultiple
         }
 
     def __init__(self, *args, **kwargs):
@@ -689,7 +698,8 @@ class AdminEventForm(forms.ModelForm):
         elif is_approved is not None and final_date is not None:
             return cleaned_data
         else:
-            err_msg = "Either update both 'Approval Status' and 'Approved Date' or leave both unupdated."
+            err_msg = "Either update both 'Approval Status' and " \
+                      "'Approved Date' or leave both unupdated."
             raise forms.ValidationError(err_msg)
 
 
