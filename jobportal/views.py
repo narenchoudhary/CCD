@@ -22,9 +22,7 @@ def login(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST':
         # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
-        print request.session.test_cookie_worked()
         if request.session.test_cookie_worked():
-            request.session.delete_test_cookie()
             if form.is_valid():
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password']
