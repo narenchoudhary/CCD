@@ -313,6 +313,7 @@ class CompanyProfileEdit(ModelForm):
     class Meta:
         model = Company
         fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
+                  'office_contact_no',
                   'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
                   'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
                   'first_hr_mobile', 'first_hr_fax']
@@ -331,7 +332,8 @@ class CompanyProfileEdit(ModelForm):
                 Tab(
                     'General Details',
                     'company_name', 'description', 'postal_address',
-                    'website', 'organization_type', 'industry_sector'
+                    'website', 'organization_type', 'industry_sector',
+                    'office_contact_no'
                 ),
                 Tab(
                     'HR Details',
@@ -432,7 +434,8 @@ class EditCompany(ModelForm):
                     'postal_address',
                     'website',
                     'organization_type',
-                    'industry_sector'
+                    'industry_sector',
+                    'office_contact_no'
                 ),
                 Tab(
                     'HR Details',
@@ -528,7 +531,8 @@ class CompanySignup(forms.ModelForm):
     class Meta:
         model = Company
         fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
-                  'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
+                  'industry_sector', 'office_contact_no', 'head_hr_name',
+                  'head_hr_email', 'head_hr_designation',
                   'head_hr_mobile', 'head_hr_fax']
 
 

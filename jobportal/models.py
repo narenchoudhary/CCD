@@ -108,6 +108,11 @@ class Company(models.Model):
     postal_address = models.TextField(blank=True, null=True,
                                       verbose_name="Postal Address")
     website = models.CharField(default="www.example.com", max_length=100)
+    office_contact_no = models.CharField(max_length=20, default='0123456789',
+                                         blank=True,
+                                         verbose_name='Office Contact Number',
+                                         help_text="Company contact number "
+                                                   "(upto 20 digits)")
     organization_type = models.CharField(max_length=20,
                                          choices=ORGANIZATION_TYPE, blank=True,
                                          verbose_name="Organization Type",
