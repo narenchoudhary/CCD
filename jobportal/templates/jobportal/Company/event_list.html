@@ -16,20 +16,26 @@
             <thead>
                 <th>Event Title</th>
                 <th>Event Type</th>
-                <th>Preferred Date(1st)</th>
-                <th>Preferred Date(2nd)</th>
+                <th>Estimated Duration</th>
+                <th>Approval Status</th>
                 <th>Details</th>
+                <th>Update</th>
             </thead>
             <tbody>
                 {% for event in event_list %}
                 <tr>
                     <td>{{event.title}}</td>
                     <td>{{event.event_type}}</td>
-                    <td>{{event.event_date1}}</td>
-                    <td>{{event.event_date2}}</td>
+                    <td>{{event.duration}} hour(s)</td>
+                    <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
                     <td>
                         <a class="btn btn-xs btn-info" role="button"
                            href="{% url 'company-event-detail' event.id %}">Details</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-xs btn-info" role="button"
+                           href="{% url 'company-event-update' event.id %}">
+                            Update</a>
                     </td>
                 </tr>
                 {% endfor %}

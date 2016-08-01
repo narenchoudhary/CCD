@@ -639,15 +639,25 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'event_date1', 'event_date2']
-        widgets = {
-            'event_date1': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            'event_date2': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            # 'event_time': DateTimePicker(options={'format': 'hh mm A', "pickSeconds": False, 'stepping': 30}),
-        }
+        fields = ['title', 'event_type', 'duration']
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+
+class EventFormAfterApproval(forms.ModelForm):
+
+    class Meta:
+        model = Event
+        fields = ['title', 'event_type', 'duration', 'logistics', 'remark']
+
+    def __init__(self, *args, **kwargs):
+        super(EventFormAfterApproval, self).__init__(*args, **kwargs)
+        self.fields['title'].disabled = True
+        self.fields['event_type'].disabled = True
+        self.fields['duration'].disabled = True
         self.helper = FormHelper()
         self.helper.form_tag = False
 
@@ -656,11 +666,11 @@ class AdminEventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'event_date1', 'event_date2', 'is_approved', 'final_date']
+        fields = ['title', 'event_type', 'duration', 'logistics', 'remark',
+                  'is_approved', 'final_date']
         widgets = {
-            'event_date1': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            'event_date2': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
+            'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
+                                                  'pickTime': False}),
         }
 
     def __init__(self, *args, **kwargs):

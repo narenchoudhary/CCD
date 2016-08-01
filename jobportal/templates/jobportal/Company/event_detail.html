@@ -21,12 +21,22 @@
                 <td>{{event.event_type}}</td>
             </tr>
             <tr>
-                <td>Preffered Date(1st)</td>
-                <td>{{event.event_date1}}</td>
+                <td>Event Duration</td>
+                <td>{{event.duration}} hour</td>
             </tr>
             <tr>
-                <td>Preffered Date(2nd)</td>
-                <td>{{event.event_date2}}</td>
+                <td>Logistics</td>
+                <td>
+                    {% if event.logistics.all.count > 0%}
+                    <ul class="list-inline">
+                        {% for logistics in event.logistics.all %}
+                            <li>{{logistics }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        Not Updated Yet
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <td>Approval Status</td>

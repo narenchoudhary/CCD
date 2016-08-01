@@ -475,18 +475,34 @@ class StudentJobRelation(models.Model):
         return super(StudentJobRelation, self).save(*args, **kwargs)
 
 
+class EventLogisticsChoice(models.Model):
+    description = models.CharField(max_length=20,
+                                   verbose_name='Event Logistics Description')
+
+    def __unicode__(self):
+        return self.description
+
+
 class Event(models.Model):
     company_owner = models.ForeignKey(Company, null=True, blank=True)
     title = models.CharField(max_length=30, null=True,
                              verbose_name='Event Title')
-    event_type = models.CharField(max_length=30, choices=EVENT_TYPE, blank=True, null=True,
-                                  verbose_name='Event Type')
-    event_date1 = models.DateField(null=True,
-                                   verbose_name='Preferred Date (1st)')
-    event_date2 = models.DateField(null=True, blank=True,
-                                   verbose_name='Preferred Date (2nd)')
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPE,null=True,
+                                  verbose_name='Event Type',
+                                  help_text='Select event type from the '
+                                            'dropdown menu.')
+    duration = models.IntegerField(default=1,
+                                   verbose_name="Estimated Duration in hours")
+    logistics = models.ManyToManyField(EventLogisticsChoice, null=True,
+                                       blank=True,
+                                       help_text="Tick all required logistics")
+    remark = models.CharField(max_length=300, null=True, blank=True,
+                              verbose_name='Remark (Optional)',
+                              help_text="Any speical remark can be added here")
     final_date = models.DateField(null=True, blank=True,
-                                  verbose_name='Approved Date')
+                                  verbose_name='Approved Date',
+                                  help_text="This is the date assigned for "
+                                            " the event by Administrator.")
     is_approved = models.NullBooleanField(default=None,
                                           verbose_name='Approval Status')
     creation_datetime = models.DateTimeField(editable=False, null=True,

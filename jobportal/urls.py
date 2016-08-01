@@ -114,6 +114,8 @@ urlpatterns = [
         name='company-event-list'),
     url(r'^company/event/create/$', views_company.EventCreate.as_view(),
         name='company-event-create'),
+    url(r'^company/event/(?P<pk>\d+)/update/$',
+        views_company.EventUpdate.as_view(), name='company-event-update'),
     url(r'^company/event/(?P<pk>\d+)/detail/$',
         views_company.EventDetail.as_view(), name='company-event-detail'),
 

@@ -20,7 +20,7 @@ from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation,
                      Alumni, Event, Programme, MinorProgrammeJobRelation)
 from .forms import (CompanyProfileEdit, CompanyJobForm, JobProgFormSet,
                     CompanySignup, UserProfileForm, CompanyJobRelForm,
-                    EventForm, JobProgMinorFormSet)
+                    EventForm, JobProgMinorFormSet, EventFormAfterApproval)
 
 from .mixins import CurrentAppMixin
 
@@ -508,3 +508,44 @@ class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         else:
             # HTTP ERROR 403
             return HttpResponseForbidden()
+
+
+class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    # Form to be shown when event.is_approved is True
+    # event.is_approved can be false in case when admin decides to reject
+    # the approval request by setting event.is_approved to False. In such a
+    # case, this form should be shown.
+    form_class_a = EventForm
+    # Form to be shown when event.is_approved is not None
+    form_class_b = EventFormAfterApproval
+    template_name = 'jobportal/Company/event_update.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
+
+    def get(self, request, pk):
+        event = get_object_or_404(Event, id=pk)
+        # if user(company) currently logged-in is owner of this event,
+        # only then render the template, else redirect to 403
+        if event.company_owner.pk is self.request.session['company_instance_id']:
+            is_approved = event.is_approved is True
+            form = self.form_class_b if is_approved else self.form_class_a
+            bound_form = form(instance=event)
+            return render(request, self.template_name, dict(form=bound_form))
+        else:
+            return HttpResponseForbidden()
+
+    def post(self, request, pk):
+        event = get_object_or_404(Event, id=pk)
+        # if user(company) currently logged-in is owner of this event,
+        # only then render the template, else redirect to 403
+        if event.company_owner.pk is self.request.session['company_instance_id']:
+            is_approved = event.is_approved is True
+            form = self.form_class_b if is_approved else self.form_class_a
+            bound_form = form(request.POST, instance=event)
+            bound_form.save()
+            return redirect('company-event-detail', pk=event.pk)
+        else:
+            HttpResponseForbidden()
