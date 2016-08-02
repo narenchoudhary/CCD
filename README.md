@@ -22,4 +22,12 @@ CPI Shortlist, Minimum CPI.
 now. Change this in production.
 - [ ] Doubt: What details must be shown in student-job detail page? take-home-*-training for
 differnet programmes?
+- [ ] A messaging framework to show all the messages, generated in views,
+as dimmisable alerts in the templates.
+- [ ] Doubt: Regarding fee payment, what content should be hidden from students who haven't
+paid the fee.
+- [x] Change: red_add_job: Club salaries together programme-wise.
+- [x] Change: rec_add_job: Bond URL to file upload.
+- [ ] Change: HEAD HR to Concerned HR
+- [ ] Doubt: Should we show event to students?
 
