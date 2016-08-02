@@ -23,7 +23,8 @@ JobProgFormSet = inlineformset_factory(
 
 
 JobProgMinorFormSet = inlineformset_factory(Job, MinorProgrammeJobRelation,
-                                            fields=('year', 'dept', 'prog'), extra=10)
+                                            fields=('year', 'dept', 'prog'),
+                                            extra=10)
 
 
 class LoginForm(forms.Form):
@@ -35,13 +36,17 @@ class EditStudProfileForm(ModelForm):
 
     class Meta:
         model = Student
-        fields = ['roll_no', 'first_name', 'middle_name', 'last_name', 'dob', 'sex', 'category',
-                  'nationality', 'minor_year', 'minor_dept', 'minor_prog', 'year', 'dept', 'prog',
-                  'hostel', 'room_no', 'iitg_webmail', 'alternative_email', 'mobile_campus',
-                  'mobile_campus_alternative', 'mobile_home', 'address_line1', 'address_line2',
-                  'address_line3', 'pin_code', 'percentage_x', 'percentage_xii', 'board_x', 'board_xii',
-                  'medium_x', 'medium_xii', 'passing_year_x', 'passing_year_xii', 'gap_in_study',
-                  'gap_reason', 'jee_air_rank', 'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
+        fields = ['roll_no', 'first_name', 'middle_name', 'last_name', 'dob',
+                  'sex', 'category', 'nationality', 'minor_year',
+                  'minor_dept', 'minor_prog', 'year', 'dept', 'prog',
+                  'hostel', 'room_no', 'iitg_webmail', 'alternative_email',
+                  'mobile_campus', 'mobile_campus_alternative',
+                  'mobile_home', 'address_line1', 'address_line2',
+                  'address_line3', 'pin_code', 'percentage_x',
+                  'percentage_xii', 'board_x', 'board_xii', 'medium_x',
+                  'medium_xii', 'passing_year_x', 'passing_year_xii',
+                  'gap_in_study', 'gap_reason', 'jee_air_rank',
+                  'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem']
 
     def __init__(self, *args, **kwargs):
@@ -76,8 +81,9 @@ class EditStudProfileForm(ModelForm):
                 ),
                 Tab(
                     'Contact Information',
-                    PrependedText('linkedin_link', 'https://'), 'alternative_email',
-                    'mobile_campus', 'mobile_campus_alternative', 'mobile_home'
+                    PrependedText('linkedin_link', 'https://'),
+                    'alternative_email', 'mobile_campus',
+                    'mobile_campus_alternative', 'mobile_home'
                 ),
                 Tab(
                     'Home Address',
@@ -87,8 +93,9 @@ class EditStudProfileForm(ModelForm):
                 Tab(
                     'Academic',
                     'jee_air_rank', 'percentage_x', 'percentage_xii',
-                    'board_x', 'board_xii', 'medium_x', 'medium_xii', 'passing_year_x',
-                    'passing_year_xii', 'gap_in_study', 'gap_reason',
+                    'board_x', 'board_xii', 'medium_x', 'medium_xii',
+                    'passing_year_x', 'passing_year_xii', 'gap_in_study',
+                    'gap_reason',
                 ),
                 Tab(
                     'CPI',
@@ -120,10 +127,12 @@ class EditStudProfileForm(ModelForm):
 class CompanyJobForm(ModelForm):
     class Meta:
         model = Job
-        fields = ['description', 'designation', 'profile_name', 'cpi_shortlist', 'minimum_cpi',
-                  'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
-                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
-                  'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
+        fields = ['description', 'designation', 'profile_name',
+                  'cpi_shortlist', 'minimum_cpi', 'percentage_x',
+                  'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
+                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
+                  'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
+                  'take_home_during_training', 'take_home_after_training',
                   'bonus', 'bond_link']
 
     def __init__(self, *args, **kwargs):
@@ -131,14 +140,15 @@ class CompanyJobForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.fields['bond_link'].help_text = 'Upload the bond document.'
-        self.fields['cpi_shortlist'].help_text = 'Select if CPI-based filtering is needed.'
+        self.fields['cpi_shortlist'].help_text = 'Select if CPI-based ' \
+                                                 'filtering is needed.'
 
         self.helper.layout = Layout(
             TabHolder(
                 Tab(
                     'Basic Information',
-                    Field('description', placeholder='Brief Description of what does consists of ...'),
-                    Field('designation', placeholder='Eg. Junior Design Engineer'),
+                    Field('description'),
+                    Field('designation', placeholder='Eg. Software Engineer'),
                     Field('profile_name', placeholder='Eg. SDE, Management'),
                     'num_openings',
                     HTML("""
@@ -214,10 +224,12 @@ class CompanyJobForm(ModelForm):
                 Tab(
                     'Bond',
                     # 'bond',
-                    Field('bond_link', placeholder='Leave empty if no bond is needed'),
+                    Field('bond_link',
+                          placeholder='Leave empty if no bond is needed'),
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <input type="submit" class="btn btn-success" value="Add Job" >
+                        <input type="submit" class="btn btn-success"
+                        value="Add Job" >
                     """)
                 )
             )
@@ -228,15 +240,20 @@ class AdminJobEditForm(ModelForm):
 
     class Meta:
         model = Job
-        fields = ['description', 'designation', 'profile_name', 'cpi_shortlist', 'minimum_cpi',
-                  'percentage_x', 'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
-                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech', 'gross_mtech',
-                  'gross_ma', 'gross_msc', 'gross_phd', 'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond_link', 'approved', 'opening_date', 'application_deadline',
+        fields = ['description', 'designation', 'profile_name',
+                  'cpi_shortlist', 'minimum_cpi', 'percentage_x',
+                  'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
+                  'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
+                  'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
+                  'take_home_during_training', 'take_home_after_training',
+                  'bonus', 'bond_link', 'approved', 'opening_date',
+                  'application_deadline',
                   ]
         widgets = {
-            'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False}),
-            'application_deadline': DateTimePicker(options={'format': 'YYYY-MM-DD', 'pickTime': False})
+            'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
+                                                    'pickTime': False}),
+            'application_deadline': DateTimePicker(options={
+                'format': 'YYYY-MM-DD', 'pickTime': False})
         }
 
     def __init__(self, *args, **kwargs):
@@ -247,14 +264,20 @@ class AdminJobEditForm(ModelForm):
             TabHolder(
                 Tab(
                     'Basic Information',
-                    'description', 'designation', 'profile_name', 'num_openings',
+                    'description',
+                    'designation',
+                    'profile_name',
+                    'num_openings',
                     HTML("""
                         <a class="btn btn-primary btnNext" >Next</a>
                     """)
                 ),
                 Tab(
                     'Requirements',
-                    'cpi_shortlist', 'minimum_cpi', 'percentage_x',
+
+                    'cpi_shortlist',
+                    'minimum_cpi',
+                    'percentage_x',
                     'percentage_xii',
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
@@ -264,9 +287,20 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Salary/Incentives',
 
-                    'currency', 'ctc_btech', 'ctc_mtech', 'ctc_phd', 'ctc_msc', 'ctc_ma',
-                    'gross_btech', 'gross_mtech', 'gross_phd', 'gross_msc', 'gross_ma',
-                    'take_home_during_training', 'take_home_after_training', 'bonus',
+                    'currency',
+                    'ctc_btech',
+                    'ctc_mtech',
+                    'ctc_phd',
+                    'ctc_msc',
+                    'ctc_ma',
+                    'gross_btech',
+                    'gross_mtech',
+                    'gross_phd',
+                    'gross_msc',
+                    'gross_ma',
+                    'take_home_during_training',
+                    'take_home_after_training',
+                    'bonus',
 
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
@@ -276,7 +310,6 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Bond',
 
-                    # 'bond',
                     'bond_link',
 
                     HTML("""
@@ -291,7 +324,8 @@ class AdminJobEditForm(ModelForm):
 
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <input type="submit" class="btn btn-primary" value="Save" >
+                        <input type="submit" class="btn btn-primary"
+                        value="Save" >
                     """)
                 )
             )
@@ -306,16 +340,14 @@ class CompanyEventForm(forms.Form):
 
 
 class CompanyProfileEdit(ModelForm):
-    # company_name = forms.CharField(max_length=30,
-    #                                label="Company Name",
-    #                                widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Company
-        fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
-                  'office_contact_no',
-                  'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
-                  'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
+        fields = ['company_name', 'description', 'postal_address', 'website',
+                  'organization_type', 'office_contact_no',
+                  'industry_sector', 'head_hr_name', 'head_hr_email',
+                  'head_hr_designation', 'head_hr_mobile', 'head_hr_fax',
+                  'first_hr_name', 'first_hr_email', 'first_hr_designation',
                   'first_hr_mobile', 'first_hr_fax']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
@@ -335,15 +367,27 @@ class CompanyProfileEdit(ModelForm):
             TabHolder(
                 Tab(
                     'General Details',
-                    'company_name', 'description', 'postal_address',
-                    'website', 'organization_type', 'industry_sector',
+
+                    'company_name',
+                    'description',
+                    'postal_address',
+                    'website',
+                    'organization_type',
+                    'industry_sector',
                     'office_contact_no'
                 ),
                 Tab(
                     'HR Details',
-                    'head_hr_name', 'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
+
+                    'head_hr_name',
+                    'head_hr_email',
+                    'head_hr_designation',
+                    'head_hr_mobile',
                     'head_hr_fax',
-                    'first_hr_name', 'first_hr_email', 'first_hr_designation', 'first_hr_mobile',
+                    'first_hr_name',
+                    'first_hr_email',
+                    'first_hr_designation',
+                    'first_hr_mobile',
                     'first_hr_fax'
                 )
             )
@@ -391,11 +435,13 @@ class AddCompany(ModelForm):
             TabHolder(
                 Tab(
                     'Login Credentials',
+
                     'username',
                     'password'
                 ),
                 Tab(
                     'General Details',
+
                     'company_name',
                     'description',
                     'postal_address',
@@ -405,6 +451,7 @@ class AddCompany(ModelForm):
                 ),
                 Tab(
                     'HR Details',
+
                     'head_hr_name',
                     'head_hr_email',
                     'head_hr_designation',
@@ -424,10 +471,12 @@ class EditCompany(ModelForm):
 
     class Meta:
         model = Company
-        fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
-                  'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
-                  'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
-                  'first_hr_mobile', 'first_hr_fax', 'approved']
+        fields = ['company_name', 'description', 'postal_address', 'website',
+                  'organization_type', 'industry_sector', 'head_hr_name',
+                  'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
+                  'head_hr_fax', 'first_hr_name', 'first_hr_email',
+                  'first_hr_designation', 'first_hr_mobile', 'first_hr_fax',
+                  'approved']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'postal_address': forms.Textarea(attrs={'rows': 4})
@@ -441,6 +490,7 @@ class EditCompany(ModelForm):
             TabHolder(
                 Tab(
                     'General Details',
+
                     'company_name',
                     'description',
                     'postal_address',
@@ -451,6 +501,7 @@ class EditCompany(ModelForm):
                 ),
                 Tab(
                     'HR Details',
+
                     'head_hr_name',
                     'head_hr_email',
                     'head_hr_designation',
@@ -464,6 +515,7 @@ class EditCompany(ModelForm):
                 ),
                 Tab(
                     'Settings',
+
                     'approved',
                 )
             )
@@ -483,7 +535,9 @@ class SelectCVForm(forms.Form):
         super(SelectCVForm, self).__init__(*args, **kwargs)
 
         for i, question in enumerate(extra):
-            self.fields['custom_%s' % i] = forms.BooleanField(label=question, initial=True, required=False)
+            self.fields['custom_%s' % i] = forms.BooleanField(label=question,
+                                                              initial=True,
+                                                              required=False)
 
     def extra_answers(self):
         for name, value in self.cleaned_data.items():
@@ -558,8 +612,10 @@ class UserProfileForm(forms.ModelForm):
     }
 
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Password Confirmation", widget=forms.PasswordInput,
-                                help_text="Enter the same password as before, for verification.")
+    password2 = forms.CharField(label="Password Confirmation",
+                                widget=forms.PasswordInput,
+                                help_text="Enter the same password "
+                                          "as before, for verification.")
 
     class Meta:
         model = UserProfile
@@ -579,7 +635,8 @@ class UserProfileForm(forms.ModelForm):
     def save(self, commit=True):
         username = self.cleaned_data['username']
         password = self.cleaned_data['password1']
-        user = UserProfile.objects.create_user(username=username, password=password)
+        user = UserProfile.objects.create_user(username=username,
+                                               password=password)
         return user
 
 
@@ -587,13 +644,15 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request')
-        super(CustomPasswordChangeForm, self).__init__(request.user, *args, **kwargs)
+        super(CustomPasswordChangeForm, self).__init__(request.user, *args,
+                                                       **kwargs)
 
 
 class CompanyJobRelForm(forms.ModelForm):
     class Meta:
         model = StudentJobRelation
-        fields = ['shortlist_init', 'shortlist_approved', 'placed_init', 'placed_approved', 'dropped']
+        fields = ['shortlist_init', 'shortlist_approved', 'placed_init',
+                  'placed_approved', 'dropped']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobRelForm, self).__init__(*args, **kwargs)
@@ -622,11 +681,6 @@ class CompanyJobRelForm(forms.ModelForm):
                 if instance.placed_approved is not None:
                     self.fields['placed_init'].disabled = True
 
-        # add radio-button widget for nullboolean fields
-        # shortlist_approved = self.fields['shortlist_approved']
-        # shortlist_approved.widget = forms.RadioSelect(choices=shortlist_approved.widget.choices)
-        # shortlist_approved.initial = '1'
-
     def save(self, commit=True):
         instance = super(CompanyJobRelForm, self).save(commit=False)
         # unset dropped value only if
@@ -635,7 +689,8 @@ class CompanyJobRelForm(forms.ModelForm):
 
         if self.has_changed() and instance.dropped is True:
             # Optimized version of above code can be this
-            # Instead of checking all fields, only check the shortlist_init field
+            # Instead of checking all fields, only check the
+            # shortlist_init field
             # self.fields['shortlist_init].has_changed()
             instance.dropped = False
         # save the changes
@@ -647,7 +702,8 @@ class CompanyJobRelForm(forms.ModelForm):
 class AdminJobRelForm(forms.ModelForm):
     class Meta:
         model = StudentJobRelation
-        fields = ['shortlist_init', 'shortlist_approved', 'placed_init', 'placed_approved']
+        fields = ['shortlist_init', 'shortlist_approved', 'placed_init',
+                  'placed_approved']
 
     def __init__(self, *args, **kwargs):
         super(AdminJobRelForm, self).__init__(*args, **kwargs)
@@ -730,6 +786,7 @@ class ProgrammeForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'open_for_placement': CheckBoxBootstrapSwitch(
-                switch={'size': 'large', 'on': 'warning', 'text-label': 'Switch Me'}
+                switch={'size': 'large', 'on': 'warning',
+                        'text-label': 'Switch Me'}
             )
         }
