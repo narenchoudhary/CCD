@@ -101,14 +101,14 @@ class Admin(models.Model):
 
 class Company(models.Model):
     user = models.OneToOneField(UserProfile, blank=True, null=True)
-    company_name = models.CharField(blank=True, null=True, max_length=30,
+    company_name = models.CharField(blank=False, null=True, max_length=30,
                                     verbose_name="Company Name")
-    description = models.TextField(blank=True, null=True,
+    description = models.TextField(blank=False, null=True,
                                    verbose_name="Description")
     postal_address = models.TextField(blank=True, null=True,
                                       verbose_name="Postal Address")
-    website = models.CharField(default="www.example.com", max_length=100)
-    office_contact_no = models.CharField(max_length=20, default='0123456789',
+    website = models.CharField(blank=False, null=True, max_length=100)
+    office_contact_no = models.CharField(max_length=20, null=True,
                                          blank=True,
                                          verbose_name='Office Contact Number',
                                          help_text="Company contact number "
@@ -121,37 +121,29 @@ class Company(models.Model):
                                        blank=True,  default="IT",
                                        verbose_name="Industry Sector")
     # Head Contact
-    head_hr_name = models.CharField(max_length=20, default='Mr. Head HR',
-                                    blank=True,
+    head_hr_name = models.CharField(max_length=20, null=True, blank=False,
                                     verbose_name='Head HR Full Name')
-    head_hr_email = models.CharField(max_length=60, default='headhr@xyz.com',
-                                     blank=True,
+    head_hr_email = models.CharField(max_length=60, null=True, blank=False,
                                      verbose_name='Head HR Email')
-    head_hr_designation = models.CharField(max_length=30, default='Head HR',
-                                           blank=True,
+    head_hr_designation = models.CharField(max_length=30, blank=False,
+                                           null=True,
                                            verbose_name='Head HR Designation')
-    head_hr_mobile = models.CharField(max_length=12, default='0123456789',
-                                      blank=True,
+    head_hr_mobile = models.CharField(max_length=12, blank=False, null=True,
                                       verbose_name='Head HR Mobile')
-    head_hr_fax = models.CharField(max_length=15, default='0123456',
-                                   blank=True,
+    head_hr_fax = models.CharField(max_length=15, blank=True, null=True,
                                    verbose_name='Head HR Fax')
     # First HR
-    first_hr_name = models.CharField(max_length=20, default='Mr. First HR',
-                                     blank=True,
+    first_hr_name = models.CharField(max_length=20, null=True, blank=True,
                                      verbose_name='First HR Full Name')
-    first_hr_email = models.CharField(max_length=60, default='firsthr@xyz.com',
-                                      blank=True,
+    first_hr_email = models.CharField(max_length=60, null=True, blank=True,
                                       verbose_name='First HR Email')
-    first_hr_designation = models.CharField(max_length=30, default='First HR',
+    first_hr_designation = models.CharField(max_length=30, null=True,
                                             blank=True,
                                             verbose_name='First HR Designation'
                                             )
-    first_hr_mobile = models.CharField(max_length=12, default='0123456789',
-                                       blank=True,
+    first_hr_mobile = models.CharField(max_length=12, null=True, blank=True,
                                        verbose_name='First HR Mobile')
-    first_hr_fax = models.CharField(max_length=15, default='0123456',
-                                    blank=True,
+    first_hr_fax = models.CharField(max_length=15, null=True, blank=True,
                                     verbose_name='First HR Fax')
     # status
     approver = models.ForeignKey(Admin, null=True,
@@ -359,13 +351,15 @@ class Job(models.Model):
                                     verbose_name='Profile Name')
     num_openings = models.DecimalField(max_digits=3, decimal_places=0,
                                        null=True, blank=True, default=10,
-                                       verbose_name='Number of Openings')
+                                       verbose_name='Expected number of '
+                                                    'recruitments')
     # requirements
     cpi_shortlist = models.BooleanField(default=False,
                                         verbose_name='CPI-Shortlist')
     minimum_cpi = models.DecimalField(max_digits=4, decimal_places=2,
                                       blank=True, default=4.00,
-                                      verbose_name='Minimum CPI')
+                                      verbose_name='Minimum CPI (On a scale '
+                                                   'of 0-10)')
     percentage_x = models.DecimalField(max_digits=5, decimal_places=2,
                                        default=40.00, null=True,
                                        verbose_name='Percentage X')
