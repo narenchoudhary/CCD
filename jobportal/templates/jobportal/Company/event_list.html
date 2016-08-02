@@ -33,9 +33,18 @@
                            href="{% url 'company-event-detail' event.id %}">Details</a>
                     </td>
                     <td>
-                        <a class="btn btn-xs btn-info" role="button"
-                           href="{% url 'company-event-update' event.id %}">
-                            Update</a>
+                        {% if event.is_approved == None %}
+                            <a class="btn btn-xs btn-info" role="button"
+                               href="{% url 'company-event-update' event.id %}">
+                                Update</a>
+                        {% else %}
+                            <button class="btn btn-xs btn-info" type="button"
+                                    data-toggle="tooltip" data-placement="bottom"
+                                    disabled="disabled"
+                                    title="Event has been approved. No changes
+                                    possible now.">Update
+                            </button>
+                        {%endif%}
                     </td>
                 </tr>
                 {% endfor %}
