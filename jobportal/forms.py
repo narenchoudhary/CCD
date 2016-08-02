@@ -719,30 +719,23 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'duration']
+        # is_approved Field has been included in fields but this field will
+        # not be rendered in the form because of HiddenField() widget.
+        # Then why include this field at all?
+        # It has been included to verify if an event has been already
+        # approved by admin. If approved, Company should not be able to
+        # edit/update the event using corresponding UpdateView()
+        fields = ['title', 'event_type', 'duration', 'logistics', 'remark',
+                  'is_approved']
+
+        widgets = {
+                    'logistics': forms.Textarea(attrs={'rows': 4}),
+                    'remark': forms.Textarea(attrs={'rows': 4}),
+                    'is_approved': forms.HiddenInput()
+                }
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-
-
-class EventFormAfterApproval(forms.ModelForm):
-
-    class Meta:
-        model = Event
-        fields = ['title', 'event_type', 'duration', 'logistics', 'remark']
-
-        widgets = {
-            'logistics': forms.CheckboxSelectMultiple,
-            'remark': forms.Textarea(attrs={'rows': 4})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(EventFormAfterApproval, self).__init__(*args, **kwargs)
-        self.fields['title'].disabled = True
-        self.fields['event_type'].disabled = True
-        self.fields['duration'].disabled = True
         self.helper = FormHelper()
         self.helper.form_tag = False
 
@@ -756,7 +749,8 @@ class AdminEventForm(forms.ModelForm):
         widgets = {
             'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
                                                   'pickTime': False}),
-            'logistics': forms.CheckboxSelectMultiple
+            'logistics': forms.Textarea(attrs={'rows': 4}),
+            'remark': forms.Textarea(attrs={'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):

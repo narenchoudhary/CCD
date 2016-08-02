@@ -26,17 +26,11 @@
             </tr>
             <tr>
                 <td>Logistics</td>
-                <td>
-                    {% if event.logistics.all.count > 0%}
-                    <ul class="list-inline">
-                        {% for logistics in event.logistics.all %}
-                            <li>{{logistics }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                        Not Updated Yet
-                    {% endif %}
-                </td>
+                <td>{{event.logistics}}</td>
+            </tr>
+            <tr>
+                <td>Remark</td>
+                <td>{{event.remark}}</td>
             </tr>
             <tr>
                 <td>Approval Status</td>

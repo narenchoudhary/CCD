@@ -474,14 +474,6 @@ class StudentJobRelation(models.Model):
         return super(StudentJobRelation, self).save(*args, **kwargs)
 
 
-class EventLogisticsChoice(models.Model):
-    description = models.CharField(max_length=20,
-                                   verbose_name='Event Logistics Description')
-
-    def __unicode__(self):
-        return self.description
-
-
 class Event(models.Model):
     company_owner = models.ForeignKey(Company, null=True, blank=True)
     title = models.CharField(max_length=30, null=True,
@@ -492,9 +484,8 @@ class Event(models.Model):
                                             'dropdown menu.')
     duration = models.IntegerField(default=1,
                                    verbose_name="Estimated Duration in hours")
-    logistics = models.ManyToManyField(EventLogisticsChoice, null=True,
-                                       blank=True,
-                                       help_text="Tick all required logistics")
+    logistics = models.CharField(null=True, blank=True, max_length=150,
+                                 verbose_name="Logistics")
     remark = models.CharField(max_length=300, null=True, blank=True,
                               verbose_name='Remark (Optional)',
                               help_text="Any speical remark can be added here")

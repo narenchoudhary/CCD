@@ -478,8 +478,8 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return get_object_or_404(Event, id=self.kwargs['pk'])
 
     def get_success_url(self):
-        # return reverse_lazy('admin-event-detail', args=(self.object.id,))
-        return reverse_lazy('admin-event-list')
+        return reverse_lazy('admin-event-detail', args=(self.object.id,))
+        # return reverse_lazy('admin-event-list')
 
     def form_valid(self, form):
         form.save()

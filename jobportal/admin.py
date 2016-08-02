@@ -44,5 +44,4 @@ admin.site.register(Avatar)
 admin.site.register(Signature)
 admin.site.register(CV)
 
-admin.site.register(EventLogisticsChoice)
 admin.site.register(Event)
