@@ -317,6 +317,10 @@ class CompanyProfileEdit(ModelForm):
                   'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
                   'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
                   'first_hr_mobile', 'first_hr_fax']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'postal_address': forms.Textarea(attrs={'rows': 4})
+        }
 
     def __init__(self, *args, **kwargs):
         super(CompanyProfileEdit, self).__init__(*args, **kwargs)
@@ -374,6 +378,10 @@ class AddCompany(ModelForm):
     class Meta:
         model = Company
         fields = '__all__'
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'postal_address': forms.Textarea(attrs={'rows': 4})
+        }
 
     def __init__(self, *args, **kwargs):
         super(AddCompany, self).__init__(*args, **kwargs)
@@ -420,6 +428,10 @@ class EditCompany(ModelForm):
                   'industry_sector', 'head_hr_name', 'head_hr_email', 'head_hr_designation',
                   'head_hr_mobile', 'head_hr_fax', 'first_hr_name', 'first_hr_email', 'first_hr_designation',
                   'first_hr_mobile', 'first_hr_fax', 'approved']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'postal_address': forms.Textarea(attrs={'rows': 4})
+        }
 
     def __init__(self, *args, **kwargs):
         super(EditCompany, self).__init__(*args, **kwargs)
@@ -534,6 +546,10 @@ class CompanySignup(forms.ModelForm):
                   'industry_sector', 'office_contact_no', 'head_hr_name',
                   'head_hr_email', 'head_hr_designation',
                   'head_hr_mobile', 'head_hr_fax']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'postal_address': forms.Textarea(attrs={'rows': 4})
+        }
 
 
 class UserProfileForm(forms.ModelForm):
@@ -662,7 +678,8 @@ class EventFormAfterApproval(forms.ModelForm):
         fields = ['title', 'event_type', 'duration', 'logistics', 'remark']
 
         widgets = {
-            'logistics': forms.CheckboxSelectMultiple
+            'logistics': forms.CheckboxSelectMultiple,
+            'remark': forms.Textarea(attrs={'rows': 4})
         }
 
     def __init__(self, *args, **kwargs):
