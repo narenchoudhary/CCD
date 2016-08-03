@@ -17,7 +17,7 @@ from django.views.generic import (View, TemplateView, RedirectView, CreateView,
                                   UpdateView, ListView, DetailView, FormView)
 
 from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation,
-                     Alumni, Event, Programme, MinorProgrammeJobRelation)
+                     Alumni, Event, Programme, MinorProgrammeJobRelation, CV)
 from .forms import (CompanyProfileEdit, CompanyJobForm, JobProgFormSet,
                     CompanySignup, UserProfileForm, CompanyJobRelForm,
                     EventForm, JobProgMinorFormSet)
@@ -260,6 +260,11 @@ class JobList(ListView):
         return Job.objects.filter(
             company_owner__id=self.request.session['company_instance_id'])
 
+    def get_context_data(self, **kwargs):
+        context = super(JobList, self).get_context_data(**kwargs)
+        context['present_date'] = timezone.now().date()
+        return context
+
 
 class JobCreate(CreateView):
     form_class = CompanyJobForm
@@ -347,16 +352,25 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     job = None
 
     def test_func(self):
-        return self.request.user.user_type == 'company'
+        # user is company
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        self.job = get_object_or_404(Job, id=self.kwargs['pk'])
+        company_user = self.request.session['company_instance_id']
+        company_owner = self.job.company_owner.id == company_user
+        if not company_owner:
+            return False
+        # deadline has passed
+        deadline = self.job.application_deadline
+        deadline_over = deadline < timezone.now().date()
+        if not deadline_over:
+            return False
+        return True
 
     def get_queryset(self):
-        self.job = Job.objects.get(id=self.kwargs['pk'])
-        owner_id = self.job.company_owner.id
-        user_id = self.request.session['company_instance_id']
-        if owner_id == user_id and self.job.approved:
-            return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
-        else:
-            return Http404()
+        return StudentJobRelation.objects.filter(job__id=self.kwargs[
+            'pk']).order_by('placed_init', 'placed_approved', 'shortlist_init')
 
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
@@ -531,3 +545,114 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return super(EventUpdate, self).form_valid(form)
         else:
             return HttpResponseForbidden()
+
+
+class RenderCV(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
+
+    def get(self, request, pk, cvno):
+        jobrel = get_object_or_404(StudentJobRelation, id=pk)
+
+        session_id = request.session['company_instance_id']
+        if jobrel.job.company_owner.id != session_id:
+            return HttpResponseForbidden()
+
+        cv = get_object_or_404(CV, stud=jobrel.stud)
+        if int(cvno) == 1 and jobrel.cv1 is True:
+            return redirect(cv.cv2.url)
+        elif int(cvno) == 2 and jobrel.cv2 is True:
+            return redirect(cv.cv2.url)
+        else:
+            return HttpResponseForbidden()
+
+
+class StudJobRelShortlist(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+
+    def test_func(self, **kwargs):
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        jobrel = get_object_or_404(StudentJobRelation,
+                                   id=self.kwargs['jobrelpk'])
+        session_id = self.request.session['company_instance_id']
+        if jobrel.job.company_owner.id != session_id:
+            return False
+        return True
+
+    def get(self, request, jobpk, jobrelpk):
+        jobrel = get_object_or_404(StudentJobRelation, id=jobrelpk)
+        if jobrel.stud.placed:
+            msg = 'Student is not available for hiring anymore.'
+            level = messages.ERROR
+        elif jobrel.shortlist_init:
+            msg = 'Student is already shortlisted'
+            level = messages.WARNING
+        elif jobrel.placed_init and jobrel.placed_approved is None:
+            msg = 'Placement Approval is already pending. Candidate cannot ' \
+                  'be shortlisted now.'
+            level = messages.ERROR
+        elif jobrel.placed_init and jobrel.placed_approved is not None:
+            msg = 'Placement request has been made already.'
+            level = messages.ERROR
+        else:
+            jobrel.shortlist_init = True
+            jobrel.shortlist_init_datetime = timezone.now()
+            jobrel.save()
+            msg = 'Student has been shortlisted shortlisted.'
+            level = messages.SUCCESS
+
+        messages.add_message(request=request, level=level,
+                             message=msg, fail_silently=True)
+        return redirect('company-jobrel-list', pk=jobpk)
+
+
+class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+
+    def test_func(self, **kwargs):
+        # check user type
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        # check application_deadline
+        job = get_object_or_404(Job, id=self.kwargs['jobpk'])
+        deadline = job.application_deadline < timezone.now().date()
+        if not deadline:
+            return False
+        # check job owner
+        jobrel = get_object_or_404(StudentJobRelation,
+                                   id=self.kwargs['jobrelpk'])
+        session_id = self.request.session['company_instance_id']
+        if jobrel.job.company_owner.id != session_id:
+            return False
+        return True
+
+    def get(self, request, jobpk, jobrelpk):
+        jobrel = get_object_or_404(StudentJobRelation, id=jobrelpk)
+        if jobrel.stud.placed:
+            msg = 'Student is not available for hiring anymore.'
+            level = messages.ERROR
+        elif jobrel.placed_init is True and jobrel.placed_approved is None:
+            msg = 'Placement Approval is already pending.'
+            level = messages.ERROR
+        elif jobrel.placed_init is True and jobrel.placed_approved is not None:
+            msg = 'Placement request has been made already.'
+            level = messages.ERROR
+        else:
+            jobrel.placed_init = True
+            jobrel.placed_init_datetime = timezone.now()
+            jobrel.save()
+            msg = 'Placement request has been sent to admin for approval.'
+            level = messages.SUCCESS
+
+        messages.add_message(request=request, level=level,
+                             message=msg, fail_silently=True)
+        return redirect('company-jobrel-list', pk=jobpk)

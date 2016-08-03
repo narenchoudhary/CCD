@@ -105,6 +105,15 @@ urlpatterns = [
         views_company.JobRelList.as_view(), name='company-jobrel-list'),
     url(r'^company/job/(?P<jobpk>\d+)/jobrel/(?P<pk>\d+)/list/$',
         views_company.JobRelUpdate.as_view(), name='company-jobrel-update'),
+    url(r'company/jobrel/(?P<pk>\d+)/cv/(?P<cvno>\d+)',
+        views_company.RenderCV.as_view(), name='company-jobrel-cv'),
+    url(r'company/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/shortlist',
+        views_company.StudJobRelShortlist.as_view(),
+        name='company-jobrel-shortlist'),
+    url(r'company/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place',
+        views_company.StudJobRelPlace.as_view(), name='company-jobrel-place'),
+
+    # TODO: remove this
     url(r'^company/job/(?P<pk>\d+)/jobrel/update/round/$',
         views_company.JobRelUpdateRound.as_view(),
         name='company-jobrel-update-round'),
@@ -172,6 +181,9 @@ urlpatterns = [
         name='admin-jobrel-list-unapproved'),
     url(r'^admin/job/(?P<pk>\d+)/jobrel/list/$',
         views_admin.JobRelList.as_view(), name='admin-jobrel-list'),
+    url(r'^admin/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place/approve',
+        views_admin.StudJobRelPlaceApprove.as_view(),
+        name='admin-jobrel-place-approve'),
     url(r'^admin/job/jobrel/(?P<pk>\d+)/update/$',
         views_admin.JobRelUpdate.as_view(), name='admin-jobrel-update'),
 

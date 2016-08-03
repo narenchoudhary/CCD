@@ -124,7 +124,7 @@
                     <td>
                     {% if job.bond_link %}
                         <a href="{{job.bond_link.url}}" target="_blank"
-                        class="btn btn-info">Download Bond Document</a>
+                        class="btn btn-info btn-xs">Download Bond Document</a>
                     {% else %}
                         No bond document uploaded
                     {% endif %}
@@ -144,7 +144,7 @@
                 </tr>
                 <tr>
                     <td>Approval Status</td>
-                    <td>{{job.approved|yesno:"Approved, Rejected, Approval Pedning"}}</td>
+                    <td>{{job.approved|yesno:"Approved, Rejected, Approval Pending"}}</td>
                 </tr>
                 <tr>
                     <td>Approved On</td>
@@ -224,7 +224,14 @@
     <hr>
     <h4 ><a href="{% url 'admin-job-update' job.id %}" class="btn btn-warning">Edit</a></h4>
 
-    <h4><a href="{% url 'admin-job-approve' job.id %}" class="btn btn-success">Approve</a></h4>
+    <h4>
+        {% if job.approved %}
+            <a class="btn btn-success" disabled="disabled" data-toggle="tooltip"
+               data-placement="right" title="Already Approved">Approve</a></h4>
+        {% else %}
+            <a href="{% url 'admin-job-approve' job.id %}"
+               class="btn btn-success">Approve</a></h4>
+        {% endif %}
 </div>
 
 {% endblock %}

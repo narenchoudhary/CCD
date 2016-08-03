@@ -446,17 +446,16 @@ class Job(models.Model):
 
 
 class StudentJobRelation(models.Model):
-    round = models.IntegerField(default=1)
     shortlist_init = models.BooleanField(default=False)
-    shortlist_init_date = models.DateTimeField(null=True, blank=True)
-    shortlist_approved = models.NullBooleanField(default=None)
-    shortlist_approved_date = models.DateTimeField(null=True, blank=True)
+    shortlist_init_datetime = models.DateTimeField(null=True, blank=True)
+    # shortlist_approved = models.NullBooleanField(default=None)
+    # shortlist_approved_date = models.DateTimeField(null=True, blank=True)
     placed_init = models.BooleanField(default=False)
-    placed_init_date = models.DateTimeField(null=True, blank=True)
+    placed_init_datetime = models.DateTimeField(null=True, blank=True)
     placed_approved = models.NullBooleanField(default=None)
-    placed_approved_date = models.DateTimeField(null=True, blank=True)
-    dropped = models.BooleanField(default=False)
-    dropped_date = models.DateTimeField(null=True, blank=True)
+    placed_approved_datetime = models.DateTimeField(null=True, blank=True)
+    # dropped = models.BooleanField(default=False)
+    # dropped_date = models.DateTimeField(null=True, blank=True)
 
     cv1 = models.BooleanField(default=False)
     cv2 = models.BooleanField(default=False)

@@ -155,9 +155,9 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         ).filter(
             application_deadline__gt=timezone.now().date()
         ).filter(
-            percentage_x__gte=stud.percentage_x
+            percentage_x__lte=stud.percentage_x
         ).filter(
-            percentage_xii__gte=stud.percentage_xii
+            percentage_xii__lte=stud.percentage_xii
         )
 
     def get_context_data(self, **kwargs):
@@ -253,8 +253,9 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(
             Student, id=request.session['student_instance_id'])
         stud_check = self.check_stud_credentials()
-        # job_check = self.check_job_credentials()
-        job_check = True
+        job_check = self.check_job_credentials()
+        print("Stud " + str(stud_check))
+        print("JOb " + str(job_check))
         if stud_check and job_check:
             form = SelectCVForm(request.POST, extra=self.get_questions())
             if form.is_valid():
@@ -264,6 +265,9 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                     setattr(jobrel, question, answer)
                 jobrel.save()
                 return redirect('stud-job-detail', pk=self.job.id)
+            else:
+                return render(request, self.template,
+                              dict(form=form, job=self.job))
         return redirect('stud-job-list')
 
     def get_questions(self):

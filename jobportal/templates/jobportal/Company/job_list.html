@@ -16,7 +16,7 @@
             <th>Designation</th>
             <th>Profile</th>
             <th>Open</th>
-            <th>Close</th>
+            <th>Deadline</th>
             <th>Status</th>
             <th>Details</th>
             <th>Candidates</th>
@@ -34,9 +34,16 @@
                 <a href="{% url 'company-job-detail' job.id %}" class="btn btn-xs btn-primary">Details</a>
             </td>
             <td>
+                {% if job.application_deadline < present_date %}
                 <a class="btn btn-xs btn-info" href="{% url 'company-jobrel-list' job.id %}" title="">
                     View Candidates
                 </a>
+                {% else %}
+                    <button class="btn btn-xs btn-info" disabled="disabled" data-toggle="tooltip"
+                    data-placement="bottom" title="Candidates can be viewed only after application deadline">
+                        View Candidates
+                    </button>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

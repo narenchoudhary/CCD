@@ -22,10 +22,6 @@
         <div class="col-md-12">
             <div class="well">
 
-                <a class="btn btn-info pull-right" role="button"
-                   href="{% url 'company-jobrel-update-round' jobid %}" >Complete Round</a>
-                <br><br><br>
-
             {% if rel_list.count > 0 %}
                 <table class="table">
                     <thead>
@@ -33,11 +29,11 @@
                             <th>Name</th>
                             <th>Programme</th>
                             <th>Department</th>
-                            <th>Round</th>
-                            <th>Status</th>
+                            <th>Shortlist</th>
+                            <th>Place</th>
+                            <th>Placement Status</th>
                             <th>Details</th>
-                            <th>CV1</th>
-                            <th>CV2</th>
+                            <th>CV</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,54 +42,67 @@
                                 <td>{{ rel.stud.first_name | capfirst}} {{ rel.stud.middle_name | capfirst }} {{ rel.stud.last_name | capfirst}}</td>
                                 <td>{{ rel.stud.prog }}</td>
                                 <td>{{ rel.stud.dept}}</td>
-                                <td>{{ rel.round }}</td>
                                 <td>
-                                    {% if rel.dropped %}
-                                        Dropped
+                                    {% if rel.shortlist_init %}
+                                        <button class="btn btn-xs btn-success"
+                                        disabled="disabled" data-placement="bottom" data-toggle="tooltip"
+                                        title="Candidate was shortlisted on {{rel.shortlist_init_datetime}}">
+                                        Shortlisted</button>
                                     {% else %}
-                                        {% if rel.shortlist_init %}
-                                            {% if rel.shortlist_approved == True %}
-                                                {% if rel.placed_init %}
-                                                    Placed Init
-                                                {% else %}
-                                                    Shortlist Approved
-                                                {% endif %}
-                                            {% elif rel.shortlist_approved == False %}
-                                                Shortlist Request Rejected
-                                            {% else %}
-                                                Shortlist Approval Pending
-                                            {% endif %}
+                                        <a class="btn btn-xs btn-default" role="button"
+                                           href="{% url 'company-jobrel-shortlist' rel.job.id rel.id %}"
+                                           data-toggle="tooltip" data-placement="bottom" title="Shortlist this candidate">
+                                            Shortlist</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if rel.placed_init %}
+                                        <button class="btn btn-xs btn-success" disabled="disabled"
+                                                data-placement="bottom" data-toggle="tooltip"
+                                                title="Candidate was selected on {{rel.placed_init_datetime}}">
+                                            Selected
+                                        </button>
+                                    {% else %}
+                                        <a class="btn btn-default btn-xs" role="button"
+                                           href="{% url 'company-jobrel-place' rel.job.id rel.id %}"
+                                           data-toggle="tooltip" data-placement="bottom" title="Place this candidate">
+                                            Place</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if rel.placed_init %}
+                                        {% if rel.placed_approved == True %}
+                                            Approved
+                                        {% elif rel.placed_approved == False %}
+                                            Rejected
                                         {% else %}
-                                            Not Shortlisted
-                                        {% endif%}
+                                            Pending
+                                        {% endif %}
+                                    {% else %}
+                                        Not Selected
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if rel.job.application_deadline < datenow %}
-                                        <a class="btn btn-xs btn-info" class='inline'
-                                           href="{% url 'company-jobrel-update' jobid rel.id %}">
-                                            Action
+                                    <a class="btn btn-info btn-xs" href="#" role="button">Details</a>
+                                </td>
+                                <td>
+                                    {% if hide == False %}
+                                        {% if rel.cv1 %}
+                                            <a class="btn btn-xs btn-info inline" role="button"
+                                               href="{% url 'company-jobrel-cv' rel.id 1 %}"
+                                               target="_blank">CV1</a>
+                                        {% elif rel.cv2 %}
+                                            <a class="btn btn-xs btn-info inline" role="button"
+                                               href="{% url 'company-jobrel-cv' rel.id 1 %}"
+                                               target="_blank">CV2</a>
+                                        {% else %}
+                                            No CV
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="btn btn-xs btn-info inline"
+                                        role="button" disabled="disabled">
+                                            CV
                                         </a>
-                                    {% else %}
-                                        <!--HIDE-->
-                                        <a class="btn btn-xs btn-info" class='inline'
-                                           href="{% url 'company-jobrel-update' jobid rel.id %}">
-                                            Action
-                                        </a>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if rel.job.application_deadline < datenow %}
-                                        <a class="btn btn-xs btn-info" class='inline' href="#">CV1</a>
-                                    {% else %}
-                                        CV1
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if rel.job.application_deadline < datenow %}
-                                        <a class="btn btn-xs btn-info" class='inline' href="#">CV1</a>
-                                    {% else %}
-                                        CV2
                                     {% endif %}
                                 </td>
                             </tr>

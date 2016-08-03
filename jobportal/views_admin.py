@@ -367,6 +367,9 @@ class StudentDetail(DetailView):
         except Signature.DoesNotExist:
             context['signature'] = None
 
+        context['rel_list'] = StudentJobRelation.objects.filter(
+            stud__id=self.object.id)
+
         return context
 
 
@@ -381,7 +384,6 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
-            Q(shortlist_approved__isnull=True) |
             Q(placed_approved__isnull=True))
 
 
@@ -409,6 +411,48 @@ class JobProgUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             args = dict(formset=formset, job=job)
             return render(request, self.template, args)
+
+
+class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+
+    def test_func(self):
+        is_admin = self.request.user.user_type == 'admin'
+        if not is_admin:
+            return True
+        job = get_object_or_404(Job, id=self.kwargs['jobpk'])
+        deadline_ok = job.application_deadline < timezone.now().date()
+        if not deadline_ok:
+            return False
+        return True
+
+    def get(self, request, jobpk, jobrelpk):
+        jobrel = get_object_or_404(StudentJobRelation, id=jobrelpk)
+        if jobrel.stud.placed:
+            msg = 'Candidate is already placed.'
+            level = messages.ERROR
+        elif jobrel.placed_init and jobrel.placed_approved is not None:
+            msg = 'Candidate placement request is already approved/rejected.'
+            level = messages.ERROR
+        elif jobrel.placed_init and jobrel.placed_approved is None:
+            jobrel.placed_approved = True
+            jobrel.placed_approved_datetime = timezone.now()
+            jobrel.save()
+
+            stud = get_object_or_404(Student, id=jobrel.stud.id)
+            stud.placed = True
+            stud.save()
+
+            msg = 'Candidate placment request approved.'
+            level = messages.SUCCESS
+        else:
+            msg = 'Something crazy happened. Report bug'
+            level = messages.ERROR
+        messages.add_message(request=request, level=level, message=msg,
+                             fail_silently=True)
+        return redirect('admin-jobrel-list-unapproved')
 
 
 class JobProgMinorUpdate(LoginRequiredMixin, UserPassesTestMixin, View):

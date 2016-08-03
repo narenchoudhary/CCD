@@ -49,6 +49,10 @@ class EditStudProfileForm(ModelForm):
                   'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem']
 
+        widgets = {
+            'gap_reason': forms.Textarea(attrs={'rows':4})
+        }
+
     def __init__(self, *args, **kwargs):
         super(EditStudProfileForm, self).__init__(*args, **kwargs)
         self.fields['roll_no'].disabled = True
@@ -73,34 +77,67 @@ class EditStudProfileForm(ModelForm):
             TabHolder(
                 Tab(
                     'Student Information',
-                    'roll_no', 'iitg_webmail',
-                    'first_name', 'middle_name', 'last_name', 'dob',
-                    'sex', 'category', 'nationality', 'year', 'dept',
-                    'prog', 'minor_year', 'minor_dept', 'minor_prog',
-                    'hostel', 'room_no'
+
+                    'roll_no',
+                    'iitg_webmail',
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'dob',
+                    'sex',
+                    'category',
+                    'nationality',
+                    'year',
+                    'dept',
+                    'prog',
+                    'minor_year',
+                    'minor_dept',
+                    'minor_prog',
+                    'hostel',
+                    'room_no'
                 ),
                 Tab(
                     'Contact Information',
+
                     PrependedText('linkedin_link', 'https://'),
-                    'alternative_email', 'mobile_campus',
-                    'mobile_campus_alternative', 'mobile_home'
+                    'alternative_email',
+                    'mobile_campus',
+                    'mobile_campus_alternative',
+                    'mobile_home'
                 ),
                 Tab(
                     'Home Address',
-                    'address_line1', 'address_line2',
-                    'address_line3', 'pin_code'
+
+                    'address_line1',
+                    'address_line2',
+                    'address_line3',
+                    'pin_code'
                 ),
                 Tab(
                     'Academic',
-                    'jee_air_rank', 'percentage_x', 'percentage_xii',
-                    'board_x', 'board_xii', 'medium_x', 'medium_xii',
-                    'passing_year_x', 'passing_year_xii', 'gap_in_study',
+
+                    'jee_air_rank',
+                    'percentage_x',
+                    'percentage_xii',
+                    'board_x',
+                    'board_xii',
+                    'medium_x',
+                    'medium_xii',
+                    'passing_year_x',
+                    'passing_year_xii',
+                    'gap_in_study',
                     'gap_reason',
                 ),
                 Tab(
                     'CPI',
-                    'cpi', 'spi_1_sem', 'spi_2_sem', 'spi_3_sem',
-                    'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
+
+                    'cpi',
+                    'spi_1_sem',
+                    'spi_2_sem',
+                    'spi_3_sem',
+                    'spi_4_sem',
+                    'spi_5_sem',
+                    'spi_6_sem',
                 )
             )
         )
@@ -246,8 +283,7 @@ class AdminJobEditForm(ModelForm):
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond_link', 'approved', 'opening_date',
-                  'application_deadline',
+                  'bonus', 'bond_link', 'opening_date', 'application_deadline',
                   ]
         widgets = {
             'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
@@ -320,7 +356,7 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Settings',
 
-                    'opening_date', 'application_deadline', 'approved',
+                    'opening_date', 'application_deadline',
 
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
@@ -546,11 +582,16 @@ class SelectCVForm(forms.Form):
 
     def clean(self):
         all_false = True
+        all_true = True
         for (question, answer) in self.extra_answers():
             if answer is True:
                 all_false = False
+            if answer is False:
+                all_true = False
         if all_false:
-            raise ValidationError("At least one CV must be selected.")
+            raise ValidationError("One CV must be selected.")
+        if all_true:
+            raise ValidationError("Only one CV must be selected.")
 
 
 class AlumniProfileForm(ModelForm):
@@ -582,14 +623,12 @@ class CVForm(forms.ModelForm):
         model = CV
         fields = ['cv1', 'cv2']
 
-    def clean(self):
-        cleaned_data = super(CVForm, self).clean()
-        cv1 = bool(cleaned_data['cv1'])
-        cv2 = bool(cleaned_data['cv2'])
-        if not cv1 and not cv2:
-            raise ValidationError("Select one option.", code='invalid')
-        if cv1 and cv2:
-            raise ValidationError("Select only one option.", code='invalid')
+        def clean(self):
+            cleaned_data = super(CVForm, self).clean()
+            if not bool(cleaned_data['cv1']) and not bool(cleaned_data['cv2']):
+                raise ValidationError("Provide at least one file.",
+                                      code='invalid')
+            return cleaned_data
 
 
 class CompanySignup(forms.ModelForm):
@@ -651,15 +690,11 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 class CompanyJobRelForm(forms.ModelForm):
     class Meta:
         model = StudentJobRelation
-        fields = ['shortlist_init', 'shortlist_approved', 'placed_init',
-                  'placed_approved', 'dropped']
+        fields = ['shortlist_init', 'placed_init',
+                  'placed_approved']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobRelForm, self).__init__(*args, **kwargs)
-        # recruiter can not changed dropped status in the form
-        # so 'dropped' field is not needed in the form.
-        # It is included to unset 'dropped' on re-shortlisting.
-        self.fields['dropped'].widget = forms.HiddenInput()
         self.fields['shortlist_approved'].disabled = True
         self.fields['placed_approved'].disabled = True
         instance = getattr(self, 'instance', None)
@@ -702,7 +737,7 @@ class CompanyJobRelForm(forms.ModelForm):
 class AdminJobRelForm(forms.ModelForm):
     class Meta:
         model = StudentJobRelation
-        fields = ['shortlist_init', 'shortlist_approved', 'placed_init',
+        fields = ['shortlist_init', 'placed_init',
                   'placed_approved']
 
     def __init__(self, *args, **kwargs):
