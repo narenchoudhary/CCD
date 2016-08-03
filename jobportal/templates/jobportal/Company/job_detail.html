@@ -9,7 +9,6 @@
 <h2 class="sub-header">Jobs Details:</h2>
 <hr/>
 <div class="col-md-12">
-
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
             <a href="#basicinfo" role="tab" data-toggle="tab">Basic Information</a>
@@ -119,7 +118,7 @@
                 <td>
                     {% if job.bond_link %}
                         <a href="{{job.bond_link.url}}" target="_blank"
-                        class="btn btn-info">Download Bond Document</a>
+                        class="btn btn-info btn-xs">Download Bond Document</a>
                     {% else %}
                         No bond document uploaded
                     {% endif %}
@@ -183,7 +182,6 @@
 
     <h3>Actions</h3>
     <hr>
-
     <p><a href="{% url 'company-jobrel-list' job.id %}" class="btn btn-primary">View Candidates</a></p>
     <p><a href="{% url 'company-job-update' job.id %}" class="btn btn-primary">Edit Job</a></p>
 </div>
