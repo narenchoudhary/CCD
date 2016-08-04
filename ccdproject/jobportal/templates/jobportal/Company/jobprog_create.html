@@ -1,0 +1,169 @@
+{% extends 'base_company.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+
+    <h2 class="sub-header">Select Programmes</h2>
+    <hr/>
+
+    <form method="post" accept-charset="utf-8"
+          action="{% url 'company-job-jobprog-create' jobpk %}">
+        {% csrf_token %}
+    <div class="col-md-12 row">
+        {% if minor_list.count > 0 %}
+
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in minor_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_minor_ids"
+                                               value="{{programme.id}}">
+                                    </td>
+                                    <td>{{programme.year}}</td>
+                                    <td>{{programme.dept}}</td>
+                                    <td>{{programme.name}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-12 row">
+        {% if btech_list.count > 0 %}
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in btech_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_btech_ids"
+                                               value="{{programme.id}}">
+                                    </td>
+                                    <td>{{programme.year}}</td>
+                                    <td>{{programme.dept}}</td>
+                                    <td>{{programme.name}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-12">
+        {% if phd_list.count > 0 %}
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in phd_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_phd_ids"
+                                               value="{{programme.id}}">
+                                    </td>
+                                    <td>{{programme.year}}</td>
+                                    <td>{{programme.dept}}</td>
+                                    <td>{{programme.name}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-12">
+        {% if msc_list.count > 0 %}
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in msc_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_msc_ids"
+                                               value="{{programme.id}}">
+                                    </td>
+                                    <td>{{programme.year}}</td>
+                                    <td>{{programme.dept}}</td>
+                                    <td>{{programme.name}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-12 row">
+        {% if ma_list.count > 0 %}
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in ma_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_ma_ids"
+                                               value="{{programme.id}}">
+                                    </td>
+                                    <td>{{programme.year}}</td>
+                                    <td>{{programme.dept}}</td>
+                                    <td>{{programme.name}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+    </div>
+        <input type="submit" value="submit">
+    </form>
+
+{% endblock %}

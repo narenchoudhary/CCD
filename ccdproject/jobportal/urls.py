@@ -95,12 +95,6 @@ urlpatterns = [
     url(r'^company/job/(?P<pk>\d+)/delete/$',
         views_company.JobDelete.as_view(), name='company-job-delete'),
 
-    url(r'^company/job/(?P<pk>\d+)/prog/update/$',
-        views_company.JobProgUpdate.as_view(), name='company-jobprog-update'),
-    url(r'^company/job/(?P<pk>\d+)/prog-minor/update/$',
-        views_company.JobProgMinorUpdate.as_view(),
-        name='company-jobprog-minor-update'),
-
     url(r'^company/(?P<pk>\d+)/jobrel/list/$',
         views_company.JobRelList.as_view(), name='company-jobrel-list'),
     url(r'^company/job/(?P<jobpk>\d+)/jobrel/(?P<pk>\d+)/list/$',
@@ -112,11 +106,9 @@ urlpatterns = [
         name='company-jobrel-shortlist'),
     url(r'company/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place',
         views_company.StudJobRelPlace.as_view(), name='company-jobrel-place'),
-
-    # TODO: remove this
-    url(r'^company/job/(?P<pk>\d+)/jobrel/update/round/$',
-        views_company.JobRelUpdateRound.as_view(),
-        name='company-jobrel-update-round'),
+    url(r'company/job/(?P<jobpk>\d+)/jobrel/create/',
+        views_company.JobProgrammeCreate.as_view(),
+        name='company-job-jobprog-create'),
 
 
     url(r'^company/event/list/$', views_company.EventList.as_view(),
@@ -226,6 +218,7 @@ urlpatterns = [
     url(r'^admin/programme/(?P<pk>\d+)/internship/delete/$',
         views_admin.ProgrammeInternshipDelete.as_view(),
         name='admin-programme-internship-delete/'),
+
 
     url(r'^admin/year/list/$', views_admin.YearList.as_view(),
         name="year-list"),

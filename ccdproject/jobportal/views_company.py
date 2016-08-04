@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import update_session_auth_hash
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import (get_object_or_404, get_list_or_404, render,
                               redirect)
@@ -299,9 +300,7 @@ class JobDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['rel_list'] = ProgrammeJobRelation.objects.filter(
-            job=self.object.id)
-        context['rel_minor_list'] = MinorProgrammeJobRelation.objects.filter(
-            job=self.object.id)
+            job=self.object)
         return context
 
 
@@ -656,3 +655,75 @@ class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
         messages.add_message(request=request, level=level,
                              message=msg, fail_silently=True)
         return redirect('company-jobrel-list', pk=jobpk)
+
+
+class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Company/jobprog_create.html'
+    job = None
+
+    def test_func(self):
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        self.job = get_object_or_404(Job, id=self.kwargs['jobpk'])
+        deadline = self.job.application_deadline < timezone.now().date()
+        if not deadline:
+            return False
+        session_id = self.request.session['company_instance_id']
+        is_owner = self.job.company_owner.id == session_id
+        if not is_owner:
+            return False
+        return True
+
+    def get(self, request, jobpk):
+        minor_list = Programme.objects.filter(open_for_placement=True,
+                                              minor_status=True)
+        btech_list = Programme.objects.filter(open_for_placement=True,
+                                              minor_status=False,
+                                              name='BTECH')
+        mtech_list = Programme.objects.filter(open_for_placement=True,
+                                              minor_status=False,
+                                              name='MTECH')
+        phd_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='PHD')
+        ma_list = Programme.objects.filter(open_for_placement=True,
+                                           minor_status=False,
+                                           name='MA')
+        msc_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='MSC')
+        args = dict(minor_list=minor_list, btech_list=btech_list,
+                    ma_list=ma_list, mtech_list=mtech_list,
+                    msc_list=msc_list, phd_list=phd_list, jobpk=jobpk)
+        return render(request, self.template_name, args)
+
+    def post(self, request, jobpk):
+
+        job = get_object_or_404(Job, id=jobpk)
+
+        minor_list_ids = request.POST.getlist('selected_minor_ids')
+        btech_list_ids = request.POST.getlist('selected_btech_ids')
+        mtech_list_ids = request.POST.getlist('selected_mtech_ids')
+        phd_list_ids = request.POST.getlist('selected_phd_ids')
+        ma_list_ids = request.POST.getlist('selected_ma_ids')
+        msc_list_ids = request.POST.getlist('selected_msc_ids')
+
+        programme_list = Programme.objects.filter(Q(id__in=minor_list_ids) |
+                                                  Q(id__in=btech_list_ids) |
+                                                  Q(id__in=phd_list_ids) |
+                                                  Q(id__in=ma_list_ids) |
+                                                  Q(id__in=mtech_list_ids) |
+                                                  Q(id__in=msc_list_ids))
+
+        for programme in programme_list:
+
+            jobprog, created = ProgrammeJobRelation.objects.get_or_create(
+                job=job,
+                year=programme.year,
+                dept=programme.dept,
+                prog=programme
+            )
+        return redirect('company-job-detail', pk=job.id)

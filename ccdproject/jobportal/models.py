@@ -556,12 +556,14 @@ class ProgrammeJobRelation(models.Model):
     prog = ChainedForeignKey(Programme, chained_field='dept',
                              chained_model_field='dept',
                              show_all=False, null=True,
-                             on_delete=models.CASCADE,
-                             limit_choices_to={'open_for_placement': True,
-                                               'minor_status': False})
+                             on_delete=models.CASCADE)
 
     def __unicode__(self):
-        return str(self.job)
+        if self.prog.minor_status:
+            return str(self.year) + str(self.dept) + str(self.prog) + '-MINOR'
+        else:
+            return str(self.year) + str(self.dept) + str(self.prog) + '-MAJOR'
+
 
 
 class MinorProgrammeJobRelation(models.Model):

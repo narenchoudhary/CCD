@@ -51,6 +51,8 @@ PROGRAMMES = (
     ('BTECH', 'B.Tech.'),
     ('MTECH', 'M.Tech.'),
     ('PHD', 'Ph.D.'),
+    ('MSC', 'M.Sc.'),
+    ('MA', 'M.A.'),
 )
 
 HOSTELS = (
