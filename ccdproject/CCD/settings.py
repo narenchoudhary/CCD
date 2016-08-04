@@ -25,34 +25,41 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'x&uda4nsg--wxz*f630nb21-$wm+8e)$51m0^)y6)3rzxe8=u3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 AUTH_USER_MODEL = 'jobportal.UserProfile'
 
 # Application definition
 
-INSTALLED_APPS = (
+
+DJANGO_CONTRIB_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
+DJANGO_3RD_PARTY_APPS = [
     'versatileimagefield',
     'crispy_forms',
     'smart_selects',
     'captcha',
     'django_cleanup',
     'bootstrap3_datetime',
+]
 
-    'mentormentee',
+PROJECT_APPS = [
     'internships',
-    'alumnijobs',
     'jobportal',
-)
+    'mentormentee',
+    'alumnijobs'
+]
+
+INSTALLED_APPS = DJANGO_CONTRIB_APPS + DJANGO_3RD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,13 +130,15 @@ SESSION_COOKIE_AGE = 2592000
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static_root')
+# https://docs.djangoproject.com/en/1.10/ref/settings/#std:setting-STATICFILES_DIRS
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static', 'static_dir'),
-)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_cdn')
 
 # Media Files (Uploaded files)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
