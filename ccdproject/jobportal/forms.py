@@ -169,8 +169,7 @@ class CompanyJobForm(ModelForm):
                   'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
-                  'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond_link']
+                  'bond_link']
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobForm, self).__init__(*args, **kwargs)
@@ -246,13 +245,6 @@ class CompanyJobForm(ModelForm):
                         Field('gross_ma'),
                         css_class='col-md-12'
                     ),
-                    HTML('<h4>Summary</h4>'),
-                    Div(
-                        Field('take_home_during_training'),
-                        Field('take_home_after_training'),
-                        Field('bonus'),
-                        css_class='col-md-12'
-                    ),
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>
                         <a class="btn btn-primary btnNext" >Next</a>
@@ -282,8 +274,7 @@ class AdminJobEditForm(ModelForm):
                   'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
-                  'take_home_during_training', 'take_home_after_training',
-                  'bonus', 'bond_link', 'opening_date', 'application_deadline',
+                  'bond_link', 'opening_date', 'application_deadline',
                   ]
         widgets = {
             'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
@@ -334,9 +325,6 @@ class AdminJobEditForm(ModelForm):
                     'gross_phd',
                     'gross_msc',
                     'gross_ma',
-                    'take_home_during_training',
-                    'take_home_after_training',
-                    'bonus',
 
                     HTML("""
                         <a class="btn btn-primary btnPrevious" >Previous</a>

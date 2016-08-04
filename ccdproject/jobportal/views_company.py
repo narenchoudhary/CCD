@@ -354,16 +354,19 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         # user is company
         is_company = self.request.user.user_type == 'company'
         if not is_company:
+            print("not company")
             return False
         self.job = get_object_or_404(Job, id=self.kwargs['pk'])
         company_user = self.request.session['company_instance_id']
         company_owner = self.job.company_owner.id == company_user
         if not company_owner:
+            print("not company owner")
             return False
         # deadline has passed
         deadline = self.job.application_deadline
         deadline_over = deadline < timezone.now().date()
         if not deadline_over:
+            print("deadline error")
             return False
         return True
 
