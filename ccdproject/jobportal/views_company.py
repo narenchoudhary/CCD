@@ -226,31 +226,28 @@ class ProfileUpdate(UpdateView):
             Company, id=self.request.session['company_instance_id'])
 
 
-class PasswordChangeView(CurrentAppMixin, UpdateView):
-
-    form_class = PasswordChangeForm
-    success_url = reverse_lazy('company-home')
+class PasswordChangeView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
     template_name = 'jobportal/Company/password_update.html'
 
-    current_app = None
-    extra_context = None
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
-    def get_object(self, queryset=None):
-        return self.request.user
+    def get(self, request):
+        form = PasswordChangeForm(None)
+        return render(request, self.template_name, dict(form=form))
 
-    def get_form_kwargs(self):
-        kwargs = super(PasswordChangeView, self).get_form_kwargs()
-        kwargs['user'] = kwargs.pop('instance')
-        return kwargs
-
-    # def form_valid(self, form):
-    #     form.save()
-    #     messages.add_message(self.request, messages.SUCCESS, 'Password changed successfully.')
-    #     return super(PasswordChangeView, self).form_valid(form)
-
-    @method_decorator
-    def dispatch(self, request, *args, **kwargs):
-        super(PasswordChangeView, self).dispatch(*args, **kwargs)
+    def post(self, request):
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            print("cnahed")
+            return redirect('company-home')
+        else:
+            print("not changed")
+            return render(request, self.template_name, dict(form=form))
 
 
 class JobList(ListView):

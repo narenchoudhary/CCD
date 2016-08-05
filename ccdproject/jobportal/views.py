@@ -73,8 +73,21 @@ def login(request):
             return HttpResponse("Please enable cookies and try again.")
     else:
         # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
-        request.session.set_test_cookie()
-        return render(request, 'jobportal/login.html', dict(form=form))
+        if request.user.is_authenticated:
+            user_profile = UserProfile.objects.get(
+                username=request.user.username)
+            if user_profile.user_type == 'admin':
+                return redirect('admin-home')
+            elif user_profile.user_type == 'company':
+                return redirect('company-home')
+            elif user_profile.user_type == 'student':
+                return redirect('stud-home')
+            else:
+                auth.logout(request)
+                return redirect('index')
+        else:
+            request.session.set_test_cookie()
+            return render(request, 'jobportal/login.html', dict(form=form))
 
 
 class LogoutView(LoginRequiredMixin, View):
