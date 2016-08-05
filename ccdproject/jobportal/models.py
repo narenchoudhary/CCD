@@ -1,3 +1,5 @@
+import uuid
+
 from datetime import timedelta
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -11,27 +13,27 @@ from constants import *
 
 
 def generate_alum_cvname(instance, filename):
-    url = "alum_cv/%s" % str(instance.id)
+    url = "alum_cv/{0}_{1}".format(instance.id, uuid.uuid4())
     return url
 
 
 def get_cv1_name(instance, filename):
-    url = "cv1/%s" % str(instance.stud.id)
+    url = 'studcv/{0}/{0}_cv1_{1}'.format(instance.stud.roll_no, uuid.uuid4())
     return url
 
 
 def get_cv2_name(instance, filename):
-    url = "cv2/%s" % str(instance.stud.id)
+    url = 'studcv/{0}/{0}_cv2_{1}'.format(instance.stud.roll_no, uuid.uuid4())
     return url
 
 
 def get_avatar_name(instance, filename):
-    url = "avatar/%s" % str(instance.stud.id)
+    url = "studavatar/{0}_{1}".format(instance.stud.roll_no, uuid.uuid4())
     return url
 
 
 def get_sign_name(instance, filename):
-    url = "signature/%s" % str(instance.stud.id)
+    url = "studsignature/{0}_{1}".format(instance.stud.roll_no, uuid.uuid4())
     return url
 
 

@@ -142,3 +142,6 @@ media/*
 # Idea folder
 .idea/
 
+
+# ignore media files
+/ccdproject/media/
