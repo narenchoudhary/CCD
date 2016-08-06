@@ -37,6 +37,12 @@ def get_sign_name(instance, filename):
     return url
 
 
+def get_bond_link_name(instance, filename):
+    url = "company_bond/{0}_{1}".format(instance.company.user.username,
+                                        uuid.uuid4())
+    return url
+
+
 class UserProfile(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPE,
                                  default='admin')
@@ -88,7 +94,8 @@ class Programme(models.Model):
 
 
 class Admin(models.Model):
-    user = models.OneToOneField(UserProfile, blank=True, null=True)
+    user = models.OneToOneField(UserProfile, blank=True, null=True,
+                                limit_choices_to={'user_type': 'admin'})
     admin_username = models.CharField(max_length=50, null=True, blank=True,
                                       verbose_name="Admin Username")
     position = models.CharField(max_length=60, null=True, blank=True,
@@ -102,7 +109,8 @@ class Admin(models.Model):
 
 
 class Company(models.Model):
-    user = models.OneToOneField(UserProfile, blank=True, null=True)
+    user = models.OneToOneField(UserProfile, blank=True, null=True,
+                                limit_choices_to={'user_type': 'company'})
     company_name = models.CharField(blank=False, null=True, max_length=30,
                                     verbose_name="Company Name")
     description = models.TextField(blank=False, null=True,
@@ -167,7 +175,8 @@ class Company(models.Model):
 
 
 class Alumni(models.Model):
-    user = models.OneToOneField(UserProfile, blank=True, null=True)
+    user = models.OneToOneField(UserProfile, blank=True, null=True,
+                                limit_choices_to={'user_type': 'alumni'})
     iitg_webmail = models.CharField(max_length=50, blank=True,
                                     verbose_name="IITG Webmail")
     alternate_email = models.EmailField(max_length=254, blank=True,
@@ -192,15 +201,12 @@ class Alumni(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(UserProfile, blank=True, null=True)
+    user = models.OneToOneField(UserProfile, blank=True, null=True,
+                                limit_choices_to={'user_type': 'student'})
     roll_no = models.DecimalField(max_digits=10, decimal_places=0, unique=True,
                                   verbose_name="Roll No", default=0)
-    first_name = models.CharField(max_length=20, default="",
-                                  verbose_name='First Name')
-    middle_name = models.CharField(max_length=20, default="",
-                                   verbose_name='Middle Name')
-    last_name = models.CharField(max_length=20, default="",
-                                 verbose_name='Last Name')
+    name = models.CharField(max_length=60, default="",
+                            verbose_name="Full Name")
     dob = models.DateField(default=timezone.now, blank=True,
                            verbose_name='DOB')
     sex = models.CharField(max_length=1, choices=SEX, default='M',
@@ -325,6 +331,10 @@ class Student(models.Model):
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 6th Semester')
+    # fee details
+    fee_transaction_id = models.CharField(max_length=100, null=True,
+                                          blank=True,
+                                          verbose_name="Fee Transaction ID")
     # status
     placed = models.BooleanField(default=False, blank=True,
                                  verbose_name='Placement Status')
@@ -339,7 +349,7 @@ class Student(models.Model):
         managed = True
 
     def __unicode__(self):
-        return str(self.user.username)
+        return str(self.roll_no)
 
 
 class Job(models.Model):
@@ -559,7 +569,6 @@ class ProgrammeJobRelation(models.Model):
             return str(self.year) + str(self.dept) + str(self.prog) + '-MINOR'
         else:
             return str(self.year) + str(self.dept) + str(self.prog) + '-MAJOR'
-
 
 
 class MinorProgrammeJobRelation(models.Model):

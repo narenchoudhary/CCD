@@ -1,4 +1,10 @@
+import csv
+import codecs
+import string
+import random
+
 from django.contrib import messages
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
@@ -14,9 +20,9 @@ from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      MinorProgrammeJobRelation, Event)
 from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet,
                     AdminJobRelForm, StudentSearchForm, EditCompany,
-                    JobProgMinorFormSet, ProgrammeForm, AdminEventForm)
-
-from internships.models import IndInternship, StudentInternRelation
+                    JobProgMinorFormSet, ProgrammeForm, AdminEventForm,
+                    StudentProfileUploadForm, StudentFeeCSVForm)
+from .constants import CATEGORY
 
 
 class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -188,8 +194,6 @@ class CompanyDetail(DetailView):
         context = super(CompanyDetail, self).get_context_data(**kwargs)
         company_instance = Company.objects.get(id=self.kwargs['pk'])
         context['company'] = company_instance
-        context['intern_list'] = IndInternship.objects.filter(company_owner=
-                                                              company_instance)
         context['job_list'] = Job.objects.filter(company_owner=
                                                  company_instance)
         return context
@@ -528,3 +532,205 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         return super(EventUpdate, self).form_valid(form)
+
+
+class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Admin/student_create.html'
+    col_count = 10
+    password_len = 8
+    # form_class = StudentUploadForm
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def validate_csv_row(self, row):
+        print("validation started")
+        num_cols = len(row)
+        if self.col_count != num_cols:
+            return False, 'Row number is not ' + str(self.col_count)
+        try:
+            roll_no = int(row[1])
+        except ValueError:
+            return False, 'Roll number is not a valid number'
+        try:
+            year = int(row[3])
+        except ValueError:
+            return False, 'Year is not a valid number.'
+        try:
+            year_instance = Year.objects.get(current_year=year)
+        except Year.DoesNotExist:
+            return False, 'Year %s doen not exist in DB' % year
+        try:
+            dept_code = str(row[4]).upper()
+            dept_instance = Department.objects.get(year=year_instance,
+                                                   dept_code=dept_code)
+        except Department.DoesNotExist:
+            return False, 'Department %s does not not exist in DB' \
+                   % str(row[4]).upper()
+        try:
+            prog = str(row[5]).upper()
+            prog_instance = Programme.objects.get(year=year_instance,
+                                                  dept=dept_instance,
+                                                  name=prog,
+                                                  minor_status=False)
+        except Programme.DoesNotExist:
+            return False, 'Programme %s does not exist in DB' \
+                   % str(row[5]).upper()
+
+        category = str(row[6])
+        print(category)
+        print(CATEGORY)
+        if category not in [cat[0] for cat in CATEGORY]:
+            return False, 'Invalid Category'
+
+        try:
+            cpi = float(row[7])
+        except ValueError:
+            return False, 'CPI not a valid number.'
+
+        return True, None
+
+    def get(self, request):
+        form = StudentProfileUploadForm()
+        return render(request, self.template_name, dict(form=form))
+
+    def post(self, request):
+        form = StudentProfileUploadForm(request.POST, request.FILES)
+        print("form ready")
+        if form.is_valid():
+            print("form valid")
+            csvfile = form.cleaned_data['csv']
+            reader = csv.reader(csvfile, delimiter=',')
+            print("reader init done")
+            error_rows = []
+            error_msg = []
+            rowcount = 0
+            print("start loop")
+            for row in reader:
+                print("inside loop")
+                rowcount += 1
+                print(rowcount)
+                print(row)
+                row_ok, error = self.validate_csv_row(row)
+                print(row_ok)
+                print(error)
+                if not row_ok:
+                    error_rows.append(rowcount)
+                    error_msg.append(error)
+                    continue
+                username = row[0]
+                # dummy password
+                password = ''.join(
+                    random.SystemRandom().choice(
+                        string.ascii_uppercase + string.digits)
+                    for _ in range(self.password_len))
+                # get or create user profile
+                userprofile, up_created = UserProfile.objects.get_or_create(
+                    username=username,
+                    is_active=False,
+                    user_type='student'
+                )
+                # if created
+                if up_created:
+                    userprofile.password = make_password(password=password)
+                    userprofile.save()
+                    print("User pofile " + username + " created.")
+                # get or create student profile
+                stud, s_created = Student.objects.get_or_create(
+                    user__id=userprofile.id
+                )
+                if not s_created:
+                    error_rows.append(rowcount)
+                    error = 'Student with this username already exists'
+                    error_msg.append(error)
+                    continue
+                if up_created and s_created:
+                    year = Year.objects.get(current_year=int(row[3]))
+                    dept = Department.objects.get(year=year,
+                                                  dept_code=
+                                                  str(row[4]).upper())
+                    prog = Programme.objects.get(year=year, dept=dept,
+                                                 name=str(row[5]),
+                                                 minor_status=False)
+                    stud.user = userprofile
+                    stud.iitg_webmail = str(username) + '@iitg.ac.in'
+                    stud.roll_no = int(row[1])
+                    stud.name = row[2]
+                    stud.year = year
+                    stud.dept = dept
+                    stud.prog = prog
+                    stud.category = str(row[6]).upper()
+                    stud.cpi = float(row[7])
+                    stud.nationality = str(row[8])
+                    stud.gender = str(row[9]).upper()
+                    stud.save()
+                    print("Student created")
+            print("loop complete")
+            zipped_data = zip(error_rows, error_msg)
+            args = dict(zipped_data=zipped_data, form=form)
+            return render(request, self.template_name, args)
+        else:
+            print("form invalid")
+            return render(request, self.template_name, dict(form=form))
+
+
+class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Admin/student_fee_update.html'
+    col_count = 2
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request):
+        form = StudentFeeCSVForm(None)
+        return render(request, self.template_name, dict(form=form))
+
+    def validate_csv_row(self, row):
+        if len(row) != self.col_count:
+            return False, "Row does not have two rows"
+        try:
+            roll_no = int(row[0])
+        except ValueError:
+            return False, "Roll Number is not a valid number."
+        return True, None
+
+    def post(self, request):
+        form = StudentFeeCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            csvfile = form.cleaned_data['csv']
+            reader = csv.reader(csvfile, delimiter=',')
+            print("reader init done")
+            error_rows = []
+            error_msg = []
+            rowcount = 0
+            for row in reader:
+                rowcount += 1
+                print(row)
+                row_ok, error = self.validate_csv_row(row)
+                print("row ok " + str(row_ok))
+                if not row_ok:
+                    error_rows.append(rowcount)
+                    error_msg.append(error)
+                    continue
+                try:
+                    stud = Student.objects.get(roll_no=int(row[0]))
+                except Student.DoesNotExist:
+                    error_rows.append(rowcount)
+                    error = 'No student with this roll number found in DB'
+                    error_msg.append(error)
+                    continue
+                userprofile = stud.user
+                userprofile.is_active = True
+                userprofile.save()
+                stud.fee_transaction_id = str(row[1])
+                stud.save()
+            zipped_data = zip(error_rows, error_msg)
+            return render(request, self.template_name,
+                          dict(form=form, zipped_data=zipped_data))
+        else:
+            return render(request, self.template_name, dict(form=form))

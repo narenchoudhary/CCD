@@ -36,7 +36,7 @@ class EditStudProfileForm(ModelForm):
 
     class Meta:
         model = Student
-        fields = ['roll_no', 'first_name', 'middle_name', 'last_name', 'dob',
+        fields = ['roll_no', 'name', 'dob',
                   'sex', 'category', 'nationality', 'minor_year',
                   'minor_dept', 'minor_prog', 'year', 'dept', 'prog',
                   'hostel', 'room_no', 'iitg_webmail', 'alternative_email',
@@ -50,16 +50,14 @@ class EditStudProfileForm(ModelForm):
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem']
 
         widgets = {
-            'gap_reason': forms.Textarea(attrs={'rows':4})
+            'gap_reason': forms.Textarea(attrs={'rows': 4})
         }
 
     def __init__(self, *args, **kwargs):
         super(EditStudProfileForm, self).__init__(*args, **kwargs)
         self.fields['roll_no'].disabled = True
         self.fields['iitg_webmail'].disabled = True
-        self.fields['first_name'].disabled = True
-        self.fields['middle_name'].disabled = True
-        self.fields['last_name'].disabled = True
+        self.fields['name'].disabled = True
         self.fields['year'].disabled = True
         self.fields['dept'].disabled = True
         self.fields['prog'].disabled = True
@@ -80,9 +78,7 @@ class EditStudProfileForm(ModelForm):
 
                     'roll_no',
                     'iitg_webmail',
-                    'first_name',
-                    'middle_name',
-                    'last_name',
+                    'name',
                     'dob',
                     'sex',
                     'category',
@@ -433,7 +429,8 @@ class AddStudent(ModelForm):
 
     class Meta:
         model = Student
-        exclude = ['user', 'placed', 'cv1', 'cv2', 'intern2', 'intern3', 'ppo']
+        exclude = ['user', 'placed', 'cv1', 'cv2', 'intern2', 'intern3',
+                   'ppo']
         widgets = {
             'gap_reason': forms.Textarea(attrs=dict(rows=4, cols=15))
         }
@@ -807,3 +804,15 @@ class ProgrammeForm(forms.ModelForm):
                         'text-label': 'Switch Me'}
             )
         }
+
+
+class StudentProfileUploadForm(forms.Form):
+
+    csv = forms.FileField(required=False, allow_empty_file=True,
+                          label='Upload CSV')
+
+
+class StudentFeeCSVForm(forms.Form):
+
+    csv = forms.FileField(required=False, allow_empty_file=True,
+                          label='Upload CSV')

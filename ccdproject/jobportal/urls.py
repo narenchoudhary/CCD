@@ -128,6 +128,11 @@ urlpatterns = [
 
     url(r'^admin/manage/$', views_admin.AdminManage.as_view(),
         name='admin-manage'),
+    url(r'^admin/student/create/', views_admin.UploadStudentData.as_view(),
+        name='admin-student-create'),
+    url(r'^admin/student/fee/update/',
+        views_admin.StudentFeeStatusView.as_view(),
+        name='admin-student-fee-update'),
     url(r'^admin/student/list/$', views_admin.StudentList.as_view(),
         name='admin-student-list'),
     url(r'^admin/student/(?P<pk>\d+)/detail/$',

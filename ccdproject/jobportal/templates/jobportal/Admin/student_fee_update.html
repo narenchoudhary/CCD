@@ -1,0 +1,45 @@
+{% extends 'base_admin.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block head_extra %}
+    <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+{% endblock %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+        <h3>Upload Student Fee Details CSV</h3>
+        <div class="col-md-6 col-md-offset-3">
+            <form method="post" accept-charset="utf-8" enctype="multipart/form-data"
+                  action="{% url 'admin-student-fee-update' %}">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input type="submit" class="btn btn-success" value="Add">
+            </form>
+        </div>
+        {% if zipped_data.count > 1 %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Row Number</th>
+                        <th>Error</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, j in zipped_data %}
+                        <tr>
+                            <td>{{i}}</td>
+                            <td>{{j}}</td>
+                            <td>Not Saved</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        {% endif %}
+{% endblock %}
