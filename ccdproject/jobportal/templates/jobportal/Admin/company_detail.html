@@ -112,34 +112,6 @@
     {% endif %}
     </div>
 
-    <div>
-    {% if intern_list.count > 0 %}
-        <h4>Internships posted from this recruiter profile:</h4>
-        <div class="col-md-12">
-            <table class="table table-striped">
-                <tr>
-                    <th>Designation</th>
-                    <th>Posted On</th>
-                    <th>Approved</th>
-                    <th>Details</th>
-                </tr>
-                {% for intern in intern_list %}
-                    <tr>
-                        <td>{{ intern.designation }}</td>
-                        <td>{{ intern.posted_on }}</td>
-                        <td>{{ intern.approved | yesno:"Approved, Not Approved"}}</td>
-                        <td>
-                            <a href="#"
-                            class="btn btn-xs brn-primary">Details</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    {% else %}
-    {% endif %}
-    </div>
-
 </div>
 
 <div class="col-md-12">

@@ -680,9 +680,11 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, jobpk):
         minor_list = Programme.objects.filter(open_for_placement=True,
                                               minor_status=True)
-        btech_list = Programme.objects.filter(open_for_placement=True,
-                                              minor_status=False,
-                                              name='BTECH')
+        btech_bdes_list = Programme.objects.filter(
+            open_for_placement=True, minor_status=False
+        ).filter(
+            Q(name='BTECH') | Q(name='BDES')
+        )
         mtech_list = Programme.objects.filter(open_for_placement=True,
                                               minor_status=False,
                                               name='MTECH')
@@ -695,7 +697,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         msc_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='MSC')
-        args = dict(minor_list=minor_list, btech_list=btech_list,
+        args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
                     ma_list=ma_list, mtech_list=mtech_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk)
         return render(request, self.template_name, args)
@@ -705,14 +707,14 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         job = get_object_or_404(Job, id=jobpk)
 
         minor_list_ids = request.POST.getlist('selected_minor_ids')
-        btech_list_ids = request.POST.getlist('selected_btech_ids')
+        btech_bdes_list = request.POST.getlist('selected_btech_ids')
         mtech_list_ids = request.POST.getlist('selected_mtech_ids')
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
         msc_list_ids = request.POST.getlist('selected_msc_ids')
 
         programme_list = Programme.objects.filter(Q(id__in=minor_list_ids) |
-                                                  Q(id__in=btech_list_ids) |
+                                                  Q(id__in=btech_bdes_list) |
                                                   Q(id__in=phd_list_ids) |
                                                   Q(id__in=ma_list_ids) |
                                                   Q(id__in=mtech_list_ids) |
@@ -720,7 +722,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
         for programme in programme_list:
 
-            jobprog, created = ProgrammeJobRelation.objects.get_or_create(
+            ProgrammeJobRelation.objects.get_or_create(
                 job=job,
                 year=programme.year,
                 dept=programme.dept,

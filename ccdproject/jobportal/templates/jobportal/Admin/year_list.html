@@ -1,5 +1,8 @@
 {% extends 'base_admin.html' %}
 
+{% block title %}
+{% endblock %}
+
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 <p><a href="#" title="">My Account</a></p>
@@ -19,16 +22,12 @@
         <thead>
         <tr>
             <th><strong>Current Year</strong></th>
-            <th><strong>Edit</strong></th>
-            <th><strong>Delete</strong></th>
         </tr>
         </thead>
         <tbody class="searchable">
         {% for year in years %}
         <tr>
             <td>{{ year.current_year }}</td>
-            <td>Edit</td>
-            <td>Delete</td>
         </tr>
         {% endfor %}
         </tbody>

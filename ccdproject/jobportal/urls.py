@@ -4,8 +4,6 @@ from django.views.generic import TemplateView
 from . import views, views_admin, views_company, views_alumni, views_print
 
 urlpatterns = [
-    url(r'^check/$', TemplateView.as_view(
-        template_name='jobportal/checkbox.html')),
     url(r'^$', TemplateView.as_view(template_name='jobportal/index.html'),
         name='index'),
     url(r'^login/$', views.login, name='login'),

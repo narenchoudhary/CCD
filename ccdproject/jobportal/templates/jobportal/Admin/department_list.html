@@ -18,11 +18,9 @@
         <thead>
         <tr>
             <th><strong>Year</strong></th>
-            <th><strong>Name</strong></th>
-            <th><strong>Code</strong></th>
-            <th><strong>Minor</strong></th>
+            <th><strong>Department Name</strong></th>
+            <th><strong>Department Code</strong></th>
             <th><strong>Edit</strong></th>
-            <th><strong>Delete</strong></th>
         </tr>
         </thead>
         <tbody>
@@ -31,9 +29,11 @@
                 <td>{{ department.year }}</td>
                 <td>{{ department.dept }}</td>
                 <td>{{ department.dept_code | upper }}</td>
-                <td>{{ department.dept_minor_status | yesno:"Yes,No"}}</td>
-                <td><a class="btn btn-info btn-xs" href="{% url 'department-update' department.id %}"><span class="glyphicon glyphicon-pencil"></span>&nbspEdit</a></td>
-                <td><a class="btn btn-info btn-xs" href="{% url 'department-delete' department.id %}"><span class="glyphicon glyphicon-trash"></span>&nbspDelete</a></td>
+                <td>
+                    <a class="btn btn-info btn-xs" href="{% url 'department-update' department.id %}">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbspEdit
+                    </a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>

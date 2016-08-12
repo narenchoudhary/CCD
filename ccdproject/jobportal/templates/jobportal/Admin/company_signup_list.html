@@ -25,8 +25,8 @@
                     <tr>
                         <th>Company Name</th>
                         <th>Company Profile</th>
-                        <th>First HR Email</th>
-                        <th>Add Credentials</th>
+                        <th>Head HR Email</th>
+                        <th>Head HR Mobile</th>
                     </tr>
                 </thead>
                 <tbody class="searchable">
@@ -35,11 +35,7 @@
                             <td>{{ company.company_name }}</td>
                             <td><a class="btn btn-info btn-xs" href = "{% url 'admin-company-detail' company.id %}"><span class="glyphicon glyphicon-list-alt"></span>&nbspRequest Profile</a></td>
                             <td>{{ company.first_hr_email }}</td>
-                            <td>
-                                <a class="btn btn-info btn-xs" href="#">
-                                    <span class="glyphicon glyphicon-plus"></span>&nbspAdd Credentials
-                                </a>
-                            </td>
+                            <td>{{ company.head_hr_mobile }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

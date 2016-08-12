@@ -49,6 +49,7 @@ DEPARTMENTS_JOBCHOICE = DEPARTMENTS + (('ALL', 'All Departments'),)
 
 PROGRAMMES = (
     ('BTECH', 'B.Tech.'),
+    ('BDES', 'B.Des.'),
     ('MTECH', 'M.Tech.'),
     ('PHD', 'Ph.D.'),
     ('MSC', 'M.Sc.'),

@@ -65,29 +65,45 @@ class YearDelete(DeleteView):
     success_url = reverse_lazy('year-list')
 
 
-class DepartmentList(ListView):
+class DepartmentList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Department.objects.all()
     template_name = 'jobportal/Admin/department_list.html'
     context_object_name = 'departments'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class DepartmentDetail(DetailView):
+
+class DepartmentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Department
     template_name = 'jobportal/Admin/department_detail.html'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class DepartmentCreate(CreateView):
+
+class DepartmentCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
     model = Department
     fields = '__all__'
     template_name = 'jobportal/Admin/department_create.html'
     success_url = reverse_lazy('department-list')
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class DepartmentUpdate(UpdateView):
+
+class DepartmentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     model = Department
     fields = '__all__'
     template_name = 'jobportal/Admin/department_update.html'
     success_url = reverse_lazy('department-list')
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_object(self, queryset=None):
         obj = Department.objects.get(id=self.kwargs['pk'])

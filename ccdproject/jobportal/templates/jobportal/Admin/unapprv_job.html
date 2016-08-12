@@ -11,7 +11,7 @@ Unapproved: Jobs
 {% endblock%}
 
 {% block content %}
-<h2 class="sub-header">Unapproved Jobs and Internships:</h2>
+<h2 class="sub-header">Unapproved Jobs :</h2>
 <hr>
 <div class="col-md-12">
     {% if job_list.count > 0 %}
@@ -46,32 +46,5 @@ Unapproved: Jobs
         <h4>All clear. No Job Approvals pending.</h4>
     {% endif %}
 
-    {% if intern_list.count > 0 %}
-        <h3>Internships</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Intern Designation</th>
-                    <th>Owner</th>
-                    <th>Posted On</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for intern in intern_list %}
-                    <tr>
-                        <td>{{ intern.designation }}</td>
-                        <td>{{ intern.company_owner.company_name }}</td>
-                        <td>{{ intern.posted_on}}</td>
-                        <td>
-                            <a href="{% url 'internships:admin_intern_details' intern.id %}"
-                            class="btn btn-xs btn-primary">Details</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-    {% endif %}
 </div>
 {% endblock %}

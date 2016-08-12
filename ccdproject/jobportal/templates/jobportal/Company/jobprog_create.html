@@ -15,7 +15,7 @@
         {% csrf_token %}
     <div class="col-md-12 row">
         {% if minor_list.count > 0 %}
-
+                <h4>Minor Programmes</h4>
                 <div class="col-md-6">
                     <table class="table table-striped">
                         <thead>
@@ -45,7 +45,8 @@
     </div>
 
     <div class="col-md-12 row">
-        {% if btech_list.count > 0 %}
+        {% if btech_bdes_list.count > 0 %}
+                <h4>BTech/BDes Programmes</h4>
                 <div class="col-md-6">
                     <table class="table table-striped">
                         <thead>
@@ -57,7 +58,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for programme in btech_list %}
+                            {% for programme in btech_bdes_list %}
                                 <tr>
                                     <td>
                                         <input type="checkbox" name="selected_btech_ids"
@@ -76,6 +77,7 @@
 
     <div class="col-md-12">
         {% if phd_list.count > 0 %}
+                <h4>PhD Programmes</h4>
                 <div class="col-md-6">
                     <table class="table table-striped">
                         <thead>
@@ -106,6 +108,7 @@
 
     <div class="col-md-12">
         {% if msc_list.count > 0 %}
+                <h4>MSc Programmes</h4>
                 <div class="col-md-6">
                     <table class="table table-striped">
                         <thead>
@@ -136,6 +139,7 @@
 
     <div class="col-md-12 row">
         {% if ma_list.count > 0 %}
+                <h4>MA Programmes</h4>
                 <div class="col-md-6">
                     <table class="table table-striped">
                         <thead>
