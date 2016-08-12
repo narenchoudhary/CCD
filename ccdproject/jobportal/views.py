@@ -18,6 +18,22 @@ ALUM_LOGIN_URL = reverse_lazy('login')
 COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
+def handler400(request):
+    return render(request, '400.html')
+
+
+def handler403(request):
+    return render(request, '403.html')
+
+
+def handler404(request):
+    return render(request, '404.html')
+
+
+def handler500(request):
+    return render(request, '500.html')
+
+
 def login(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST':
@@ -162,6 +178,10 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
             Q(cpi_shortlist=False) | Q(cpi_shortlist=True,
                                        minimum_cpi__lte=stud.cpi)
         ).filter(
+            Q(backlog_filter=False) |
+            Q(backlog_filter=True,
+              num_backlogs_allowed__gte=stud.active_backlogs)
+        ).filter(
             approved=True
         ).filter(
             opening_date__lte=timezone.now().date()
@@ -180,20 +200,35 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 
+# TODO: Test this view
 class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
     raise_exception = True
     model = Job
     template_name = 'jobportal/Student/job_detail.html'
+    stud = None
+    jobid = None
+    job = None
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        self.stud = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
+        self.jobid = self.kwargs['pk']
+        self.job = get_object_or_404(Job, id=self.jobid)
+        # TODO: Check eligibility
+        stud_eligibility = self.check_student_eligibility()
+        if not stud_eligibility:
+            return False
+        return True
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['no_cv'] = self.student_cv()
         context['now'] = timezone.now()
-        context['jobrel'] = self.get_jobrel_or_none(self.kwargs['pk'])
+        context['jobrel'] = self.get_jobrel_or_none(self.jobid)
         return context
 
     def student_cv(self):
@@ -203,14 +238,31 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             return True
         return False
 
-    def get_jobrel_or_none(self, jobid):
+    def get_jobrel_or_none(self):
         try:
             jobrel = StudentJobRelation.objects.get(
-                job__id=jobid,
-                stud__id=self.request.session['student_instance_id'])
+                job__id=self.jobid,
+                stud__id=self.stud.id)
             return jobrel
         except StudentJobRelation.DoesNotExist:
             return None
+
+    def check_student_eligibility(self, jobid):
+        # Check Programme eligibility
+        progjobrel = ProgrammeJobRelation.objects.filter(
+            Q(job__id=self.job.id, prog__id=self.stud.prog.id) |
+            Q(job__id=self.job.id, prog__id=self.stud.minor_prog.id)
+        )
+        if not progjobrel:
+            return False
+        # Check CPI eligibility
+        if self.job.cpi_shortlist and self.job.minimum_cpi > self.stud.cpi:
+            return False
+        # Check BackLog eligibility
+        if self.job.backlog_filter and self.job.num_backlogs_allowed < \
+                self.stud.active_backlogs:
+            return False
+        return True
 
 
 class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -244,44 +296,35 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
     template = 'jobportal/Student/jobrel_create.html'
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        self.stud = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
+        self.job = get_object_or_404(Job, id=self.kwargs['pk'])
+        stud_cv_check = self.check_stud_credentials()
+        stud_check = self.check_stud_credentials()
+        job_check = self.check_job_credentials()
+        if not stud_cv_check or not stud_check or not job_check:
+            return False
+        return True
 
     def get(self, request, pk):
-        self.stud = get_object_or_404(
-            Student, id=request.session['student_instance_id'])
-        self.job = get_object_or_404(Job, id=pk)
-        stud_check = self.check_stud_credentials()
-        job_check = self.check_job_credentials()
-        job_check = True
-        print stud_check
-        print job_check
-        if stud_check and job_check:
-            form = SelectCVForm(extra=self.get_questions())
-            return render(request, self.template, dict(form=form, job=self.job))
-        else:
-            return redirect('stud-job-list')
+        form = SelectCVForm(extra=self.get_questions())
+        return render(request, self.template, dict(form=form, job=self.job))
 
     def post(self, request, pk):
-        self.job = get_object_or_404(Job, id=pk)
-        self.stud = get_object_or_404(
-            Student, id=request.session['student_instance_id'])
-        stud_check = self.check_stud_credentials()
-        job_check = self.check_job_credentials()
-        print("Stud " + str(stud_check))
-        print("JOb " + str(job_check))
-        if stud_check and job_check:
-            form = SelectCVForm(request.POST, extra=self.get_questions())
-            if form.is_valid():
-                jobrel = StudentJobRelation(stud=self.stud, job=self.job)
-                jobrel.save()
-                for (question, answer) in form.extra_answers():
-                    setattr(jobrel, question, answer)
-                jobrel.save()
-                return redirect('stud-job-detail', pk=self.job.id)
-            else:
-                return render(request, self.template,
-                              dict(form=form, job=self.job))
-        return redirect('stud-job-list')
+        form = SelectCVForm(request.POST, extra=self.get_questions())
+        if form.is_valid():
+            jobrel = StudentJobRelation(stud=self.stud, job=self.job)
+            jobrel.save()
+            for (question, answer) in form.extra_answers():
+                setattr(jobrel, question, answer)
+            jobrel.save()
+            return redirect('stud-job-detail', pk=self.job.id)
+        else:
+            return render(request, self.template,
+                          dict(form=form, job=self.job))
 
     def get_questions(self):
         cv = get_object_or_404(CV, stud=self.stud)
@@ -292,15 +335,29 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
             questions.append("cv2")
         return questions
 
-    def check_stud_credentials(self):
+    def check_stud_cv(self):
         try:
             cv = CV.objects.get(stud=self.stud)
         except CV.DoesNotExist:
             return False
-        if bool(cv.cv1) or bool(cv.cv2):
-            return True
-        else:
+        if not bool(cv.cv1) and not bool(cv.cv2):
             return False
+        return True
+
+    def check_stud_credentials(self):
+        progjobrel = ProgrammeJobRelation.objects.filter(
+            Q(job__id=self.job.id, prog__id=self.stud.prog.id) |
+            Q(job__id=self.job.id, prog__id=self.stud.minor_prog.id)
+        )
+        if not progjobrel:
+            return False
+        # Check CPI eligibility
+        if self.job.cpi_shortlist and self.job.minimum_cpi > self.stud.cpi:
+            return False
+        # Check BackLog eligibility
+        if self.job.backlog_filter and self.job.num_backlogs_allowed < self.stud.active_backlogs:
+            return False
+        return True
 
     def check_job_credentials(self):
         time_now = timezone.now().date()

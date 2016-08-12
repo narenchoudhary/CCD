@@ -3,6 +3,8 @@ import codecs
 import string
 import random
 
+from sqlite3.dbapi2 import IntegrityError
+
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -18,7 +20,7 @@ from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Department, Year, Programme,
                      ProgrammeJobRelation, UserProfile,
                      MinorProgrammeJobRelation, Event)
-from .forms import (AddCompany, AdminJobEditForm, AddStudent, JobProgFormSet,
+from .forms import (AdminJobEditForm, JobProgFormSet,
                     AdminJobRelForm, StudentSearchForm, EditCompany,
                     JobProgMinorFormSet, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm)
@@ -177,12 +179,6 @@ class CompanyList(ListView):
     queryset = Company.objects.filter(approved=True)
     template_name = 'jobportal/Admin/company_list.html'
     context_object_name = 'company_list'
-
-
-class CompanyCreate(CreateView):
-    form = AddCompany
-    template_name = 'jobportal/Admin/company_create.html'
-    success_url = reverse_lazy('company-detail')
 
 
 class CompanyDetail(DetailView):
@@ -538,7 +534,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
     raise_exception = True
     template_name = 'jobportal/Admin/student_create.html'
-    col_count = 10
+    col_count = 13
     password_len = 8
     # form_class = StudentUploadForm
 
@@ -546,10 +542,24 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         return self.request.user.user_type == 'admin'
 
     def validate_csv_row(self, row):
-        print("validation started")
+        # CSV format
+        # Col0: Webmail: no checking
+        # Col1: Roll No: Must be number
+        # Col2: Name: no checking
+        # Col3: Year: Must be in Db
+        # Col4: Dept: Must be in Db
+        # Col5: Prog: Must be in Db
+        # Col6: Minor Year: Must be in Db
+        # Col7: Minor Dept: Must be in Db
+        # Col8: Minor Prog: Must be in Db
+        # Col9: Category: Must be in constants.CATEGORY
+        # Col10: CPI: Must be Float
+        # Col11: Nationality: NO checking
+        # Col12: Gender: Must be in [M, F]
         num_cols = len(row)
         if self.col_count != num_cols:
-            return False, 'Row number is not ' + str(self.col_count)
+            return False, 'Total number of columns is not ' + str(
+                self.col_count)
         try:
             roll_no = int(row[1])
         except ValueError:
@@ -571,24 +581,42 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                    % str(row[4]).upper()
         try:
             prog = str(row[5]).upper()
-            prog_instance = Programme.objects.get(year=year_instance,
-                                                  dept=dept_instance,
-                                                  name=prog,
-                                                  minor_status=False)
+            Programme.objects.get(year=year_instance, dept=dept_instance,
+                                  name=prog, minor_status=False)
         except Programme.DoesNotExist:
             return False, 'Programme %s does not exist in DB' \
                    % str(row[5]).upper()
-
-        category = str(row[6])
-        print(category)
-        print(CATEGORY)
+        if row[6] != '':
+            try:
+                year_instance = Year.objects.get(current_year=year)
+            except Year.DoesNotExist:
+                return False, 'Minor year %s doen not exist in DB' % year
+        if row[7] != '':
+            try:
+                dept_code = str(row[7]).upper()
+                dept_instance = Department.objects.get(year=year_instance,
+                                                       dept_code=dept_code)
+            except Department.DoesNotExist:
+                return False, 'Department %s does not not exist in DB' \
+                       % dept_code
+        try:
+            prog = str(row[8]).upper()
+            Programme.objects.get(year=year_instance, dept=dept_instance,
+                                  name=prog, minor_status=True)
+        except Programme.DoesNotExist:
+            return False, 'Programme %s does not exist in DB' \
+                   % prog
+        category = str(row[9])
         if category not in [cat[0] for cat in CATEGORY]:
             return False, 'Invalid Category'
 
         try:
-            cpi = float(row[7])
+            cpi = float(row[10])
         except ValueError:
             return False, 'CPI not a valid number.'
+
+        if row[12] not in ['M', 'F']:
+            return False, 'Gender must be M or F only.'
 
         return True, None
 
@@ -596,26 +624,19 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         form = StudentProfileUploadForm()
         return render(request, self.template_name, dict(form=form))
 
+    # TODO: Add Transaction
     def post(self, request):
         form = StudentProfileUploadForm(request.POST, request.FILES)
         print("form ready")
         if form.is_valid():
-            print("form valid")
             csvfile = form.cleaned_data['csv']
             reader = csv.reader(csvfile, delimiter=',')
-            print("reader init done")
             error_rows = []
             error_msg = []
             rowcount = 0
-            print("start loop")
             for row in reader:
-                print("inside loop")
                 rowcount += 1
-                print(rowcount)
-                print(row)
                 row_ok, error = self.validate_csv_row(row)
-                print(row_ok)
-                print(error)
                 if not row_ok:
                     error_rows.append(rowcount)
                     error_msg.append(error)
@@ -626,53 +647,55 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                     random.SystemRandom().choice(
                         string.ascii_uppercase + string.digits)
                     for _ in range(self.password_len))
-                # get or create user profile
-                userprofile, up_created = UserProfile.objects.get_or_create(
-                    username=username,
-                    is_active=False,
-                    user_type='student'
-                )
-                # if created
-                if up_created:
-                    userprofile.password = make_password(password=password)
-                    userprofile.save()
-                    print("User pofile " + username + " created.")
-                # get or create student profile
-                stud, s_created = Student.objects.get_or_create(
-                    user__id=userprofile.id
-                )
-                if not s_created:
-                    error_rows.append(rowcount)
-                    error = 'Student with this username already exists'
-                    error_msg.append(error)
-                    continue
-                if up_created and s_created:
-                    year = Year.objects.get(current_year=int(row[3]))
-                    dept = Department.objects.get(year=year,
-                                                  dept_code=
-                                                  str(row[4]).upper())
-                    prog = Programme.objects.get(year=year, dept=dept,
-                                                 name=str(row[5]),
-                                                 minor_status=False)
-                    stud.user = userprofile
-                    stud.iitg_webmail = str(username) + '@iitg.ac.in'
-                    stud.roll_no = int(row[1])
-                    stud.name = row[2]
-                    stud.year = year
-                    stud.dept = dept
-                    stud.prog = prog
-                    stud.category = str(row[6]).upper()
-                    stud.cpi = float(row[7])
-                    stud.nationality = str(row[8])
-                    stud.gender = str(row[9]).upper()
-                    stud.save()
-                    print("Student created")
-            print("loop complete")
+                try:
+                    userprofile = UserProfile.objects.get(
+                        username=username, user_type='student'
+                    )
+                except UserProfile.DoesNotExist:
+                    userprofile = UserProfile.objects.create(
+                        username=username,
+                        password=make_password(password=username),
+                        is_active=False,
+                        user_type='student'
+                    )
+                    try:
+                        year = Year.objects.get(current_year=int(row[3]))
+                        dept = Department.objects.get(
+                            year=year, dept_code=str(row[4]).upper())
+                        prog = Programme.objects.get(
+                            year=year, dept=dept, name=str(row[5]),
+                            minor_status=False)
+                        minor_year = Year.objects.get(current_year=int(row[6]))
+                        minor_dept = Department.objects.get(
+                            year=minor_year, dept_code=str(row[7]).upper())
+                        minor_prog = Programme.objects.get(
+                            year=minor_year, dept=minor_dept, name=str(row[8]),
+                            minor_status=True)
+                        stud = Student.objects.create(
+                            user=userprofile,
+                            iitg_webmail=str(username) + '@iitg.ac.in',
+                            roll_no=int(row[1]),
+                            name=row[2],
+                            year=year,
+                            dept=dept,
+                            prog=prog,
+                            minor_year=minor_year,
+                            minor_dept=minor_dept,
+                            minor_prog=minor_prog,
+                            category=str(row[6]).upper(),
+                            cpi=float(row[10]),
+                            nationality=str(row[11]),
+                            sex=str(row[12]).upper(),
+                        )
+                    except ValueError or TypeError or IntegrityError:
+                        userprofile.delete()
+                        error_rows.append(rowcount)
+                        error = 'Student creation failed. Integrity Error'
+                        error_msg.append(error)
             zipped_data = zip(error_rows, error_msg)
             args = dict(zipped_data=zipped_data, form=form)
             return render(request, self.template_name, args)
         else:
-            print("form invalid")
             return render(request, self.template_name, dict(form=form))
 
 

@@ -146,8 +146,6 @@ urlpatterns = [
 
     url(r'^admin/company/list/$', views_admin.CompanyList.as_view(),
         name='admin-company-list'),
-    url(r'^admin/company/create/$', views_admin.CompanyCreate.as_view(),
-        name='admin-company-create'),
     url(r'^admin/company/(?P<pk>\d+)/detail/$',
         views_admin.CompanyDetail.as_view(), name='admin-company-detail'),
     url(r'^admin/company/(?P<pk>\d+)/update/$',

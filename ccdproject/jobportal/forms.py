@@ -28,6 +28,9 @@ JobProgMinorFormSet = inlineformset_factory(Job, MinorProgrammeJobRelation,
 
 
 class LoginForm(forms.Form):
+    """
+    Common Login Form for all Users.
+    """
     username = forms.CharField(required=True, label='Webmail', max_length=25)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
 
@@ -47,7 +50,8 @@ class EditStudProfileForm(ModelForm):
                   'medium_xii', 'passing_year_x', 'passing_year_xii',
                   'gap_in_study', 'gap_reason', 'jee_air_rank',
                   'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
-                  'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem']
+                  'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
+                  'active_backlogs']
 
         widgets = {
             'gap_reason': forms.Textarea(attrs={'rows': 4})
@@ -134,6 +138,7 @@ class EditStudProfileForm(ModelForm):
                     'spi_4_sem',
                     'spi_5_sem',
                     'spi_6_sem',
+                    'active_backlogs',
                 )
             )
         )
@@ -156,8 +161,13 @@ class EditStudProfileForm(ModelForm):
         if not(check_all or check_none):
             raise forms.ValidationError("Programme errors")
 
+        return cleaned_data
+
 
 class CompanyJobForm(ModelForm):
+    """
+    Job ModelForm for Company Users to create Job instances.
+    """
     class Meta:
         model = Job
         fields = ['description', 'designation', 'profile_name',
@@ -166,6 +176,36 @@ class CompanyJobForm(ModelForm):
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link']
+
+    def clean(self):
+        cleaned_data = super(CompanyJobForm, self).clean()
+        ctc_btech = cleaned_data['ctc_btech']
+        gross_btech = cleaned_data['gross_btech']
+        ctc_mtech = cleaned_data['ctc_mtech']
+        gross_mtech = cleaned_data['gross_mtech']
+        ctc_msc = cleaned_data['ctc_msc']
+        gross_msc = cleaned_data['gross_msc']
+        ctc_ma = cleaned_data['ctc_ma']
+        gross_ma = cleaned_data['gross_ma']
+        ctc_phd = cleaned_data['ctc_phd']
+        gross_phd = cleaned_data['gross_phd']
+        if ctc_btech < gross_btech:
+            raise ValidationError("Error: In Salary section, Gross B.Tech. "
+                                  "cannot be greater than CTC B.Tech.")
+        elif ctc_mtech < gross_mtech:
+            raise ValidationError("Error: In Salary section, Gross M.Tech. "
+                                  "cannot be greater than CTC M.Tech.")
+        elif ctc_msc < gross_msc:
+            raise ValidationError("Error: In Salary section, Gross M.Sc. "
+                                  "cannot be greater than CTC M.Sc")
+        elif ctc_ma < gross_ma:
+            raise ValidationError("Error: In Salary section, Gross M.A. "
+                                  "cannot be greater than CTC M.A.")
+        elif ctc_phd < gross_phd:
+            raise ValidationError("Error: In Salary section, Gross Ph.D. "
+                                  "cannot be greater than CTC Ph.D.")
+
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobForm, self).__init__(*args, **kwargs)
@@ -262,7 +302,9 @@ class CompanyJobForm(ModelForm):
 
 
 class AdminJobEditForm(ModelForm):
-
+    """
+    Job ModelForm for Admin Users to create Job instances.
+    """
     class Meta:
         model = Job
         fields = ['description', 'designation', 'profile_name',
@@ -271,7 +313,7 @@ class AdminJobEditForm(ModelForm):
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link', 'opening_date', 'application_deadline',
-                  ]
+                  'backlog_filter', 'num_backlogs_allowed']
         widgets = {
             'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
                                                     'pickTime': False}),
@@ -298,6 +340,8 @@ class AdminJobEditForm(ModelForm):
                 Tab(
                     'Requirements',
 
+                    'backlog_filter',
+                    'num_backlogs_allowed',
                     'cpi_shortlist',
                     'minimum_cpi',
                     'percentage_x',
@@ -360,6 +404,9 @@ class CompanyEventForm(forms.Form):
 
 
 class CompanyProfileEdit(ModelForm):
+    """
+    Company ModelForm for Company Users to update Company instance.
+    """
 
     class Meta:
         model = Company
@@ -415,6 +462,7 @@ class CompanyProfileEdit(ModelForm):
 
 
 class StudentSearchForm(forms.Form):
+    # TODO: Update this as per 10/8/16 README
 
     year = forms.DecimalField(max_digits=4, decimal_places=0, required=True)
     dept_code = forms.CharField(max_length=4, required=True, label='Department Code')
@@ -422,21 +470,11 @@ class StudentSearchForm(forms.Form):
     minor_status = forms.BooleanField(initial=False, required=False)
 
 
-class AddStudent(ModelForm):
-    # Login Credentials
-    username = forms.CharField(max_length=20)
-    password = forms.CharField(max_length=20, widget=forms.PasswordInput)
-
-    class Meta:
-        model = Student
-        exclude = ['user', 'placed', 'cv1', 'cv2', 'intern2', 'intern3',
-                   'ppo']
-        widgets = {
-            'gap_reason': forms.Textarea(attrs=dict(rows=4, cols=15))
-        }
-
-
 class AddCompany(ModelForm):
+    """
+    Company ModelForm (with username and password fields for related
+    UserProfile) for Admin Users to create Company instances.
+    """
     username = forms.CharField(max_length=20, required=True)
     password = forms.CharField(max_length=30)
 
@@ -489,7 +527,9 @@ class AddCompany(ModelForm):
 
 
 class EditCompany(ModelForm):
-
+    """
+    Company ModelForm for Admin Users to update Company instances.
+    """
     class Meta:
         model = Company
         fields = ['company_name', 'description', 'postal_address', 'website',
@@ -544,6 +584,9 @@ class EditCompany(ModelForm):
 
 
 class EditStudentAdmin(ModelForm):
+    """
+    Student ModelForm for Admin Users to update Student instances.
+    """
 
     class Meta:
         model = Student
@@ -551,6 +594,9 @@ class EditStudentAdmin(ModelForm):
 
 
 class SelectCVForm(forms.Form):
+    """
+    CV ModelForm for Student Users to create and update CVs.
+    """
     def __init__(self, *args, **kwargs):
         extra = kwargs.pop("extra")
         super(SelectCVForm, self).__init__(*args, **kwargs)

@@ -19,16 +19,34 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+# https://docs.djangoproject.com/en/1.9/topics/http/views/#customizing-error
+# -views
+# http://stackoverflow.com/questions/17662928/django-creating-a-custom-500-
+# 404-error-page
+handler400 = 'jobportal.views.handler400'
+handler403 = 'jobportal.views.handler403'
+handler404 = 'jobportal.views.handler404'
+handler500 = 'jobportal.views.handler500'
+
 urlpatterns = [
-    # url(r'^captcha/', include('captcha.urls')),
-    url(r'^chaining/', include('smart_selects.urls')),
-    url(r'^jobportal/', include('jobportal.urls')),
-    url(r'^mentormentee/', include('mentormentee.urls', namespace="mentormentee", app_name="mentormentee")),
-    url(r'^internships/', include('internships.urls', namespace="internships", app_name="internships")),
-    url(r'^alumnijobs/', include('alumnijobs.urls', namespace="alumnijobs", app_name="alumnijobs")),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^tnp/chaining/', include('smart_selects.urls')),
+    url(r'^tnp/jobportal/', include('jobportal.urls')),
+    url(r'^tnp/mentormentee/', include('mentormentee.urls',
+                                       namespace="mentormentee",
+                                       app_name="mentormentee")),
+    url(r'^tnp/internships/', include('internships.urls',
+                                      namespace="internships",
+                                      app_name="internships")),
+    url(r'^tnp/alumnijobs/', include('alumnijobs.urls',
+                                     namespace="alumnijobs",
+                                     app_name="alumnijobs")),
+    url(r'^tnp/admin/', include(admin.site.urls)),
+    url(r'^tnp/', include('jobportal.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)

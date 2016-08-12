@@ -203,6 +203,9 @@ class Alumni(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(UserProfile, blank=True, null=True,
                                 limit_choices_to={'user_type': 'student'})
+    iitg_webmail = models.CharField(max_length=50, blank=False,
+                                    verbose_name="IITG Webmail",
+                                    unique=True)
     roll_no = models.DecimalField(max_digits=10, decimal_places=0, unique=True,
                                   verbose_name="Roll No", default=0)
     name = models.CharField(max_length=60, default="",
@@ -211,6 +214,8 @@ class Student(models.Model):
                            verbose_name='DOB')
     sex = models.CharField(max_length=1, choices=SEX, default='M',
                            verbose_name='Gender')
+    active_backlogs = models.IntegerField(verbose_name="Number of active "
+                                                       "backlogs", default=0)
     category = models.CharField(max_length=10, choices=CATEGORY, default='GEN')
     nationality = models.CharField(max_length=15, default="INDIAN", blank=True)
     minor_year = models.ForeignKey(Year, null=True, blank=True,
@@ -243,9 +248,6 @@ class Student(models.Model):
                               blank=True, default="")
     room_no = models.CharField(max_length=6, blank=True, default="",
                                verbose_name='Room No')
-    iitg_webmail = models.CharField(max_length=50, blank=False,
-                                    verbose_name="IITG Webmail",
-                                    unique=True, default="")
     alternative_email = models.CharField(max_length=50, blank=True, null=True,
                                          verbose_name='Alternative Email')
     mobile_campus = models.CharField(blank=True, max_length=16,
@@ -360,7 +362,7 @@ class Job(models.Model):
                                    verbose_name='Job Description')
     designation = models.CharField(blank=True, max_length=50, null=True,
                                    verbose_name='Job Designation')
-    profile_name = models.CharField(max_length=15, null=True,
+    profile_name = models.CharField(max_length=50, null=True,
                                     verbose_name='Profile Name')
     num_openings = models.DecimalField(max_digits=3, decimal_places=0,
                                        null=True, blank=True, default=10,
@@ -368,12 +370,15 @@ class Job(models.Model):
                                                     'recruitments from IIT '
                                                     'Guwahati')
     # requirements
+    backlog_filter = models.BooleanField(default=False,
+                                         verbose_name="Backlog Filtering")
+    num_backlogs_allowed = models.IntegerField(
+        default=1, verbose_name="Number of backlogs permitted")
     cpi_shortlist = models.BooleanField(default=False,
                                         verbose_name='CPI-Shortlist')
-    minimum_cpi = models.DecimalField(max_digits=4, decimal_places=2,
-                                      blank=True, default=4.00,
-                                      verbose_name='Minimum CPI (On a scale '
-                                                   'of 0-10)')
+    minimum_cpi = models.DecimalField(
+        max_digits=4, decimal_places=2, blank=True, default=4.00,
+        verbose_name='Minimum CPI (On a scale of 0-10)')
     percentage_x = models.DecimalField(max_digits=5, decimal_places=2,
                                        default=40.00, null=True,
                                        verbose_name='Percentage X')
@@ -419,7 +424,6 @@ class Job(models.Model):
                                     verbose_name='Gross Salary')
     # Job description
     # bond = models.BooleanField(default=False, verbose_name='Legal Bond')
-    # bond_link = models.URLField(null=True, blank=True, verbose_name='Bond Document Link')
     bond_link = models.FileField(null=True, blank=True,
                                  verbose_name='Legal Bond Document')
     # Dates and Status

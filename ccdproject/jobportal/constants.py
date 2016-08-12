@@ -11,8 +11,8 @@ CATEGORY = (
     ('OBC', 'OBC'),
     ('SC', 'SC'),
     ('ST', 'ST'),
-    ('PH', 'PH'),
-    ('Foreign', 'Foreign')
+    ('PD', 'PD'),
+    ('FOREIGN', 'FOREIGN'),
 )
 
 USER_TYPE = (
@@ -65,7 +65,7 @@ HOSTELS = (
     ('Kapili', 'Kapili'),
     ('Lohit', 'Lohit'),
     ('Manas', 'Manas'),
-    ("Married Scholars Hostel", "Married Scholars Hostel"),
+    ("Married Scholars ", "Married Scholars"),
     ('Siang', 'Siang'),
     ('Subansiri', 'Subansiri'),
     ('Umiam', 'Umiam'),
