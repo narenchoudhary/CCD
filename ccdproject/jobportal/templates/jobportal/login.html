@@ -6,7 +6,7 @@ Login
 {% endblock %}
 
 {% block menu %}
-<a href="/jobportal">
+<a href="{% url 'index' %}">
     <li>Welcome</li>
 </a>
 <a href="{% url 'login' %}">

@@ -1,7 +1,7 @@
 {% extends 'base_jobportal.html' %}
 
 {% block menu %}
-    <a href="/jobportal"><li>Welcome</li></a>
+    <a href="{% url 'index' %}"><li>Welcome</li></a>
     <a href="{% url 'login' %}"><li>Login</li></a>
     <a href="{% url 'signup' %}"><li>Recruiters Signup</li></a>
 {% endblock %}
