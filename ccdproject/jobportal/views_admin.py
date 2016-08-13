@@ -18,11 +18,9 @@ from django.views.generic import (View, ListView, CreateView, DetailView,
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Department, Year, Programme,
-                     ProgrammeJobRelation, UserProfile,
-                     MinorProgrammeJobRelation, Event)
-from .forms import (AdminJobEditForm, JobProgFormSet,
-                    AdminJobRelForm, StudentSearchForm, EditCompany,
-                    JobProgMinorFormSet, ProgrammeForm, AdminEventForm,
+                     ProgrammeJobRelation, UserProfile, Event)
+from .forms import (AdminJobEditForm, StudentSearchForm,
+                    EditCompany, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm)
 from .constants import CATEGORY
 
@@ -42,27 +40,25 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return context
 
 
-class AdminManage(TemplateView):
-
-    template_name = 'jobportal/Admin/manage.html'
-
-
-class YearList(ListView):
+class YearList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Year.objects.all()
     template_name = 'jobportal/Admin/year_list.html'
     context_object_name = 'years'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class YearCreate(CreateView):
+
+class YearCreate(UserPassesTestMixin, LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy('login')
     model = Year
     fields = '__all__'
     template_name = 'jobportal/Admin/year_create.html'
     success_url = reverse_lazy('year-list')
 
-
-class YearDelete(DeleteView):
-    model = Year
-    success_url = reverse_lazy('year-list')
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
 
 class DepartmentList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -110,97 +106,94 @@ class DepartmentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return obj
 
 
-class DepartmentDelete(DeleteView):
-    model = Department
-    success_url = reverse_lazy('department-list')
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
-
-
-class ProgrammeList(ListView):
+class ProgrammeList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Programme.objects.all()
     template_name = 'jobportal/Admin/programme_list.html'
     context_object_name = 'programme_list'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class ProgrammeCreate(CreateView):
+
+class ProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
     form_class = ProgrammeForm
     template_name = 'jobportal/Admin/programme_create.html'
     success_url = reverse_lazy('programme-list')
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class ProgrammeUpdate(UpdateView):
+
+class ProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     model = Programme
     fields = '__all__'
     template_name = 'jobportal/Admin/programme_update.html'
     success_url = reverse_lazy('programme-list')
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
     def get_object(self, queryset=None):
         return Programme.objects.get(id=self.kwargs['pk'])
 
 
-class ProgrammeDelete(DeleteView):
-    model = Programme
-    success_url = reverse_lazy('programme-list')
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
-
-
-class ProgrammePlacementList(ListView):
+class ProgrammePlacementList(LoginRequiredMixin, UserPassesTestMixin,
+                             ListView):
+    login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/programme_placement_list.html'
     context_object_name = 'programme_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
         return Programme.objects.filter(open_for_placement=True)
 
 
-class ProgrammeInternshipList(ListView):
-
+class ProgrammeInternshipList(LoginRequiredMixin, UserPassesTestMixin,
+                              ListView):
+    login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/programme_internship_list.html'
     context_object_name = 'programme_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
         return Programme.objects.filter(open_for_internship=True)
 
 
-class ProgrammePlacementDelete(View):
-
-    def get(self, request, pk):
-        prog = get_object_or_404(Programme, id=pk)
-        if prog.open_for_placement:
-            prog.open_for_placement = False
-            prog.save()
-        return redirect('admin-programme-placement-list')
-
-
-class ProgrammeInternshipDelete(View):
-
-    def get(self, request, pk):
-        prog = get_object_or_404(Programme, id=pk)
-        if prog.open_for_internship:
-            prog.open_for_internship = False
-            prog.save()
-        return redirect('admin-programme-internship-list')
-
-
-class CompanySignupList(ListView):
+class CompanySignupList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Company.objects.filter(approved=None)
     template_name = 'jobportal/Admin/company_signup_list.html'
     context_object_name = 'company_list'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class CompanyList(ListView):
+
+class CompanyList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Company.objects.filter(approved=True)
     template_name = 'jobportal/Admin/company_list.html'
     context_object_name = 'company_list'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class CompanyDetail(DetailView):
+
+class CompanyDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Company
     template_name = 'jobportal/Admin/company_detail.html'
     context_object_name = 'company'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super(CompanyDetail, self).get_context_data(**kwargs)
@@ -211,9 +204,13 @@ class CompanyDetail(DetailView):
         return context
 
 
-class CompanyUpdate(UpdateView):
+class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     form_class = EditCompany
     template_name = 'jobportal/Admin/company_update.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_object(self, queryset=None):
         return Company.objects.get(id=self.kwargs['pk'])
@@ -225,7 +222,6 @@ class CompanyUpdate(UpdateView):
 class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
     login_url = reverse_lazy('login')
-    raise_exception = True
 
     def test_func(self):
         return self.request.user.user_type == 'admin'
@@ -247,46 +243,48 @@ class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('admin-company-detail', pk=company.id)
 
 
-class CompanyDelete(View):
-
-    url = reverse_lazy('admin-company-list')
-
-    def get(self, request, pk):
-        company = get_object_or_404(Company, id=pk)
-        company.is_deleted = True
-        company.deletion_date = timezone.now()
-        company.save()
-        return redirect('admin-company-detail', pk=pk)
-
-
-class JobList(ListView):
+class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Job.objects.filter(approved=True)
     template_name = 'jobportal/Admin/job_list.html'
     context_object_name = 'job_list'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class JobListUnapproved(ListView):
+
+class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     queryset = Job.objects.filter(approved=None)
     template_name = 'jobportal/Admin/job_list_unapproved.html'
     context_object_name = 'job_list'
 
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
-class JobDetail(DetailView):
+
+class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Job
     template_name = 'jobportal/Admin/job_detail.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['prog_list'] = ProgrammeJobRelation.objects.filter(
             job=self.object.id)
-        context['prog_minor_list'] = MinorProgrammeJobRelation.objects.filter(
-            job=self.object.id)
         return context
 
 
-class JobUpdate(UpdateView):
+class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     form_class = AdminJobEditForm
     template_name = 'jobportal/Admin/job_update.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_success_url(self):
         return reverse_lazy('admin-job-detail', args=(self.object.id,))
@@ -295,7 +293,11 @@ class JobUpdate(UpdateView):
         return get_object_or_404(Job, id=self.kwargs['pk'])
 
 
-class JobApprove(View):
+class JobApprove(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get(self, request, pk):
         job = get_object_or_404(Job, id=pk)
@@ -306,28 +308,24 @@ class JobApprove(View):
         return redirect('admin-job-detail', pk=pk)
 
 
-class JobRelList(ListView):
+class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/jobrel_list.html'
     context_object_name = 'rel_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
         return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
 
 
-class JobRelUpdate(UpdateView):
-    form_class = AdminJobRelForm
-    template_name = 'jobportal/Admin/jobrel_update.html'
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(StudentJobRelation, id=self.kwargs['pk'])
-
-    def get_success_url(self):
-        return reverse_lazy('admin-jobrel-update', args=(self.object.id,))
-
-
-class StudentList(View):
-
+class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
     template = 'jobportal/Admin/student_list.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get(self, request):
         form = StudentSearchForm()
@@ -337,30 +335,33 @@ class StudentList(View):
     def post(self, request):
         form = StudentSearchForm(request.POST)
         if form.is_valid():
-            year = form.cleaned_data['year']
-            dept_code = form.cleaned_data['dept_code']
-            dept_code = dept_code.upper()
-            programme = form.cleaned_data['programme']
-            minor_status = form.cleaned_data['minor_status']
-            try:
-                prog = Programme.objects.get(year__current_year=year,
-                                             dept__dept_code=dept_code,
-                                             name=programme,
-                                             minor_status=minor_status)
-                stud_list = Student.objects.filter(prog=prog)
-                args = dict(form=form, stud_list=stud_list)
-                return render(request, self.template, args)
-            except Programme.DoesNotExist:
-                messages.error(request, 'No such programe exists.')
-                return render(request, self.template, dict(form=form))
+            name = form.cleaned_data['name']
+            username = form.cleaned_data['username']
+            roll_no = form.cleaned_data['roll_no']
+            stud_list = Student.objects.all()
+            if name is not None:
+                print("name")
+                stud_list = stud_list.filter(name__icontains=name)
+            if username != '' and username is not None:
+                print("username")
+                stud_list = stud_list.filter(user__username=username)
+            if roll_no is not None:
+                print("roll")
+                stud_list = stud_list.filter(roll_no=roll_no)
+            args = dict(form=form, stud_list=stud_list)
+            return render(request, self.template, args)
         else:
             return render(request, self.template, dict(form=form))
 
 
-class StudentDetail(DetailView):
+class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Student
     template_name = 'jobportal/Admin/student_detail.html'
     context_object_name = 'student'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
 
     def get_object(self, queryset=None):
         return get_object_or_404(Student, id=self.kwargs['pk'])
@@ -391,7 +392,6 @@ class StudentDetail(DetailView):
 
 class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    raise_exception = True
     context_object_name = 'rel_list'
     template_name = 'jobportal/Admin/jobrel_list_unapproved.html'
 
@@ -401,32 +401,6 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
             Q(placed_approved__isnull=True))
-
-
-class JobProgUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
-
-    login_url = reverse_lazy('login')
-    raise_exception = True
-    template = 'jobportal/Admin/jobprog_update.html'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgFormSet(instance=job)
-        args = dict(formset=formset, job=job)
-        return render(request, self.template, args)
-
-    def post(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgFormSet(request.POST, instance=job)
-        if formset.is_valid():
-            formset.save()
-            return redirect('admin-job-detail', pk=job.id)
-        else:
-            args = dict(formset=formset, job=job)
-            return render(request, self.template, args)
 
 
 class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -471,35 +445,8 @@ class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('admin-jobrel-list-unapproved')
 
 
-class JobProgMinorUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
-
-    login_url = reverse_lazy('login')
-    raise_exception = True
-    template = 'jobportal/Admin/jobprog_minor_update.html'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgMinorFormSet(instance=job)
-        args = dict(formset=formset, job=job)
-        return render(request, self.template, args)
-
-    def post(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgMinorFormSet(request.POST, instance=job)
-        if formset.is_valid():
-            formset.save()
-            return redirect('admin-job-detail', pk=job.id)
-        else:
-            args = dict(formset=formset, job=job)
-            return render(request, self.template, args)
-
-
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    raise_exception = True
     model = Event
     template_name = 'jobportal/Admin/event_list.html'
     context_object_name = 'event_list'
@@ -513,7 +460,6 @@ class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
-    raise_exception = True
     model = Event
     template_name = 'jobportal/Admin/event_detail.html'
     context_object_name = 'event'
@@ -527,7 +473,6 @@ class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
-    raise_exception = True
     form_class = AdminEventForm
     template_name = 'jobportal/Admin/event_update.html'
 
@@ -548,7 +493,6 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
-    raise_exception = True
     template_name = 'jobportal/Admin/student_create.html'
     col_count = 13
     password_len = 8
@@ -615,13 +559,14 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
             except Department.DoesNotExist:
                 return False, 'Department %s does not not exist in DB' \
                        % dept_code
-        try:
-            prog = str(row[8]).upper()
-            Programme.objects.get(year=year_instance, dept=dept_instance,
-                                  name=prog, minor_status=True)
-        except Programme.DoesNotExist:
-            return False, 'Programme %s does not exist in DB' \
-                   % prog
+        if row[8] != '':
+            try:
+                prog = str(row[8]).upper()
+                Programme.objects.get(year=year_instance, dept=dept_instance,
+                                      name=prog, minor_status=True)
+            except Programme.DoesNotExist:
+                return False, 'Programme %s does not exist in DB' \
+                       % prog
         category = str(row[9])
         if category not in [cat[0] for cat in CATEGORY]:
             return False, 'Invalid Category'

@@ -27,37 +27,37 @@
     </div>
 
     <div class="col-md-12">
-    {% if stud_list.count > 0 %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Username</td>
-                    <td>Year</td>
-                    <td>Dept</td>
-                    <td>Programme</td>
-                    <td>Details</td>
-                </tr>
-            </thead>
+        {% if stud_list.count > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Username</td>
+                        <td>Year</td>
+                        <td>Dept</td>
+                        <td>Programme</td>
+                        <td>Details</td>
+                    </tr>
+                </thead>
 
-            <tbody>
-            {% for stud in stud_list %}
-                <tr>
-                    <td>{{ stud.first_name }}</td>
-                    <td>{{ stud.user.username }}</td>
-                    <td>{{ stud.year }}</td>
-                    <td>{{ stud.dept }}</td>
-                    <td>{{ stud.prog }}</td>
-                    <td>
-                        <a class="btn btn-info btn-xs" href="{% url 'admin-student-detail' stud.id %}">
-                            <span class="glyphicon glyphicon-plus"></span>Details
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                <tbody>
+                {% for stud in stud_list %}
+                    <tr>
+                        <td>{{ stud.first_name }}</td>
+                        <td>{{ stud.user.username }}</td>
+                        <td>{{ stud.year }}</td>
+                        <td>{{ stud.dept }}</td>
+                        <td>{{ stud.prog }}</td>
+                        <td>
+                            <a class="btn btn-info btn-xs" href="{% url 'admin-student-detail' stud.id %}">
+                                <span class="glyphicon glyphicon-plus"></span>Details
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     </div>
 
 {% endblock%}

@@ -13,17 +13,14 @@ from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import (get_object_or_404, get_list_or_404, render,
                               redirect)
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.views.generic import (View, TemplateView, RedirectView, CreateView,
-                                  UpdateView, ListView, DetailView, FormView)
+                                  UpdateView, ListView, DetailView)
 
 from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation,
-                     Alumni, Event, Programme, MinorProgrammeJobRelation, CV)
-from .forms import (CompanyProfileEdit, CompanyJobForm, JobProgFormSet,
-                    CompanySignup, UserProfileForm, CompanyJobRelForm,
-                    EventForm, JobProgMinorFormSet)
-
-from .mixins import CurrentAppMixin
+                     Event, Programme, CV)
+from .forms import (CompanyProfileEdit, CompanyJobForm, CompanySignup,
+                    UserProfileForm, CompanyJobRelForm,
+                    EventForm)
 
 COMPANY_LOGIN_URL = reverse_lazy('login')
 
@@ -48,90 +45,6 @@ def password_change_company(request):
         form = PasswordChangeForm(request)
         args = {'form': form, 'company_instance': company_instance}
         return render(request, 'jobportal/Company/passwordchange.html', args)
-
-
-def add_progs(request, jobid):
-    job_instance = get_object_or_404(Job, id=jobid)
-    formset = JobProgFormSet(request.POST or None, instance=job_instance)
-
-    if request.method == 'POST':
-        if formset.is_valid():
-            formset.save()
-            return redirect('companyjob', jobid=job_instance.id)
-        else:
-            args = dict(formset=formset, job_instance=job_instance)
-            return render(request, 'jobportal/Company/add_job_progs.html',
-                          args)
-    else:
-        args = dict(formset=formset, job_instance=job_instance)
-        return render(request, 'jobportal/Company/add_job_progs.html', args)
-
-
-class JobProgUpdate(View):
-
-    template = 'jobportal/Company/jobprog_update.html'
-
-    def get(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgFormSet(instance=job)
-        args = dict(formset=formset, job=job)
-        return render(request, self.template, args)
-
-    def post(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgFormSet(request.POST, instance=job)
-        if formset.is_valid():
-            formset.save()
-            return redirect('company-job-detail', pk=job.id)
-        else:
-            args = dict(formset=formset, job=job)
-            return render(request, self.template, args)
-
-
-class JobProgMinorUpdate(View):
-
-    template = 'jobportal/Company/jobprog_minor_update.html'
-
-    def get(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgMinorFormSet(instance=job)
-        args = dict(formset=formset, job=job)
-        return render(request, self.template, args)
-
-    def post(self, request, pk):
-        job = get_object_or_404(Job, id=pk)
-        formset = JobProgMinorFormSet(request.POST, instance=job)
-        if formset.is_valid():
-            formset.save()
-            return redirect('company-job-detail', pk=job.id)
-        else:
-            args = dict(formset=formset, job=job)
-            return render(request, self.template, args)
-
-
-@login_required(login_url=COMPANY_LOGIN_URL)
-def job_drop(request, jobid):
-    # TODO: Check no shortlist bug
-    job_instance = get_object_or_404(Job, id=jobid)
-    stud_rels = list(StudentJobRelation.objects.get(job=job_instance,
-                                                    dropped=False))
-    approval_error = False
-    for rel in stud_rels:
-        if rel.shortlist_init is True and rel.shortlist_approved is not True:
-            approval_error = True
-            break
-        if rel.placed_init is True and rel.placed_approved is not True:
-            approval_error = True
-            break
-    if not approval_error:
-        for rel in stud_rels:
-            rel.round += 1
-            if rel.shortlist_init is False:
-                rel.dropped = True
-            rel.save()
-    # TODO: Message framework
-    # TODO: change to render
-    return redirect('companycandidates', jobid=job_instance.id)
 
 
 # Issue: Not working as intended; Most probably it's not using relative path
@@ -196,9 +109,12 @@ class CompanySignUpView(View):
             return render(request, self.template, args)
 
 
-class HomeView(TemplateView):
-
+class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    login_url = reverse_lazy('login')
     template_name = 'jobportal/Company/home.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
@@ -206,20 +122,28 @@ class HomeView(TemplateView):
         return context
 
 
-class ProfileDetail(DetailView):
+class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Company
     template_name = 'jobportal/Company/profile_detail.html'
     context_object_name = 'company'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def get_object(self, queryset=None):
         return get_object_or_404(Company,
                                  id=self.request.session['company_instance_id'])
 
 
-class ProfileUpdate(UpdateView):
+class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     form_class = CompanyProfileEdit
     template_name = 'jobportal/Company/profile_update.html'
     success_url = reverse_lazy('company-profile-detail')
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -250,9 +174,13 @@ class PasswordChangeView(LoginRequiredMixin, UserPassesTestMixin, View):
             return render(request, self.template_name, dict(form=form))
 
 
-class JobList(ListView):
+class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
     template_name = 'jobportal/Company/job_list.html'
     context_object_name = 'job_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def get_queryset(self):
         return Job.objects.filter(
@@ -264,9 +192,13 @@ class JobList(ListView):
         return context
 
 
-class JobCreate(CreateView):
+class JobCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    login_url = reverse_lazy('login')
     form_class = CompanyJobForm
     template_name = 'jobportal/Company/job_create.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def form_valid(self, form):
         job = form.save(commit=False)
@@ -280,10 +212,14 @@ class JobCreate(CreateView):
         return reverse_lazy('company-job-detail', args=(self.object.id,))
 
 
-class JobDetail(DetailView):
+class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
     model = Job
     template_name = 'jobportal/Company/job_detail.html'
     context_object_name = 'job'
+
+    def test_func(self):
+        return self.request.user.user_type == 'company'
 
     def get_object(self, queryset=None):
         job = get_object_or_404(Job, id=self.kwargs['pk'])
@@ -301,13 +237,17 @@ class JobDetail(DetailView):
         return context
 
 
-class JobUpdate(UpdateView):
+class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('login')
     form_class = CompanyJobForm
     template_name = 'jobportal/Company/job_update.html'
     context_object_name = 'job'
 
+    def test_func(self):
+        return self.request.user.user_type == 'company'
+
     def form_valid(self, form):
-        job = form.save(commit=False)
+        form.save(commit=False)
         return super(JobUpdate, self).form_valid(form)
 
     def get_object(self, queryset=None):
@@ -321,23 +261,6 @@ class JobUpdate(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('company-job-detail', args=(self.object.id,))
-
-
-class JobDelete(LoginRequiredMixin, UserPassesTestMixin, View):
-    login_url = reverse_lazy('login')
-    raise_exception = True
-
-    def test_func(self):
-        return self.request.user.user_type == 'company'
-
-    def get(self, request, pk):
-        job = Job.objects.get(id=pk)
-        if job.company_owner.id == request.session['company_instance_id']:
-            job.is_deleted = True
-            job.save()
-            return redirect('company-job-list')
-        else:
-            return Http404()
 
 
 class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -666,14 +589,17 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         is_company = self.request.user.user_type == 'company'
         if not is_company:
+            print("not company")
             return False
         self.job = get_object_or_404(Job, id=self.kwargs['jobpk'])
-        deadline = self.job.application_deadline < timezone.now().date()
-        if not deadline:
-            return False
         session_id = self.request.session['company_instance_id']
         is_owner = self.job.company_owner.id == session_id
         if not is_owner:
+            print("not owner")
+            return False
+        deadline_ok = self.job.application_deadline > timezone.now().date()
+        if not deadline_ok:
+            print("not deadline ok")
             return False
         return True
 

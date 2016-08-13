@@ -10,7 +10,7 @@ from django.views.generic import (View, ListView, TemplateView, DetailView,
 
 from .models import (UserProfile, Admin, Student, Company, Alumni,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
-                     MinorProgrammeJobRelation, Avatar, Signature, CV)
+                     Avatar, Signature, CV)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
@@ -106,12 +106,14 @@ def login(request):
             return render(request, 'jobportal/login.html', dict(form=form))
 
 
-class LogoutView(LoginRequiredMixin, View):
+class LogoutView(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
 
+    def test_func(self):
+        return self.request.user and self.request.user.is_authenticated()
+
     def get(self, request):
-        if request.user and request.user.is_authenticated():
-            auth.logout(request)
+        auth.logout(request)
         return redirect('index')
 
 
@@ -171,7 +173,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
             Student, id=self.request.session['student_instance_id'])
         # Ref: http://stackoverflow.com/a/12600950/3679857
         major = ProgrammeJobRelation.objects.filter(prog=stud.prog)
-        minor = MinorProgrammeJobRelation.objects.filter(prog=stud.minor_prog)
+        minor = ProgrammeJobRelation.objects.filter(prog=stud.minor_prog)
         return Job.objects.filter(
             Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
         ).filter(
@@ -247,7 +249,7 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         except StudentJobRelation.DoesNotExist:
             return None
 
-    def check_student_eligibility(self, jobid):
+    def check_student_eligibility(self):
         # Check Programme eligibility
         progjobrel = ProgrammeJobRelation.objects.filter(
             Q(job__id=self.job.id, prog__id=self.stud.prog.id) |

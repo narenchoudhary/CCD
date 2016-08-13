@@ -12,21 +12,6 @@ from models import *
 from widgets import CheckBoxBootstrapSwitch
 
 
-class CustomJobProgFormSet(BaseInlineFormSet):
-
-    def clean(self):
-        super(CustomJobProgFormSet, self).clean()
-
-JobProgFormSet = inlineformset_factory(
-    Job, ProgrammeJobRelation,
-    fields=('year', 'dept', 'prog'), extra=10, formset=CustomJobProgFormSet)
-
-
-JobProgMinorFormSet = inlineformset_factory(Job, MinorProgrammeJobRelation,
-                                            fields=('year', 'dept', 'prog'),
-                                            extra=10)
-
-
 class LoginForm(forms.Form):
     """
     Common Login Form for all Users.
@@ -463,11 +448,25 @@ class CompanyProfileEdit(ModelForm):
 
 class StudentSearchForm(forms.Form):
     # TODO: Update this as per 10/8/16 README
+    name = forms.CharField(max_length=100, required=False,
+                           label='Full Name (or part of name)')
+    username = forms.CharField(max_length=50, label='Username', required=False)
+    roll_no = forms.IntegerField(label='Roll Number', required=False)
 
-    year = forms.DecimalField(max_digits=4, decimal_places=0, required=True)
-    dept_code = forms.CharField(max_length=4, required=True, label='Department Code')
-    programme = forms.ChoiceField(choices=PROGRAMMES, required=True)
-    minor_status = forms.BooleanField(initial=False, required=False)
+    def clean(self):
+        cleaned_data = super(StudentSearchForm, self).clean()
+        username = cleaned_data['username']
+        roll_no = cleaned_data['roll_no']
+        name = cleaned_data['name']
+
+        if username is None and roll_no is None and name is None:
+            raise ValidationError("All fields cannot be empty")
+        if roll_no is not None:
+            try:
+                int(roll_no)
+            except ValueError:
+                raise ValidationError("Roll Number must be a number")
+        return cleaned_data
 
 
 class AddCompany(ModelForm):
@@ -763,22 +762,6 @@ class CompanyJobRelForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-
-
-class AdminJobRelForm(forms.ModelForm):
-    class Meta:
-        model = StudentJobRelation
-        fields = ['shortlist_init', 'placed_init',
-                  'placed_approved']
-
-    def __init__(self, *args, **kwargs):
-        super(AdminJobRelForm, self).__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
-        self.fields['shortlist_init'].disabled = True
-        self.fields['placed_init'].disabled = True
-        if instance and instance.pk:
-            if instance.placed_init is True:
-                self.fields['shortlist_approved'].disabled = True
 
 
 class EventForm(forms.ModelForm):

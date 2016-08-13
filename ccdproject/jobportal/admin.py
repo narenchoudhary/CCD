@@ -34,7 +34,6 @@ admin.site.register(Alumni)
 admin.site.register(Job)
 admin.site.register(StudentJobRelation)
 admin.site.register(ProgrammeJobRelation)
-admin.site.register(MinorProgrammeJobRelation)
 
 admin.site.register(Year)
 admin.site.register(Department)

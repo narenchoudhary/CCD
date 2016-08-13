@@ -79,9 +79,6 @@ urlpatterns = [
     url(r'^company/programme/list/$', views_company.ProgrammeList.as_view(),
         name='company-programme-list'),
 
-    url(r'^companydropjob/(?P<jobid>\d+)$', views_company.job_drop,
-        name='companydropjob'),
-
     url(r'^company/job/list/$', views_company.JobList.as_view(),
         name='company-job-list'),
     url(r'^company/job/create/$', views_company.JobCreate.as_view(),
@@ -90,8 +87,6 @@ urlpatterns = [
         views_company.JobDetail.as_view(), name='company-job-detail'),
     url(r'^company/job/(?P<pk>\d+)/update/$',
         views_company.JobUpdate.as_view(), name='company-job-update'),
-    url(r'^company/job/(?P<pk>\d+)/delete/$',
-        views_company.JobDelete.as_view(), name='company-job-delete'),
 
     url(r'^company/job/(?P<pk>\d+)/jobrel/list/$',
         views_company.JobRelList.as_view(), name='company-jobrel-list'),
@@ -124,8 +119,6 @@ urlpatterns = [
 
     url(r'^admin/home/$', views_admin.HomeView.as_view(), name="admin-home"),
 
-    url(r'^admin/manage/$', views_admin.AdminManage.as_view(),
-        name='admin-manage'),
     url(r'^admin/student/create/', views_admin.UploadStudentData.as_view(),
         name='admin-student-create'),
     url(r'^admin/student/fee/update/',
@@ -148,8 +141,6 @@ urlpatterns = [
         views_admin.CompanyDetail.as_view(), name='admin-company-detail'),
     url(r'^admin/company/(?P<pk>\d+)/update/$',
         views_admin.CompanyUpdate.as_view(), name='admin-company-update'),
-    url(r'^admin/company/(?P<pk>\d+)/delete/$',
-        views_admin.CompanyDelete.as_view(), name='admin-company-delete'),
 
     url(r'^admin/job/list/$', views_admin.JobList.as_view(),
         name='admin-job-list'),
@@ -163,12 +154,6 @@ urlpatterns = [
     url(r'^admin/job/(?P<pk>\d+)/approve/$',
         views_admin.JobApprove.as_view(), name='admin-job-approve'),
 
-    url(r'^admin/job/progs/major/list$', views_admin.JobProgUpdate.as_view(),
-        name='admin-jobprog-update'),
-    url(r'^admin/job/progs/major/list$',
-        views_admin.JobProgMinorUpdate.as_view(),
-        name='admin-jobprog-minor-update'),
-
     url(r'^admin/jobrel/list/unapproved/$',
         views_admin.JobRelListUnapproved.as_view(),
         name='admin-jobrel-list-unapproved'),
@@ -177,8 +162,6 @@ urlpatterns = [
     url(r'^admin/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place/approve',
         views_admin.StudJobRelPlaceApprove.as_view(),
         name='admin-jobrel-place-approve'),
-    url(r'^admin/job/jobrel/(?P<pk>\d+)/update/$',
-        views_admin.JobRelUpdate.as_view(), name='admin-jobrel-update'),
 
     url(r'^admin/event/list/$', views_admin.EventList.as_view(),
         name='admin-event-list'),
@@ -195,8 +178,6 @@ urlpatterns = [
         views_admin.DepartmentDetail.as_view(), name="department-detail"),
     url(r'^admin/department/(?P<pk>\d+)/update/$',
         views_admin.DepartmentUpdate.as_view(), name='department-update'),
-    url(r'^admin/department/(?P<pk>\d+)/delete/$',
-        views_admin.DepartmentDelete.as_view(), name='department-delete'),
 
     url(r'^admin/programme/list/$', views_admin.ProgrammeList.as_view(),
         name="programme-list"),
@@ -204,29 +185,19 @@ urlpatterns = [
         name="programme-create"),
     url(r'^admin/programme/(?P<pk>\d+)/update/$',
         views_admin.ProgrammeUpdate.as_view(), name='programme-update'),
-    url(r'^admin/programme/(?P<pk>\d+)/delete/$',
-        views_admin.ProgrammeDelete.as_view(), name='programme-delete'),
 
     url(r'^admin/programme/placement/list/$',
         views_admin.ProgrammePlacementList.as_view(),
         name='admin-programme-placement-list'),
-    url(r'^admin/programme/(?P<pk>\d+)/placement/delete/$',
-        views_admin.ProgrammePlacementDelete.as_view(),
-        name='admin-programme-placement-delete/'),
     url(r'^admin/programme/internship/list/$',
         views_admin.ProgrammeInternshipList.as_view(),
         name='admin-programme-internship-list'),
-    url(r'^admin/programme/(?P<pk>\d+)/internship/delete/$',
-        views_admin.ProgrammeInternshipDelete.as_view(),
-        name='admin-programme-internship-delete/'),
 
 
     url(r'^admin/year/list/$', views_admin.YearList.as_view(),
         name="year-list"),
     url(r'^admin/year/create/$', views_admin.YearCreate.as_view(),
         name="year-add"),
-    url(r'^admin/years/(?P<pk>\d+)/delete/$', views_admin.YearDelete.as_view(),
-        name='year-delete'),
 
     url(r'^printcsv/(?P<jobid>\d+)$', views_print.candidates_stud_csv,
         name='printcsv'),

@@ -138,6 +138,7 @@
                 <th>Year</th>
                 <th>Dept</th>
                 <th>Prog</th>
+                <th>Minor/Major</th>
             </tr>
         </thead>
         <tbody>
@@ -146,6 +147,7 @@
                     <td>{{prog.year}}</td>
                     <td>{{prog.dept}}</td>
                     <td>{{prog.prog}}</td>
+                    <td>{{prog.minor_status | yesno:"Major, Minor"}}</td>
                 </tr>
             {% endfor %}
         </tbody>
