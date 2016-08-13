@@ -153,6 +153,9 @@ urlpatterns = [
         views_admin.JobUpdate.as_view(), name='admin-job-update'),
     url(r'^admin/job/(?P<pk>\d+)/approve/$',
         views_admin.JobApprove.as_view(), name='admin-job-approve'),
+    url(r'^admin/job/(?P<jobpk>\d+)/jobprog/list/update',
+        views_admin.JobProgrammeUpdate.as_view(),
+        name='admin-job-jobprog-list-update'),
 
     url(r'^admin/jobrel/list/unapproved/$',
         views_admin.JobRelListUnapproved.as_view(),

@@ -186,7 +186,8 @@
         <p>No major programmes listed.</p>
     {% endif %}
 
-    <h4><a href="#" class="btn btn-primary">Edit Programmes</a></h4>
+    <h4><a href="{% url 'admin-job-jobprog-list-update' job.id %}"
+           class="btn btn-primary">Edit Programmes</a></h4>
 
 </div>
 

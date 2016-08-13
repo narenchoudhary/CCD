@@ -604,6 +604,9 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         return True
 
     def get(self, request, jobpk):
+        # TODO: Integrate saved_jobrels when MDL is completed
+        saved_jobrels = [jobrel.prog.id for jobrel in
+                         ProgrammeJobRelation.objects.filter(job__id=jobpk)]
         minor_list = Programme.objects.filter(open_for_placement=True,
                                               minor_status=True)
         btech_bdes_list = Programme.objects.filter(

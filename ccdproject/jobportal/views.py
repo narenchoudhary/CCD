@@ -230,12 +230,15 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['no_cv'] = self.student_cv()
         context['now'] = timezone.now()
-        context['jobrel'] = self.get_jobrel_or_none(self.jobid)
+        context['jobrel'] = self.get_jobrel_or_none()
         return context
 
     def student_cv(self):
-        cv = get_object_or_404(
-            CV, stud__id=self.request.session['student_instance_id'])
+        try:
+            cv = CV.objects.get(
+                stud__id=self.request.session['student_instance_id'])
+        except CV.DoesNotExist:
+            return False
         if cv.cv1 is None and cv.cv2 is None:
             return True
         return False

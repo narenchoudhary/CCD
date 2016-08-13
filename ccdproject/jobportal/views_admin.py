@@ -255,7 +255,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    queryset = Job.objects.filter(approved=None)
+    queryset = Job.objects.filter(Q(approved=None) | Q(approved=False))
     template_name = 'jobportal/Admin/job_list_unapproved.html'
     context_object_name = 'job_list'
 
@@ -293,6 +293,85 @@ class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return get_object_or_404(Job, id=self.kwargs['pk'])
 
 
+class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Renders a list of all programmes available for placement and saves the
+    selected programmes as programmes which are related with a Job object on
+    submission.
+    """
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Admin/jobprog_list_update.html'
+    job = None
+
+    def test_func(self):
+        self.job = get_object_or_404(Job, id=self.kwargs['jobpk'])
+        is_admin = self.request.user.user_type == 'admin'
+        if not is_admin:
+            return False
+        deadline_ok = self.job.application_deadline > timezone.now().date()
+        if not deadline_ok:
+            return False
+        return True
+
+    def get(self, request, jobpk):
+        # TODO: Integrate saved_jobrels when MDL is completed
+        saved_jobrels = [jobrel.prog.id for jobrel in
+                         ProgrammeJobRelation.objects.filter(job__id=jobpk)]
+        minor_list = Programme.objects.filter(open_for_placement=True,
+                                              minor_status=True)
+        btech_bdes_list = Programme.objects.filter(
+            open_for_placement=True, minor_status=False
+        ).filter(
+            Q(name='BTECH') | Q(name='BDES')
+        )
+        mtech_list = Programme.objects.filter(open_for_placement=True,
+                                              minor_status=False,
+                                              name='MTECH')
+        phd_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='PHD')
+        ma_list = Programme.objects.filter(open_for_placement=True,
+                                           minor_status=False,
+                                           name='MA')
+        msc_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='MSC')
+        args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
+                    ma_list=ma_list, mtech_list=mtech_list,
+                    msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
+                    saved_jobrels=saved_jobrels)
+        return render(request, self.template_name, args)
+
+    def post(self, request, jobpk):
+
+        job = get_object_or_404(Job, id=jobpk)
+
+        minor_list_ids = request.POST.getlist('selected_minor_ids')
+        btech_bdes_list = request.POST.getlist('selected_btech_ids')
+        mtech_list_ids = request.POST.getlist('selected_mtech_ids')
+        phd_list_ids = request.POST.getlist('selected_phd_ids')
+        ma_list_ids = request.POST.getlist('selected_ma_ids')
+        msc_list_ids = request.POST.getlist('selected_msc_ids')
+
+        programme_list = Programme.objects.filter(Q(id__in=minor_list_ids) |
+                                                  Q(id__in=btech_bdes_list) |
+                                                  Q(id__in=phd_list_ids) |
+                                                  Q(id__in=ma_list_ids) |
+                                                  Q(id__in=mtech_list_ids) |
+                                                  Q(id__in=msc_list_ids))
+
+        for programme in programme_list:
+
+            ProgrammeJobRelation.objects.get_or_create(
+                job=job,
+                year=programme.year,
+                dept=programme.dept,
+                prog=programme
+            )
+        return redirect('admin-job-detail', pk=job.id)
+
+
 class JobApprove(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
 
@@ -309,6 +388,9 @@ class JobApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    Displays list of candidates for a particular Job object.
+    """
     login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/jobrel_list.html'
     context_object_name = 'rel_list'
@@ -321,6 +403,10 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Renders a form for searching a student and displays all matching results
+    on submission.
+    """
     login_url = reverse_lazy('login')
     template = 'jobportal/Admin/student_list.html'
 
@@ -355,6 +441,9 @@ class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    All details of student.
+    """
     login_url = reverse_lazy('login')
     model = Student
     template_name = 'jobportal/Admin/student_detail.html'
@@ -391,6 +480,9 @@ class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 
 class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    Lists all placement requests from Companies.
+    """
     login_url = reverse_lazy('login')
     context_object_name = 'rel_list'
     template_name = 'jobportal/Admin/jobrel_list_unapproved.html'
@@ -404,6 +496,10 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Once a company sends a placment request for a candidate, Administrator can
+    approve/reject that request.
+    """
 
     login_url = reverse_lazy('login')
     raise_exception = True
@@ -446,6 +542,9 @@ class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    List all events posted by Companies.
+    """
     login_url = reverse_lazy('login')
     model = Event
     template_name = 'jobportal/Admin/event_list.html'
@@ -472,6 +571,10 @@ class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 
 class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    Renders pre-filled for an already existing event object and saves the
+    updates on submission.
+    """
     login_url = reverse_lazy('login')
     form_class = AdminEventForm
     template_name = 'jobportal/Admin/event_update.html'
@@ -492,6 +595,12 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Administrator can add students to portal by uploading a CSV (format
+    described below). Students will not be able to login just after this step.
+    Administrator needs to upload a CSV containing (roll_no, transaction_id)
+    pairs to enable logging of Students.
+    """
     login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/student_create.html'
     col_count = 13
@@ -501,7 +610,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
-    def validate_csv_row(self, row):
+    def _validate_csv_row(self, row):
         # CSV format
         # Col0: Webmail: no checking
         # Col1: Roll No: Must be number
@@ -597,7 +706,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
             rowcount = 0
             for row in reader:
                 rowcount += 1
-                row_ok, error = self.validate_csv_row(row)
+                row_ok, error = self._validate_csv_row(row)
                 if not row_ok:
                     error_rows.append(rowcount)
                     error_msg.append(error)
@@ -661,6 +770,10 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Admininstrator can activate login permission for students by uploading a
+    CSV containing (roll_no, transaction_id) pairs.
+    """
 
     login_url = reverse_lazy('login')
     raise_exception = True
@@ -674,7 +787,7 @@ class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
         form = StudentFeeCSVForm(None)
         return render(request, self.template_name, dict(form=form))
 
-    def validate_csv_row(self, row):
+    def _validate_csv_row(self, row):
         if len(row) != self.col_count:
             return False, "Row does not have two rows"
         try:
@@ -695,7 +808,7 @@ class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
             for row in reader:
                 rowcount += 1
                 print(row)
-                row_ok, error = self.validate_csv_row(row)
+                row_ok, error = self._validate_csv_row(row)
                 print("row ok " + str(row_ok))
                 if not row_ok:
                     error_rows.append(rowcount)
