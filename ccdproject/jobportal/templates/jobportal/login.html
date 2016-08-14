@@ -19,23 +19,35 @@ Login
 
 {% block level_0 %}
 
-<h3>Login:</h3>
-<hr>
-<div class="account-login col-md-6 col-md-offset-3">
-    <form action="{% url 'login' %}" method="post" accept-charset="utf-8">
+<div class="breadcrumbs">
+    <div>
+    </div>
+</div>
+
+<div class="row">
+<div class="col s12 offset-m3 m6" style="margin-top: 4%;">
+<div class="card">
+<div class="card-content">
+<span class="card-title black-text">Log in</span>
+    <form id="login-form" action="{% url 'login' %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
         <div class="well">
             {% if form.non_field_errors %}
                 <ul class='form-errors'>
                     {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
+                        <li class="error">{{ error }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
             {{ form.field_errors }}
             {{ form | crispy }}
-            <input type="submit" class="btn btn-primary" value="Log In">
+	    <div class="card-action right-align">
+               <input type="submit" class="btn btn-primary" value="Log In">
+	    </div>
         </div>
     </form>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}

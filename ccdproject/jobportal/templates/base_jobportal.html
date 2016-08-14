@@ -32,7 +32,8 @@
     <link rel="stylesheet"
           href="{% static 'material/css/fixedHeader.dataTables.css' %}">
     <link rel="stylesheet" href="{% static 'material/css/forms.css' %}">
-    <link rel="stylesheet" href="{% static 'material/css/frontend.css' %}">
+    <!--<link rel="stylesheet" href="{% static 'material/css/frontend.css' %}">-->
+    <link rel="stylesheet" href="http://forms.viewflow.io/static/material/admin/css/base.css">
     <link rel="stylesheet"
           href="{% static 'material/css/material-icons.css' %}">
 
@@ -73,8 +74,7 @@
 
         <div class="nav-wrapper">
             <div class="page-title hide-on-med-and-down">
-                <img style="width:24%;margin-left:19%;"
-                     src="{% static 'img/logo.png' %}">
+                <img style="width:24%;" src="{% static 'img/logo.png' %}">
             </div>
 
             <ul class="right">
@@ -104,20 +104,9 @@
     </nav>
 </header>
 <main>
-
-    <div class="container" style="width:85%;">
-        <div style="margin-top: 5%;"
-             class="row  white z-depth-2 valign-wrapper login-block login-container">
-            <div class="col s12 m8 l12">
-                {% block level_0 %}
-                {% endblock %}
-            </div>
-        </div>
-    </div>
-
-
+     {% block level_0 %}
+     {% endblock %}
 </main>
-
 <div id="load_indicator" class="preloader-wrapper big active"
      style="position:absolute;left:45%;top:45%;display:none">
     <div class="spinner-layer spinner-blue-only">

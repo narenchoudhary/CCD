@@ -2,17 +2,28 @@
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-    <p><a href="#" title="">My Account</a></p>
+    <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
 
 {% block content %}
 
-    {% if prog_minor_list.count > 0 %}
-        <h4>Minor programmers open for placement</h4>
-        <p>These minor programmes are open for placement for this session.</p>
-        <hr>
-        <table class="table">
+<div class="breadcrumbs">
+  <div>
+      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="#">Open Programmes</a>
+  </div>
+</div>
+<div class="row">
+
+   {% if prog_minor_list.count > 0 %}
+        <div class="col s12 m8 l9">
+    	  <div class="card">
+    	   <div class="card-content">
+        	<h5>Minor programmers open for placement</h5>
+        	<p>These minor programmes are open for placement for this session.</p>
+            <div class="results" style="margin-top:2%;">
+    	    <div class="dataTables_wrapper no-footer" id="profile">
+    	    <table class="table table-striped" id="result_list" role="grid">
             <thead>
                 <tr>
                     <th>Year</th>
@@ -30,15 +41,37 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
+        </div>
     {% else %}
-        <h4>Bummer! There isn't anythig here yet.</h4>
+        <h5>Bummer! There isn't anythig here yet.</h5>
     {% endif %}
-
-    {% if prog_major_list.count > 0 %}
-        <h4>Majors programmes open for placement</h4>
-        <p>These major programmes are open for placement for this session.</p>
-        <hr>
-        <table class="table">
+    </div>
+    </div>
+    </div>
+    <div class="col s12 m4 l3">
+        <div class="card filters-card">
+            <div class="card-content">
+                <span class="card-title black-text">Search</span>
+                <div class="row" style="margin-top:-10px">
+                  <div class="input-field col s12">
+                    <input type="text" data-name="q" value="" id="searchbar">
+                    <label for="searchbar" class="">Search...</label>
+                    <a href="#" id="changelist-search-button"><i class="material-icons">search</i></a>
+                  </div>
+                </div>
+            </div>
+         </div>
+    </div>
+        {% if prog_major_list.count > 0 %}
+         <div class="col s12 m8 l9">
+          <div class="card">
+           <div class="card-content">
+                <h5>Major programmers open for placement</h5>
+                <p>These major programmes are open for placement for this session.</p>
+            <div class="results" style="margin-top:2%;">
+            <div class="dataTables_wrapper no-footer" id="profile">
+            <table class="table table-striped" id="result_list" role="grid">
             <thead>
                 <tr>
                     <th>Year</th>
@@ -56,7 +89,13 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
+        </div>
     {% else %}
-        <h4>Bummer! There isn't anythig here yet.</h4>
+        <h5>Bummer! There isn't anythig here yet.</h5>
     {% endif %}
+    </div>
+    </div>
+    </div>
+</div>
 {% endblock %}

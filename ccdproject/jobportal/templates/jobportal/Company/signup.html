@@ -8,9 +8,12 @@
 {% endblock %}
 
 {% block content %}
-        <h2 class="sub-header">Recruiters' Registration Form</h2>
-        <hr/>
-        <h4>Fill all the required details:</h4>
+
+<div class="row">
+<div class="col s12 offset-m2 m8" style="margin-top: 4%;">
+<div class="card">
+<div class="card-content">
+        <span class="card-title black-text">Recruiters' Registration Form</span>
         <div class="col-md-10">
             <form action="{% url 'company-signup' %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}
@@ -19,8 +22,15 @@
                 </div>
                 <div class="well">
                     {{ companyform | crispy}}
+	        <div class="card-action right-align">
                     <input type="submit" class="btn btn-primary" value="Sign Up" >
+	        </div>
                 </div>
             </form>
         </div>
+</div>
+</div>
+</div>
+</div>
+
 {% endblock %}

@@ -2,17 +2,26 @@
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-<p><a href="#" title="">My Account</a></p>
+   <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
 
 {% block content %}
 
-<div class="col-md-12">
-    <h2 class="sub-header">All events</h2>
-    <hr/>
+<div class="breadcrumbs">
+  <div>
+      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="#">Events and Status</a>
+  </div>
+</div>
+
+<div class="row">
     {% if event_list.count > 0 %}
-        <table class="table table-responsive">
+	<div class="col s12">
+    	<div class="card">
+    	<div class="card-content">
+        <div class="results" style="margin-top:2%;">
+    	   <div class="dataTables_wrapper no-footer" id="profile">
+    	    <table class="table table-striped" id="result_list" role="grid">
             <thead>
                 <th>Event Title</th>
                 <th>Event Type</th>
@@ -29,7 +38,7 @@
                     <td>{{event.duration}} hour(s)</td>
                     <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
                     <td>
-                        <a class="btn btn-xs btn-info" role="button"
+                        <a style="color:white;" class="btn btn-xs btn-info" role="button"
                            href="{% url 'company-event-detail' event.id %}">Details</a>
                     </td>
                     <td>
@@ -38,7 +47,7 @@
                                href="{% url 'company-event-update' event.id %}">
                                 Update</a>
                         {% else %}
-                            <button class="btn btn-xs btn-info" type="button"
+                            <button style="cursor:not-allowed" class="btn btn-xs btn-info" type="button"
                                     data-toggle="tooltip" data-placement="bottom"
                                     disabled="disabled"
                                     title="Event has been approved. No changes
@@ -51,13 +60,18 @@
             </tbody>
         </table>
     {% else %}
-        <h4>
+        <h5>
             Bummer there isn't anything here. Please follow
             <a href="{% url 'company-event-create' %}">
                 <span style="color: #00b6b6">this</span>
             </a> to create a new event.
-        </h4>
+        </h5>
     {% endif %}
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
 </div>
 
 {% endblock %}

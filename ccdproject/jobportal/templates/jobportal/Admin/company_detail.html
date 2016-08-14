@@ -2,55 +2,42 @@
 {% load crispy_forms_tags %}
 
 {% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-<p><a href="#" title="">My Account</a></p>
+<a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
 
 {% block content %}
 
-<h2 class="sub-header">Company Details</h2>
-<hr>
-<div class="col-md-12">
+<div class="breadcrumbs">
+  <div>
+      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="#">Recruiters</a>
+  </div>
+</div>
 
+<div class="row">
+    <div class="col s12">
+    <div class="card">
+    <div class="card-content">
     {% if company.approved == True %}
-        <div class="alert alert-success" role="alert">
-            <h4>This profile was approved by {{company.approver }} on {{ company.approval_date }}.</h4>
-        </div>
+       <h5 style="margin-left:15px;color:green;font-size:20px">This profile was approved by {{company.approver }} on {{ company.approval_date }}.</h5>
     {% elif company.approved == False %}
-        <div class="alert alert-danger" role="alert">
-            <h4>
-                This signup request is rejected by Administrator. Please check this
-                profile again and make sure it was intentional.
-            </h4>
-        </div>
+       <h5 style="margin-left:15px;color:red;font-size:20px;">This signup request is rejected by Administrator. Please check this profile again and make sure it was intentional.</h5>
     {% else %}
-        <div class="alert alert-warning" role="alert">
-            <h4>
-                <strong>Warning! </strong> It is an unapproved signup request. Check the signup details
-                and approve this profile.
-            </h4>
-            <p>
-                <a class="btn btn-warning" href="{% url 'admin-company-approve' company.id %}">
-                    Approve
-                </a>
-            </p>
-        </div>
+       <h5 style="margin-left:15px;color:red;font-size:20px;"><strong>Warning! </strong> It is an unapproved signup request. Check the signup details and approve this profile.</h5>
+       <p style="margin-left:15px;">
+         <a class="btn btn-warning" href="{% url 'admin-company-approve' company.id %}">Approve</a>
+       </p>
     {% endif %}
-
-    <div class="col-md-12">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active">
-                <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Company Profile</a>
-            </li>
-            <li role="presentation">
-                <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-
-            <div role="tabpanel" class="tab-pane active" id="profile">
-                <table class="table table-striped">
+    </div>
+    </div>
+    </div>
+    <div class="col s12 m8 l9">
+    <div class="card data-card">
+    <div class="card-content">
+    <p style="padding-left: 24px;">Jump to: <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Company Profile</a>, <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a></p>
+	<div class="results" style="margin-top:2%;">
+    	   <div class="dataTables_wrapper no-footer" id="profile">
+    		<table class="table table-striped" id="result_list" role="grid">
                     <tr>
                     <td> Company Name: </td><td> {{ company.company_name }}</td>
                     </tr><tr>
@@ -83,13 +70,33 @@
             </div>
 
         </div>
-
+    </div>
+    </div>
     </div>
 
-    <div>
+    <div class="col s12 m4 l3">
+        <div class="card filters-card">
+            <div class="card-content">
+                <span class="card-title black-text">Filter</span>
+                <div class="row" style="margin-top:-10px">
+                  <div class="input-field col s12">
+                    <input type="text" data-name="q" value="" id="searchbar">
+                    <label for="searchbar" class="">Search Company</label>
+                    <a href="#" id="changelist-search-button"><i class="material-icons">search</i></a>
+                    <small>1952 results (<a href="?">Show all</a>)</small>
+                  </div>
+                </div>
+            </div>
+         </div>
+    </div>
+
+    <div class="col s12 m8 l9">
+    <div class="card data-card">
+    <div class="card-content">
     {% if job_list.count > 0 %}
-        <h4>Jobs posted from this recruiter profile:</h4>
-        <div class="col-md-12">
+        <h5 style="margin-left:24px;">Jobs posted from this recruiter profile:</h5>
+        <div class="results">
+    	  <div class="dataTables_wrapper no-footer" id="result_list_wrapper">
             <table class="table table-striped">
                 <tr>
                     <th>Designation</th>
@@ -102,20 +109,18 @@
                         <td>{{ job.designation }}</td>
                         <td>{{ job.posted_on }}</td>
                         <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
-                        <td><a class="btn btn-xs btn-primary"
-                               href="{% url 'admin-job-detail' job.id %}">Details</a></td>
+                        <td><a style="color:white;" class="btn btn-xs btn-primary" href="{% url 'admin-job-detail' job.id %}">Details</a></td>
                     </tr>
                 {% endfor %}
             </table>
+          </div>
         </div>
     {% else %}
     {% endif %}
+       <p style="margin-left:24px;"><a class="btn btn-info" href="{% url 'admin-company-update' company.id %}"> Edit Company Profile</a></p>
     </div>
-
+    </div>
+    </div>
 </div>
-
-<div class="col-md-12">
-    <p><a class="btn btn-info" href="{% url 'admin-company-update' company.id %}"> Edit Company Profile</a></p>
 </div>
-
 {% endblock %}
