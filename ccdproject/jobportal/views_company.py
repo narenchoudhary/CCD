@@ -4,6 +4,7 @@ import StringIO
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import update_session_auth_hash
 from django.contrib import messages
@@ -16,11 +17,10 @@ from django.utils import timezone
 from django.views.generic import (View, TemplateView, RedirectView, CreateView,
                                   UpdateView, ListView, DetailView)
 
-from .models import (Job, Company, StudentJobRelation, ProgrammeJobRelation,
-                     Event, Programme, CV)
+from .models import (UserProfile, Job, Company, StudentJobRelation,
+                     ProgrammeJobRelation, Event, Programme, CV)
 from .forms import (CompanyProfileEdit, CompanyJobForm, CompanySignup,
-                    UserProfileForm, CompanyJobRelForm,
-                    EventForm)
+                    CompanyJobRelForm, EventForm)
 
 COMPANY_LOGIN_URL = reverse_lazy('login')
 
@@ -87,25 +87,27 @@ class CompanySignUpView(View):
     template = 'jobportal/Company/signup.html'
 
     def get(self, request):
-        userform = UserProfileForm(prefix='user')
-        companyform = CompanySignup(prefix='company')
-        args = dict(userform=userform, companyform=companyform)
+        form = CompanySignup()
+        args = dict(form=form)
         return render(request, self.template, args)
 
     def post(self, request):
-        companyform = CompanySignup(request.POST, prefix='company')
-        userform = UserProfileForm(request.POST, prefix='user')
-        if userform.is_valid() and companyform.is_valid():
-            user = userform.save()
-            user.is_active = False
-            user.user_type = 'company'
+        form = CompanySignup(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.pop('username')
+            password1 = form.cleaned_data.pop('password1')
+            user = UserProfile(username=username,
+                               password=make_password(password1),
+                               user_type='company',
+                               is_active=False)
             user.save()
-            company = companyform.save(commit=False)
+            company = form.save(commit=False)
             company.user = user
             company.save()
-            return redirect('signup-confirm')
+            return render(request, 'jobportal/Company/signupconfirm.html',
+                          dict(email=company.head_hr_email))
         else:
-            args = dict(userform=userform, companyform=companyform)
+            args = dict(form=form)
             return render(request, self.template, args)
 
 
@@ -217,23 +219,27 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Job
     template_name = 'jobportal/Company/job_detail.html'
     context_object_name = 'job'
+    job = None
 
     def test_func(self):
-        return self.request.user.user_type == 'company'
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        self.job = get_object_or_404(Job, id=self.kwargs['pk'])
+        company_id = self.request.session['company_instance_id']
+        if self.job.company_owner.id != company_id:
+            return False
+        return True
 
     def get_object(self, queryset=None):
-        job = get_object_or_404(Job, id=self.kwargs['pk'])
-        company = get_object_or_404(
-            Company, id=self.request.session['company_instance_id'])
-        if job.company_owner == company:
-            return job
-        else:
-            return Http404('You are not permitted to vie this page')
+        return self.job
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['rel_list'] = ProgrammeJobRelation.objects.filter(
             job=self.object)
+        date_today = timezone.now().date()
+        context['deadline_over'] = self.job.application_deadline <= date_today
         return context
 
 
@@ -628,7 +634,8 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                                             name='MSC')
         args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
                     ma_list=ma_list, mtech_list=mtech_list,
-                    msc_list=msc_list, phd_list=phd_list, jobpk=jobpk)
+                    msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
+                    saved_jobrels=saved_jobrels)
         return render(request, self.template_name, args)
 
     def post(self, request, jobpk):
@@ -636,7 +643,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         job = get_object_or_404(Job, id=jobpk)
 
         minor_list_ids = request.POST.getlist('selected_minor_ids')
-        btech_bdes_list = request.POST.getlist('selected_btech_ids')
+        btech_bdes_list = request.POST.getlist('selected_btech_bdes_ids')
         mtech_list_ids = request.POST.getlist('selected_mtech_ids')
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')

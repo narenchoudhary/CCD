@@ -9,7 +9,7 @@
 
 <div class="breadcrumbs">
   <div>
-      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="{% url 'company-home' %}">Home</a>
       <a href="#">Events and Status</a>
   </div>
 </div>
@@ -43,15 +43,14 @@
                     </td>
                     <td>
                         {% if event.is_approved == None %}
-                            <a class="btn btn-xs btn-info" role="button"
+                            <a class="btn btn-xs btn-info white-text" role="button"
                                href="{% url 'company-event-update' event.id %}">
                                 Update</a>
                         {% else %}
-                            <button style="cursor:not-allowed" class="btn btn-xs btn-info" type="button"
+                            <button class="btn btn-xs btn-info"
+                                    type="button" disabled="disabled"
                                     data-toggle="tooltip" data-placement="bottom"
-                                    disabled="disabled"
-                                    title="Event has been approved. No changes
-                                    possible now.">Update
+                                    title="Event has been approved. No changes possible now.">Update
                             </button>
                         {%endif%}
                     </td>

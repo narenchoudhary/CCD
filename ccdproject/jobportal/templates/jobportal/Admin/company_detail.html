@@ -9,118 +9,166 @@
 
 <div class="breadcrumbs">
   <div>
-      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="{% url 'admin-home' %}">Home</a> ⟩
       <a href="#">Recruiters</a>
   </div>
 </div>
 
 <div class="row">
-    <div class="col s12">
-    <div class="card">
-    <div class="card-content">
-    {% if company.approved == True %}
-       <h5 style="margin-left:15px;color:green;font-size:20px">This profile was approved by {{company.approver }} on {{ company.approval_date }}.</h5>
-    {% elif company.approved == False %}
-       <h5 style="margin-left:15px;color:red;font-size:20px;">This signup request is rejected by Administrator. Please check this profile again and make sure it was intentional.</h5>
-    {% else %}
-       <h5 style="margin-left:15px;color:red;font-size:20px;"><strong>Warning! </strong> It is an unapproved signup request. Check the signup details and approve this profile.</h5>
-       <p style="margin-left:15px;">
-         <a class="btn btn-warning" href="{% url 'admin-company-approve' company.id %}">Approve</a>
-       </p>
-    {% endif %}
-    </div>
-    </div>
-    </div>
-    <div class="col s12 m8 l9">
-    <div class="card data-card">
-    <div class="card-content">
-    <p style="padding-left: 24px;">Jump to: <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Company Profile</a>, <a href="#hrdetails" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a></p>
-	<div class="results" style="margin-top:2%;">
-    	   <div class="dataTables_wrapper no-footer" id="profile">
-    		<table class="table table-striped" id="result_list" role="grid">
-                    <tr>
-                    <td> Company Name: </td><td> {{ company.company_name }}</td>
-                    </tr><tr>
-                    <td>Description: </td><td> {{ company.description }}</td>
-                    </tr><tr>
-                    <td>Postal Address: </td><td> {{ company.postal_address }}</td>
-                    </tr><tr>
-                    <td>Website: </td><td> {{ company.website }}</td>
-                    </tr><tr>
-                    <td>Organization Type: </td><td> {{ company.organization_type }}</td>
-                    </tr><tr>
-                    <td>Industry Sector: </td><td> {{ company.industry_sector }}</td>
-                    </tr>
-                </table>
-            </div>
 
-            <div role="tabpanel" class="tab-pane" id="hrdetails">
-                <table class="table table-striped">
-                    <tr><td>Head HR Name</td><td> {{ company.head_hr_name }}</td></tr>
-                    <tr><td>Head HR Email</td><td> {{ company.head_hr_email }}</td></tr>
-                    <tr><td>Head HR Designation</td><td> {{ company.head_hr_designation }}</td></tr>
-                    <tr><td>Head HR Mobile</td><td> {{ company.head_hr_mobile }}</td></tr>
-                    <tr><td>Head HR Fax</td><td> {{ company.head_hr_fax }}</td></tr>
-                    <tr><td>First HR Name</td><td> {{ company.first_hr_name }}</td></tr>
-                    <tr><td>First HR Designation</td><td> {{ company.first_hr_designation }}</td></tr>
-                    <tr><td>First HR Mobile</td><td> {{ company.first_hr_mobile }}</td></tr>
-                    <tr><td>First HR Email</td><td> {{ company.first_hr_email }}</td></tr>
-                    <tr><td>First HR Fax</td><td> {{ company.first_hr_fax }}</td></tr>
-                </table>
-            </div>
+    <div class="row">
 
-        </div>
-    </div>
-    </div>
-    </div>
-
-    <div class="col s12 m4 l3">
-        <div class="card filters-card">
-            <div class="card-content">
-                <span class="card-title black-text">Filter</span>
-                <div class="row" style="margin-top:-10px">
-                  <div class="input-field col s12">
-                    <input type="text" data-name="q" value="" id="searchbar">
-                    <label for="searchbar" class="">Search Company</label>
-                    <a href="#" id="changelist-search-button"><i class="material-icons">search</i></a>
-                    <small>1952 results (<a href="?">Show all</a>)</small>
-                  </div>
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    {% if company.approved == True %}
+                       <h5 style="margin-left:15px;color:green;font-size:20px">This profile was approved by {{company.approver }} on {{ company.approval_date }}.</h5>
+                    {% elif company.approved == False %}
+                       <h5 style="margin-left:15px;color:red;font-size:20px;">This signup request is rejected by Administrator. Please check this profile again and make sure it was intentional.</h5>
+                    {% else %}
+                       <h5 style="margin-left:15px;color:red;font-size:20px;"><strong>Warning! </strong> It is an unapproved signup request. Check the signup details and approve this profile.</h5>
+                       <p style="margin-left:15px;">
+                         <a class="btn btn-warning" href="{% url 'admin-company-approve' company.id %}">Approve</a>
+                       </p>
+                    {% endif %}
                 </div>
             </div>
-         </div>
-    </div>
-
-    <div class="col s12 m8 l9">
-    <div class="card data-card">
-    <div class="card-content">
-    {% if job_list.count > 0 %}
-        <h5 style="margin-left:24px;">Jobs posted from this recruiter profile:</h5>
-        <div class="results">
-    	  <div class="dataTables_wrapper no-footer" id="result_list_wrapper">
-            <table class="table table-striped">
-                <tr>
-                    <th>Designation</th>
-                    <th>Posted On</th>
-                    <th>Approved</th>
-                    <th>Details</th>
-                </tr>
-                {% for job in job_list %}
-                    <tr>
-                        <td>{{ job.designation }}</td>
-                        <td>{{ job.posted_on }}</td>
-                        <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
-                        <td><a style="color:white;" class="btn btn-xs btn-primary" href="{% url 'admin-job-detail' job.id %}">Details</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
-          </div>
         </div>
-    {% else %}
-    {% endif %}
-       <p style="margin-left:24px;"><a class="btn btn-info" href="{% url 'admin-company-update' company.id %}"> Edit Company Profile</a></p>
+
+        <div class="col s12 m9 l9">
+            <ul class="s12 m12 l12 tabs z-depth-1">
+                <li class="tab col s6 m6 l6">
+                    <a class="teal-text" href="#profile">Basic Information</a>
+                </li>
+                <li class="tab col s6 m6 l6">
+                    <a href="#hrdetails" class="teal-text">Requirements</a>
+                </li>
+            </ul>
+
+            <div class="col s12 m12 l12  white" id="profile">
+                <table class="table centered responsive-table" id="result_list" role="grid">
+                    <tr>
+                        <td> Username:</td>
+                        <td> {{ company.user.username }}</td>
+                    </tr>
+                    <tr>
+                        <td> Company Name:</td>
+                        <td> {{ company.company_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td> {{ company.description }}</td>
+                    </tr>
+                    <tr>
+                        <td>Postal Address:</td>
+                        <td> {{ company.postal_address }}</td>
+                    </tr>
+                    <tr>
+                        <td>Website:</td>
+                        <td> {{ company.website }}</td>
+                    </tr>
+                    <tr>
+                        <td>Office Contact Number:</td>
+                        <td> {{ company.office_contact_no }}</td>
+                    </tr>
+                    <tr>
+                        <td>Organization Type:</td>
+                        <td> {{ company.organization_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>Industry Sector:</td>
+                        <td> {{ company.industry_sector }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12  white" id="hrdetails">
+                <table class="table bordered centered responsive-table">
+                    <tr>
+                        <td>Head HR Name</td>
+                        <td> {{ company.head_hr_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Head HR Email</td>
+                        <td> {{ company.head_hr_email }}</td>
+                    </tr>
+                    <tr>
+                        <td>Head HR Designation</td>
+                        <td> {{ company.head_hr_designation }}</td>
+                    </tr>
+                    <tr>
+                        <td>Head HR Mobile</td>
+                        <td> {{ company.head_hr_mobile }}</td>
+                    </tr>
+                    <tr>
+                        <td>Head HR Fax</td>
+                        <td> {{ company.head_hr_fax }}</td>
+                    </tr>
+                    <tr>
+                        <td>First HR Name</td>
+                        <td> {{ company.first_hr_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>First HR Designation</td>
+                        <td> {{ company.first_hr_designation }}</td>
+                    </tr>
+                    <tr>
+                        <td>First HR Mobile</td>
+                        <td> {{ company.first_hr_mobile }}</td>
+                    </tr>
+                    <tr>
+                        <td>First HR Email</td>
+                        <td> {{ company.first_hr_email }}</td>
+                    </tr>
+                    <tr>
+                        <td>First HR Fax</td>
+                        <td> {{ company.first_hr_fax }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-action">
+                    <a class="btn btn-info"
+                       href="{% url 'admin-company-update' company.id %}">
+                        Edit Company Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m8 l9">
+            <div class="card">
+                <div class="card-content">
+                    {% if job_list.count > 0 %}
+                        <span class="card-title">Jobs posted from this recruiter profile:</span>
+                        <div class="results">
+                            <div class="dataTables_wrapper no-footer" id="result_list_wrapper">
+                                <table class="table">
+                                    <tr>
+                                        <th>Designation</th>
+                                        <th>Posted On</th>
+                                        <th>Approved</th>
+                                        <th>Details</th>
+                                    </tr>
+                                {% for job in job_list %}
+                                    <tr>
+                                        <td>{{ job.designation }}</td>
+                                        <td>{{ job.posted_on }}</td>
+                                        <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
+                                        <td><a style="color:white;" class="btn btn-xs btn-primary"
+                                               href="{% url 'admin-job-detail' job.id %}">Details</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                {% else %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
-    </div>
-</div>
 </div>
 {% endblock %}

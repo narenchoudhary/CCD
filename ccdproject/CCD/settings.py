@@ -44,6 +44,7 @@ DJANGO_CONTRIB_APPS = [
 ]
 
 DJANGO_3RD_PARTY_APPS = [
+    'material',
     'versatileimagefield',
     'crispy_forms',
     'smart_selects',
@@ -124,9 +125,11 @@ USE_TZ = True
 
 # Sessions settings
 # https://docs.djangoproject.com/en/1.9/ref/settings/#sessions
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_AGE = 2592000
+
+# Remember session for one month
+SESSION_COOKIE_AGE = 60*60*24*30
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

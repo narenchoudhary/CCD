@@ -23,7 +23,6 @@
             <th><strong>Programme</strong></th>
             <th><strong>Minor</strong></th>
             <th><strong>Edit</strong></th>
-            <th><strong>Delete</strong></th>
         </tr>
         </thead>
         <tbody>
@@ -34,7 +33,6 @@
             <td>{{ programme.name }}</td>
             <td>{{ programme.minor_status | yesno }}</td>
             <td><a class="btn btn-info btn-xs" href="{% url 'programme-update' programme.id %}"><span class="glyphicon glyphicon-pencil"></span>&nbspEdit</a></td>
-            <td><a class="btn btn-info btn-xs" href="{% url 'programme-delete' programme.id %}"><span class="glyphicon glyphicon-trash"></span>&nbspDelete</a></td>
         </tr>
         {% endfor %}
         </tbody>

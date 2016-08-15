@@ -34,68 +34,32 @@ def handler500(request):
     return render(request, '500.html')
 
 
-def login(request):
-    form = LoginForm(request.POST or None)
-    if request.method == 'POST':
-        # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
-        if request.session.test_cookie_worked():
-            if form.is_valid():
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
-                user = auth.authenticate(username=username, password=password)
-                if user is not None and user.is_active is True:
-                    user_profile = UserProfile.objects.get(username=username)
-                    if user_profile.user_type == 'student':
-                        auth.login(request, user)
-                        student_instance = Student.objects.get(user=
-                                                               user_profile)
-                        request.session['student_instance_id'] = student_instance.id
-                        request.session['login_type'] = 'student'
-                        return redirect('stud-home')
+def check_webmail_auth_at_server():
+    return
 
-                    elif user_profile.user_type == 'company':
-                        auth.login(request, user)
-                        company_instance = Company.objects.get(user=
-                                                               user_profile)
-                        request.session['company_instance_id'] = company_instance.id
-                        request.session['login_type'] = 'company'
-                        return redirect('company-home')
 
-                    elif user_profile.user_type == 'alumni':
-                        auth.login(request, user)
-                        alum_instance = Alumni.objects.get(user=user_profile)
-                        request.session['alum_instance_id'] = alum_instance.id
-                        request.session['login_type'] = 'alumni'
-                        return redirect('alum_home')
+class Login(View):
+    template_name = 'jobportal/login.html'
 
-                    elif user_profile.user_type == 'admin':
-                        auth.login(request, user)
-                        admin_instance = Admin.objects.get(user=user_profile)
-                        request.session['admin_instance_id'] = admin_instance.id
-                        request.session['login_type'] = 'admin'
-                        return redirect('admin-home')
+    @staticmethod
+    def _auth_one_server(server):
+        return True
 
-                    else:
-                        # this should never happen unless new users are added
-                        args = dict(form=form)
-                        return render(request, 'jobportal/login.html', args)
-                else:
-                    args = dict(form=form)
-                    return render(request, 'jobportal/login.html', args)
-            else:
-                args = dict(form=form)
-                return render(request, 'jobportal/login.html', args)
-        else:
-            return HttpResponse("Please enable cookies and try again.")
-    else:
+    @staticmethod
+    def _auth_all_servers(username, password):
+        return 'server', True
+
+    def get(self, request):
+        form = LoginForm(None)
         if request.user.is_authenticated():
-            user_profile = UserProfile.objects.get(
+            userprofile = UserProfile.objects.get(
                 username=request.user.username)
-            if user_profile.user_type == 'admin':
+            user_type = userprofile.user_type
+            if user_type == 'admin':
                 return redirect('admin-home')
-            elif user_profile.user_type == 'company':
+            elif user_type == 'company':
                 return redirect('company-home')
-            elif user_profile.user_type == 'student':
+            elif user_type == 'student':
                 return redirect('stud-home')
             else:
                 auth.logout(request)
@@ -103,10 +67,165 @@ def login(request):
         else:
             # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
             request.session.set_test_cookie()
-            return render(request, 'jobportal/login.html', dict(form=form))
+            return render(request, self.template_name, dict(form=form))
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
+        if request.session.test_cookie_worked():
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password']
+                remember_me = form.cleaned_data['remember_me']
+                if not remember_me:
+                    request.session.set_expiry(0)
+                try:
+                    user_profile = UserProfile.objects.get(username=username)
+                except UserProfile.DoesNotExist:
+                    user_profile = None
+                if user_profile is not None:
+                    user_type = user_profile.user_type
+                    if user_type == 'admin':
+                        if user_profile.is_active:
+                            user = auth.authenticate(username=username,
+                                                     password=password)
+                            if user is not None:
+                                auth.login(request, user)
+                                admin = Admin.objects.get(
+                                    user=user_profile)
+                                request.session['admin_instance_id'] = admin.id
+                                return redirect('admin-home')
+                            else:
+                                error = 'Incorrect password.'
+                                args = dict(form=form, error=error)
+                                return render(request, self.template_name,
+                                              args)
+
+                        else:
+                            error = 'User not active yet.'
+                            args = dict(form=form, error=error)
+                            return render(request, self.template_name, args)
+                    elif user_type == 'company':
+                        if user_profile.is_active:
+                            user = auth.authenticate(username=username,
+                                                     password=password)
+                            if user is not None:
+                                auth.login(request, user)
+                                company = Company.objects.get(
+                                    user=user_profile)
+                                request.session['company_instance_id'] = company.id
+                                return redirect('company-home')
+                            else:
+                                error = 'Incorrect password.'
+                                args = dict(form=form, error=error)
+                                return render(request, self.template_name,
+                                              args)
+                        else:
+                            error = 'Your signup request has not been ' \
+                                    'approved yet. Please visit again after ' \
+                                    'some time.'
+                            args = dict(form=form, error=error)
+                            return render(request, self.template_name, args)
+                    elif user_type == 'student':
+                        # fee paid
+                        if user_profile.is_active:
+                            # check if server is saved
+                            if user_type.login_server is not None:
+                                status = self._auth_one_server(
+                                    server=user_type.login_server)
+                                # if saved server worked
+                                if status:
+                                    # authenticate
+                                    # TODO: Write auth backend
+                                    # http://stackoverflow.com/a/2788053/3679857
+                                    user = auth.authenticate(username=username,
+                                                             password=password)
+                                    if user is not None:
+                                        auth.login(request, user)
+                                        stud = Student.objects.get(
+                                            user=user_profile
+                                        )
+                                        request.session[
+                                            'student_instance_id'] = stud.id
+                                        return redirect('student-home')
+                                # if saved server did not work
+                                else:
+                                    # try all the servers
+                                    server, status = self._auth_all_servers(
+                                        username=username, password=password
+                                    )
+                                    # if match found
+                                    if status:
+                                        # save server for future logins
+                                        user_profile.server = True
+                                        user_profile.save()
+                                        # authenticate and authorize
+                                        user = auth.authenticate(
+                                            username=username,
+                                            password=password)
+                                        auth.login(request, user)
+                                        stud = Student.objects.get(
+                                            user=user_profile
+                                        )
+                                        request.session[
+                                            'student_instance_id'] = stud.id
+                                        return redirect('student-home')
+                                    else:
+                                        error = 'Wrong password'
+                                        args = dict(form=form, error=error)
+                                        return render(
+                                            request, self.template_name, args
+                                        )
+                            # if server is not saved
+                            else:
+                                server, status = self._auth_all_servers(
+                                    username=username, password=password
+                                )
+                                # if match found
+                                if status:
+                                    # saved server for future requests
+                                    user_profile.server = True
+                                    user_profile.save()
+                                    # authenticate and authorize
+                                    user = auth.authenticate(
+                                        username=username, password=password)
+                                    auth.login(request, user)
+                                    stud = Student.objects.get(
+                                        user=user_profile
+                                    )
+                                    request.session[
+                                        'student_instance_id'] = stud.id
+                                    return redirect('student-home')
+                                else:
+                                    error = 'Wrong password'
+                                    args = dict(form=form, error=error)
+                                    return render(request, self.template_name,
+                                                  args)
+
+                        else:
+                            error = 'Fee not paid'
+                            args = dict(form=form, error=error)
+                            return render(request, self.template_name, args)
+                    elif user_type == 'alumni':
+                        pass
+                    else:
+                        error = 'Unknown error occurred'
+                        args = dict(form=form, error=error)
+                        return render(request, self.template_name, args)
+                else:
+                    error = 'Invalid username'
+                    args = dict(form=form, error=error)
+                    return render(request, self.template_name, args)
+            else:
+                return render(request, self.template_name, dict(form=form))
+
+        else:
+            error = 'Please enable cookies and try again.'
+            args = dict(form=form, error=error)
+            return render(request, self.template_name, args)
 
 
-class LogoutView(LoginRequiredMixin, UserPassesTestMixin, View):
+class Logout(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
 
     def test_func(self):

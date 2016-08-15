@@ -1,14 +1,11 @@
 {% extends 'base_jobportal.html' %}
-{% load crispy_forms_tags %}
+{% load material_form %}
 
 {% block title %}
 Login
 {% endblock %}
 
 {% block menu %}
-<a href="{% url 'index' %}">
-    <li>Welcome</li>
-</a>
 <a href="{% url 'login' %}">
     <li>Login</li>
 </a>
@@ -29,22 +26,32 @@ Login
 <div class="card">
 <div class="card-content">
 <span class="card-title black-text">Log in</span>
-    <form id="login-form" action="{% url 'login' %}" method="post" accept-charset="utf-8">
+    <form action="{% url 'login' %}" method="POST" accept-charset="utf-8"
+          class="viewform">
         {% csrf_token %}
-        <div class="well">
-            {% if form.non_field_errors %}
-                <ul class='form-errors'>
-                    {% for error in form.non_field_errors %}
-                        <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            {{ form.field_errors }}
-            {{ form | crispy }}
-	    <div class="card-action right-align">
-               <input type="submit" class="btn btn-primary" value="Log In">
+        {% if error %}
+            <div class="row">
+                <div class=" card red lighten-5">
+                    <div class="red-text card-content">
+                        <i class="mdi-alert-error"></i>
+                        <p> {{error}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% form %}
+            {% part form.username prefix %}
+                <i class="material-icons prefix">account_box</i>
+            {% endpart %}
+            {% part form.password prefix %}
+                <i class="material-icons prefix">lock_open</i>
+            {% endpart %}
+        {% endform %}
+	    <div class="right-align">
+               <button type="submit" name="_submit"
+                       class="waves-effect waves-light btn btn-primary btn-lg">
+                   Log In</button>
 	    </div>
-        </div>
     </form>
 </div>
 </div>

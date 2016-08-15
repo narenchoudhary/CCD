@@ -46,6 +46,8 @@ def get_bond_link_name(instance, filename):
 class UserProfile(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPE,
                                  default='admin')
+    login_server = models.CharField(max_length=30, choices=SERVER_IP,
+                                    default='202.141.80.13')
 
     def __unicode__(self):
         return str(self.username)
@@ -132,29 +134,29 @@ class Company(models.Model):
                                        verbose_name="Industry Sector")
     # Head Contact
     head_hr_name = models.CharField(max_length=20, null=True, blank=False,
-                                    verbose_name='Head HR Full Name')
-    head_hr_email = models.CharField(max_length=60, null=True, blank=False,
-                                     verbose_name='Head HR Email')
+                                    verbose_name='Full Name')
+    head_hr_email = models.EmailField(null=True, blank=False,
+                                      verbose_name='Email')
     head_hr_designation = models.CharField(max_length=30, blank=False,
                                            null=True,
-                                           verbose_name='Head HR Designation')
+                                           verbose_name='Designation')
     head_hr_mobile = models.CharField(max_length=12, blank=False, null=True,
-                                      verbose_name='Head HR Mobile')
+                                      verbose_name='Contact Number')
     head_hr_fax = models.CharField(max_length=15, blank=True, null=True,
-                                   verbose_name='Head HR Fax')
+                                   verbose_name='Fax')
     # First HR
     first_hr_name = models.CharField(max_length=20, null=True, blank=True,
-                                     verbose_name='First HR Full Name')
-    first_hr_email = models.CharField(max_length=60, null=True, blank=True,
-                                      verbose_name='First HR Email')
+                                     verbose_name='Full Name')
+    first_hr_email = models.EmailField(null=True, blank=True,
+                                       verbose_name='Email')
     first_hr_designation = models.CharField(max_length=30, null=True,
                                             blank=True,
-                                            verbose_name='First HR Designation'
+                                            verbose_name='Designation'
                                             )
     first_hr_mobile = models.CharField(max_length=12, null=True, blank=True,
-                                       verbose_name='First HR Mobile')
+                                       verbose_name='Mobile')
     first_hr_fax = models.CharField(max_length=15, null=True, blank=True,
-                                    verbose_name='First HR Fax')
+                                    verbose_name='Fax')
     # status
     approver = models.ForeignKey(Admin, null=True,
                                  verbose_name='Profile Approver')
@@ -389,39 +391,39 @@ class Job(models.Model):
     currency = models.CharField(default="INR", max_length=15, null=True)
     ctc_btech = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
-                                    blank=True, verbose_name='CTC/year')
+                                    blank=True, verbose_name='B.Tech CTC/year')
     ctc_mtech = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
-                                    blank=True, verbose_name='CTC/year')
+                                    blank=True, verbose_name='M.Tech CTC/year')
     ctc_msc = models.DecimalField(max_digits=16, decimal_places=2,
                                   default=0.00, null=True,
-                                  blank=True, verbose_name='CTC/year')
+                                  blank=True, verbose_name='M.Sc. CTC/year')
     ctc_ma = models.DecimalField(max_digits=16, decimal_places=2,
                                  default=0.00, null=True,
-                                 blank=True, verbose_name='CTC/year')
+                                 blank=True, verbose_name='M.A. CTC/year')
     ctc_phd = models.DecimalField(max_digits=16, decimal_places=2,
                                   default=0.00, null=True,
-                                  blank=True, verbose_name='CTC/year')
+                                  blank=True, verbose_name='Ph.D. CTC/year')
     gross_btech = models.DecimalField(max_digits=16, decimal_places=2,
                                       default=0.00, null=True,
                                       blank=True,
-                                      verbose_name='Gross Salary')
+                                      verbose_name='B.Tech Gross Salary')
     gross_mtech = models.DecimalField(max_digits=16, decimal_places=2,
                                       default=0.00, null=True,
                                       blank=True,
-                                      verbose_name='Gross Salary')
+                                      verbose_name='M.Tech Gross Salary')
     gross_msc = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
                                     blank=True,
-                                    verbose_name='Gross Salary')
+                                    verbose_name='M.Sc. Gross Salary')
     gross_ma = models.DecimalField(max_digits=16, decimal_places=2,
                                    default=0.00, null=True,
                                    blank=True,
-                                   verbose_name='Gross Salary')
+                                   verbose_name='M.A. Gross Salary')
     gross_phd = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
                                     blank=True,
-                                    verbose_name='Gross Salary')
+                                    verbose_name='Ph.D. Gross Salary')
     # Job description
     # bond = models.BooleanField(default=False, verbose_name='Legal Bond')
     bond_link = models.FileField(null=True, blank=True,
@@ -452,6 +454,8 @@ class Job(models.Model):
             self.opening_date = timezone.now() + timedelta(days=30)
             self.application_deadline = timezone.now() + timedelta(days=45)
         self.last_updated = timezone.now()
+        if self.minimum_cpi is None:
+            self.minimum_cpi = 4.0
         return super(Job, self).save(*args, **kwargs)
 
 
@@ -491,13 +495,13 @@ class Event(models.Model):
                                   verbose_name='Event Type',
                                   help_text='Select event type from the '
                                             'dropdown menu.')
-    duration = models.IntegerField(default=1,
-                                   verbose_name="Estimated Duration in hours")
+    duration = models.DecimalField(default=1, max_digits=4, decimal_places=2,
+                                   verbose_name="Estimated Duration (in "
+                                                "hours)")
     logistics = models.CharField(null=True, blank=True, max_length=150,
                                  verbose_name="Logistics")
     remark = models.CharField(max_length=300, null=True, blank=True,
-                              verbose_name='Remark (Optional)',
-                              help_text="Any speical remark can be added here")
+                              verbose_name='Remark (Optional)')
     final_date = models.DateField(null=True, blank=True,
                                   verbose_name='Approved Date',
                                   help_text="This is the date assigned for "

@@ -204,19 +204,31 @@ class CompanyDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context
 
 
-class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
     form_class = EditCompany
+    model = Company
     template_name = 'jobportal/Admin/company_update.html'
 
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
-    def get_object(self, queryset=None):
-        return Company.objects.get(id=self.kwargs['pk'])
+    def get(self, request, pk):
+        company = Company.objects.get(id=pk)
+        print(company.approved)
+        form = EditCompany(instance=company)
+        return render(request, self.template_name,
+                      dict(form=form, company=company))
 
-    def get_success_url(self):
-        return reverse_lazy('admin-company-detail', args=(self.object.id,))
+    def post(self, request, pk):
+        company = Company.objects.get(id=pk)
+        form = EditCompany(request.POST, instance=company)
+        approved = company.approved
+        if form.is_valid():
+            form.save()
+            return redirect('admin-company-detail', pk=company.id)
+        else:
+            return render(request, self.template_name, dict(form=form))
 
 
 class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -630,7 +642,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
             return False, 'Total number of columns is not ' + str(
                 self.col_count)
         try:
-            roll_no = int(row[1])
+            roll_no = int(str(row[1]).strip())
         except ValueError:
             return False, 'Roll number is not a valid number'
         try:
@@ -729,18 +741,32 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                         user_type='student'
                     )
                     try:
-                        year = Year.objects.get(current_year=int(row[3]))
-                        dept = Department.objects.get(
-                            year=year, dept_code=str(row[4]).upper())
-                        prog = Programme.objects.get(
-                            year=year, dept=dept, name=str(row[5]),
-                            minor_status=False)
-                        minor_year = Year.objects.get(current_year=int(row[6]))
-                        minor_dept = Department.objects.get(
-                            year=minor_year, dept_code=str(row[7]).upper())
-                        minor_prog = Programme.objects.get(
-                            year=minor_year, dept=minor_dept, name=str(row[8]),
-                            minor_status=True)
+                        year = None
+                        dept = None
+                        prog = None
+                        if row[3] != '':
+                            year = Year.objects.get(current_year=int(row[3]))
+                        if year and row[4] != '':
+                            dept = Department.objects.get(
+                                year=year, dept_code=str(row[4]).upper())
+                        if year and dept and row[5] != '':
+                            prog = Programme.objects.get(
+                                year=year, dept=dept, name=str(row[5]),
+                                minor_status=False)
+                        minor_year = None
+                        minor_dept = None
+                        minor_prog = None
+                        if row[6] != '':
+                            minor_year = Year.objects.get(
+                                current_year=int(row[6]))
+                        if minor_year and row[7] != '':
+                            minor_dept = Department.objects.get(
+                                year=minor_year, dept_code=str(row[7]).upper())
+                        if minor_year and minor_dept and row[8] != '':
+                            minor_prog = Programme.objects.get(
+                                year=minor_year, dept=minor_dept,
+                                name=str(row[8]),
+                                minor_status=True)
                         stud = Student.objects.create(
                             user=userprofile,
                             iitg_webmail=str(username) + '@iitg.ac.in',
@@ -749,15 +775,22 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             year=year,
                             dept=dept,
                             prog=prog,
-                            minor_year=minor_year,
-                            minor_dept=minor_dept,
-                            minor_prog=minor_prog,
                             category=str(row[6]).upper(),
                             cpi=float(row[10]),
                             nationality=str(row[11]),
                             sex=str(row[12]).upper(),
                         )
-                    except ValueError or TypeError or IntegrityError:
+                        if year and dept and prog:
+                            stud.year = year
+                            stud.dept = dept
+                            stud.prog = prog
+                            stud.save()
+                        if minor_year and minor_dept and minor_year:
+                            stud.minor_year = minor_year
+                            stud.minor_dept = minor_dept
+                            stud.minor_prog = minor_prog
+                            stud.save()
+                    except (ValueError, TypeError, IntegrityError):
                         userprofile.delete()
                         error_rows.append(rowcount)
                         error = 'Student creation failed. Integrity Error'

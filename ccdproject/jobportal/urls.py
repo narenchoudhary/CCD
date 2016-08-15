@@ -4,10 +4,11 @@ from django.views.generic import TemplateView
 from . import views, views_admin, views_company, views_alumni, views_print
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='jobportal/index.html'),
-        name='index'),
-    url(r'^login/$', views.login, name='login'),
-    url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
+    # url(r'^$', TemplateView.as_view(template_name='jobportal/index.html'),
+    #     name='index'),
+    url(r'^$', views.Login.as_view(), name='index'),
+    url(r'^login/$', views.Login.as_view(), name='login'),
+    url(r'^logout/$', views.Logout.as_view(), name='logout'),
 
 
     url(r'^stud/home/$', views.HomeView.as_view(), name='stud-home'),
@@ -59,7 +60,8 @@ urlpatterns = [
 
 
 
-
+    url(r'^signup/$', views_company.CompanySignUpView.as_view(),
+        name='sigup'),
     url(r'^company/signup/$', views_company.CompanySignUpView.as_view(),
         name='company-signup'),
     url(r'^company/signupconfirm/$', TemplateView.as_view(

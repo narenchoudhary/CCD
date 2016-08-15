@@ -106,3 +106,11 @@ EVENT_TYPE = (
     ('Workshop', 'Workshop'),
     ('Promotional Event', 'Promotional Event'),
 )
+
+SERVER_IP = (
+    ('202.141.80.9', 'naambor'),
+    ('202.141.80.10', 'disbang'),
+    ('202.141.80.11', 'tamdil'),
+    ('202.141.80.12', 'teesta'),
+    ('202.141.80.13', 'dikrong'),
+)

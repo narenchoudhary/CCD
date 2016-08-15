@@ -1,5 +1,15 @@
 {% extends 'base_company.html' %}
-{% load crispy_forms_tags %}
+{% load material_form %}
+
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
 
 {% block account_setting%}
    <a href="{% url 'logout' %}" title="logout">Logout</a>
@@ -9,41 +19,58 @@
 
 <div class="breadcrumbs">
   <div>
-      <a href="/tnp/admin/home/">Home</a> ⟩
-      <a href="/tnp/company/profile/detail/">ACCOUNT INFORMATION</a> ⟩
+      <a href="{% url 'company-home' %}">Home</a> ⟩
+      <a href="{% url 'company-profile-detail' %}">ACCOUNT INFORMATION</a> ⟩
       <a href="#">Update Profile</a>
   </div>
 </div>
+
 <div class="row">
    <div class="col s12 m8 l9">
       <div class="card">
         <div class="card-content">
-	   <p>Jump to: <a href="#general-details" aria-controls="home" role="tab" data-toggle="tab">General Details</a>, <a href="#hr-details" aria-controls="profile" role="tab" data-toggle="tab">HR Details</a></p>
-            <form method="post" accept-charset="utf-8" id="login-form">
+            <form method="post" accept-charset="utf-8"
+                  action="{% url 'company-profile-update' %}">
                 {% csrf_token %}
-                <div class="well">
-                    {% crispy form form.helper %}
-		  <div class="card-action right-align">
-                    <input type="submit" class="btn btn-primary" value="Save">
-		  </div>
-                </div>
+                {% form %}
+                    {% part form.company_name prefix %}
+                        <i class="material-icons prefix">business</i>
+                    {% endpart %}
+                    {% part form.description prefix %}
+                        <i class="material-icons prefix">subject</i>
+                    {% endpart %}
+                    {% part form.postal_address prefix %}
+                        <i class="material-icons prefix">subject</i>
+                    {% endpart %}
+                    {% part form.website prefix %}
+                        <i class="material-icons prefix">web</i>
+                    {% endpart %}
+                    {% part form.office_contact_no prefix %}
+                        <i class="material-icons prefix">call</i>
+                    {% endpart %}
+                    {% part form.head_hr_name prefix %}
+                        <i class="material-icons prefix">account_box</i>
+                    {% endpart %}
+                    {% part form.head_hr_email prefix %}
+                        <i class="material-icons prefix">email</i>
+                    {% endpart %}
+                    {% part form.head_hr_mobile prefix %}
+                        <i class="material-icons prefix">phone_android</i>
+                    {% endpart %}
+                    {% part form.first_hr_name prefix %}
+                        <i class="material-icons prefix">account_box</i>
+                    {% endpart %}
+                    {% part form.first_hr_email prefix %}
+                        <i class="material-icons prefix">email</i>
+                    {% endpart %}
+                    {% part form.first_hr_mobile prefix %}
+                        <i class="material-icons prefix">phone_android</i>
+                    {% endpart %}
+                {% endform %}
+                <input type="submit" class="right-align btn btn-primary" value="Save">
             </form>
         </div>
       </div>
    </div>
-   <div class="col s12 m4 l3">
-        <div class="card filters-card">
-            <div class="card-content">
-                <span class="card-title black-text">Search</span>
-                <div class="row" style="margin-top:-10px">
-                  <div class="input-field col s12">
-                    <input type="text" data-name="q" value="" id="searchbar">
-                    <label for="searchbar" class="">Search...</label>
-                    <a href="#" id="changelist-search-button"><i class="material-icons">search</i></a>
-                  </div>
-                </div>
-            </div>
-         </div>
-    </div>
 </div>
 {% endblock %}

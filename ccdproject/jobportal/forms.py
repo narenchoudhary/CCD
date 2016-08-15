@@ -1,12 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
-from django.forms import BaseInlineFormSet, ModelForm, inlineformset_factory
+from django.forms import ModelForm
 
-from bootstrap3_datetime.widgets import DateTimePicker
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import *
-from crispy_forms.bootstrap import *
+from material import *
 
 from models import *
 from widgets import CheckBoxBootstrapSwitch
@@ -16,8 +13,10 @@ class LoginForm(forms.Form):
     """
     Common Login Form for all Users.
     """
-    username = forms.CharField(required=True, label='Webmail', max_length=25)
+    username = forms.CharField(required=True, label='Username', max_length=25)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
+    remember_me = forms.BooleanField(required=False, initial=True,
+                                     label='Remember Me')
 
 
 class EditStudProfileForm(ModelForm):
@@ -58,75 +57,6 @@ class EditStudProfileForm(ModelForm):
         self.fields['percentage_xii'].label = 'Percentage XII'
         self.fields['board_x'].label = 'X Examination Board'
         self.fields['board_xii'].label = 'XII Examination Board'
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'Student Information',
-
-                    'roll_no',
-                    'iitg_webmail',
-                    'name',
-                    'dob',
-                    'sex',
-                    'category',
-                    'nationality',
-                    'year',
-                    'dept',
-                    'prog',
-                    'minor_year',
-                    'minor_dept',
-                    'minor_prog',
-                    'hostel',
-                    'room_no'
-                ),
-                Tab(
-                    'Contact Information',
-
-                    PrependedText('linkedin_link', 'https://'),
-                    'alternative_email',
-                    'mobile_campus',
-                    'mobile_campus_alternative',
-                    'mobile_home'
-                ),
-                Tab(
-                    'Home Address',
-
-                    'address_line1',
-                    'address_line2',
-                    'address_line3',
-                    'pin_code'
-                ),
-                Tab(
-                    'Academic',
-
-                    'jee_air_rank',
-                    'percentage_x',
-                    'percentage_xii',
-                    'board_x',
-                    'board_xii',
-                    'medium_x',
-                    'medium_xii',
-                    'passing_year_x',
-                    'passing_year_xii',
-                    'gap_in_study',
-                    'gap_reason',
-                ),
-                Tab(
-                    'CPI',
-
-                    'cpi',
-                    'spi_1_sem',
-                    'spi_2_sem',
-                    'spi_3_sem',
-                    'spi_4_sem',
-                    'spi_5_sem',
-                    'spi_6_sem',
-                    'active_backlogs',
-                )
-            )
-        )
 
     def clean(self):
         cleaned_data = super(EditStudProfileForm, self).clean()
@@ -153,6 +83,30 @@ class CompanyJobForm(ModelForm):
     """
     Job ModelForm for Company Users to create Job instances.
     """
+
+    layout = Layout(
+        Fieldset('Basic Information',
+                 'designation', 'profile_name', 'description', 'num_openings'),
+        Fieldset('CPI and Percentage Requirements',
+                 Row(
+                     Column('cpi_shortlist', 'minimum_cpi', span_columns=6),
+                     Column('percentage_x', 'percentage_xii', span_columns=6),
+                 )
+                 # Row('percentage_x', 'percentage_xii'),
+                 # Row('percentage_x','percentage_xii')
+                 ),
+        Fieldset('Salary Breakdown (Only fill details for programmes your '
+                 'firm will be hiring)',
+                 'currency',
+                 Row('ctc_btech', 'gross_btech'),
+                 Row('ctc_mtech', 'gross_mtech'),
+                 Row('ctc_msc', 'gross_msc'),
+                 Row('ctc_ma', 'gross_ma'),
+                 Row('ctc_phd', 'gross_phd')
+                 ),
+        Fieldset('Legal Doucment', 'bond_link')
+    )
+
     class Meta:
         model = Job
         fields = ['description', 'designation', 'profile_name',
@@ -174,6 +128,7 @@ class CompanyJobForm(ModelForm):
         gross_ma = cleaned_data['gross_ma']
         ctc_phd = cleaned_data['ctc_phd']
         gross_phd = cleaned_data['gross_phd']
+
         if ctc_btech < gross_btech:
             raise ValidationError("Error: In Salary section, Gross B.Tech. "
                                   "cannot be greater than CTC B.Tech.")
@@ -190,106 +145,53 @@ class CompanyJobForm(ModelForm):
             raise ValidationError("Error: In Salary section, Gross Ph.D. "
                                   "cannot be greater than CTC Ph.D.")
 
+        cpi_shortlist = cleaned_data['cpi_shortlist']
+        minimum_cpi = cleaned_data['minimum_cpi']
+
+        if cpi_shortlist is True:
+            if minimum_cpi is None:
+                error = 'Minimum CPI field cannot be left blank if CPI ' \
+                        'Shortlist option in checked.'
+                raise ValidationError(error)
+        else:
+            cleaned_data['minimim_cpi'] = 4.0
+        if minimum_cpi is None:
+            cleaned_data['minimim_cpi'] = 4.0
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super(CompanyJobForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.fields['bond_link'].help_text = 'Upload the bond document.'
-        self.fields['cpi_shortlist'].help_text = 'Select if CPI-based ' \
-                                                 'filtering is needed.'
-
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'Basic Information',
-                    Field('description'),
-                    Field('designation', placeholder='Eg. Software Engineer'),
-                    Field('profile_name', placeholder='Eg. SDE, Management'),
-                    'num_openings',
-                    HTML("""
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Requirements',
-                    HTML('<h4>CPI</h4>'),
-                    Div(
-                        Field('cpi_shortlist'),
-                        Field('minimum_cpi'),
-                        css_class='col-md-12'
-                    ),
-
-                    HTML('<h4>Percentage</h4>'),
-                    Div(
-                        Field('percentage_x'),
-                        Field('percentage_xii'),
-                        css_class='col-md-12'
-                    ),
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Salary Breakdown',
-
-                    'currency',
-                    HTML('<h4>B.Tech</h4>'),
-                    Div(
-                        Field('ctc_btech'),
-                        Field('gross_btech'),
-                        css_class='col-md-12'
-                    ),
-                    HTML('<h4>M.Tech</h4>'),
-                    Div(
-                        Field('ctc_mtech'),
-                        Field('gross_mtech'),
-                        css_class='col-md-12'
-                    ),
-                    HTML('<h4>Ph.D.</h4>'),
-                    Div(
-                        Field('ctc_phd'),
-                        Field('gross_phd'),
-                        css_class='col-md-12'
-                    ),
-                    HTML('<h4>M.Sc.</h4>'),
-                    Div(
-                        Field('ctc_msc'),
-                        Field('gross_msc'),
-                        css_class='col-md-12'
-                    ),
-                    HTML('<h4>M.A.</h4>'),
-                    Div(
-                        Field('ctc_ma'),
-                        Field('gross_ma'),
-                        css_class='col-md-12'
-                    ),
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Bond',
-                    # 'bond',
-                    Field('bond_link',
-                          placeholder='Leave empty if no bond is needed'),
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <input type="submit" class="btn btn-success"
-                        value="Add Job" >
-                    """)
-                )
-            )
-        )
 
 
 class AdminJobEditForm(ModelForm):
     """
     Job ModelForm for Admin Users to create Job instances.
     """
+
+    layout = Layout(
+        Fieldset('Basic Information',
+                 'designation', 'profile_name', 'description', 'num_openings'),
+        Fieldset('CPI and Percentage Requirements',
+                 Row(
+                     Column('cpi_shortlist', 'minimum_cpi', span_columns=4),
+                     Column('percentage_x', 'percentage_xii', span_columns=4),
+                     Column('backlog_filter', 'num_backlogs_allowed', span_columns=4),
+                 )
+                 # Row('percentage_x', 'percentage_xii'),
+                 # Row('percentage_x','percentage_xii')
+                 ),
+        Fieldset('Salary Breakdown (Only fill details for programmes your '
+                 'firm will be hiring)',
+                 'currency',
+                 Row('ctc_btech', 'gross_btech'),
+                 Row('ctc_mtech', 'gross_mtech'),
+                 Row('ctc_msc', 'gross_msc'),
+                 Row('ctc_ma', 'gross_ma'),
+                 Row('ctc_phd', 'gross_phd')
+                 ),
+        Fieldset('Legal Doucment', 'bond_link')
+    )
+
     class Meta:
         model = Job
         fields = ['description', 'designation', 'profile_name',
@@ -299,86 +201,9 @@ class AdminJobEditForm(ModelForm):
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link', 'opening_date', 'application_deadline',
                   'backlog_filter', 'num_backlogs_allowed']
-        widgets = {
-            'opening_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
-                                                    'pickTime': False}),
-            'application_deadline': DateTimePicker(options={
-                'format': 'YYYY-MM-DD', 'pickTime': False})
-        }
 
     def __init__(self, *args, **kwargs):
         super(AdminJobEditForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'Basic Information',
-                    'description',
-                    'designation',
-                    'profile_name',
-                    'num_openings',
-                    HTML("""
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Requirements',
-
-                    'backlog_filter',
-                    'num_backlogs_allowed',
-                    'cpi_shortlist',
-                    'minimum_cpi',
-                    'percentage_x',
-                    'percentage_xii',
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Salary/Incentives',
-
-                    'currency',
-                    'ctc_btech',
-                    'ctc_mtech',
-                    'ctc_phd',
-                    'ctc_msc',
-                    'ctc_ma',
-                    'gross_btech',
-                    'gross_mtech',
-                    'gross_phd',
-                    'gross_msc',
-                    'gross_ma',
-
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Bond',
-
-                    'bond_link',
-
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <a class="btn btn-primary btnNext" >Next</a>
-                    """)
-                ),
-                Tab(
-                    'Settings',
-
-                    'opening_date', 'application_deadline',
-
-                    HTML("""
-                        <a class="btn btn-primary btnPrevious" >Previous</a>
-                        <input type="submit" class="btn btn-primary"
-                        value="Save" >
-                    """)
-                )
-            )
-        )
 
 
 class CompanyEventForm(forms.Form):
@@ -406,6 +231,19 @@ class CompanyProfileEdit(ModelForm):
             'postal_address': forms.Textarea(attrs={'rows': 4})
         }
 
+    layout = Layout(
+        Fieldset('Company Details',
+                 'company_name', 'description', 'postal_address',
+                 'website', 'office_contact_no',
+                 Row(Span6('organization_type'), Span6('industry_sector'))),
+        Fieldset('Head HR (First Point of Contact)',
+                 'head_hr_name', 'head_hr_email', 'head_hr_mobile',
+                 'head_hr_designation', 'head_hr_fax'),
+        Fieldset('First HR (Second Point of Contact)',
+                 'first_hr_name', 'first_hr_email', 'first_hr_mobile',
+                 'first_hr_designation', 'first_hr_fax')
+    )
+
     def __init__(self, *args, **kwargs):
         super(CompanyProfileEdit, self).__init__(*args, **kwargs)
         self.fields['company_name'].disabled = True
@@ -413,37 +251,6 @@ class CompanyProfileEdit(ModelForm):
         self.fields['website'].disabled = True
         self.fields['organization_type'].disabled = True
         self.fields['industry_sector'].disabled = True
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'General Details',
-
-                    'company_name',
-                    'description',
-                    'postal_address',
-                    'website',
-                    'organization_type',
-                    'industry_sector',
-                    'office_contact_no'
-                ),
-                Tab(
-                    'HR Details',
-
-                    'head_hr_name',
-                    'head_hr_email',
-                    'head_hr_designation',
-                    'head_hr_mobile',
-                    'head_hr_fax',
-                    'first_hr_name',
-                    'first_hr_email',
-                    'first_hr_designation',
-                    'first_hr_mobile',
-                    'first_hr_fax'
-                )
-            )
-        )
 
 
 class StudentSearchForm(forms.Form):
@@ -487,48 +294,26 @@ class AddCompany(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AddCompany, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'Login Credentials',
-
-                    'username',
-                    'password'
-                ),
-                Tab(
-                    'General Details',
-
-                    'company_name',
-                    'description',
-                    'postal_address',
-                    'website',
-                    'organization_type',
-                    'industry_sector'
-                ),
-                Tab(
-                    'HR Details',
-
-                    'head_hr_name',
-                    'head_hr_email',
-                    'head_hr_designation',
-                    'head_hr_mobile',
-                    'head_hr_fax',
-                    'first_hr_name',
-                    'first_hr_email',
-                    'first_hr_designation',
-                    'first_hr_mobile',
-                    'first_hr_fax'
-                )
-            )
-        )
 
 
 class EditCompany(ModelForm):
     """
     Company ModelForm for Admin Users to update Company instances.
     """
+
+    layout = Layout(
+        Fieldset('Company Details',
+                 'company_name', 'description', 'postal_address',
+                 'website', 'office_contact_no',
+                 Row(Span6('organization_type'), Span6('industry_sector'))),
+        Fieldset('First Point of Contact',
+                 'head_hr_name', 'head_hr_email', 'head_hr_mobile',
+                 'head_hr_designation', 'head_hr_fax'),
+        Fieldset('Second Point of Contact',
+                 'first_hr_name', 'first_hr_email', 'first_hr_mobile',
+                 'first_hr_designation', 'first_hr_fax')
+    )
+
     class Meta:
         model = Company
         fields = ['company_name', 'description', 'postal_address', 'website',
@@ -536,7 +321,7 @@ class EditCompany(ModelForm):
                   'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
                   'head_hr_fax', 'first_hr_name', 'first_hr_email',
                   'first_hr_designation', 'first_hr_mobile', 'first_hr_fax',
-                  'approved']
+                  'office_contact_no']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'postal_address': forms.Textarea(attrs={'rows': 4})
@@ -544,42 +329,6 @@ class EditCompany(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EditCompany, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    'General Details',
-
-                    'company_name',
-                    'description',
-                    'postal_address',
-                    'website',
-                    'organization_type',
-                    'industry_sector',
-                    'office_contact_no'
-                ),
-                Tab(
-                    'HR Details',
-
-                    'head_hr_name',
-                    'head_hr_email',
-                    'head_hr_designation',
-                    'head_hr_mobile',
-                    'head_hr_fax',
-                    'first_hr_name',
-                    'first_hr_email',
-                    'first_hr_designation',
-                    'first_hr_mobile',
-                    'first_hr_fax'
-                ),
-                Tab(
-                    'Settings',
-
-                    'approved',
-                )
-            )
-        )
 
 
 class EditStudentAdmin(ModelForm):
@@ -653,42 +402,54 @@ class CVForm(forms.ModelForm):
         model = CV
         fields = ['cv1', 'cv2']
 
-        def clean(self):
-            cleaned_data = super(CVForm, self).clean()
-            if not bool(cleaned_data['cv1']) and not bool(cleaned_data['cv2']):
-                raise ValidationError("Provide at least one file.",
-                                      code='invalid')
-            return cleaned_data
+    def clean(self):
+        cleaned_data = super(CVForm, self).clean()
+        if not bool(cleaned_data['cv1']) and not bool(cleaned_data['cv2']):
+            raise ValidationError("Provide at least one file.",
+                                  code='invalid')
+        return cleaned_data
 
 
 class CompanySignup(forms.ModelForm):
 
-    class Meta:
-        model = Company
-        fields = ['company_name', 'description', 'postal_address', 'website', 'organization_type',
-                  'industry_sector', 'office_contact_no', 'head_hr_name',
-                  'head_hr_email', 'head_hr_designation',
-                  'head_hr_mobile', 'head_hr_fax']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'postal_address': forms.Textarea(attrs={'rows': 4})
-        }
-
-
-class UserProfileForm(forms.ModelForm):
-    error_messages = {
-        'password_mismatch': "The two password fields didn't match.",
-    }
-
+    username = forms.CharField(max_length=50)
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Password Confirmation",
                                 widget=forms.PasswordInput,
                                 help_text="Enter the same password "
                                           "as before, for verification.")
 
+    error_messages = {
+        'password_mismatch': "The two password fields didn't match.",
+    }
+
+    layout = Layout(
+        Fieldset('Select Username and Password',
+                 'username', 'password1', 'password2'),
+        Fieldset('Company Details',
+                 'company_name', 'description', 'postal_address',
+                 'website', 'office_contact_no',
+                 Row(Span6('organization_type'), Span6('industry_sector'))),
+        Fieldset('First Point of Contact',
+                 'head_hr_name', 'head_hr_email', 'head_hr_mobile',
+                 'head_hr_designation', 'head_hr_fax'),
+        Fieldset('Second Point of Contact',
+                 'first_hr_name', 'first_hr_email', 'first_hr_mobile',
+                 'first_hr_designation', 'first_hr_fax')
+    )
+
     class Meta:
-        model = UserProfile
-        fields = ['username']
+        model = Company
+        fields = ['company_name', 'description', 'postal_address', 'website',
+                  'organization_type', 'industry_sector', 'office_contact_no',
+                  'head_hr_name', 'head_hr_email', 'head_hr_designation',
+                  'head_hr_mobile', 'head_hr_fax', 'first_hr_name',
+                  'first_hr_email', 'first_hr_designation', 'first_hr_fax',
+                  'first_hr_mobile']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'postal_address': forms.Textarea(attrs={'rows': 4})
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -701,12 +462,15 @@ class UserProfileForm(forms.ModelForm):
         self.instance.username = self.cleaned_data.get('username')
         return password2
 
-    def save(self, commit=True):
-        username = self.cleaned_data['username']
-        password = self.cleaned_data['password1']
-        user = UserProfile.objects.create_user(username=username,
-                                               password=password)
-        return user
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        try:
+            user = UserProfile.objects.get(username=username)
+            raise ValidationError("This username already exists. Please "
+                                  "select different username.")
+        except UserProfile.DoesNotExist:
+            pass
+        return username
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
@@ -766,6 +530,13 @@ class CompanyJobRelForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
 
+    layout = Layout(
+            Row('title'),
+            Row(Span6('event_type'), Span6('duration')),
+            Row('logistics'),
+            Row('remark')
+    )
+
     class Meta:
         model = Event
         # is_approved Field has been included in fields but this field will
@@ -785,8 +556,6 @@ class EventForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
 
 
 class AdminEventForm(forms.ModelForm):
@@ -796,8 +565,6 @@ class AdminEventForm(forms.ModelForm):
         fields = ['title', 'event_type', 'duration', 'logistics', 'remark',
                   'is_approved', 'final_date']
         widgets = {
-            'final_date': DateTimePicker(options={'format': 'YYYY-MM-DD',
-                                                  'pickTime': False}),
             'logistics': forms.Textarea(attrs={'rows': 4}),
             'remark': forms.Textarea(attrs={'rows': 4}),
         }
@@ -805,8 +572,6 @@ class AdminEventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminEventForm, self).__init__(*args, **kwargs)
         self.fields['title'].disabled = True
-        self.helper = FormHelper()
-        self.helper.form_tag = False
 
     def clean(self):
         cleaned_data = super(AdminEventForm, self).clean()

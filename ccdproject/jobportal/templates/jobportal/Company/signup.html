@@ -1,8 +1,17 @@
 {% extends 'base_company.html' %}
-{% load crispy_forms_tags %}
+{% load material_form %}
+
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
 
 {% block menu %}
-    <a href="{% url 'index' %}"><li>Welcome</li></a>
     <a href="{% url 'login' %}"><li>Login</li></a>
     <a href="{% url 'company-signup' %}"><li>Recruiters Signup</li></a>
 {% endblock %}
@@ -15,16 +24,57 @@
 <div class="card-content">
         <span class="card-title black-text">Recruiters' Registration Form</span>
         <div class="col-md-10">
-            <form action="{% url 'company-signup' %}" method="post" accept-charset="utf-8">
+            <form action="{% url 'company-signup' %}" method="post" accept-charset="utf-8"
+                  class="viewform">
                 {% csrf_token %}
-                <div class="well">
-                    {{ userform | crispy}}
-                </div>
-                <div class="well">
-                    {{ companyform | crispy}}
-	        <div class="card-action right-align">
-                    <input type="submit" class="btn btn-primary" value="Sign Up" >
-	        </div>
+                {% form form=form %}
+                    {% part form.username prefix %}
+                        <i class="material-icons prefix">account_box</i>
+                    {% endpart %}
+                    {% part form.password1 prefix %}
+                        <i class="material-icons prefix">lock_open</i>
+                    {% endpart %}
+                    {% part form.password2 prefix %}
+                        <i class="material-icons prefix">lock_open</i>
+                    {% endpart %}
+                    {% part form.company_name prefix %}
+                        <i class="material-icons prefix">business</i>
+                    {% endpart %}
+                    {% part form.description prefix %}
+                        <i class="material-icons prefix">subject</i>
+                    {% endpart %}
+                    {% part form.postal_address prefix %}
+                        <i class="material-icons prefix">subject</i>
+                    {% endpart %}
+                    {% part form.website prefix %}
+                        <i class="material-icons prefix">web</i>
+                    {% endpart %}
+                    {% part form.office_contact_no prefix %}
+                        <i class="material-icons prefix">call</i>
+                    {% endpart %}
+                    {% part form.head_hr_name prefix %}
+                        <i class="material-icons prefix">account_box</i>
+                    {% endpart %}
+                    {% part form.head_hr_email prefix %}
+                        <i class="material-icons prefix">email</i>
+                    {% endpart %}
+                    {% part form.head_hr_mobile prefix %}
+                        <i class="material-icons prefix">phone_android</i>
+                    {% endpart %}
+                    {% part form.first_hr_name prefix %}
+                        <i class="material-icons prefix">account_box</i>
+                    {% endpart %}
+                    {% part form.first_hr_email prefix %}
+                        <i class="material-icons prefix">email</i>
+                    {% endpart %}
+                    {% part form.first_hr_mobile prefix %}
+                        <i class="material-icons prefix">phone_android</i>
+                    {% endpart %}
+                {% endform %}
+                <div class="right-align">
+                   <button type="submit" name="_submit"
+                           class="waves-effect waves-light btn btn-primary btn-lg">
+                       Register</button>
                 </div>
             </form>
         </div>
