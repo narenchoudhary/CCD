@@ -177,7 +177,7 @@
                         <td>Bond Document URL</td>
                         <td>
                             {% if job.bond_link %}
-                                <a href="{{job.bond_link.url}}" target="_blank"
+                                <a href="{% url 'company-job-download-bond' job.id %}" target="_blank"
                                 class="btn btn-info btn-xs">Download Bond Document</a>
                             {% else %}
                                 No bond document uploaded
@@ -224,8 +224,8 @@
         <div class="col s12 m9 l9">
             <div class="card">
                  <div class="card-content">
+                     <span class="card-title">Programmes</span>
                      {% if rel_list.count > 0 %}
-                        <span class="card-title">Programmes</span>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -247,9 +247,7 @@
                             </tbody>
                         </table>
                      {% else %}
-                        <span class="card-title">
-                         <i class="material-icons">warning</i> Programmes</span>
-                        <h5>You have not selected any programme for this Job entry.</h5>
+                        <h5>You have not selected any programme for this Job application.</h5>
                      {% endif %}
                 </div>
                 <div class="card-action">

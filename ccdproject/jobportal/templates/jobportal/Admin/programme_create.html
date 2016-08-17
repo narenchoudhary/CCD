@@ -1,6 +1,16 @@
 {% extends 'base_admin.html' %}
 {% load staticfiles %}
-{% load crispy_forms_tags %}
+{% load material_form %}
+
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
 
 {% block head_extra %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -13,12 +23,22 @@
 {% endblock%}
 
 {% block content %}
-        <h3>Add a new Programme</h3>
-        <div class="col-md-6 col-md-offset-3">
-            <form method="post" accept-charset="utf-8">
-                {% csrf_token %}
-                {{ form | crispy }}
-                <input type="submit" class="btn btn-success" value="Add">
-            </form>
+
+<div class="row">
+    <div class="row">
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Add Programme</span>
+                    <form method="post" accept-charset="utf-8">
+                        {% csrf_token %}
+                        {% form %}
+                        {% endform %}
+                        <input type="submit" class="btn" value="Add">
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
 {% endblock %}

@@ -2,57 +2,54 @@
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-    <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
 {% block content %}
-        <h2 class="sub-header">All Jobs: </h2>
-        <hr>
-        <div class="col-md-12">
-            <div class="col-md-3 input-group pull-right form-group" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
-                <input type="text" class="filter form-control" placeholder="What you looking for?">
-            </div>
 
-            <table id="job-table" class="table table-striped tablesorter table-hover">
-                <thead>
-                    <tr>
-                        <th>Posted By</th>
-                        <th>Job Designation</th>
-                        <th>Openings</th>
-                        <th>Opening Date</th>
-                        <th>Closing Date</th>
-                        <th>Status</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody class="searchable">
-                    {% for job in  job_list %}
-                        <tr>
-                            <td>
-                                {{ job.company_owner }}
-                            </td>
-                            <td>{{ job.designation }}</td>
-                            <td>{{ job.num_openings }}</td>
-                            <td>{{ job.opening_date }}</td>
-                            <td>
-                                {% if job.application_deadline %}
-                                    {{ job.application_deadline }}
-                                {% else %}
-                                    Date Not Set
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if job.approved %}
-                                    Approved
-                                {% else %}
-                                    Approval Pending
-                                {% endif %}
-                            </td>
-                            <td><a href = "{% url 'admin-job-detail' job.id %}" class="btn btn-xs btn-primary"> <span class="glyphicon glyphicon-list-alt"></span> Details</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="row">
+
+    <div class="row">
+        <div class="col s12 m9 l12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Unapporved Job Applications</span>
+                    {% if job_list.count > 0 %}
+                    <table id="job-table" class="table table-striped tablesorter table-hover">
+                        <thead>
+                            <tr>
+                                <th>Posted By</th>
+                                <th>Job Designation</th>
+                                <th>Opening Date</th>
+                                <th>Closing Date</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody class="searchable">
+                            {% for job in  job_list %}
+                                <tr>
+                                    <td>{{ job.company_owner }}</td>
+                                    <td>{{ job.designation }}</td>
+                                    <td>{{ job.opening_date }}</td>
+                                    <td>{{ job.application_deadline }}</td>
+                                    <td>
+                                        {{ job.approved|yesno:"Approved, Rejected, Approval Pending"}}
+                                    </td>
+                                    <td>
+                                        <a href = "{% url 'admin-job-detail' job.id %}"
+                                           class="btn">Details</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                        <h5>No unapproved Job application requests.</h5>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -17,16 +17,16 @@
 
 <li><a href="{% url 'admin-company-signup-list' %}">SignUp Requests</a></li>
 
-<li><a href="{% url 'admin-job-list' %}">Jobs</a></li>
+<li><a href="{% url 'admin-job-list' %}">Jobs: Approved</a></li>
 
-<li><a href="{% url 'admin-job-list-unapproved' %}">Approvals: Jobs</a></li>
+<li><a href="{% url 'admin-job-list-unapproved' %}">Jobs: Unapproved</a></li>
 
 <li>
-    <a href="{% url 'admin-jobrel-list-unapproved' %}">Approvals: Progress</a>
+    <a href="{% url 'admin-jobrel-list-unapproved' %}">Placement Requests</a>
 </li>
 
 <li>
-    <a class="collapsible-header">Programme Setups</a>
+    <a class="collapsible-header">Programme Settings</a>
     <div class="collapsible-body">
         <ul>
 	        <li><a href="{% url 'year-list' %}">Years</a></li>

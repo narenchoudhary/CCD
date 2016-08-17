@@ -10,7 +10,6 @@ urlpatterns = [
     url(r'^login/$', views.Login.as_view(), name='login'),
     url(r'^logout/$', views.Logout.as_view(), name='logout'),
 
-
     url(r'^stud/home/$', views.HomeView.as_view(), name='stud-home'),
     url(r'^stud/profile/update/$', views.ProfileUpdate.as_view(),
         name='stud-profile-update'),
@@ -89,6 +88,9 @@ urlpatterns = [
         views_company.JobDetail.as_view(), name='company-job-detail'),
     url(r'^company/job/(?P<pk>\d+)/update/$',
         views_company.JobUpdate.as_view(), name='company-job-update'),
+    url(r'^company/job/(?P<pk>\d+)/download/bond/$',
+        views_company.DownloadBondDocument.as_view(),
+        name='company-job-download-bond'),
 
     url(r'^company/job/(?P<pk>\d+)/jobrel/list/$',
         views_company.JobRelList.as_view(), name='company-jobrel-list'),

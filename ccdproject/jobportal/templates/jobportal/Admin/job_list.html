@@ -31,10 +31,8 @@
                             <td> {{ job.ptofile}}</td>
                             <td> {{ job.opening_date }}</td>
                             <td> {{ job.application_deadline }}</td>
-                            </td>
                             <td>
-                                <a style="color:white"
-                                   href="{% url 'company-job-detail' job.id %}"
+                                <a href="{% url 'admin-job-detail' job.id %}"
                                    class="btn btn-xs btn-primary">Details</a>
                             </td>
                         </tr>

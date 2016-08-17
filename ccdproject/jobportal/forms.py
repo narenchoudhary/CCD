@@ -175,7 +175,8 @@ class AdminJobEditForm(ModelForm):
                  Row(
                      Column('cpi_shortlist', 'minimum_cpi', span_columns=4),
                      Column('percentage_x', 'percentage_xii', span_columns=4),
-                     Column('backlog_filter', 'num_backlogs_allowed', span_columns=4),
+                     Column('backlog_filter', 'num_backlogs_allowed',
+                            span_columns=4),
                  )
                  # Row('percentage_x', 'percentage_xii'),
                  # Row('percentage_x','percentage_xii')
@@ -189,7 +190,12 @@ class AdminJobEditForm(ModelForm):
                  Row('ctc_ma', 'gross_ma'),
                  Row('ctc_phd', 'gross_phd')
                  ),
-        Fieldset('Legal Doucment', 'bond_link')
+        Fieldset('Legal Doucment', 'bond_link'),
+        Fieldset(
+            'Opening and Closing Dates',
+            'opening_date',
+            'application_deadline',
+        )
     )
 
     class Meta:
@@ -589,6 +595,23 @@ class AdminEventForm(forms.ModelForm):
 
 
 class ProgrammeForm(forms.ModelForm):
+
+    layout = Layout(
+        Fieldset(
+            "Year, Department and Programme Name",
+            Row('year', 'dept', 'name')
+        ),
+        Fieldset(
+            "Minor status (Check if this programme is a Minor programme)",
+            'minor_status'
+        ),
+        Fieldset(
+            "Open for Placement/Internships",
+            Row('open_for_placement'),
+            Row('open_for_internship')
+        )
+    )
+
     class Meta:
         model = Programme
         fields = '__all__'

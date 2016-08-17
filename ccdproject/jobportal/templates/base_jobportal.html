@@ -20,7 +20,6 @@
     <!--django-smart-selects-->
     <script src="{% static 'material/js/jquery-2.2.0.js' %}"></script>
     <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
-
     {% include 'material/includes/material_js.html' %}
 
     <!--MDL CSS-->
@@ -36,26 +35,12 @@
     <link rel="stylesheet" href="{% static 'material/css/forms.css' %}">
     <!--<link rel="stylesheet" href="{% static 'material/css/frontend.css' %}">-->
     <link rel="stylesheet" href="http://forms.viewflow.io/static/material/admin/css/base.css">
-    <link rel="stylesheet"
-          href="{% static 'material/css/material-icons.css' %}">
 
     <!--MDL Fonts-->
     <!--<link href='https://fonts.googleapis.com/icon?family=Material+Icons'
             rel='stylesheet' type='text/css'>-->
     <link href="{% static 'material/css/icon_material_icons.css' %}"
           rel='stylesheet' type='text/css'>
-    <!--MDL JS-->
-    <script src="{% static 'material/js/materialize.min.js' %}"></script>
-    <script src="{% static 'material/js/materialize.js' %}"></script>
-    <script src="{% static 'material/js/jquery.datetimepicker.js' %}"></script>
-    <script src="{% static 'material/js/jquery.formset.js' %}"></script>
-    <script src="{% static 'material/js/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'material/js/dataTables.responsive.js' %}"></script>
-    <script src="{% static 'material/js/dataTables.fixedHeader.js' %}"></script>
-    <script src="{% static 'material/frontend/js/jquery.activeNavigation.js' %}"></script>
-    <script src="{% static 'material/frontend/js/jquery.pjax.js' %}"></script>
-    <script src="{% static 'material/js/material_init.js' %}"></script>
-    <script src="{% static 'material/frontend/js/frontend.js' %}"></script>
 
     <!--This block is for linking css/js files specifies to some particular template-->
     {% block head_extra_tags %}
@@ -125,6 +110,14 @@
 </div>
 
 <!-- Placed at the end of the document so the pages load faster -->
+<!--MDL JS-->
+
+<script src="{% static 'material/js/jquery.dataTables.js' %}"></script>
+<script src="{% static 'material/js/dataTables.responsive.js' %}"></script>
+<script src="{% static 'material/js/dataTables.fixedHeader.js' %}"></script>
+<script src="{% static 'material/frontend/js/jquery.activeNavigation.js' %}"></script>
+<script src="{% static 'material/js/material_init.js' %}"></script>
+<script src="{% static 'material/frontend/js/frontend.js' %}"></script>
 <!--Sorter-->
 <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
 <script>

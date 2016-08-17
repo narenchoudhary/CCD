@@ -125,7 +125,7 @@
                                         <td>
                                             <input type="checkbox" id="leader_mtech">
                                                 <label for="leader_mtech">
-                                                    Select all B.Tech/B.Des. programmes
+                                                    Select all M.Tech programmes
                                                 </label>
                                         </td>
                                         <td></td>
@@ -137,7 +137,10 @@
                                         <td>
                                             <input type="checkbox" name="selected_mtech_ids"
                                                    value="{{programme.id}}"
-                                                   id="selected_mtech_{{programme.id}}">
+                                                   id="selected_mtech_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="mtech">
                                             <label for="selected_mtech_{{programme.id}}"></label>
                                         </td>
                                         <td>{{programme.year}}</td>
@@ -163,12 +166,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_msc">
+                                                <label for="leader_msc">
+                                                    Select all M.Sc. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
                                 {% for programme in msc_list %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="selected_msc_ids"
                                                    value="{{programme.id}}"
-                                                   id="selected_msc_{{programme.id}}">
+                                                   id="selected_msc_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="msc">
                                             <label for="selected_msc_{{programme.id}}"></label>
                                         </td>
                                         <td>{{programme.year}}</td>
@@ -194,12 +211,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_ma">
+                                                <label for="leader_ma">
+                                                    Select all M.A. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
                                 {% for programme in ma_list %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="selected_ma_ids"
                                                    value="{{programme.id}}"
-                                                   id="selected_ma_{{programme.id}}">
+                                                   id="selected_ma_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="ma">
                                             <label for="selected_ma_{{programme.id}}"></label>
                                         </td>
                                         <td>{{programme.year}}</td>
@@ -225,12 +256,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_phd">
+                                                <label for="leader_phd">
+                                                    Select all Ph.D. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
                                 {% for programme in phd_list %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="selected_phd_ids"
                                                    value="{{programme.id}}"
-                                                   id="selected_phd_{{programme.id}}">
+                                                   id="selected_phd_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="phd">
                                             <label for="selected_phd_{{programme.id}}"></label>
                                         </td>
                                         <td>{{programme.year}}</td>
@@ -272,16 +317,66 @@
 
     $("#leader_minor").change(function(){
         var status = this.checked;
-        if(status == true){
-            $('.minor').each(function(){
-                this.checked = status;
-            });
-        }
+        $('.minor').each(function(){
+            this.checked = status;
+        });
     });
 
     $('.minor').change(function(){
         if(this.checked == false){
             $("#leader_minor")[0].checked = false;
+        }
+    });
+
+    $("#leader_mtech").change(function(){
+        var status = this.checked;
+        $('.mtech').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.mtech').change(function(){
+        if(this.checked == false){
+            $("#leader_mtech")[0].checked = false;
+        }
+    });
+
+    $("#leader_msc").change(function(){
+        var status = this.checked;
+        $('.msc').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.msc').change(function(){
+        if(this.checked == false){
+            $("#leader_msc")[0].checked = false;
+        }
+    });
+
+    $("#leader_ma").change(function(){
+        var status = this.checked;
+        $('.ma').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.ma').change(function(){
+        if(this.checked == false){
+            $("#leader_ma")[0].checked = false;
+        }
+    });
+
+    $("#leader_phd").change(function(){
+        var status = this.checked;
+        $('.phd').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.phd').change(function(){
+        if(this.checked == false){
+            $("#leader_phd")[0].checked = false;
         }
     });
 

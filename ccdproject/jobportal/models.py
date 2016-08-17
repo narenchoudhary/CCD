@@ -38,8 +38,8 @@ def get_sign_name(instance, filename):
 
 
 def get_bond_link_name(instance, filename):
-    url = "company_bond/{0}_{1}".format(instance.company.user.username,
-                                        uuid.uuid4())
+    url = "company_bond/{0}_{1}.pdf".format(
+        instance.company_owner.user.username, uuid.uuid4())
     return url
 
 
@@ -64,7 +64,7 @@ class Year(models.Model):
 
 class Department(models.Model):
     year = models.ForeignKey(Year)
-    dept = models.CharField(max_length=40)
+    dept = models.CharField(max_length=75)
     dept_code = models.CharField(max_length=4)
 
     class Meta:
@@ -427,6 +427,7 @@ class Job(models.Model):
     # Job description
     # bond = models.BooleanField(default=False, verbose_name='Legal Bond')
     bond_link = models.FileField(null=True, blank=True,
+                                 upload_to=get_bond_link_name,
                                  verbose_name='Legal Bond Document')
     # Dates and Status
     posted_on = models.DateTimeField(blank=True, null=True,

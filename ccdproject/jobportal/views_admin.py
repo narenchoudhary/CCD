@@ -104,6 +104,11 @@ class DepartmentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_object(self, queryset=None):
         obj = Department.objects.get(id=self.kwargs['pk'])
         return obj
+    
+    def get_context_data(self, **kwargs):
+        context = super(DepartmentUpdate, self).get_context_data(**kwargs)
+        context['deptid'] = self.kwargs['pk']
+        return context
 
 
 class ProgrammeList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -281,7 +286,9 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     template_name = 'jobportal/Admin/job_detail.html'
 
     def test_func(self):
-        return self.request.user.user_type == 'admin'
+        is_admin = self.request.user.user_type == 'admin'
+        print(is_admin)
+        return is_admin
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
