@@ -26,6 +26,7 @@
                                     <th>Year</th>
                                     <th>Department</th>
                                     <th>Programme</th>
+                                    <th>Discipline</th>
                                 </tr>
                             </thead>
                         <tbody>
@@ -34,12 +35,13 @@
                                     <td>{{ prog.year }}</td>
                                     <td>{{ prog.dept }}</td>
                                     <td>{{ prog.name }}</td>
+                                    <td>{{ prog.discipline }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 {% else %}
-                    <h5>Bummer! There isn't anything here yet.</h5>
+                    <h5>Sorry! There isn't anything here yet.</h5>
                 {% endif %}
             </div>
         </div>
@@ -65,12 +67,13 @@
                                     <td>{{ prog.year }}</td>
                                     <td>{{ prog.dept }}</td>
                                     <td>{{ prog.name }}</td>
+                                    <td>{{ prog.discipline }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 {% else %}
-                    <h5>Bummer! There isn't anything here yet.</h5>
+                    <h5>Sorry! There isn't anything here yet.</h5>
                 {% endif %}
             </div>
         </div>

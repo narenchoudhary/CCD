@@ -51,6 +51,7 @@ PROGRAMMES = (
     ('BTECH', 'B.Tech.'),
     ('BDES', 'B.Des.'),
     ('MTECH', 'M.Tech.'),
+    ('MDES', 'M.Des.'),
     ('PHD', 'Ph.D.'),
     ('MSC', 'M.Sc.'),
     ('MA', 'M.A.'),

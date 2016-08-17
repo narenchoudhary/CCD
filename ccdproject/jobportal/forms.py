@@ -21,6 +21,50 @@ class LoginForm(forms.Form):
 
 class EditStudProfileForm(ModelForm):
 
+    layout = Layout(
+        Fieldset(
+            'Basic Information',
+            Row('name'),
+            Row('roll_no', 'iitg_webmail'),
+            Row('sex', 'dob'),
+            Row('nationality', 'category'),
+            Row('hostel', 'room_no'),
+            Row('mobile_campus'),
+            Row('mobile_campus_alternative'),
+            Row('mobile_home'),
+            Row('alternative_email'),
+            Row('linkedin_link'),
+        ),
+        Fieldset(
+            'Major Programme',
+            'year', 'dept', 'prog'
+        ),
+        Fieldset(
+            'Minor Programme',
+            'minor_year', 'minor_dept', 'minor_prog'
+        ),
+        Fieldset(
+            'Permanent Address',
+            'address_line1', 'address_line2', 'address_line3', 'pin_code'
+        ),
+        Fieldset(
+            'Academic Performance',
+            Row(
+                Column('percentage_x', 'board_x', 'passing_year_x'),
+                Column('percentage_xii', 'board_xii', 'passing_year_xii'),
+            ),
+            Row('gap_in_study'),
+            Row('gap_reason'),
+        ),
+        Fieldset(
+            'IITG Academic Performance',
+            Row('cpi'),
+            Row('spi_1_sem', 'spi_2_sem', 'spi_3_sem'),
+            Row('spi_4_sem', 'spi_5_sem', 'spi_6_sem'),
+            Row('active_backlogs')
+        )
+    )
+
     class Meta:
         model = Student
         fields = ['roll_no', 'name', 'dob',
@@ -38,7 +82,7 @@ class EditStudProfileForm(ModelForm):
                   'active_backlogs']
 
         widgets = {
-            'gap_reason': forms.Textarea(attrs={'rows': 4})
+            'gap_reason': forms.Textarea(attrs={'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -46,6 +90,7 @@ class EditStudProfileForm(ModelForm):
         self.fields['roll_no'].disabled = True
         self.fields['iitg_webmail'].disabled = True
         self.fields['name'].disabled = True
+        self.fields['name'].widget.attrs['readonly'] = True
         self.fields['year'].disabled = True
         self.fields['dept'].disabled = True
         self.fields['prog'].disabled = True

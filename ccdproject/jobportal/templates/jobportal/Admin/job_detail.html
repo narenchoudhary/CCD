@@ -131,8 +131,8 @@
                         <td>Bond Document URL</td>
                         <td>
                             {% if job.bond_link %}
-                                <a href="{{job.bond_link.url}}" target="_blank"
-                                class="btn btn-info btn-xs">Download Bond Document</a>
+                                <a href="{% url 'admin-job-download-bond' job.pk %}" target="_blank"
+                                   class="btn ">Download Bond Document</a>
                             {% else %}
                                 No bond document uploaded
                             {% endif %}

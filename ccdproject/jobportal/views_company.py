@@ -2,6 +2,7 @@ import zipfile
 import os
 import StringIO
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import make_password
@@ -14,6 +15,7 @@ from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import (get_object_or_404, get_list_or_404, render,
                               redirect)
 from django.utils import timezone
+from django.utils.encoding import smart_str
 from django.views.generic import (View, TemplateView, RedirectView, CreateView,
                                   UpdateView, ListView, DetailView)
 
@@ -169,10 +171,8 @@ class PasswordChangeView(LoginRequiredMixin, UserPassesTestMixin, View):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            print("cnahed")
             return redirect('company-home')
         else:
-            print("not changed")
             return render(request, self.template_name, dict(form=form))
 
 
@@ -280,19 +280,16 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         # user is company
         is_company = self.request.user.user_type == 'company'
         if not is_company:
-            print("not company")
             return False
         self.job = get_object_or_404(Job, id=self.kwargs['pk'])
         company_user = self.request.session['company_instance_id']
         company_owner = self.job.company_owner.id == company_user
         if not company_owner:
-            print("not company owner")
             return False
         # deadline has passed
         deadline = self.job.application_deadline
         deadline_over = deadline < timezone.now().date()
         if not deadline_over:
-            print("deadline error")
             return False
         return True
 
@@ -595,22 +592,18 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         is_company = self.request.user.user_type == 'company'
         if not is_company:
-            print("not company")
             return False
         self.job = get_object_or_404(Job, id=self.kwargs['jobpk'])
         session_id = self.request.session['company_instance_id']
         is_owner = self.job.company_owner.id == session_id
         if not is_owner:
-            print("not owner")
             return False
         deadline_ok = self.job.application_deadline > timezone.now().date()
         if not deadline_ok:
-            print("not deadline ok")
             return False
         return True
 
     def get(self, request, jobpk):
-        # TODO: Integrate saved_jobrels when MDL is completed
         saved_jobrels = [jobrel.prog.id for jobrel in
                          ProgrammeJobRelation.objects.filter(job__id=jobpk)]
         minor_list = Programme.objects.filter(open_for_placement=True,
@@ -620,9 +613,14 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         ).filter(
             Q(name='BTECH') | Q(name='BDES')
         )
-        mtech_list = Programme.objects.filter(open_for_placement=True,
-                                              minor_status=False,
-                                              name='MTECH')
+
+        mtech_mdes_list = Programme.objects.filter(
+            open_for_placement=True,
+            minor_status=False
+        ).filter(
+            Q(name='MTECH') | Q(name='MDES')
+        )
+
         phd_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='PHD')
@@ -633,7 +631,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                                             minor_status=False,
                                             name='MSC')
         args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
-                    ma_list=ma_list, mtech_list=mtech_list,
+                    ma_list=ma_list, mtech_mdes_list=mtech_mdes_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
                     saved_jobrels=saved_jobrels)
         return render(request, self.template_name, args)
@@ -643,18 +641,20 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         job = get_object_or_404(Job, id=jobpk)
 
         minor_list_ids = request.POST.getlist('selected_minor_ids')
-        btech_bdes_list = request.POST.getlist('selected_btech_bdes_ids')
-        mtech_list_ids = request.POST.getlist('selected_mtech_ids')
+        btech_bdes_list_ids = request.POST.getlist('selected_btech_bdes_ids')
+        mtech_mdes_list_ids = request.POST.getlist('selected_mtech_mdes_ids')
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
         msc_list_ids = request.POST.getlist('selected_msc_ids')
 
-        programme_list = Programme.objects.filter(Q(id__in=minor_list_ids) |
-                                                  Q(id__in=btech_bdes_list) |
-                                                  Q(id__in=phd_list_ids) |
-                                                  Q(id__in=ma_list_ids) |
-                                                  Q(id__in=mtech_list_ids) |
-                                                  Q(id__in=msc_list_ids))
+        programme_list = Programme.objects.filter(
+            Q(id__in=minor_list_ids) |
+            Q(id__in=btech_bdes_list_ids) |
+            Q(id__in=phd_list_ids) |
+            Q(id__in=ma_list_ids) |
+            Q(id__in=mtech_mdes_list_ids) |
+            Q(id__in=msc_list_ids)
+        )
 
         for programme in programme_list:
 
@@ -665,3 +665,22 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                 prog=programme
             )
         return redirect('company-job-detail', pk=job.id)
+
+
+class DownloadBondDocument(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+
+    def test_func(self):
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        return True
+
+    @staticmethod
+    def get(request, pk):
+        job = get_object_or_404(Job, id=pk)
+        response = HttpResponse(job.bond_link, content_type='application/pdf')
+        download_name = job.company_owner.user.username + '_' + job.designation
+        response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                          smart_str(download_name)
+        return response

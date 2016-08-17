@@ -46,8 +46,8 @@ def get_bond_link_name(instance, filename):
 class UserProfile(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPE,
                                  default='admin')
-    login_server = models.CharField(max_length=30, choices=SERVER_IP,
-                                    default='202.141.80.13')
+    login_server = models.CharField(max_length=30, default='dikrong',
+                                    blank=True, null=True)
 
     def __unicode__(self):
         return str(self.username)
@@ -71,7 +71,7 @@ class Department(models.Model):
         unique_together = ['dept_code', 'year']
 
     def __unicode__(self):
-        return str(self.dept_code)
+        return str(self.dept)
 
 
 class Programme(models.Model):
@@ -81,12 +81,14 @@ class Programme(models.Model):
                              verbose_name='Department')
     name = models.CharField(choices=PROGRAMMES, max_length=10,
                             verbose_name='Programme Name')
+    discipline = models.CharField(max_length=40, null=True, blank=True)
     minor_status = models.BooleanField(default=False,
                                        verbose_name='Minor Status')
     open_for_placement = models.BooleanField(default=False,
                                              verbose_name='Open for Placement')
     open_for_internship = models.BooleanField(default=False,
-                                              verbose_name='Open for Internship')
+                                              verbose_name=
+                                              'Open for Internship')
 
     class Meta:
         unique_together = ['year', 'dept', 'name', 'minor_status']

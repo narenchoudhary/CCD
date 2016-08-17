@@ -1,20 +1,21 @@
 import csv
-import codecs
 import string
 import random
 
 from sqlite3.dbapi2 import IntegrityError
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, CreateView, DetailView,
-                                  TemplateView, UpdateView, DeleteView,
-                                  RedirectView, FormView)
+                                  TemplateView, UpdateView)
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Department, Year, Programme,
@@ -28,7 +29,6 @@ from .constants import CATEGORY
 class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     login_url = reverse_lazy('login')
-    raise_exception = True
     template_name = 'jobportal/Admin/home.html'
 
     def test_func(self):
@@ -220,7 +220,6 @@ class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request, pk):
         company = Company.objects.get(id=pk)
-        print(company.approved)
         form = EditCompany(instance=company)
         return render(request, self.template_name,
                       dict(form=form, company=company))
@@ -246,8 +245,6 @@ class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, pk):
         company = Company.objects.get(id=pk)
         user = company.user
-        print company
-        print company.user
         if user is not None and user.is_active is False:
             user.is_active = True
             user.save()
@@ -287,7 +284,6 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         is_admin = self.request.user.user_type == 'admin'
-        print(is_admin)
         return is_admin
 
     def get_context_data(self, **kwargs):
@@ -344,9 +340,14 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         ).filter(
             Q(name='BTECH') | Q(name='BDES')
         )
-        mtech_list = Programme.objects.filter(open_for_placement=True,
-                                              minor_status=False,
-                                              name='MTECH')
+
+        mtech_mdes_list = Programme.objects.filter(
+            open_for_placement=True,
+            minor_status=False
+        ).filter(
+            Q(name='MTECH') | Q(name='MDES')
+        )
+
         phd_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='PHD')
@@ -357,7 +358,7 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
                                             minor_status=False,
                                             name='MSC')
         args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
-                    ma_list=ma_list, mtech_list=mtech_list,
+                    ma_list=ma_list, mtech_mdes_list=mtech_mdes_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
                     saved_jobrels=saved_jobrels)
         return render(request, self.template_name, args)
@@ -368,17 +369,19 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
 
         minor_list_ids = request.POST.getlist('selected_minor_ids')
         btech_bdes_list = request.POST.getlist('selected_btech_ids')
-        mtech_list_ids = request.POST.getlist('selected_mtech_ids')
+        mtech_mdes_list_ids = request.POST.getlist('selected_mtech_mdes_ids')
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
         msc_list_ids = request.POST.getlist('selected_msc_ids')
 
-        programme_list = Programme.objects.filter(Q(id__in=minor_list_ids) |
-                                                  Q(id__in=btech_bdes_list) |
-                                                  Q(id__in=phd_list_ids) |
-                                                  Q(id__in=ma_list_ids) |
-                                                  Q(id__in=mtech_list_ids) |
-                                                  Q(id__in=msc_list_ids))
+        programme_list = Programme.objects.filter(
+            Q(id__in=minor_list_ids) |
+            Q(id__in=btech_bdes_list) |
+            Q(id__in=phd_list_ids) |
+            Q(id__in=ma_list_ids) |
+            Q(id__in=mtech_mdes_list_ids) |
+            Q(id__in=msc_list_ids)
+        )
 
         for programme in programme_list:
 
@@ -445,13 +448,10 @@ class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
             roll_no = form.cleaned_data['roll_no']
             stud_list = Student.objects.all()
             if name is not None:
-                print("name")
                 stud_list = stud_list.filter(name__icontains=name)
             if username != '' and username is not None:
-                print("username")
                 stud_list = stud_list.filter(user__username=username)
             if roll_no is not None:
-                print("roll")
                 stud_list = stud_list.filter(roll_no=roll_no)
             args = dict(form=form, stud_list=stud_list)
             return render(request, self.template, args)
@@ -871,3 +871,19 @@ class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
                           dict(form=form, zipped_data=zipped_data))
         else:
             return render(request, self.template_name, dict(form=form))
+
+
+class DownloadBondDocument(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    @staticmethod
+    def get(request, pk):
+        job = get_object_or_404(Job, id=pk)
+        response = HttpResponse(job.bond_link, content_type='application/pdf')
+        download_name = job.company_owner.user.username + '_' + job.designation
+        response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                          smart_str(download_name)
+        return response

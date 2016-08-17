@@ -5,6 +5,13 @@
 {% endblock%}
 
 {% block content %}
+<div class="breadcrumbs">
+    <div>
+        <a href="{% url 'company-home' %}">Home</a> ⟩
+        <a href="{% url 'company-job-detail' jobpk %}">Job Detail</a> ⟩
+        <a href="#">Add Programmes</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
@@ -24,7 +31,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
@@ -51,7 +58,9 @@
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
                                                    class="btech_bdes">
-                                            <label for="selected_btech_bdes_{{programme.id}}"> </label>
+                                            <label for="selected_btech_bdes_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -69,7 +78,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
@@ -96,7 +105,9 @@
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
                                                    class="minor">
-                                            <label for="selected_minor_{{programme.id}}"></label>
+                                            <label for="selected_minor_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -114,7 +125,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
@@ -123,8 +134,8 @@
                             <tbody>
                                     <tr>
                                         <td>
-                                            <input type="checkbox" id="leader_mtech">
-                                                <label for="leader_mtech">
+                                            <input type="checkbox" id="leader_mtech_mdes">
+                                                <label for="leader_mtech_mdes">
                                                     Select all M.Tech programmes
                                                 </label>
                                         </td>
@@ -135,13 +146,15 @@
                                 {% for programme in mtech_list %}
                                     <tr>
                                         <td>
-                                            <input type="checkbox" name="selected_mtech_ids"
+                                            <input type="checkbox" name="selected_mtech_mdes_ids"
                                                    value="{{programme.id}}"
-                                                   id="selected_mtech_{{programme.id}}"
+                                                   id="selected_mtech_mdes_{{programme.id}}"
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
-                                                   class="mtech">
-                                            <label for="selected_mtech_{{programme.id}}"></label>
+                                                   class="mtech_mdes">
+                                            <label for="selected_mtech_mdes_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -159,13 +172,14 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% if msc_list.count > 2 %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" id="leader_msc">
@@ -177,6 +191,7 @@
                                         <td></td>
                                         <td></td>
                                     </tr>
+                                {% endif %}
                                 {% for programme in msc_list %}
                                     <tr>
                                         <td>
@@ -186,7 +201,9 @@
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
                                                    class="msc">
-                                            <label for="selected_msc_{{programme.id}}"></label>
+                                            <label for="selected_msc_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -204,13 +221,14 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% if ma_list.count > 2 %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" id="leader_ma">
@@ -222,6 +240,7 @@
                                         <td></td>
                                         <td></td>
                                     </tr>
+                                {% endif %}
                                 {% for programme in ma_list %}
                                     <tr>
                                         <td>
@@ -231,7 +250,9 @@
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
                                                    class="ma">
-                                            <label for="selected_ma_{{programme.id}}"></label>
+                                            <label for="selected_ma_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -249,13 +270,14 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Discipline</th>
                                     <th>Year of Admission</th>
                                     <th>Department</th>
                                     <th>Programme</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% if phd_list.count > 2 %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" id="leader_phd">
@@ -267,6 +289,7 @@
                                         <td></td>
                                         <td></td>
                                     </tr>
+                                {% endif %}
                                 {% for programme in phd_list %}
                                     <tr>
                                         <td>
@@ -276,7 +299,9 @@
                                                    {%if programme.id in saved_jobrels %}
                                                    checked="checked" {% endif %}
                                                    class="phd">
-                                            <label for="selected_phd_{{programme.id}}"></label>
+                                            <label for="selected_phd_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
                                         </td>
                                         <td>{{programme.year}}</td>
                                         <td>{{programme.dept}}</td>
@@ -328,16 +353,16 @@
         }
     });
 
-    $("#leader_mtech").change(function(){
+    $("#leader_mtech_mdes").change(function(){
         var status = this.checked;
-        $('.mtech').each(function(){
+        $('.mtech_mdes').each(function(){
             this.checked = status;
         });
     });
 
-    $('.mtech').change(function(){
+    $('.mtech_mdes').change(function(){
         if(this.checked == false){
-            $("#leader_mtech")[0].checked = false;
+            $("#leader_mtech_mdes")[0].checked = false;
         }
     });
 

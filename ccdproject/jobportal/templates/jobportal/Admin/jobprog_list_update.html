@@ -3,172 +3,403 @@
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-    <p><a href="#" title="">My Account</a></p>
 {% endblock%}
 
 {% block content %}
+<div class="row">
 
-    <h2 class="sub-header">Select Programmes</h2>
-    <hr/>
+    <div class="row">
 
-    <form method="post" accept-charset="utf-8"
-          action="{% url 'admin-job-jobprog-list-update' jobpk %}">
-        {% csrf_token %}
-    <div class="col-md-12 row">
-        {% if minor_list.count > 0 %}
-                <h4>Minor Programmes</h4>
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Year</th>
-                                <th>Department</th>
-                                <th>Programme</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for programme in minor_list %}
+        <div class="col s12 m9 l9">
+            <form method="post" accept-charset="utf-8"
+                action="{% url 'admin-job-jobprog-list-update' jobpk %}">
+                {% csrf_token %}
+                <div class="card">
+
+                    <div class="card-content">
+                        <span class="card-title">Select Programmes</span>
+                    </div>
+                    {% if btech_bdes_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">B.Tech/B.Des Major Programmes</span>
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <input type="checkbox" name="selected_minor_ids"
-                                               value="{{programme.id}}">
-                                    </td>
-                                    <td>{{programme.year}}</td>
-                                    <td>{{programme.dept}}</td>
-                                    <td>{{programme.name}}</td>
+                                    <th>Select</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_btech_bdes">
+                                                <label for="leader_btech_bdes">
+                                                    Select all B.Tech/B.Des. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% for programme in btech_bdes_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_btech_bdes_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_btech_bdes_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="btech_bdes">
+                                            <label for="selected_btech_bdes_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if minor_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">B.Tech./B.Des. Minor Programmes</span>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_minor">
+                                                <label for="leader_minor">
+                                                    Select all Minor programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% for programme in minor_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_minor_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_minor_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="minor">
+                                            <label for="selected_minor_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if mtech_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">M.Tech. Programmes</span>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_mtech_mdes">
+                                                <label for="leader_mtech_mdes">
+                                                    Select all M.Tech programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% for programme in mtech_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_mtech_mdes_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_mtech_mdes_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="mtech_mdes">
+                                            <label for="selected_mtech_mdes_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if msc_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">M.Sc. Programmes</span>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if msc_list.count > 2 %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_msc">
+                                                <label for="leader_msc">
+                                                    Select all M.Sc. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% endif %}
+                                {% for programme in msc_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_msc_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_msc_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="msc">
+                                            <label for="selected_msc_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if ma_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">M.A. Programmes</span>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if ma_list.count > 2 %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_ma">
+                                                <label for="leader_ma">
+                                                    Select all M.A. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% endif %}
+                                {% for programme in ma_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_ma_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_ma_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="ma">
+                                            <label for="selected_ma_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if phd_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">Ph.D. Programmes</span>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Discipline</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if phd_list.count > 2 %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_phd">
+                                                <label for="leader_phd">
+                                                    Select all Ph.D. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% endif %}
+                                {% for programme in phd_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_phd_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_phd_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="phd">
+                                            <label for="selected_phd_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    <div class="card-action">
+                        <button type="submit" name="_submit"
+                           class="waves-effect waves-light btn btn-primary btn-lg align-right">
+                       Save selected programmes</button>
+                    </div>
                 </div>
-        {% endif %}
+            </form>
+        </div>
+
     </div>
 
-    <div class="col-md-12 row">
-        {% if btech_bdes_list.count > 0 %}
-                <h4>BTech/BDes Programmes</h4>
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Year</th>
-                                <th>Department</th>
-                                <th>Programme</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for programme in btech_bdes_list %}
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="selected_btech_ids"
-                                               value="{{programme.id}}">
-                                    </td>
-                                    <td>{{programme.year}}</td>
-                                    <td>{{programme.dept}}</td>
-                                    <td>{{programme.name}}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-        {% endif %}
-    </div>
+</div>
 
-    <div class="col-md-12">
-        {% if phd_list.count > 0 %}
-                <h4>PhD Programmes</h4>
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Year</th>
-                                <th>Department</th>
-                                <th>Programme</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for programme in phd_list %}
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="selected_phd_ids"
-                                               value="{{programme.id}}">
-                                    </td>
-                                    <td>{{programme.year}}</td>
-                                    <td>{{programme.dept}}</td>
-                                    <td>{{programme.name}}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-        {% endif %}
-    </div>
+<script>
 
-    <div class="col-md-12">
-        {% if msc_list.count > 0 %}
-                <h4>MSc Programmes</h4>
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Year</th>
-                                <th>Department</th>
-                                <th>Programme</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for programme in msc_list %}
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="selected_msc_ids"
-                                               value="{{programme.id}}">
-                                    </td>
-                                    <td>{{programme.year}}</td>
-                                    <td>{{programme.dept}}</td>
-                                    <td>{{programme.name}}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-        {% endif %}
-    </div>
+    $("#leader_btech_bdes").change(function(){
+        var status = this.checked;
+        $('.btech_bdes').each(function(){
+            this.checked = status;
+        });
+    });
 
-    <div class="col-md-12 row">
-        {% if ma_list.count > 0 %}
-                <h4>MA Programmes</h4>
-                <div class="col-md-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Year</th>
-                                <th>Department</th>
-                                <th>Programme</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for programme in ma_list %}
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="selected_ma_ids"
-                                               value="{{programme.id}}">
-                                    </td>
-                                    <td>{{programme.year}}</td>
-                                    <td>{{programme.dept}}</td>
-                                    <td>{{programme.name}}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-        {% endif %}
-    </div>
-        <input type="submit" value="submit">
-    </form>
+    $('.btech_bdes').change(function(){
+        if(this.checked == false){
+            $("#leader_btech_bdes")[0].checked = false;
+        }
+    });
+
+    $("#leader_minor").change(function(){
+        var status = this.checked;
+        $('.minor').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.minor').change(function(){
+        if(this.checked == false){
+            $("#leader_minor")[0].checked = false;
+        }
+    });
+
+    $("#leader_mtech_mdes").change(function(){
+        var status = this.checked;
+        $('.mtech_mdes').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.mtech_mdes').change(function(){
+        if(this.checked == false){
+            $("#leader_mtech_mdes")[0].checked = false;
+        }
+    });
+
+    $("#leader_msc").change(function(){
+        var status = this.checked;
+        $('.msc').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.msc').change(function(){
+        if(this.checked == false){
+            $("#leader_msc")[0].checked = false;
+        }
+    });
+
+    $("#leader_ma").change(function(){
+        var status = this.checked;
+        $('.ma').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.ma').change(function(){
+        if(this.checked == false){
+            $("#leader_ma")[0].checked = false;
+        }
+    });
+
+    $("#leader_phd").change(function(){
+        var status = this.checked;
+        $('.phd').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.phd').change(function(){
+        if(this.checked == false){
+            $("#leader_phd")[0].checked = false;
+        }
+    });
+
+</script>
 
 {% endblock %}

@@ -1,3 +1,5 @@
+import poplib
+import socket
 
 from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -41,14 +43,58 @@ def check_webmail_auth_at_server():
 
 class Login(View):
     template_name = 'jobportal/login.html'
+    server_dict = {
+        'dikrong': '202.141.80.13',
+        'teesta': '202.141.80.12',
+        'tamdil': '202.141.80.11',
+        'naambor': '202.141.80.9',
+        'disbang': '202.141.80.10'
+    }
+    server_port = 995
 
-    @staticmethod
-    def _auth_one_server(server):
-        return True
+    def _auth_one_server(self, username, password, server):
+        """
+        :param username: username
+        :param password: password
+        :param server: server name, not ip
+        :return: login status
+        """
+        server_ip = self.server_dict.get(str(server).lower())
+        print("server and ip : %s and %s " %(server, server_ip))
+        try:
+            print("server poplib start")
+            serv = poplib.POP3_SSL(server_ip, self.server_port)
+            serv.user(username)
+            print("username complete")
+            p_str = serv.pass_(password)
+            print("password complete")
+            if 'OK' in p_str:
+                serv.quit()
+                print("all OK and True")
+                return True
+        except:
+            print("exception and False")
+            return False
+        print("no exception and False")
+        return False
 
-    @staticmethod
-    def _auth_all_servers(username, password):
-        return 'server', True
+    def _auth_all_servers(self, username, password):
+        """
+        :param username: username
+        :param password: password
+        :return: matching_server, login_status
+
+        login_status == False implies wrong_password.
+        """
+        for server in self.server_dict.items():
+            print("Auth all servers with %s" % server[0])
+            status = self._auth_one_server(username, password, server[0])
+            print("%s returned %s" % (server[0], str(status)))
+            if status:
+                print("Lgin success")
+                return server[0], True
+            print("Iteration for another server")
+        return None, False
 
     def get(self, request):
         form = LoginForm(None)
@@ -131,16 +177,20 @@ class Login(View):
                         # fee paid
                         if user_profile.is_active:
                             # check if server is saved
-                            if user_type.login_server is not None:
+                            if bool(user_profile.login_server):
                                 status = self._auth_one_server(
-                                    server=user_type.login_server)
+                                    username=username, password=password,
+                                    server=user_profile.login_server)
                                 # if saved server worked
                                 if status:
                                     # authenticate
                                     # TODO: Write auth backend
                                     # http://stackoverflow.com/a/2788053/3679857
+                                    # password=username is a just hack
+                                    # This is not good design, but it saved me
+                                    # from writing custom auth backend
                                     user = auth.authenticate(username=username,
-                                                             password=password)
+                                                             password=username)
                                     if user is not None:
                                         auth.login(request, user)
                                         stud = Student.objects.get(
@@ -148,7 +198,7 @@ class Login(View):
                                         )
                                         request.session[
                                             'student_instance_id'] = stud.id
-                                        return redirect('student-home')
+                                        return redirect('stud-home')
                                 # if saved server did not work
                                 else:
                                     # try all the servers
@@ -163,14 +213,14 @@ class Login(View):
                                         # authenticate and authorize
                                         user = auth.authenticate(
                                             username=username,
-                                            password=password)
+                                            password=username)
                                         auth.login(request, user)
                                         stud = Student.objects.get(
                                             user=user_profile
                                         )
                                         request.session[
                                             'student_instance_id'] = stud.id
-                                        return redirect('student-home')
+                                        return redirect('stud-home')
                                     else:
                                         error = 'Wrong password'
                                         args = dict(form=form, error=error)
@@ -185,7 +235,7 @@ class Login(View):
                                 # if match found
                                 if status:
                                     # saved server for future requests
-                                    user_profile.server = True
+                                    user_profile.login_server = server
                                     user_profile.save()
                                     # authenticate and authorize
                                     user = auth.authenticate(
@@ -509,7 +559,6 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         self.jobrel = get_object_or_404(StudentJobRelation,
                                         stud=self.stud, job=self.job)
         job_check = self.check_job_credentials()
-        print job_check
         if job_check:
             self.jobrel.delete()
             return redirect('stud-job-detail', pk=self.job.id)
