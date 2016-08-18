@@ -554,7 +554,7 @@ class Signature(models.Model):
             if this.signature != self.signature:
                 this.signature.delete(save=False)
         except Signature.DoesNotExist:
-            passJob
+            pass
         super(Signature, self).save(*args, **kwargs)
 
 
