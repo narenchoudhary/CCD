@@ -472,33 +472,47 @@ class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return HttpResponseForbidden()
 
 
-class RenderCV(UserPassesTestMixin, LoginRequiredMixin, View):
+# TODO: This function is untested
+class DownloadStudCV(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    jobrel = None
 
     def test_func(self):
-        return self.request.user.user_type == 'company'
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return is_company
+        self.jobrel = get_object_or_404(
+            StudentJobRelation, id=self.kwargs['pk'])
+        company_id = self.request.session['company_instance_id']
+        if not self.jobrel.job.company_owner.id == company_id:
+            return False
+        return True
 
     def get(self, request, pk, cvno):
-        jobrel = get_object_or_404(StudentJobRelation, id=pk)
-
-        session_id = request.session['company_instance_id']
-        if jobrel.job.company_owner.id != session_id:
-            return HttpResponseForbidden()
-
-        cv = get_object_or_404(CV, stud=jobrel.stud)
-        if int(cvno) == 1 and jobrel.cv1 is True:
-            return redirect(cv.cv2.url)
-        elif int(cvno) == 2 and jobrel.cv2 is True:
-            return redirect(cv.cv2.url)
+        stud_id = self.jobrel.stud.id
+        cv = get_object_or_404(CV, stud__id=stud_id)
+        if cvno == '1' and bool(cv.cv1.name):
+            response = HttpResponse(cv.cv1,
+                                    content_type='application/pdf')
+            download_name = 'IITG_' + str(cv.stud.roll_no)
+            response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                              smart_str(download_name)
+            return response
+        elif cvno == '2' and bool(cv.cv2.name):
+            response = HttpResponse(cv.cv2,
+                                    content_type='application/pdf')
+            download_name = 'IITG_' + str(cv.stud.roll_no)
+            response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                              smart_str(download_name)
+            return response
         else:
-            return HttpResponseForbidden()
+            raise Http404()
 
 
+# TODO: This function is untested
 class StudJobRelShortlist(LoginRequiredMixin, UserPassesTestMixin, View):
 
     login_url = reverse_lazy('login')
-    raise_exception = True
 
     def test_func(self, **kwargs):
         is_company = self.request.user.user_type == 'company'
@@ -538,9 +552,9 @@ class StudJobRelShortlist(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('company-jobrel-list', pk=jobpk)
 
 
+# TODO: This function is untested
 class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
-    raise_exception = True
 
     def test_func(self, **kwargs):
         # check user type
@@ -583,9 +597,9 @@ class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('company-jobrel-list', pk=jobpk)
 
 
+# TODO: This function is untested
 class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
-    raise_exception = True
     template_name = 'jobportal/Company/jobprog_create.html'
     job = None
 

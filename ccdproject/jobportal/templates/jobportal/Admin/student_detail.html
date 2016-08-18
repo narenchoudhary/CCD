@@ -212,13 +212,23 @@
                     <tr>
                         <td>CV1</td>
                         <td>
-                            <a class="btn" href="#">CV1</a>
+                            {% if cv.cv1 %}
+                                <a href="{% url 'admin-student-cv-download' student.id 1 %}"
+                                        class="btn">CV1</a>
+                            {% else %}
+                                No CV uploaded
+                            {% endif %}
                         </td>
                     </tr>
                     <tr>
                         <td>CV2</td>
                         <td>
-                            <a class="btn" href="#">CV1</a>
+                            {% if cv.cv2 %}
+                                <a href="{% url 'admin-student-cv-download' student.id 2 %}"
+                                        class="btn">CV2</a>
+                            {% else %}
+                                No CV uploaded
+                            {% endif %}
                         </td>
                     </tr>
                 </table>

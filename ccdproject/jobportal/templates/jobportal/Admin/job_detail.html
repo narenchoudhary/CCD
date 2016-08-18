@@ -10,11 +10,14 @@
 <div class="row">
     <div class="row">
 
-        <div class="header">
-            <h2 class="">Job Details</h2>
-        </div>
-
         <div class="col s12 m9 l10">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Job Details</span>
+                </div>
+            </div>
+
             <ul class="tabs z-depth-1">
                 <li class="tab col s3 l2">
                     <a class="teal-text" href="#basicinfo">Basic Information</a>
@@ -51,7 +54,7 @@
                         <td>{{job.profile_name}}</td>
                     </tr>
                     <tr>
-                        <td>Number of openings</td>
+                        <td>Expected number of recruitments</td>
                         <td>{{job.num_openings}}</td>
                     </tr>
                     <tr>
@@ -70,7 +73,7 @@
             </div>
 
             <div  class="col s12 m12 l12  white" id="requirements">
-                <table class="table table-striped">
+                <table class="table bordered">
                     <tr>
                         <td>CPI Shortlist</td>
                         <td>{{job.cpi_shortlist|yesno}}</td>
@@ -97,7 +100,7 @@
             </div>
 
             <div class="col s12 m12 l12  white" id="salary">
-                <table class="table table-striped">
+                <table class="table bordered">
                     <tr>
                         <td>Currency</td>
                         <td>{{job.currency}}</td>
@@ -126,7 +129,7 @@
             </div>
 
             <div class="col s12 m12 l12  white" id="bond">
-                <table class="table table-striped">
+                <table class="table bordered">
                     <tr>
                         <td>Bond Document URL</td>
                         <td>
@@ -142,7 +145,7 @@
             </div>
 
             <div class="col s12 m12 l12  white" id="status">
-                <table class="table table-striped">
+                <table class="table bordered">
                     <tr>
                         <td>Posted On</td>
                         <td>{{job.posted_on}}</td>

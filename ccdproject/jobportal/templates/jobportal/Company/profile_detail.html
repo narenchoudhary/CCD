@@ -1,5 +1,9 @@
 {% extends 'base_company.html' %}
 
+{% block title %}
+    Recruiter | Profile
+{% endblock %}
+
 {% block account_setting%}
   <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
@@ -17,8 +21,12 @@
 
     <div class="row">
 
-        <div class="header">
-            <h2 class="">Recruiter Profile Details</h2>
+        <div class="col s12 l9 m9">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-title">Recruiter Profile Details</div>
+                </div>
+            </div>
         </div>
 
         <div class="col s12 m9 l9">
@@ -73,43 +81,43 @@
             <div class="col s12 m12 l12  white" id="hrdetails">
                 <table class="table bordered centered responsive-table">
                     <tr>
-                        <td>Head HR Name</td>
+                        <td>1st PoC Name</td>
                         <td> {{ company.head_hr_name }}</td>
                     </tr>
                     <tr>
-                        <td>Head HR Email</td>
+                        <td>1st PoC Email</td>
                         <td> {{ company.head_hr_email }}</td>
                     </tr>
                     <tr>
-                        <td>Head HR Designation</td>
+                        <td>1st PoC Designation</td>
                         <td> {{ company.head_hr_designation }}</td>
                     </tr>
                     <tr>
-                        <td>Head HR Mobile</td>
+                        <td>1st PoC Mobile</td>
                         <td> {{ company.head_hr_mobile }}</td>
                     </tr>
                     <tr>
-                        <td>Head HR Fax</td>
+                        <td>1st PoC Fax</td>
                         <td> {{ company.head_hr_fax }}</td>
                     </tr>
                     <tr>
-                        <td>First HR Name</td>
+                        <td>2nd PoC Name</td>
                         <td> {{ company.first_hr_name }}</td>
                     </tr>
                     <tr>
-                        <td>First HR Designation</td>
+                        <td>2nd PoC Designation</td>
                         <td> {{ company.first_hr_designation }}</td>
                     </tr>
                     <tr>
-                        <td>First HR Mobile</td>
+                        <td>2nd PoC Mobile</td>
                         <td> {{ company.first_hr_mobile }}</td>
                     </tr>
                     <tr>
-                        <td>First HR Email</td>
+                        <td>2nd PoC Email</td>
                         <td> {{ company.first_hr_email }}</td>
                     </tr>
                     <tr>
-                        <td>First HR Fax</td>
+                        <td>2nd PoC Fax</td>
                         <td> {{ company.first_hr_fax }}</td>
                     </tr>
                 </table>

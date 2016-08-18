@@ -9,6 +9,10 @@
     }
 </style>
 
+{% block title %}
+    Recruiter | New Event
+{% endblock %}
+
 {% block account_setting%}
 <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
@@ -28,7 +32,7 @@
         <div class="card">
             <div class="card-content">
                 <!--TODO: Change this-->
-                <h5>Request for placement related events can be created here.</h5>
+                <h5>Create request for placement related events here.</h5>
             </div>
         </div>
     </div>

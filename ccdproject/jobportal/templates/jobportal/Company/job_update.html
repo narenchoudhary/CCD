@@ -1,6 +1,10 @@
 {% extends 'base_company.html' %}
 {% load material_form %}
 
+{% block title %}
+    Recruiter | Update Job Application
+{% endblock %}
+
 {% block custom_styles %}
 <style type="text/css">
     .section h5 {
@@ -40,7 +44,7 @@
         {% else %}
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title">Job Application</span>
+                    <span class="card-title">Job Application Form</span>
                     <form method="post" accept-charset="utf-8"
                           enctype="multipart/form-data"
                           action="{% url 'company-job-update' job.id %}">

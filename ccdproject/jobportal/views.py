@@ -5,9 +5,10 @@ from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, TemplateView, DetailView,
                                   CreateView, UpdateView)
 
@@ -753,3 +754,31 @@ class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         except CV.DoesNotExist:
             cv = None
         return cv
+
+
+class DownloadCV(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get(self, cvno):
+        cv = get_object_or_404(
+          CV, stud__id= self.request.session['student_instance_id']
+        )
+        if cvno == '1' and bool(cv.cv1.name):
+            response = HttpResponse(cv.cv1,
+                                    content_type='application/pdf')
+            download_name = cv.stud.user.username + '_' + cvno
+            response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                              smart_str(download_name)
+            return response
+        elif cvno == '2' and bool(cv.cv2.name):
+            response = HttpResponse(cv.cv2,
+                                    content_type='application/pdf')
+            download_name = cv.stud.user.username + '_' + cvno
+            response['Content-Disposition'] = 'attachment; filename=%s' % \
+                                              smart_str(download_name)
+            return response
+        else:
+            raise Http404()

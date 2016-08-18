@@ -1,6 +1,10 @@
 {% extends 'base_company.html' %}
 {% load crispy_forms_tags %}
 
+{% block title %}
+    Recruiter | Event
+{% endblock %}
+
 {% block account_setting%}
   <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}

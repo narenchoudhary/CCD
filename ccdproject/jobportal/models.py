@@ -81,7 +81,7 @@ class Programme(models.Model):
                              verbose_name='Department')
     name = models.CharField(choices=PROGRAMMES, max_length=10,
                             verbose_name='Programme Name')
-    discipline = models.CharField(max_length=40, null=True, blank=True)
+    discipline = models.CharField(max_length=75, null=True, blank=True)
     minor_status = models.BooleanField(default=False,
                                        verbose_name='Minor Status')
     open_for_placement = models.BooleanField(default=False,
@@ -554,7 +554,7 @@ class Signature(models.Model):
             if this.signature != self.signature:
                 this.signature.delete(save=False)
         except Signature.DoesNotExist:
-            pass
+            passJob
         super(Signature, self).save(*args, **kwargs)
 
 

@@ -2,75 +2,81 @@
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-    <p><a href="#" title="">My Account</a></p>
+
 {% endblock%}
 
 {% block content %}
-        <h2 class="sub-header">Candidates:</h2>
-        <hr/>
-        <div class="col-md-12">
-            <div class="well">
-            {% if rel_list.count > 0 %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Shortlist</th>
-                            <th>Place</th>
-                            <th>Place Approval</th>
-                            <th>Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for rel in rel_list %}
+
+<div href="row">
+
+    <div class="row">
+        <div class="col s12 l9 m9">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Candidates</span>
+                    {% if rel_list.count > 0 %}
+                    <table class="table bordered">
+                        <thead>
                             <tr>
-                                <td>{{ rel.stud.first_name | capfirst}} {{ rel.stud.middle_name | capfirst }} {{ rel.stud.last_name | capfirst}}</td>
-                                <td>
-                                    {% if rel.shortlist_init %}
-                                        <button class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom"
-                                                title="Candidate shortlisted on {{rel.placed_init_datetime }}">Shortlisted</button>
-                                    {% else %}
-                                        <button class="btn btn-xs btn-danger">Not Shortlisted</button>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if rel.placed_init %}
-                                        <button class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom"
-                                                title="Candidate selected on {{rel.placed_init_datetime }}">Selected</button>
-                                    {% else %}
-                                        <button class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom"
-                                                title="Candidate shortlisted on {{rel.placed_init_datetime }}">Not Selected</button>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if rel.placed_init %}
-                                        {% if rel.placed_approved == True %}
-                                            <button class="btn-success btn btn-xs" data-toggle="tooltip" data-placement="bottom"
-                                                title="Placement request approved on {{rel.placed_approved_datetime }}">Approved</button>
-                                        {% elif rel.placed_approved == False %}
-                                            <button class="btn-danger btn btn-xs">Rejected</button>
-                                        {% else %}
-                                            <a class="btn btn-xs btn-default" role="button"
-                                               href="{% url 'admin-jobrel-place-approve' rel.job.id rel.id %}"
-                                               data-toggle="tooltip" data-placement="bottom"
-                                               title="Click to approve placement request.">Approval Required</a>
-                                        {% endif %}
-                                    {% else %}
-                                        ---
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a class="btn btn-xs btn-info"
-                                       href="{% url 'admin-student-detail' rel.stud.id %}">Detail</a>
-                                </td>
+                                <th>Name</th>
+                                <th>Shortlist</th>
+                                <th>Place</th>
+                                <th>Place Approval</th>
+                                <th>Detail</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <p><a class="btn btn-info " href="#">Print Student Details</a></p>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{ rel.name }} </td>
+                                    <td>
+                                        {% if rel.shortlist_init %}
+                                            <button class="btn light-green tooltipped" data-position="bottom"
+                                                    data-tooltip="Candidate shortlisted on {{rel.placed_init_datetime }}">Shortlisted</button>
+                                        {% else %}
+                                            <button class="btn red lighten-4">Not Shortlisted</button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            <button class="btn light-green tooltipped" data-position="bottom"
+                                                    data-tooltip="Candidate selected on {{rel.placed_init_datetime }}">Selected</button>
+                                        {% else %}
+                                            <button class="btn red lighten-4">Not Selected</button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            {% if rel.placed_approved == True %}
+                                                <button class="btn green tooltipped" data-toggle="tooltip" data-placement="bottom"
+                                                    title="Placement request approved on {{rel.placed_approved_datetime }}">Approved</button>
+                                            {% elif rel.placed_approved == False %}
+                                                <button class="btn-danger btn btn-xs">Rejected</button>
+                                            {% else %}
+                                                <a class="btn tooltipped" role="button" data-position="bottom"
+                                                   href="{% url 'admin-jobrel-place-approve' rel.job.id rel.id %}"
+                                                   data-tooltip="Click to approve placement request.">Approval Required</a>
+                                            {% endif %}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="btn"
+                                           href="{% url 'admin-student-detail' rel.stud.id %}">Detail</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                <p><a class="btn" href="#">Print Student Details</a></p>
             {% else %}
                 <p>No student have applied for this position.</p>
             {% endif %}
+                </div>
             </div>
         </div>
+    </div>
+</div>
 {% endblock %}

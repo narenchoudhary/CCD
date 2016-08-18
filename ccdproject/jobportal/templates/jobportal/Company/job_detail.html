@@ -1,5 +1,9 @@
 {% extends 'base_company.html' %}
 
+{% block title %}
+    Recruiter | Job Application
+{% endblock %}
+
 {% block account_setting%}
 <a href="{% url 'logout' %}" title="logout">Logout</a>
 {% endblock%}
@@ -15,8 +19,12 @@
 
 <div class="row">
     <div class="row">
-        <div class="header">
-            <h2 class="">Job Details</h2>
+        <div class="col s12 l9 m9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Job Application Details</span>
+                </div>
+            </div>
         </div>
 
         {% if rel_list.count  == 0%}
@@ -212,14 +220,17 @@
                        class="btn btn-primary">View Candidates</a>
                     {% else %}
                         <a href="{% url 'company-jobrel-list' job.id %}"
-                       class="btn btn-primary disabled">View Candidates</a>
+                       class="btn disabled tooltipped" data-position="bottom"
+                           data-tooltip="Candidates cab be viewed after application deadline
+                           ({{job.application_deadline}}) only.">View Candidates</a>
                     {% endif %}
                     {% if job.approved == None %}
                         <a href="{% url 'company-job-update' job.id %}"
                        class="btn btn-primary ">Edit Job</a>
                     {% else %}
                         <a href="{% url 'company-job-update' job.id %}"
-                       class="btn btn-primary disabled">Edit Job</a>
+                       class="btn disabled tooltipped" data-tooltip="This job has been already
+                       approved. No changes can be made now." data-position="bottom">Edit Job</a>
                     {% endif %}
 
                 </div>

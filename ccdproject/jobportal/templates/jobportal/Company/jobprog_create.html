@@ -1,5 +1,9 @@
 {% extends 'base_company.html' %}
 
+{% block title %}
+    Recruiter | Add Programmes
+{% endblock %}
+
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 {% endblock%}
@@ -15,11 +19,15 @@
 
 <div class="row">
     <div class="row">
-        <div class="header">
-            <h2 class="sub-header">Select Programmes</h2>
-        </div>
 
         <div class="col s12 m9 l9">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Select Programmes</span>
+                </div>
+            </div>
+
             <form method="post" accept-charset="utf-8"
                 action="{% url 'company-job-jobprog-create' jobpk %}">
                 {% csrf_token %}
@@ -119,7 +127,7 @@
                     </div>
                     {% endif %}
 
-                    {% if mtech_list.count > 0 %}
+                    {% if mtech_mdes_list.count > 0 %}
                     <div class="card-content">
                         <span class="card-title">M.Tech. Programmes</span>
                         <table class="table">
@@ -143,7 +151,7 @@
                                         <td></td>
                                         <td></td>
                                     </tr>
-                                {% for programme in mtech_list %}
+                                {% for programme in mtech_mdes_list %}
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="selected_mtech_mdes_ids"

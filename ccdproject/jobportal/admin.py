@@ -44,7 +44,8 @@ class DepartmentAdmin(admin.ModelAdmin):
 class ProgrammeAdmin(admin.ModelAdmin):
     list_display = ('year', 'dept', 'discipline', 'name', 'minor_status',
                     'open_for_placement', 'open_for_internship')
-    list_filter = ('minor_status', 'open_for_placement', 'open_for_internship')
+    list_filter = ('minor_status', 'open_for_placement', 'open_for_internship'
+                   , 'name')
 
 
 class EventAdmin(admin.ModelAdmin):

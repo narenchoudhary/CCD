@@ -1,9 +1,13 @@
 {% extends 'base_company.html' %}
 
+{% block title %}
+    Recruiter | Confirmation
+{% endblock %}
+
 {% block menu %}
 <a href="{% url 'index' %}"><li>Welcome</li></a>
 <a href="{% url 'login' %}"><li>Login</li></a>
-<a href="{% url 'company-signup' %}"><li>Recruiters Signup</li></a>
+<a href="{% url 'company-signup' %}"><li>Recruiters Registration Form</li></a>
 {% endblock %}
 
 {% block content %}

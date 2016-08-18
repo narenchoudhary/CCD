@@ -92,7 +92,9 @@ class EditStudProfileForm(ModelForm):
         self.fields['name'].disabled = True
         self.fields['name'].widget.attrs['readonly'] = True
         self.fields['year'].disabled = True
+        self.fields['year'].widget.attrs['readonly'] = True
         self.fields['dept'].disabled = True
+        self.fields['dept'].widget.attrs['readonly'] = True
         self.fields['prog'].disabled = True
         self.fields['minor_year'].disabled = True
         self.fields['minor_dept'].disabled = True
@@ -255,6 +257,8 @@ class AdminJobEditForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AdminJobEditForm, self).__init__(*args, **kwargs)
+        self.fields['designation'].widget.attrs['readonly'] = True
+        self.fields['profile_name'].widget.attrs['readonly'] = True
 
 
 class CompanyEventForm(forms.Form):

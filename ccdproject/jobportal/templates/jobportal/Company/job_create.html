@@ -1,6 +1,10 @@
 {% extends 'base_company.html' %}
 {% load material_form %}
 
+{% block title %}
+    Recruiter | JAF
+{% endblock %}
+
 {% block custom_styles %}
 <style type="text/css">
     .section h5 {
@@ -28,7 +32,7 @@
     <div class="col s12 m8 l9">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">Job Application</span>
+                <span class="card-title">Job Application Form</span>
                 <form method="post" accept-charset="utf-8"
                       enctype="multipart/form-data"
                       action="{% url 'company-job-create' %}">
