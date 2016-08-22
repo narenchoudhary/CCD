@@ -15,18 +15,17 @@
 
 <div class="row">
 
-    <div class="col s12 m8 l9">
+    <div class="col s12 m12 l9">
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Approved Company Profiles</span>
                 {% if company_list.count > 0 %}
-                    <table class="table bordered dataTable no-footer"
-                           id="result_list" role="grid">
+                    <table class="table bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr role="row">
                             <th>Company Name</th>
-                            <th>1st Poc Name</th>
-                            <th>1st PoC Mobile</th>
+                            <th class="hide-on-small-only">1st Poc Name</th>
+                            <th class="hide-on-small-only">1st PoC Mobile</th>
                             <th>Details</th>
                         </tr>
                         </thead>
@@ -35,10 +34,9 @@
                         {% for company in company_list %}
                         <tr>
                             <td>{{ company.company_name }}</td>
-                            <td>{{ company.head_hr_name }}</td>
-                            <td>{{ company.head_hr_mobile }}</td>
-                            <td><a class="btn btn-info btn-xs"
-                                   style="color:#fff"
+                            <td class="hide-on-small-only">{{ company.head_hr_name }}</td>
+                            <td class="hide-on-small-only">{{ company.head_hr_mobile }}</td>
+                            <td><a class="btn"
                                    href="{% url 'admin-company-detail' company.id %}">Details</a>
                             </td>
                         </tr>
@@ -48,24 +46,6 @@
                 {% else %}
                     <p>Bummer. There's nothing here yet.</p>
                 {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <div class="col s12 m4 l3">
-        <div class="card filters-card">
-            <div class="card-content">
-                <span class="card-title black-text">Filter</span>
-                <div class="row" style="margin-top:-10px">
-                    <div class="input-field col s12">
-                        <input type="text" data-name="q" value=""
-                               id="searchbar">
-                        <label for="searchbar" class="">Search Company</label>
-                        <a href="#" id="changelist-search-button"><i
-                                class="material-icons">search</i></a>
-                        <small>1952 results (<a href="?">Show all</a>)</small>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

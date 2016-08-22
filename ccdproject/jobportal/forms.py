@@ -15,7 +15,7 @@ class LoginForm(forms.Form):
     """
     username = forms.CharField(required=True, label='Username', max_length=25)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
-    remember_me = forms.BooleanField(required=False, initial=True,
+    remember_me = forms.BooleanField(required=False, initial=False,
                                      label='Remember Me')
 
 
@@ -24,24 +24,13 @@ class EditStudProfileForm(ModelForm):
     layout = Layout(
         Fieldset(
             'Basic Information',
-            Row('name'),
-            Row('roll_no', 'iitg_webmail'),
-            Row('sex', 'dob'),
-            Row('nationality', 'category'),
+            Row('dob'),
             Row('hostel', 'room_no'),
             Row('mobile_campus'),
             Row('mobile_campus_alternative'),
             Row('mobile_home'),
             Row('alternative_email'),
             Row('linkedin_link'),
-        ),
-        Fieldset(
-            'Major Programme',
-            'year', 'dept', 'prog'
-        ),
-        Fieldset(
-            'Minor Programme',
-            'minor_year', 'minor_dept', 'minor_prog'
         ),
         Fieldset(
             'Permanent Address',
@@ -58,7 +47,6 @@ class EditStudProfileForm(ModelForm):
         ),
         Fieldset(
             'IITG Academic Performance',
-            Row('cpi'),
             Row('spi_1_sem', 'spi_2_sem', 'spi_3_sem'),
             Row('spi_4_sem', 'spi_5_sem', 'spi_6_sem'),
             Row('active_backlogs')
@@ -67,63 +55,20 @@ class EditStudProfileForm(ModelForm):
 
     class Meta:
         model = Student
-        fields = ['roll_no', 'name', 'dob',
-                  'sex', 'category', 'nationality', 'minor_year',
-                  'minor_dept', 'minor_prog', 'year', 'dept', 'prog',
-                  'hostel', 'room_no', 'iitg_webmail', 'alternative_email',
+        fields = ['dob','hostel', 'room_no','alternative_email',
                   'mobile_campus', 'mobile_campus_alternative',
                   'mobile_home', 'address_line1', 'address_line2',
                   'address_line3', 'pin_code', 'percentage_x',
                   'percentage_xii', 'board_x', 'board_xii', 'medium_x',
                   'medium_xii', 'passing_year_x', 'passing_year_xii',
                   'gap_in_study', 'gap_reason', 'jee_air_rank',
-                  'linkedin_link', 'cpi', 'spi_1_sem', 'spi_2_sem',
+                  'linkedin_link', 'spi_1_sem', 'spi_2_sem',
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
                   'active_backlogs']
 
         widgets = {
             'gap_reason': forms.Textarea(attrs={'rows': 4}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super(EditStudProfileForm, self).__init__(*args, **kwargs)
-        self.fields['roll_no'].disabled = True
-        self.fields['iitg_webmail'].disabled = True
-        self.fields['name'].disabled = True
-        self.fields['name'].widget.attrs['readonly'] = True
-        self.fields['year'].disabled = True
-        self.fields['year'].widget.attrs['readonly'] = True
-        self.fields['dept'].disabled = True
-        self.fields['dept'].widget.attrs['readonly'] = True
-        self.fields['prog'].disabled = True
-        self.fields['minor_year'].disabled = True
-        self.fields['minor_dept'].disabled = True
-        self.fields['minor_prog'].disabled = True
-        self.fields['jee_air_rank'].label = 'JEE AIR Rank'
-        self.fields['percentage_x'].label = 'Percentage X'
-        self.fields['percentage_xii'].label = 'Percentage XII'
-        self.fields['board_x'].label = 'X Examination Board'
-        self.fields['board_xii'].label = 'XII Examination Board'
-
-    def clean(self):
-        cleaned_data = super(EditStudProfileForm, self).clean()
-        minor_y = bool(cleaned_data.get('minor_year'))
-        minor_d = bool(cleaned_data.get('minor_dept'))
-        minor_p = bool(cleaned_data.get('minor_prog'))
-        check_all = minor_y and minor_d and minor_p
-        check_none = not(minor_y or minor_d or minor_p)
-        if not(check_all or check_none):
-            raise forms.ValidationError("Minor programme errors")
-
-        year = bool(cleaned_data.get('year'))
-        dept = bool(cleaned_data.get('dept'))
-        prog = bool(cleaned_data.get('prog'))
-        check_all = year and dept and prog
-        check_none = not(year or dept or prog)
-        if not(check_all or check_none):
-            raise forms.ValidationError("Programme errors")
-
-        return cleaned_data
 
 
 class CompanyJobForm(ModelForm):
@@ -139,8 +84,6 @@ class CompanyJobForm(ModelForm):
                      Column('cpi_shortlist', 'minimum_cpi', span_columns=6),
                      Column('percentage_x', 'percentage_xii', span_columns=6),
                  )
-                 # Row('percentage_x', 'percentage_xii'),
-                 # Row('percentage_x','percentage_xii')
                  ),
         Fieldset('Salary Breakdown (Only fill details for programmes your '
                  'firm will be hiring)',
@@ -405,9 +348,8 @@ class SelectCVForm(forms.Form):
         super(SelectCVForm, self).__init__(*args, **kwargs)
 
         for i, question in enumerate(extra):
-            self.fields['custom_%s' % i] = forms.BooleanField(label=question,
-                                                              initial=True,
-                                                              required=False)
+            self.fields['custom_%s' % i] = forms.BooleanField(
+                label=str(question).upper(), initial=False, required=False)
 
     def extra_answers(self):
         for name, value in self.cleaned_data.items():
@@ -415,17 +357,17 @@ class SelectCVForm(forms.Form):
                 yield (self.fields[name].label, value)
 
     def clean(self):
-        all_false = True
-        all_true = True
+        true_count = 0
+        false_count = 0
         for (question, answer) in self.extra_answers():
             if answer is True:
-                all_false = False
+                true_count += 1
             if answer is False:
-                all_true = False
-        if all_false:
-            raise ValidationError("One CV must be selected.")
-        if all_true:
-            raise ValidationError("Only one CV must be selected.")
+                false_count += 1
+        if true_count is 0 and false_count is not 0:
+            raise ValidationError("Select one CV.")
+        if true_count is 2 and false_count is 0:
+            raise ValidationError("Select only one CV.")
 
 
 class AlumniProfileForm(ModelForm):
@@ -520,7 +462,7 @@ class CompanySignup(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
         try:
-            user = UserProfile.objects.get(username=username)
+            UserProfile.objects.get(username=username)
             raise ValidationError("This username already exists. Please "
                                   "select different username.")
         except UserProfile.DoesNotExist:

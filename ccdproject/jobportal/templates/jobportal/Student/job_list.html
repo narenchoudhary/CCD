@@ -1,58 +1,61 @@
 {% extends 'base_student.html' %}
-
+{% load humanize %}
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 
 {% endblock%}
 
 {% block content %}
-<h2 class="sub-header">Student Jobs</h2>
-<hr/>
-<div class="col-md-12">
-    {% if job_list.count > 0 %}
-    <div class="col-md-3 input-group pull-right form-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
-        <input type="text" class="filter form-control" placeholder="Search">
-    </div>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Company</th>
-            <th>Designation</th>
-            <th>Profile</th>
-            <th>CTC</th>
-            <th>Deadline</th>
-            <th>Details</th>
-        </tr>
-        </thead>
-        <tbody class="searchable">
-        {% for job in job_list %}
-        <tr>
-            <td>{{ job.company_owner }}</td>
-            <td>{{ job.designation }}</td>
-            <td>{{ job.profile_name }}</td>
-            <td>
-                {% if stud.prog.name == 'BTECH' %}
-                    {{job.currency}} {{job.ctc_btech}}
-                {% elif stud.prog.name == 'MTECH' %}
-                    {{job.currency}} {{job.ctc_mtech}}
-                {% elif stud.prog.name == 'PHD' %}
-                    {{job.currency}} {{job.ctc_phd}}
-                {% endif %}
-            </td>
-            <td>{{ job.application_deadline | date:'d N Y'}}</td>
-            <td>
-                <a class="btn btn-info btn-xs" href="{% url 'stud-job-detail' job.id %}"><span
-                class="glyphicon glyphicon-list"></span>&nbspDetails</a>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p>No job matches your profile.</p>
-    {% endif %}
-    <br>
+<div class="row">
+    <div class="row">
+        <div class="col s12 m12 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Job Applications List</span>
+                    <p>Count: {{ job_list.count }}</p>
+                    {% if job_list.count > 0 %}
+                        <table class="table bordered">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Designation</th>
+                                    <th>Profile</th>
+                                    <th>CTC</th>
+                                    <th>Deadline</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody class="searchable">
+                                {% for job in job_list %}
+                                <tr>
+                                    <td>{{ job.company_owner }}</td>
+                                    <td>{{ job.designation }}</td>
+                                    <td>{{ job.profile_name }}</td>
+                                    <td>
+                                        {% if stud.prog.name == 'BTECH' %}
+                                            {{job.currency}} {{job.ctc_btech | intcomma }}
+                                        {% elif stud.prog.name == 'MTECH' %}
+                                            {{job.currency}} {{job.ctc_mtech | intcomma}}
+                                        {% elif stud.prog.name == 'PHD' %}
+                                            {{job.currency}} {{job.ctc_phd | intcomma}}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ job.application_deadline | date:'d N Y'}}</td>
+                                    <td>
+                                        <a href="{% url 'stud-job-detail' job.id %}"
+                                           class="btn">Details</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No job matches your profile.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

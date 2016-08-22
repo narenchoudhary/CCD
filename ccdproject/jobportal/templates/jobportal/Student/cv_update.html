@@ -1,5 +1,5 @@
 {% extends 'base_student.html' %}
-{% load crispy_forms_tags %}
+{% load material_form %}
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
@@ -7,15 +7,26 @@
 {% endblock%}
 
 {% block content %}
-<h2 class="sub-header">Upload new CV(s)</h2>
-<hr/>
-<div class="col-md-9">
-    <form enctype="multipart/form-data" method="post" accept-charset="utf-8">
-        <div class="well">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <input type="submit" class="btn btn-primary" value="Upload">
+
+<div class="row">
+
+    <div class="row">
+        <div class="col s12 m12 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Upload CVs</span>
+
+                    <form enctype="multipart/form-data"
+                          action="{% url 'stud-cv-update' %}"
+                          method="post" accept-charset="utf-8">
+                        {% csrf_token %}
+                        {% form %}
+                        {% endform %}
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
+
 </div>
 {% endblock %}

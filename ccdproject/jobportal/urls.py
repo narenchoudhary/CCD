@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^stud/job/(?P<pk>\d+)/detail/$', views.JobDetail.as_view(),
         name='stud-job-detail'),
 
-    url(r'^stud/jobrel/list/$', views.JobList.as_view(),
+    url(r'^stud/jobrel/list/$', views.JobRelList.as_view(),
         name='stud-jobrel-list'),
     url(r'^stud/job/(?P<pk>\d+)/apply$', views.JobRelCreate.as_view(),
         name='stud-jobrel-create'),

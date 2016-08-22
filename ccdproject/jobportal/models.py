@@ -1,13 +1,15 @@
+from datetime import timedelta
 import uuid
 
-from datetime import timedelta
-
+from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.models import Site
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
+
 
 from smart_selects.db_fields import ChainedForeignKey
+from versatileimagefield.fields import VersatileImageField
 
 from constants import *
 
@@ -28,7 +30,7 @@ def get_cv2_name(instance, filename):
 
 
 def get_avatar_name(instance, filename):
-    url = "studavatar/{0}_{1}".format(instance.stud.roll_no, uuid.uuid4())
+    url = "studavatar/{0}_{1}.jpg".format(instance.stud.roll_no, uuid.uuid4())
     return url
 
 
@@ -41,6 +43,16 @@ def get_bond_link_name(instance, filename):
     url = "company_bond/{0}_{1}.pdf".format(
         instance.company_owner.user.username, uuid.uuid4())
     return url
+
+
+class SiteManagement(models.Model):
+    site = models.OneToOneField(Site)
+    student_profile_update_deadline = models.DateField(null=True, blank=True)
+    student_cv_update_deadline = models.DateField(null=True, blank=True)
+    student_sign_update_deadline = models.DateField(null=True, blank=True)
+    block_student_login = models.BooleanField(default=False)
+    block_company_login = models.BooleanField(default=False)
+    block_admin_login = models.BooleanField(default=False)
 
 
 class UserProfile(AbstractUser):
@@ -427,7 +439,6 @@ class Job(models.Model):
                                     blank=True,
                                     verbose_name='Ph.D. Gross Salary')
     # Job description
-    # bond = models.BooleanField(default=False, verbose_name='Legal Bond')
     bond_link = models.FileField(null=True, blank=True,
                                  upload_to=get_bond_link_name,
                                  verbose_name='Legal Bond Document')
@@ -529,32 +540,24 @@ class Event(models.Model):
 class Avatar(models.Model):
     stud = models.OneToOneField(Student, null=True,
                                 on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to=get_avatar_name,
-                               blank=True, null=True)
+    avatar = VersatileImageField(upload_to=get_avatar_name,
+                                 blank=True, null=True)
+    last_updated = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        try:
-            this = Avatar.objects.get(id=self.id)
-            if this.avatar != self.avatar:
-                this.avatar.delete(save=False)
-        except Avatar.DoesNotExist:
-            pass
+        self.last_updated = timezone.now()
         super(Avatar, self).save(*args, **kwargs)
 
 
 class Signature(models.Model):
     stud = models.OneToOneField(Student, on_delete=models.CASCADE,
                                 null=True)
-    signature = models.ImageField(upload_to=get_sign_name, blank=True,
-                                  null=True)
+    signature = VersatileImageField(upload_to=get_sign_name, blank=True,
+                                    null=True)
+    last_updated = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        try:
-            this = Signature.objects.get(id=self.id)
-            if this.signature != self.signature:
-                this.signature.delete(save=False)
-        except Signature.DoesNotExist:
-            pass
+        self.last_updated = timezone.now()
         super(Signature, self).save(*args, **kwargs)
 
 
@@ -562,6 +565,11 @@ class CV(models.Model):
     stud = models.OneToOneField(Student, null=True, on_delete=models.CASCADE)
     cv1 = models.FileField(upload_to=get_cv1_name, blank=True, null=True)
     cv2 = models.FileField(upload_to=get_cv2_name, blank=True, null=True)
+    last_updated = models.DateTimeField(null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        self.last_updated = timezone.now()
+        super(CV, self).save(*args, **kwargs)
 
 
 class ProgrammeJobRelation(models.Model):

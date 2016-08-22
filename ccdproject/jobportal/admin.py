@@ -62,6 +62,7 @@ class JobAdmin(admin.ModelAdmin):
 
 class ProgrammeJobRelationAdmin(admin.ModelAdmin):
     list_display = ('job', 'year', 'dept', 'prog')
+    list_filter = ('dept',)
 
 
 class StudentJobRelationAdmin(admin.ModelAdmin):
@@ -77,6 +78,8 @@ class AvatarAdmin(admin.ModelAdmin):
 class AdminAdmin(admin.ModelAdmin):
     list_display = ('user', 'position')
 
+
+admin.site.register(SiteManagement)
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Admin, AdminAdmin)

@@ -6,15 +6,17 @@
 {% endblock%}
 
 {% block content %}
-<h3>Welcome, <i>{{ stud.first_name }}</i></h3>
-<p>This is your Personal Dashboard for all the functions.</p>
-<hr/>
 
-<div class="profile-box well row">
-    <div class="user-img-holder thumbnail col-md-6">
+<div class="row">
+    <div class="row">
+        <div class="col s12 m12 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Welcome {{stud.name}}</span>
+                    <p>This is your Personal Dashboard for all the functions.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <p class="col-md-6">Name: {{ stud.first_name }} {{ stud.last_name }}
-        <br>Course:{{ stud.prog}} {{ stud.dept.dept }} {{ stud.year }}
-    </p>
 </div>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
@@ -107,23 +108,23 @@
                     </tr>
                     <tr>
                         <td>CTC BTech</td>
-                        <td>{{job.ctc_btech}}</td>
+                        <td>{{job.ctc_btech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC MTech</td>
-                        <td>{{job.ctc_mtech}}</td>
+                        <td>{{job.ctc_mtech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC MSc</td>
-                        <td>{{job.ctc_msc}}</td>
+                        <td>{{job.ctc_msc | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC MA</td>
-                        <td>{{job.ctc_ma}}</td>
+                        <td>{{job.ctc_ma | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC PhD</td>
-                        <td>{{job.ctc_phd}}</td>
+                        <td>{{job.ctc_phd | intcomma}}</td>
                     </tr>
                 </table>
             </div>
@@ -230,7 +231,7 @@
                                         <td>{{prog.year}}</td>
                                         <td>{{prog.dept}}</td>
                                         <td>{{prog.prog}}</td>
-                                        <td>{{prog.minor_status|yesno}}</td>
+                                        <td>{{prog.prog.minor_status|yesno:"Minor, Major"}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

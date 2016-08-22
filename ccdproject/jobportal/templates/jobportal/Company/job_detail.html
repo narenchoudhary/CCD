@@ -1,4 +1,5 @@
 {% extends 'base_company.html' %}
+{% load humanize %}
 
 {% block title %}
     Recruiter | Job Application
@@ -146,43 +147,43 @@
                     </tr>
                     <tr>
                         <td>CTC B.Tech.</td>
-                        <td>{{job.ctc_btech}}</td>
+                        <td>{{job.ctc_btech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>Gross B.Tech.</td>
-                        <td>{{job.gross_btech}}</td>
+                        <td>{{job.gross_btech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC M.Tech.</td>
-                        <td>{{job.ctc_mtech}}</td>
+                        <td>{{job.ctc_mtech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>Gross M.Tech.</td>
-                        <td>{{job.gross_mtech}}</td>
+                        <td>{{job.gross_mtech | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC M.Sc.</td>
-                        <td>{{job.ctc_msc}}</td>
+                        <td>{{job.ctc_msc | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>Gross M.Sc.</td>
-                        <td>{{job.gross_msc}}</td>
+                        <td>{{job.gross_msc | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC M.A.</td>
-                        <td>{{job.ctc_ma}}</td>
+                        <td>{{job.ctc_ma | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>Gross M.A.</td>
-                        <td>{{job.gross_ma}}</td>
+                        <td>{{job.gross_ma | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>CTC Ph.D.</td>
-                        <td>{{job.ctc_phd}}</td>
+                        <td>{{job.ctc_phd | intcomma}}</td>
                     </tr>
                     <tr>
                         <td>Gross Ph.D.</td>
-                        <td>{{job.gross_phd}}</td>
+                        <td>{{job.gross_phd | intcomma}}</td>
                     </tr>
                 </table>
             </div>

@@ -368,7 +368,7 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         job = get_object_or_404(Job, id=jobpk)
 
         minor_list_ids = request.POST.getlist('selected_minor_ids')
-        btech_bdes_list = request.POST.getlist('selected_btech_ids')
+        btech_bdes_list = request.POST.getlist('selected_btech_bdes_ids')
         mtech_mdes_list_ids = request.POST.getlist('selected_mtech_mdes_ids')
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
@@ -511,7 +511,7 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
-            Q(placed_approved__isnull=True))
+            Q(placed_approved__isnull=True, placed_init=True))
 
 
 class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -622,7 +622,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     """
     login_url = reverse_lazy('login')
     template_name = 'jobportal/Admin/student_create.html'
-    col_count = 13
+    col_count = 15
     password_len = 8
     # form_class = StudentUploadForm
 
@@ -637,29 +637,36 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         # Col3: Year: Must be in Db
         # Col4: Dept: Must be in Db
         # Col5: Prog: Must be in Db
-        # Col6: Minor Year: Must be in Db
-        # Col7: Minor Dept: Must be in Db
-        # Col8: Minor Prog: Must be in Db
-        # Col9: Category: Must be in constants.CATEGORY
-        # Col10: CPI: Must be Float
-        # Col11: Nationality: NO checking
-        # Col12: Gender: Must be in [M, F]
+        # Col6: Discipline: Must be in Db
+        # Col7: Minor Year: Must be in Db
+        # Col8: Minor Dept: Must be in Db
+        # Col9: Minor Prog: Must be in Db
+        # Col10: Minor Discipline: Must be in Database
+        # Col11: Category: Must be in constants.CATEGORY
+        # Col12: CPI: Must be Float
+        # Col13: Nationality: NO checking
+        # Col14: Gender: Must be in [M, F]
         num_cols = len(row)
+        # Check number of columns
         if self.col_count != num_cols:
             return False, 'Total number of columns is not ' + str(
                 self.col_count)
+        # Check roll no
         try:
             roll_no = int(str(row[1]).strip())
         except ValueError:
             return False, 'Roll number is not a valid number'
+        # check year
         try:
-            year = int(row[3])
+            year = int(str(row[3]).strip())
         except ValueError:
             return False, 'Year is not a valid number.'
+        # get year
         try:
             year_instance = Year.objects.get(current_year=year)
         except Year.DoesNotExist:
             return False, 'Year %s doen not exist in DB' % year
+        # get dept code
         try:
             dept_code = str(row[4]).upper()
             dept_instance = Department.objects.get(year=year_instance,
@@ -667,44 +674,55 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         except Department.DoesNotExist:
             return False, 'Department %s does not not exist in DB' \
                    % str(row[4]).upper()
+        # get programme
         try:
             prog = str(row[5]).upper()
             Programme.objects.get(year=year_instance, dept=dept_instance,
-                                  name=prog, minor_status=False)
+                                  name=prog, minor_status=False,
+                                  discipline__iexact=row[6])
         except Programme.DoesNotExist:
             return False, 'Programme %s does not exist in DB' \
                    % str(row[5]).upper()
-        if row[6] != '':
-            try:
-                year_instance = Year.objects.get(current_year=year)
-            except Year.DoesNotExist:
-                return False, 'Minor year %s doen not exist in DB' % year
+        # check minor_year
+        try:
+            minor_year = int(str(row[3]).strip())
+        except ValueError:
+            return False, 'Year is not a valid number.'
+        # get minor year
         if row[7] != '':
             try:
-                dept_code = str(row[7]).upper()
-                dept_instance = Department.objects.get(year=year_instance,
-                                                       dept_code=dept_code)
-            except Department.DoesNotExist:
-                return False, 'Department %s does not not exist in DB' \
-                       % dept_code
+                minor_year = Year.objects.get(current_year=year)
+            except Year.DoesNotExist:
+                return False, 'Minor year %s doen not exist in DB' % year
+        # check minor department
         if row[8] != '':
             try:
-                prog = str(row[8]).upper()
+                minor_dept_code = str(row[8]).upper()
+                minor_dept_instance = Department.objects.get(
+                    year=minor_year, dept_code=minor_dept_code)
+            except Department.DoesNotExist:
+                return False, 'Minor Department %s for year %s does not not ' \
+                              'exist in DB ' % (minor_dept_code, minor_year)
+        if row[9] != '' and row[10] != '':
+            try:
+                minor_prog = str(row[9]).upper()
                 Programme.objects.get(year=year_instance, dept=dept_instance,
-                                      name=prog, minor_status=True)
+                                      name=minor_prog, minor_status=True,
+                                      discipline__iexact=str(row[10]).strip())
             except Programme.DoesNotExist:
-                return False, 'Programme %s does not exist in DB' \
+                return False, 'Minor Programme %s does not exist in DB' \
                        % prog
-        category = str(row[9])
+        # check category
+        category = str(row[11]).strip()
         if category not in [cat[0] for cat in CATEGORY]:
             return False, 'Invalid Category'
-
+        # check cpi
         try:
-            cpi = float(row[10])
+            cpi = float(str(row[12]).strip())
         except ValueError:
             return False, 'CPI not a valid number.'
-
-        if row[12] not in ['M', 'F']:
+        # check sex/gender
+        if str(row[14]).strip() not in ['M', 'F']:
             return False, 'Gender must be M or F only.'
 
         return True, None
@@ -730,7 +748,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                     error_rows.append(rowcount)
                     error_msg.append(error)
                     continue
-                username = row[0]
+                username = str(row[0]).strip()
                 # dummy password
                 password = ''.join(
                     random.SystemRandom().choice(
@@ -740,6 +758,9 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                     userprofile = UserProfile.objects.get(
                         username=username, user_type='student'
                     )
+                    error_rows.append(rowcount)
+                    error = 'username %s already exists' % username
+                    error_msg.append(error)
                 except UserProfile.DoesNotExist:
                     userprofile = UserProfile.objects.create(
                         username=username,
@@ -755,37 +776,40 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             year = Year.objects.get(current_year=int(row[3]))
                         if year and row[4] != '':
                             dept = Department.objects.get(
-                                year=year, dept_code=str(row[4]).upper())
+                                year=year,
+                                dept_code=str(row[4]).strip().upper())
                         if year and dept and row[5] != '':
                             prog = Programme.objects.get(
                                 year=year, dept=dept, name=str(row[5]),
-                                minor_status=False)
+                                minor_status=False,
+                                discipline__iexact=row[6])
                         minor_year = None
                         minor_dept = None
                         minor_prog = None
-                        if row[6] != '':
+                        if row[7] != '':
                             minor_year = Year.objects.get(
-                                current_year=int(row[6]))
-                        if minor_year and row[7] != '':
+                                current_year=int(row[7]))
+                        if minor_year and row[8] != '':
                             minor_dept = Department.objects.get(
-                                year=minor_year, dept_code=str(row[7]).upper())
-                        if minor_year and minor_dept and row[8] != '':
+                                year=minor_year, dept_code=str(row[8]).upper())
+                        if minor_year and minor_dept and row[9] != '' and \
+                                row[10] != '':
                             minor_prog = Programme.objects.get(
                                 year=minor_year, dept=minor_dept,
-                                name=str(row[8]),
-                                minor_status=True)
+                                name=str(row[9]).strip(), minor_status=True,
+                                discipline__iexact=str(row[10]).strip())
                         stud = Student.objects.create(
                             user=userprofile,
                             iitg_webmail=str(username) + '@iitg.ac.in',
-                            roll_no=int(row[1]),
-                            name=row[2],
+                            roll_no=int(str(row[1]).strip()),
+                            name=str(row[2]).strip(),
                             year=year,
                             dept=dept,
                             prog=prog,
-                            category=str(row[6]).upper(),
-                            cpi=float(row[10]),
-                            nationality=str(row[11]),
-                            sex=str(row[12]).upper(),
+                            category=str(row[11]).upper(),
+                            cpi=float(row[12]),
+                            nationality=str(row[13]).strip(),
+                            sex=str(row[14]).upper().strip(),
                         )
                         if year and dept and prog:
                             stud.year = year

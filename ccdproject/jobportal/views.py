@@ -5,6 +5,8 @@ from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
+from django.forms import FileInput
+from django.forms.models import modelform_factory
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -46,9 +48,9 @@ class Login(View):
     template_name = 'jobportal/login.html'
     server_dict = {
         'dikrong': '202.141.80.13',
-        'teesta': '202.141.80.12',
+        # 'teesta': '202.141.80.12',
         'tamdil': '202.141.80.11',
-        'naambor': '202.141.80.9',
+        # 'naambor': '202.141.80.9',
         'disbang': '202.141.80.10'
     }
     server_port = 995
@@ -61,10 +63,13 @@ class Login(View):
         :return: login status
         """
         server_ip = self.server_dict.get(str(server).lower())
-        print("server and ip : %s and %s " %(server, server_ip))
+        print("server and ip : %s and %s " % (server, server_ip))
         try:
             print("server poplib start")
+            print(server_ip)
+            print(type(server_ip))
             serv = poplib.POP3_SSL(server_ip, self.server_port)
+            print('serv_created')
             serv.user(username)
             print("username complete")
             p_str = serv.pass_(password)
@@ -73,6 +78,10 @@ class Login(View):
                 serv.quit()
                 print("all OK and True")
                 return True
+        except poplib.error_proto:
+            serv.quit()
+            print("poplib.error_proto: -ERR Authentication failed.")
+            return False
         except:
             print("exception and False")
             return False
@@ -179,11 +188,13 @@ class Login(View):
                         if user_profile.is_active:
                             # check if server is saved
                             if bool(user_profile.login_server):
+                                print("Student login_server found.")
                                 status = self._auth_one_server(
                                     username=username, password=password,
                                     server=user_profile.login_server)
                                 # if saved server worked
                                 if status:
+                                    print("Login Successful for login_server")
                                     # authenticate
                                     # TODO: Write auth backend
                                     # http://stackoverflow.com/a/2788053/3679857
@@ -202,7 +213,9 @@ class Login(View):
                                         return redirect('stud-home')
                                 # if saved server did not work
                                 else:
+                                    print("Login Failed for login_server")
                                     # try all the servers
+                                    print("Login Successful")
                                     server, status = self._auth_all_servers(
                                         username=username, password=password
                                     )
@@ -359,7 +372,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         ).filter(
             opening_date__lte=timezone.now().date()
         ).filter(
-            application_deadline__gt=timezone.now().date()
+            application_deadline__gte=timezone.now().date()
         ).filter(
             percentage_x__lte=stud.percentage_x
         ).filter(
@@ -399,17 +412,26 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
-        context['no_cv'] = self.student_cv()
-        context['now'] = timezone.now()
+        context['no_cv'] = self.no_cv()
+        context['deadline_passed'] = \
+            self.job.application_deadline < timezone.now().date()
+        print(self.job.application_deadline)
+        print(timezone.now().date())
+        print(timezone.now())
+        print(context['deadline_passed'])
         context['jobrel'] = self.get_jobrel_or_none()
         return context
 
-    def student_cv(self):
+    def no_cv(self):
+        """
+        Return True when student has not uploaded any CV
+        :return: status of CV
+        """
         try:
             cv = CV.objects.get(
                 stud__id=self.request.session['student_instance_id'])
         except CV.DoesNotExist:
-            return False
+            return True
         if cv.cv1 is None and cv.cv2 is None:
             return True
         return False
@@ -445,6 +467,7 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     raise_exception = True
     template_name = 'jobportal/Student/jobrel_list.html'
+    context_object_name = 'jobrel_list'
 
     def test_func(self):
         return self.request.user.user_type == 'student'
@@ -551,7 +574,10 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
     jobrel = None
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        return True
 
     def get(self, request, pk):
         self.stud = get_object_or_404(
@@ -560,6 +586,8 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         self.jobrel = get_object_or_404(StudentJobRelation,
                                         stud=self.stud, job=self.job)
         job_check = self.check_job_credentials()
+        print(job_check)
+        print(self.jobrel.creation_datetime)
         if job_check:
             self.jobrel.delete()
             return redirect('stud-job-detail', pk=self.job.id)
@@ -569,7 +597,7 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
     def check_job_credentials(self):
         time_now = timezone.now().date()
         opening_date_check = self.job.opening_date <= time_now
-        deadline_check = self.job.application_deadline > time_now
+        deadline_check = self.job.application_deadline >= time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check
 
@@ -610,7 +638,13 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
     raise_exception = True
     model = Avatar
-    fields = ['avatar']
+    form_class = modelform_factory(
+        Avatar,
+        fields=['avatar'],
+        widgets={
+            'avatar': FileInput
+        }
+    )
     template_name = 'jobportal/Student/avatar_update.html'
     success_url = reverse_lazy('stud-avatar-detail')
 
@@ -629,8 +663,13 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
     raise_exception = True
-    model = Avatar
-    fields = ['avatar']
+    form_class = modelform_factory(
+        Avatar,
+        fields=['avatar'],
+        widgets={
+            'avatar': FileInput
+        }
+    )
     template_name = 'jobportal/Student/avatar_create.html'
     success_url = reverse_lazy('stud-avatar-detail')
 

@@ -7,34 +7,39 @@
 {% endblock%}
 
 {% block content %}
-
-    <h2 class="sub-header">Upload Signature</h2>
-        <hr/>
-    <div class="col-md-12">
-
-        {% if signature.signature %}
-            <p><img src="{{ signature.signature.url }}" class="thumbnail"></p>
-        {% endif %}
-
-        {% if signature and signature.signature %}
-            <h4>
-                <a class="btn btn-lg btn-info" href="{% url 'stud-sign-update' %}">
-                    <span class="glyphicon glyphicon-cloud-upload"></span>Upload new image
-                </a>
-            </h4>
-        {% elif signature %}
-            <h4>
-                <a class="btn btn-lg btn-info" href="{% url 'stud-sign-update' %}">
-                    <span class="glyphicon glyphicon-cloud-upload"></span>Upload image
-                </a>
-            </h4>
-        {% else %}
-            <h4>
-                <a class="btn btn-lg btn-info" href="{% url 'stud-sign-create' %}">
-                    <span class="glyphicon glyphicon-cloud-upload"></span>Upload image
-                </a>
-            </h4>
-        {% endif %}
+<div class="row">
+    <div class="row">
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Signature</span>
+                    {% if signature.signature %}
+                        <p>
+                            <img class="responsive-img"
+                                 src="{{ signature.signature.thumbnail.300x300 }}">
+                        </p>
+                    {% else %}
+                        <p>No signature found for this profile.</p>
+                    {% endif %}
+                </div>
+                <div class="card-action">
+                    {% if signature and signature.signature %}
+                        <a class="btn" href="{% url 'stud-sign-update' %}">
+                            Upload new signature
+                        </a>
+                    {% elif signature %}
+                        <a class="btn" href="{% url 'stud-sign-update' %}">
+                            Upload signature
+                        </a>
+                    {% else %}
+                        <a class="btn" href="{% url 'stud-sign-create' %}">
+                            Upload signature
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
 {% endblock %}
