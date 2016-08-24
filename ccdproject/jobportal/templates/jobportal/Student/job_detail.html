@@ -3,10 +3,21 @@
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-
 {% endblock%}
 
+{% block title %}
+    Student | Job Detail
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-job-list' %}">All Jobs</a> ⟩
+        <a href="{% url 'stud-job-detail' job.id %}">Job Details</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
@@ -23,7 +34,7 @@
                     <a class="teal-text" href="#job">Basic Information</a>
                 </li>
                 <li class="tab col s3 m3 l2">
-                    <a href="#recruiter" class="teal-text">Requirements</a>
+                    <a href="#recruiter" class="teal-text">Company Information</a>
                 </li>
             </ul>
         </div>
@@ -92,8 +103,8 @@
                     {% if jobrel %}
                         <p>You applied for this Job on {{jobrel.creation_datetime}}.</p>
                     {% else %}
-                        {% if nocv %}
-                            <p class="red">You have not uploaded any CV. You must upload at least one CV to apply.</p>
+                        {% if no_cv %}
+                            <p class="red-text"> WARNING: You have not uploaded any CV. You must upload at least one CV to apply.</p>
                         {% else %}
                             <p>You can remove your application before deadline only. Once deadline has passed, no changes
                             can be made to your application status.</p>
@@ -113,7 +124,7 @@
                         {% endif %}
 
                     {% else %}
-                        {% if nocv %}
+                        {% if no_cv %}
                             <a href="{% url 'stud-jobrel-create' job.id %}" class="btn disabled">
                                 Apply
                             </a>

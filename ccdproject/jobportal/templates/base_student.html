@@ -1,45 +1,39 @@
 {% extends 'base_jobportal.html' %}
 
 {% block menu %}
-<li class="account-nav-head">Student <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
 <li>
     <a href="{% url 'stud-home' %}">
-        <span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;Home
+        Home
     </a>
 </li>
 <li>
     <a href="{% url 'stud-profile-update' %}">
-        <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit Profile
+        Edit Profile
     </a>
 </li>
 <li>
     <a href="{% url 'stud-job-list' %}">
-        <span class="glyphicon glyphicon-briefcase"></span>&nbsp;&nbsp;All Jobs
+        All Jobs
     </a>
 </li>
 <li>
     <a href="{% url 'stud-jobrel-list' %}">
-        <span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Selected Jobs
+        Selected Jobs
     </a>
 </li>
 <li>
     <a href="{% url 'stud-cv-detail' %}">
-        <span class="glyphicon glyphicon-upload"></span>&nbsp;&nbsp;Student CV
+        Student CV
     </a>
 </li>
 <li>
     <a href="{% url 'stud-avatar-detail' %}">
-        <span class="glyphicon glyphicon-upload"></span>&nbsp;&nbsp;Avatar
+        Avatar
     </a>
 </li>
 <li>
     <a href="{% url 'stud-sign-detail' %}">
-        <span class="glyphicon glyphicon-upload"></span>&nbsp;&nbsp;Signature
-    </a>
-</li>
-<li>
-    <a href="{% url 'stud-event-list' %}">
-        <span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;Calendar
+        Signature
     </a>
 </li>
 

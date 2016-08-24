@@ -1,12 +1,23 @@
 {% extends 'base_student.html' %}
-{% load crispy_forms_tags %}
+{% load material_form %}
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 
 {% endblock%}
 
+{% block title %}
+    Student | Upload CV
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-cv-create' %}">Upload CV</a>
+    </div>
+</div>
 
 <div class="row">
 
@@ -14,7 +25,7 @@
         <div class="col s12 m12 l9">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title">>Upload CVs</span>
+                    <span class="card-title">Upload CVs</span>
 
                     <form enctype="multipart/form-data"
                           action="{% url 'stud-cv-create' %}"
@@ -22,6 +33,7 @@
                         {% csrf_token %}
                         {% form %}
                         {% endform %}
+                        <input type="submit" class="btn" value="Upload">
                     </form>
 
                 </div>

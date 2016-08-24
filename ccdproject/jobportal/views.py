@@ -448,8 +448,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def check_student_eligibility(self):
         # Check Programme eligibility
         progjobrel = ProgrammeJobRelation.objects.filter(
-            Q(job__id=self.job.id, prog__id=self.stud.prog.id) |
-            Q(job__id=self.job.id, prog__id=self.stud.minor_prog.id)
+            Q(job=self.job, prog=self.stud.prog) |
+            Q(job=self.job, prog=self.stud.minor_prog)
         )
         if not progjobrel:
             return False
@@ -545,8 +545,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def check_stud_credentials(self):
         progjobrel = ProgrammeJobRelation.objects.filter(
-            Q(job__id=self.job.id, prog__id=self.stud.prog.id) |
-            Q(job__id=self.job.id, prog__id=self.stud.minor_prog.id)
+            Q(job=self.job, prog=self.stud.prog) |
+            Q(job=self.job, prog=self.stud.minor_prog)
         )
         if not progjobrel:
             return False
@@ -556,6 +556,12 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         # Check BackLog eligibility
         if self.job.backlog_filter and self.job.num_backlogs_allowed < self.stud.active_backlogs:
             return False
+        # if already applied, then cannot apply again
+        try:
+            StudentJobRelation.objects.get(job=self.job, stud=self.stud)
+            return False
+        except StudentJobRelation.DoesNotExist:
+            pass
         return True
 
     def check_job_credentials(self):

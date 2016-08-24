@@ -5,7 +5,20 @@
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 {% endblock%}
 
+{% block title %}
+    Student | Apply
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-job-detail' job.id %}">Job Detail</a> ⟩
+        <a href="{% url 'stud-jobrel-create' job.id %}">Apply</a>
+    </div>
+</div>
+
 
 <div class="row">
     <div class="row">

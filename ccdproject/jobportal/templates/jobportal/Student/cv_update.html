@@ -6,7 +6,18 @@
 
 {% endblock%}
 
+{% block title %}
+    Student | Upload CV
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-cv-update' %}">Update CV</a>
+    </div>
+</div>
 
 <div class="row">
 
@@ -22,6 +33,7 @@
                         {% csrf_token %}
                         {% form %}
                         {% endform %}
+                        <input type="submit" class="btn" value="Upload">
                     </form>
                 </div>
             </div>

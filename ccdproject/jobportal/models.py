@@ -541,7 +541,7 @@ class Avatar(models.Model):
     stud = models.OneToOneField(Student, null=True,
                                 on_delete=models.CASCADE)
     avatar = VersatileImageField(upload_to=get_avatar_name,
-                                 blank=True, null=True)
+                                 blank=False, null=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -552,7 +552,7 @@ class Avatar(models.Model):
 class Signature(models.Model):
     stud = models.OneToOneField(Student, on_delete=models.CASCADE,
                                 null=True)
-    signature = VersatileImageField(upload_to=get_sign_name, blank=True,
+    signature = VersatileImageField(upload_to=get_sign_name, blank=False,
                                     null=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 

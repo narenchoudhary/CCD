@@ -11,11 +11,22 @@
 </style>
 {% endblock %}
 
+{% block title %}
+    Student | Profile Update
+{% endblock %}
+
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 {% endblock%}
 
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-profile-update' %}">update profile</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">

@@ -6,7 +6,18 @@
 
 {% endblock%}
 
+{% block title %}
+    Student | Avatar
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-avatar-detail' %}">Avatar</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
@@ -17,7 +28,7 @@
                     {% if avatar.avatar %}
                         <p>
                             <img class="responsive-img"
-                                 src="{{avatar.avatar.thumbnail.400x400}}">
+                                 src="{{avatar.avatar.thumbnail.300x300}}">
                         </p>
                     {% else %}
                         <p>Not avatar found for this profile.</p>

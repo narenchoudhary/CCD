@@ -6,7 +6,18 @@
 
 {% endblock%}
 
+{% block title %}
+    Student | CV
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-cv-detail' %}">CV</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
@@ -14,6 +25,11 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Student CVs</span>
+                    <!--TODO: Server Error-->
+                    {% if cv.cv1 or cv.cv2 %}
+                    {% else %}
+                        <p>You have not uploaded any CV yet.</p>
+                    {% endif %}
                     {% if cv.cv1 %}
                     <p>
                         <a href="{{ cv.cv1.url }}" target="_blank">
@@ -22,6 +38,7 @@
                     </p>
                     {% endif %}
 
+                    <!--TODO: Server Error-->
                     {% if cv.cv2 %}
                     <p>
                         <a href="{{ cv.cv2.url }}" target="_blank">
@@ -31,12 +48,13 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
+                    <!--TODO: Server Error-->
                     {% if cv.cv1 or cv.cv2 %}
                         <a class="btn btn-lg btn-info" href="{% url 'stud-cv-update' %}">
                             <span class="glyphicon glyphicon-cloud-upload"></span> Upload new file(s)
                         </a>
                     {% else %}
-                        <a class="btn btn-lg btn-info" href="{% url 'stud-cv-update' %}">
+                        <a class="btn btn-lg btn-info" href="{% url 'stud-cv-create' %}">
                             <span class="glyphicon glyphicon-cloud-upload"></span> Upload file(s)
                         </a>
                     {% endif %}

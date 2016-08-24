@@ -2,10 +2,20 @@
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-
 {% endblock%}
 
+{% block title %}
+    Student | Job Application List
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-jobrel-list' %}">Student job applications</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">

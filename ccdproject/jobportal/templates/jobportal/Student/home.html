@@ -2,10 +2,19 @@
 
 {% block account_setting%}
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-
 {% endblock%}
 
+{% block title %}
+    Student | Home
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
@@ -13,7 +22,7 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Welcome {{stud.name}}</span>
-                    <p>This is your Personal Dashboard for all the functions.</p>
+                    <p>This is your Personal Dashboard.</p>
                 </div>
             </div>
         </div>

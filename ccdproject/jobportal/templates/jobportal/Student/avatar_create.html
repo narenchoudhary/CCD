@@ -5,7 +5,18 @@
 <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 {% endblock%}
 
+{% block title %}
+    Student | Upload Avatar
+{% endblock %}
+
 {% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-avatar-create' %}">Upload avatar</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="row">
