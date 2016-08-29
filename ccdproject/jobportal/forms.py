@@ -6,7 +6,6 @@ from django.forms import ModelForm
 from material import *
 
 from models import *
-from widgets import CheckBoxBootstrapSwitch
 
 
 class LoginForm(forms.Form):
@@ -620,12 +619,6 @@ class ProgrammeForm(forms.ModelForm):
     class Meta:
         model = Programme
         fields = '__all__'
-        widgets = {
-            'open_for_placement': CheckBoxBootstrapSwitch(
-                switch={'size': 'large', 'on': 'warning',
-                        'text-label': 'Switch Me'}
-            )
-        }
 
 
 class StudentProfileUploadForm(forms.Form):
