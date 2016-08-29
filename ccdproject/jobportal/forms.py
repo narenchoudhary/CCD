@@ -12,7 +12,7 @@ class LoginForm(forms.Form):
     """
     Common Login Form for all Users.
     """
-    username = forms.CharField(required=True, label='Username', max_length=25)
+    username = forms.CharField(required=True, label='Username', max_length=50)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
     remember_me = forms.BooleanField(required=False, initial=False,
                                      label='Remember Me')
