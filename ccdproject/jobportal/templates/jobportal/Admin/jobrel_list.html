@@ -50,7 +50,7 @@
                                         {% if rel.placed_init %}
                                             {% if rel.placed_approved == True %}
                                                 <button class="btn green tooltipped" data-toggle="tooltip" data-placement="bottom"
-                                                    title="Placement request approved on {{rel.placed_approved_datetime }}">Approved</button>
+                                                    data-tooltip="Placement request approved on {{rel.placed_approved_datetime }}">Approved</button>
                                             {% elif rel.placed_approved == False %}
                                                 <button class="btn-danger btn btn-xs">Rejected</button>
                                             {% else %}

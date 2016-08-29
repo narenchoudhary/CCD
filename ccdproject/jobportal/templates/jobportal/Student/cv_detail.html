@@ -26,36 +26,43 @@
                 <div class="card-content">
                     <span class="card-title">Student CVs</span>
                     <!--TODO: Server Error-->
-                    {% if cv.cv1 or cv.cv2 %}
+                    {% if cv %}
+                        {%if cv.cv1 or cv.cv2 %}
+                            {% if cv.cv1 %}
+                                <p>
+                                    <a href="{{ cv.cv1.url }}" target="_blank">
+                                        <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV1
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {%if cv.cv2 %}
+                                <p>
+                                    <a href="{{ cv.cv2.url }}" target="_blank">
+                                        <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV2
+                                    </a>
+                                </p>
+                            {% endif %}
+                        {% else %}
+                            <p>You have not uploaded any CV yet.</p>
+                        {% endif %}
                     {% else %}
                         <p>You have not uploaded any CV yet.</p>
                     {% endif %}
-                    {% if cv.cv1 %}
-                    <p>
-                        <a href="{{ cv.cv1.url }}" target="_blank">
-                            <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV1
-                        </a>
-                    </p>
-                    {% endif %}
-
-                    <!--TODO: Server Error-->
-                    {% if cv.cv2 %}
-                    <p>
-                        <a href="{{ cv.cv2.url }}" target="_blank">
-                            <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV2
-                        </a>
-                    </p>
-                    {% endif %}
                 </div>
                 <div class="card-action">
-                    <!--TODO: Server Error-->
-                    {% if cv.cv1 or cv.cv2 %}
-                        <a class="btn btn-lg btn-info" href="{% url 'stud-cv-update' %}">
-                            <span class="glyphicon glyphicon-cloud-upload"></span> Upload new file(s)
-                        </a>
+                    {% if cv %}
+                        {% if cv.cv1 or cv.cv2 %}
+                            <a class="btn" href="{% url 'stud-cv-update' %}">
+                                Upload new file(s)
+                            </a>
+                        {% else %}
+                            <a class="btn" href="{% url 'stud-cv-update' %}">
+                                Upload file(s)
+                            </a>
+                        {% endif %}
                     {% else %}
                         <a class="btn btn-lg btn-info" href="{% url 'stud-cv-create' %}">
-                            <span class="glyphicon glyphicon-cloud-upload"></span> Upload file(s)
+                            Upload file(s)
                         </a>
                     {% endif %}
                 </div>

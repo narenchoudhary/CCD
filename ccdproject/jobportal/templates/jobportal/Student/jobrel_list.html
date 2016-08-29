@@ -42,15 +42,15 @@
                                     <td>{{jobrel.job.profile_name}}</td>
                                     <td>{{jobrel.creation_datetime}}</td>
                                     <td>
-                                        {% if jobrel.shortlist_init %}
-                                            {% if jobrel.placed_apporved == True %}
-                                                <span class="green-text">Placed</span>
-                                            {% else %}
-                                                <span class="green-text">Shortlisted</span>
-                                            {% endif %}
+                                        {% if jobrel.placed_approved == True %}
+                                            <span class="green-text">Placed</span>
                                         {% else %}
+                                            {% if jobrel.shortlist_init %}
+                                                <span class="green-text">Shortlisted</span>
+                                            {% else %}
                                                 <span class="red-text">Not Shortlisted</span>
-                                        {% endif%}
+                                            {% endif%}
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <a href="{% url 'stud-job-detail' jobrel.job.id %}"

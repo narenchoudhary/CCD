@@ -44,18 +44,7 @@
                 <form method="post" accept-charset="utf-8">
                     {% csrf_token %}
                     {% form %}
-                        {% part form.event_type prefix %}
-                            <i class="material-icons prefix">filter_list</i>
-                        {% endpart %}
-                        {% part form.duration prefix %}
-                            <i class="material-icons prefix">watch_later</i>
-                        {% endpart %}
-                        {% part form.logistics prefix %}
-                            <i class="material-icons prefix">event_note</i>
-                        {% endpart %}
-                        {% part form.remark prefix %}
-                            <i class="material-icons prefix">comment</i>
-                        {% endpart %}
+                        
                     {% endform %}
                     <div class="card-action">
                         <div class="right-align">

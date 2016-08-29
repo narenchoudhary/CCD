@@ -78,9 +78,6 @@ class AvatarAdmin(admin.ModelAdmin):
 class AdminAdmin(admin.ModelAdmin):
     list_display = ('user', 'position')
 
-
-admin.site.register(SiteManagement)
-
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Admin, AdminAdmin)
 admin.site.register(Company, ComanyAdmin)

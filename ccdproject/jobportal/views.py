@@ -518,7 +518,7 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
             jobrel = StudentJobRelation(stud=self.stud, job=self.job)
             jobrel.save()
             for (question, answer) in form.extra_answers():
-                setattr(jobrel, question, answer)
+                setattr(jobrel, str(question).lower(), answer)
             jobrel.save()
             return redirect('stud-job-detail', pk=self.job.id)
         else:

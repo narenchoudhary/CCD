@@ -16,12 +16,14 @@
                     {% if event_list.count > 0 %}
                         <table class="table bordered">
                             <thead>
-                                <th>Event Title</th>
-                                <th>Company</th>
-                                <th>Event Type</th>
-                                <th>Duration</th>
-                                <th>Approved</th>
-                                <th>Update</th>
+                                <tr>
+                                    <th>Event Title</th>
+                                    <th>Company</th>
+                                    <th>Event Type</th>
+                                    <th>Duration</th>
+                                    <th>Approved</th>
+                                    <th>Details</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 {% for event in event_list %}
@@ -32,8 +34,8 @@
                                     <td>{{event.duration}}</td>
                                     <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
                                     <td>
-                                        <a class="btn btn-xs btn-info" role="button"
-                                           href="{% url 'admin-event-update' event.id %}">Update</a>
+                                        <a href="{% url 'admin-event-detail' event.id %}"
+                                           class="btn">detail</a>
                                     </td>
                                 </tr>
                                 {% endfor %}

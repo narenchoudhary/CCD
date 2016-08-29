@@ -368,6 +368,7 @@ class SelectCVForm(forms.Form):
             raise ValidationError("Select one CV.")
         if true_count is 2 and false_count is 0:
             raise ValidationError("Select only one CV.")
+        return self.cleaned_data
 
 
 class AlumniProfileForm(ModelForm):
@@ -395,6 +396,11 @@ class SignatureForm(forms.ModelForm):
 
 
 class CVForm(forms.ModelForm):
+
+    widgets = {
+
+    }
+
     class Meta:
         model = CV
         fields = ['cv1', 'cv2']
@@ -557,6 +563,14 @@ class EventForm(forms.ModelForm):
 
 class AdminEventForm(forms.ModelForm):
 
+    layout = Layout(
+        Row('title'),
+        Row(Span6('event_type'), Span6('duration')),
+        Row('logistics'),
+        Row('remark'),
+        Row('is_approved', 'final_date')
+    )
+
     class Meta:
         model = Event
         fields = ['title', 'event_type', 'duration', 'logistics', 'remark',
@@ -581,7 +595,7 @@ class AdminEventForm(forms.ModelForm):
             return cleaned_data
         else:
             err_msg = "Either update both 'Approval Status' and " \
-                      "'Approved Date' or leave both unupdated."
+                      "'Approved Date' or leave both unchanged."
             raise forms.ValidationError(err_msg)
 
 

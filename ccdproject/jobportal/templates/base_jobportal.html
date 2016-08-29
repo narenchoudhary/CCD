@@ -23,24 +23,8 @@
     {% include 'material/includes/material_js.html' %}
 
     <!--MDL CSS-->
-    <link rel="stylesheet"
-          href="{% static 'material/css/materialize.min.css' %}">
-    <link rel="stylesheet" href="{% static 'material/css/materialize.css' %}">
-    <link rel="stylesheet"
-          href="{% static 'material/css/jquery.datetimepicker.css' %}">
-    <link rel="stylesheet"
-          href="{% static 'material/css/responsive.dataTables.css' %}">
-    <link rel="stylesheet"
-          href="{% static 'material/css/fixedHeader.dataTables.css' %}">
-    <link rel="stylesheet" href="{% static 'material/css/forms.css' %}">
-    <!--<link rel="stylesheet" href="{% static 'material/css/frontend.css' %}">-->
     <link rel="stylesheet" href="http://forms.viewflow.io/static/material/admin/css/base.css">
-
-    <!--MDL Fonts-->
-    <!--<link href='https://fonts.googleapis.com/icon?family=Material+Icons'
-            rel='stylesheet' type='text/css'>-->
-    <link href="{% static 'material/css/icon_material_icons.css' %}"
-          rel='stylesheet' type='text/css'>
+    <script src="http://forms.viewflow.io/static/material/js/jquery.formset.js"></script>
 
     <!--This block is for linking css/js files specifies to some particular template-->
     {% block head_extra_tags %}
@@ -116,13 +100,6 @@
 
 <!-- Placed at the end of the document so the pages load faster -->
 <!--MDL JS-->
-
-<script src="{% static 'material/js/jquery.dataTables.js' %}"></script>
-<script src="{% static 'material/js/dataTables.responsive.js' %}"></script>
-<script src="{% static 'material/js/dataTables.fixedHeader.js' %}"></script>
-<script src="{% static 'material/frontend/js/jquery.activeNavigation.js' %}"></script>
-<script src="{% static 'material/js/material_init.js' %}"></script>
-<script src="{% static 'material/frontend/js/frontend.js' %}"></script>
 <!--Sorter-->
 <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
 <script>

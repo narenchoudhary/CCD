@@ -76,7 +76,7 @@ class Year(models.Model):
 
 class Department(models.Model):
     year = models.ForeignKey(Year)
-    dept = models.CharField(max_length=75)
+    dept = models.CharField(max_length=90)
     dept_code = models.CharField(max_length=4)
 
     class Meta:
@@ -104,6 +104,7 @@ class Programme(models.Model):
 
     class Meta:
         unique_together = ['year', 'dept', 'name', 'minor_status']
+        managed = True
 
     def __unicode__(self):
         return str(self.name)
@@ -127,7 +128,7 @@ class Admin(models.Model):
 class Company(models.Model):
     user = models.OneToOneField(UserProfile, blank=True, null=True,
                                 limit_choices_to={'user_type': 'company'})
-    company_name = models.CharField(blank=False, null=True, max_length=30,
+    company_name = models.CharField(blank=False, null=True, max_length=50,
                                     verbose_name="Company Name")
     description = models.TextField(blank=False, null=True,
                                    verbose_name="Description")
@@ -222,9 +223,9 @@ class Student(models.Model):
     iitg_webmail = models.CharField(max_length=50, blank=False,
                                     verbose_name="IITG Webmail",
                                     unique=True)
-    roll_no = models.DecimalField(max_digits=10, decimal_places=0, unique=True,
+    roll_no = models.DecimalField(max_digits=15, decimal_places=0, unique=True,
                                   verbose_name="Roll No", default=0)
-    name = models.CharField(max_length=60, default="",
+    name = models.CharField(max_length=80, default="",
                             verbose_name="Full Name")
     dob = models.DateField(default=timezone.now, blank=True,
                            verbose_name='DOB')
@@ -311,7 +312,8 @@ class Student(models.Model):
                                   null=True,
                                   verbose_name='Reason For Gap In Study')
     jee_air_rank = models.DecimalField(max_digits=6, decimal_places=0,
-                                       default=0, verbose_name='JEE AIR Rank')
+                                       default=0, verbose_name='JEE AIR Rank',
+                                       null=True, blank=True)
     linkedin_link = models.URLField(max_length=254, blank=True, null=True,
                                     verbose_name='LinkedIn Account Public URL')
     # grades
@@ -319,33 +321,33 @@ class Student(models.Model):
                               default=0.00, verbose_name='CPI',
                               validators=[MaxValueValidator(10.0),
                                           MinValueValidator(0.0)])
-    spi_1_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_1_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 1st Semester')
-    spi_2_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_2_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 2nd Semester')
-    spi_3_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_3_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 3rd Semester')
-    spi_4_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_4_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 4th Semester')
-    spi_5_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_5_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 5th Semester')
-    spi_6_sem = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
-                                    default=0.00,
+    spi_6_sem = models.DecimalField(max_digits=4, decimal_places=2,
+                                    blank=False, null=False, default=0.00,
                                     validators=[MaxValueValidator(10.0),
                                                 MinValueValidator(0.0)],
                                     verbose_name='SPI 6th Semester')
@@ -376,7 +378,7 @@ class Job(models.Model):
     # Fields Needed
     description = models.TextField(blank=True, null=True,
                                    verbose_name='Job Description')
-    designation = models.CharField(blank=True, max_length=50, null=True,
+    designation = models.CharField(blank=True, max_length=90, null=True,
                                    verbose_name='Job Designation')
     profile_name = models.CharField(max_length=50, null=True,
                                     verbose_name='Profile Name')
@@ -503,7 +505,7 @@ class StudentJobRelation(models.Model):
 
 class Event(models.Model):
     company_owner = models.ForeignKey(Company, null=True, blank=True)
-    title = models.CharField(max_length=30, null=True,
+    title = models.CharField(max_length=50, null=True,
                              verbose_name='Event Title')
     event_type = models.CharField(max_length=30, choices=EVENT_TYPE,null=True,
                                   verbose_name='Event Type',
@@ -512,14 +514,14 @@ class Event(models.Model):
     duration = models.DecimalField(default=1, max_digits=4, decimal_places=2,
                                    verbose_name="Estimated Duration (in "
                                                 "hours)")
-    logistics = models.CharField(null=True, blank=True, max_length=150,
+    logistics = models.CharField(null=True, blank=True, max_length=400,
                                  verbose_name="Logistics")
-    remark = models.CharField(max_length=300, null=True, blank=True,
+    remark = models.CharField(max_length=400, null=True, blank=True,
                               verbose_name='Remark (Optional)')
     final_date = models.DateField(null=True, blank=True,
                                   verbose_name='Approved Date',
                                   help_text="This is the date assigned for "
-                                            " the event by Administrator.")
+                                            " the event by the administrator.")
     is_approved = models.NullBooleanField(default=None,
                                           verbose_name='Approval Status')
     creation_datetime = models.DateTimeField(editable=False, null=True,
