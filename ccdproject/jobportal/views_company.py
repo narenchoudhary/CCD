@@ -299,8 +299,6 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
         context['jobid'] = self.job.id
-        deadline = self.job.application_deadline
-        context['hide'] = timezone.now().date() <= deadline
         return context
 
 

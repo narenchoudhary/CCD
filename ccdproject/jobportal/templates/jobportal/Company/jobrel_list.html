@@ -32,45 +32,50 @@
                             </thead>
                             <tbody>
                                 {% for rel in rel_list %}
-                                    <tr class="{% if rel.stud.placed %} red lighten-4 {% endif %}">
+                                    <tr class="{% if rel.placed_approved %} light-green
+                                    {% elif rel.stud.placed %} red lighten-4 {% endif %}">
                                         <td>{{ rel.stud.name }}</td>
                                         <td>{{ rel.stud.prog }}</td>
                                         <td>{{ rel.stud.dept}}</td>
                                         <td>
-                                            {% if rel.stud.placed %}
-                                                NOT AVAILABLE
+                                            {% if rel.placed_init %}
+                                                <button class="btn disabled tooltipped" data-position="bottom"
+                                                        data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
+                                                    Shortlist
+                                                </button>
                                             {% else %}
-                                                {% if rel.shortlist_init %}
-                                                    <button class="btn disabled tooltipped" data-position="bottom"
-                                                    data-tooltip="Candidate was shortlisted on {{rel.shortlist_init_datetime}}">
-                                                    Shortlisted</button>
+                                                {% if rel.stud.placed %}
+                                                    NOT AVAILABLE
                                                 {% else %}
-                                                    <a class="btn tooltipped" data-position="bottom"
-                                                       href="{% url 'company-jobrel-shortlist' rel.job.id rel.id %}"
-                                                       data-tooltip="Shortlist this candidate">
-                                                        Shortlist</a>
+                                                    {% if rel.shortlist_init %}
+                                                        <button class="btn disabled tooltipped" data-position="bottom"
+                                                                data-tooltip="Candidate was shortlisted on {{rel.shortlist_init_datetime}}">
+                                                            Shortlisted</button>
+                                                    {% else %}
+                                                        <a class="btn tooltipped" data-position="bottom"
+                                                           href="{% url 'company-jobrel-shortlist' rel.job.id rel.id %}"
+                                                           data-tooltip="Shortlist this candidate">
+                                                            Shortlist</a>
+                                                    {% endif %}
                                                 {% endif %}
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if rel.stud.placed %}
-                                                NOT AVAILABLE
-                                            {% else %}
                                             {% if rel.placed_init %}
                                                 <a class="btn disabled tooltipped" data-position="bottom"
-                                                        data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
+                                                   data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
                                                     Selected
                                                 </a>
                                             {% else %}
-                                                <a href="{% url 'company-jobrel-place' rel.job.id rel.id %}"
+                                                {% if rel.stud.placed %}
+                                                    NOT AVAILABLE
+                                                {% else %}
+                                                    <a href="{% url 'company-jobrel-place' rel.job.id rel.id %}"
                                                    class="btn" >Place</a>
-                                            {% endif %}
+                                                {% endif %}
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if rel.stud.placed %}
-                                                NOT AVAILABLE
-                                            {% else %}
                                             {% if rel.placed_init %}
                                                 {% if rel.placed_approved == True %}
                                                     Approved
@@ -80,15 +85,17 @@
                                                     Pending
                                                 {% endif %}
                                             {% else %}
-                                                Not Selected
-                                            {% endif %}
+                                                {% if rel.stud.placed %}
+                                                    NOT AVAILABLE
+                                                {% else %}
+                                                    Not Selected
+                                                {% endif %}
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if rel.stud.placed %}
+                                            {% if rel.stud.placed and rel.placed_approved != True %}
                                                 NOT AVAILABLE
                                             {% else %}
-                                            {% if hide == False %}
                                                 {% if rel.cv1 %}
                                                     <a href="{% url 'company-jobrel-cv' rel.id 1 %}"
                                                        class="btn" target="_blank">CV1</a>
@@ -98,9 +105,6 @@
                                                 {% else %}
                                                     No CV
                                                 {% endif %}
-                                            {% else %}
-                                                <a class="btn disabled">CV</a>
-                                            {% endif %}
                                             {% endif %}
                                         </td>
                                     </tr>

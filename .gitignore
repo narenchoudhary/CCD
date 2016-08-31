@@ -144,4 +144,13 @@ media/*
 
 
 # ignore media files
-/ccdproject/media/
+ccdproject/media/**
+!ccdproject/media/.gitkeep
+
+
+# ignore static_cdn
+static_cdn/
+
+# ignore CSV files
+*.csv
+
