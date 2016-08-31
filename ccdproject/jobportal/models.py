@@ -383,7 +383,7 @@ class Job(models.Model):
     profile_name = models.CharField(max_length=50, null=True,
                                     verbose_name='Profile Name')
     num_openings = models.DecimalField(max_digits=3, decimal_places=0,
-                                       null=True, blank=True, default=10,
+                                       null=True, blank=False,
                                        verbose_name='Expected number of '
                                                     'recruitments from IIT '
                                                     'Guwahati')
@@ -406,11 +406,12 @@ class Job(models.Model):
     # Salary
     currency = models.CharField(default="INR", max_length=15, null=True)
     ctc_btech = models.DecimalField(max_digits=16, decimal_places=2,
-                                    default=0.00, null=True,
-                                    blank=True, verbose_name='B.Tech CTC/year')
+                                    default=0.00, null=True, blank=True,
+                                    verbose_name='B.Tech/B.Des CTC/year')
     ctc_mtech = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
-                                    blank=True, verbose_name='M.Tech CTC/year')
+                                    blank=True,
+                                    verbose_name='M.Tech/M.Des CTC/year')
     ctc_msc = models.DecimalField(max_digits=16, decimal_places=2,
                                   default=0.00, null=True,
                                   blank=True, verbose_name='M.Sc. CTC/year')
@@ -423,11 +424,11 @@ class Job(models.Model):
     gross_btech = models.DecimalField(max_digits=16, decimal_places=2,
                                       default=0.00, null=True,
                                       blank=True,
-                                      verbose_name='B.Tech Gross Salary')
+                                      verbose_name='B.Tech/B.Des Gross Salary')
     gross_mtech = models.DecimalField(max_digits=16, decimal_places=2,
                                       default=0.00, null=True,
                                       blank=True,
-                                      verbose_name='M.Tech Gross Salary')
+                                      verbose_name='M.Tech/M.Des Gross Salary')
     gross_msc = models.DecimalField(max_digits=16, decimal_places=2,
                                     default=0.00, null=True,
                                     blank=True,
@@ -440,6 +441,9 @@ class Job(models.Model):
                                     default=0.00, null=True,
                                     blank=True,
                                     verbose_name='Ph.D. Gross Salary')
+    additional_info = models.TextField(blank=True, null=True, default="",
+                                       verbose_name='Additional Information '
+                                                    'About Salary (if any)')
     # Job description
     bond_link = models.FileField(null=True, blank=True,
                                  upload_to=get_bond_link_name,

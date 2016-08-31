@@ -91,9 +91,10 @@ class CompanyJobForm(ModelForm):
                  Row('ctc_mtech', 'gross_mtech'),
                  Row('ctc_msc', 'gross_msc'),
                  Row('ctc_ma', 'gross_ma'),
-                 Row('ctc_phd', 'gross_phd')
+                 Row('ctc_phd', 'gross_phd'),
+                 Row('additional_info')
                  ),
-        Fieldset('Legal Doucment', 'bond_link')
+        Fieldset('Legal Document', 'bond_link')
     )
 
     class Meta:
@@ -103,7 +104,7 @@ class CompanyJobForm(ModelForm):
                   'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
-                  'bond_link']
+                  'bond_link', 'additional_info']
 
     def clean(self):
         cleaned_data = super(CompanyJobForm, self).clean()
@@ -177,9 +178,10 @@ class AdminJobEditForm(ModelForm):
                  Row('ctc_mtech', 'gross_mtech'),
                  Row('ctc_msc', 'gross_msc'),
                  Row('ctc_ma', 'gross_ma'),
-                 Row('ctc_phd', 'gross_phd')
+                 Row('ctc_phd', 'gross_phd'),
+                 Row('additional_info')
                  ),
-        Fieldset('Legal Doucment', 'bond_link'),
+        Fieldset('Legal Document', 'bond_link'),
         Fieldset(
             'Opening and Closing Dates',
             'opening_date',
@@ -195,7 +197,7 @@ class AdminJobEditForm(ModelForm):
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link', 'opening_date', 'application_deadline',
-                  'backlog_filter', 'num_backlogs_allowed']
+                  'backlog_filter', 'num_backlogs_allowed', 'additional_info']
 
     def __init__(self, *args, **kwargs):
         super(AdminJobEditForm, self).__init__(*args, **kwargs)

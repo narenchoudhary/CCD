@@ -103,6 +103,7 @@ INDUSTRY_SECTOR = (
 )
 
 EVENT_TYPE = (
+    ('Screening Test', 'Screening Test'),
     ('Pre Placement Talk', 'Pre Placement Talk'),
     ('Workshop', 'Workshop'),
     ('Promotional Event', 'Promotional Event'),
