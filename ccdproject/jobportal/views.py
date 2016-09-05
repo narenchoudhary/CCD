@@ -162,6 +162,24 @@ class Login(View):
                             error = 'User not active yet.'
                             args = dict(form=form, error=error)
                             return render(request, self.template_name, args)
+                    elif user_type == 'verifier':
+                        if user_profile.is_active:
+                            user = auth.authenticate(username=username,
+                                                     password=password)
+                            if user is not None:
+                                auth.login(request, user)
+                                request.session['verifier_instance_id'] = \
+                                    user_profile.id
+                                return redirect('verifier-home')
+                            else:
+                                error = 'Incorrect password.'
+                                args = dict(form=form, error=error)
+                                return render(request, self.template_name,
+                                              args)
+                        else:
+                            error = 'User not active yet.'
+                            args = dict(form=form, error=error)
+                            return render(request, self.template_name, args)
                     elif user_type == 'company':
                         if user_profile.is_active:
                             user = auth.authenticate(username=username,

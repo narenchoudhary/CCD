@@ -20,6 +20,7 @@ USER_TYPE = (
     ('alumni', 'alumni'),
     ('admin', 'admin'),
     ('company', 'company'),
+    ('verifier', 'verifier'),
 )
 
 
@@ -27,7 +28,7 @@ USER_CATEGORY = (
     ('Current Student', 'Current Student'),
     ('Alumni', 'Alumni'),
     ('Company', 'Company'),
-    ('Admin', 'Admin')
+    ('Admin', 'Admin'),
 )
 
 DEPARTMENTS = (

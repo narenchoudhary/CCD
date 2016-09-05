@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
 
-from . import views, views_admin, views_company, views_alumni, views_print
+from . import (views, views_admin, views_company, views_alumni, views_print,
+               views_verifier)
 
 urlpatterns = [
     # url(r'^$', TemplateView.as_view(template_name='jobportal/index.html'),
@@ -217,4 +218,20 @@ urlpatterns = [
     url(r'^printcsv/(?P<jobid>\d+)$', views_print.candidates_stud_csv,
         name='printcsv'),
     url(r'^companies_csv/$', views_print.companies_csv, name='companies_csv'),
+
+
+    url(r'^verifier/home/$', views_verifier.Home.as_view(),
+        name="verifier-home"),
+    url(r'^verifier/student/(?P<studid>\d+)/detail/$',
+        views_verifier.StudentDetail.as_view(),
+        name="verifier-student-detail"),
+    url(r'^verifier/student/(?P<studid>\d+)/update/$',
+        views_verifier.StudentUpdate.as_view(),
+        name="verifier-student-update"),
+    url(r'^verifier/student/(?P<studid>\d+)/cv/update/$',
+        views_verifier.CVUpdate.as_view(),
+        name="verifier-cv-update"),
+    url(r'^verifier/student/(?P<studid>\d+)/cv/(?P<cvno>\d+)/$',
+        views_verifier.StudentCVDownload.as_view(),
+        name='verifier-student-cv-download'),
 ]
