@@ -491,14 +491,14 @@ class DownloadStudCV(LoginRequiredMixin, UserPassesTestMixin, View):
         if cvno == '1' and bool(cv.cv1.name):
             response = HttpResponse(cv.cv1,
                                     content_type='application/pdf')
-            download_name = 'IITG_' + str(cv.stud.roll_no)
+            download_name = 'CV_' + str(cv.stud.roll_no) + '_IITG.pdf'
             response['Content-Disposition'] = 'attachment; filename=%s' % \
                                               smart_str(download_name)
             return response
         elif cvno == '2' and bool(cv.cv2.name):
             response = HttpResponse(cv.cv2,
                                     content_type='application/pdf')
-            download_name = 'IITG_' + str(cv.stud.roll_no)
+            download_name = 'CV_' + str(cv.stud.roll_no) + '_IITG.pdf'
             response['Content-Disposition'] = 'attachment; filename=%s' % \
                                               smart_str(download_name)
             return response

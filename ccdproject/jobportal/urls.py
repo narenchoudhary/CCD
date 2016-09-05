@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^stud/cv/$', views.CVDetail.as_view(), name='stud-cv-detail'),
     url(r'^stud/cv/create/$', views.CVCreate.as_view(), name='stud-cv-create'),
     url(r'^stud/cv/update/$', views.CVUpdate.as_view(), name='stud-cv-update'),
+    url(r'^stud/cv/(?P<cvno>\d+)/download/$', views.DownloadCV.as_view(),
+        name='stud-cv-download'),
 
     url(r'^stud/event/list/$', views.EventList.as_view(),
         name='stud-event-list'),

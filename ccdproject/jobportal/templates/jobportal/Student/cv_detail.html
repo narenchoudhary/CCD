@@ -30,14 +30,14 @@
                         {%if cv.cv1 or cv.cv2 %}
                             {% if cv.cv1 %}
                                 <p>
-                                    <a href="{{ cv.cv1.url }}" target="_blank">
+                                    <a href="{% url 'stud-cv-download' 1 %}" target="_blank">
                                         <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV1
                                     </a>
                                 </p>
                             {% endif %}
                             {%if cv.cv2 %}
                                 <p>
-                                    <a href="{{ cv.cv2.url }}" target="_blank">
+                                    <a href="{% url 'stud-cv-download' 2 %}" target="_blank">
                                         <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV2
                                     </a>
                                 </p>

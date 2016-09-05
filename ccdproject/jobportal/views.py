@@ -807,21 +807,21 @@ class DownloadCV(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.user_type == 'student'
 
-    def get(self, cvno):
+    def get(self, request, cvno):
         cv = get_object_or_404(
-          CV, stud__id= self.request.session['student_instance_id']
+          CV, stud__id=self.request.session['student_instance_id']
         )
         if cvno == '1' and bool(cv.cv1.name):
             response = HttpResponse(cv.cv1,
                                     content_type='application/pdf')
-            download_name = cv.stud.user.username + '_' + cvno
+            download_name = 'CV1_' + str(cv.stud.roll_no) + '_IITG.pdf'
             response['Content-Disposition'] = 'attachment; filename=%s' % \
                                               smart_str(download_name)
             return response
         elif cvno == '2' and bool(cv.cv2.name):
             response = HttpResponse(cv.cv2,
                                     content_type='application/pdf')
-            download_name = cv.stud.user.username + '_' + cvno
+            download_name = 'CV2_' + str(cv.stud.roll_no) + '_IITG.pdf'
             response['Content-Disposition'] = 'attachment; filename=%s' % \
                                               smart_str(download_name)
             return response
