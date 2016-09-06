@@ -71,7 +71,15 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
 
 
 class AvatarAdmin(admin.ModelAdmin):
-    list_display = ('stud',)
+    model = Avatar
+    list_display = ('stud', 'stud_name', 'last_updated', )
+    readonly_fields = ('image_tag', 'stud_name')
+
+
+class SignatureAdmin(admin.ModelAdmin):
+    model = Signature
+    list_display = ('stud', 'stud_name', 'last_updated')
+    readonly_fields = ('image_tag', 'stud_name')
 
 
 class AdminAdmin(admin.ModelAdmin):
@@ -90,7 +98,7 @@ admin.site.register(ProgrammeJobRelation, ProgrammeJobRelationAdmin)
 admin.site.register(Programme, ProgrammeAdmin)
 
 admin.site.register(Avatar, AvatarAdmin)
-admin.site.register(Signature)
+admin.site.register(Signature, SignatureAdmin)
 admin.site.register(CV)
 
 admin.site.register(Event, EventAdmin)

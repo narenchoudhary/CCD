@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.html import format_html
 
 from versatileimagefield.fields import VersatileImageField
 
@@ -544,6 +545,15 @@ class Avatar(models.Model):
         self.last_updated = timezone.now()
         super(Avatar, self).save(*args, **kwargs)
 
+    def image_tag(self):
+        return format_html(
+            '<img src="%s" width="200" height="200" />' % self.avatar.url)
+
+    def stud_name(self):
+        return self.stud.name
+
+    image_tag.short_description = 'Avatar Image'
+
 
 class Signature(models.Model):
     stud = models.OneToOneField(Student, on_delete=models.CASCADE,
@@ -555,6 +565,15 @@ class Signature(models.Model):
     def save(self, *args, **kwargs):
         self.last_updated = timezone.now()
         super(Signature, self).save(*args, **kwargs)
+
+    def image_tag(self):
+        return format_html(
+            '<img src="%s" width="200" height="200" />' % self.signature.url)
+
+    def stud_name(self):
+        return self.stud.name
+
+    image_tag.short_description = 'Signature Image'
 
 
 class CV(models.Model):
