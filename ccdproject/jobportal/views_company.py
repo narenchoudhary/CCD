@@ -619,18 +619,13 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                          ProgrammeJobRelation.objects.filter(job__id=jobpk)]
         minor_list = Programme.objects.filter(open_for_placement=True,
                                               minor_status=True)
-        btech_bdes_list = Programme.objects.filter(
-            open_for_placement=True, minor_status=False
-        ).filter(
-            Q(name='BTECH') | Q(name='BDES')
-        )
+        bachelors_list = Programme.objects.filter(
+            open_for_placement=True, minor_status=False).filter(
+            Q(name='BTECH') | Q(name='BDES'))
 
-        mtech_mdes_list = Programme.objects.filter(
-            open_for_placement=True,
-            minor_status=False
-        ).filter(
-            Q(name='MTECH') | Q(name='MDES')
-        )
+        masters_list = Programme.objects.filter(
+            open_for_placement=True, minor_status=False).filter(
+            Q(name='MTECH') | Q(name='MDES'))
 
         phd_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
@@ -641,8 +636,8 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         msc_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='MSC')
-        args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
-                    ma_list=ma_list, mtech_mdes_list=mtech_mdes_list,
+        args = dict(minor_list=minor_list, btech_bdes_list=bachelors_list,
+                    ma_list=ma_list, mtech_mdes_list=masters_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
                     saved_jobrels=saved_jobrels)
         return render(request, self.template_name, args)
@@ -671,8 +666,6 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
             ProgrammeJobRelation.objects.get_or_create(
                 job=job,
-                year=programme.year,
-                dept=programme.dept,
                 prog=programme
             )
         return redirect('company-job-detail', pk=job.id)

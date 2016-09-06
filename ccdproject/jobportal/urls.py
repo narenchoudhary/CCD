@@ -51,17 +51,6 @@ urlpatterns = [
     url(r'^stud/sign/update/$', views.SignatureUpdate.as_view(),
         name='stud-sign-update'),
 
-
-    url(r'^alum_home/$', views_alumni.alum_home, name='alum_home'),
-    url(r'^alum_view_profile$', views_alumni.view_profile,
-        name='alum_view_profile'),
-    url(r'^alum_edit_profile$', views_alumni.edit_profile,
-        name='alum_edit_profile'),
-    url(r'^alum_cv_upload$', views_alumni.upload_cv,
-        name='alum_cv_upload'),
-
-
-
     url(r'^signup/$', views_company.CompanySignUpView.as_view(),
         name='sigup'),
     url(r'^company/signup/$', views_company.CompanySignUpView.as_view(),
@@ -186,15 +175,6 @@ urlpatterns = [
     url(r'^admin/event/(?P<pk>\d+)/update/$',
         views_admin.EventUpdate.as_view(), name='admin-event-update'),
 
-    url(r'^admin/department/list/$', views_admin.DepartmentList.as_view(),
-        name="department-list"),
-    url(r'^admin/department/create/$', views_admin.DepartmentCreate.as_view(),
-        name="department-create"),
-    url(r'^admin/department/(?P<pk>\d+)/detail/$',
-        views_admin.DepartmentDetail.as_view(), name="department-detail"),
-    url(r'^admin/department/(?P<pk>\d+)/update/$',
-        views_admin.DepartmentUpdate.as_view(), name='department-update'),
-
     url(r'^admin/programme/list/$', views_admin.ProgrammeList.as_view(),
         name="programme-list"),
     url(r'^admin/programme/create/$', views_admin.ProgrammeCreate.as_view(),
@@ -208,12 +188,6 @@ urlpatterns = [
     url(r'^admin/programme/internship/list/$',
         views_admin.ProgrammeInternshipList.as_view(),
         name='admin-programme-internship-list'),
-
-
-    url(r'^admin/year/list/$', views_admin.YearList.as_view(),
-        name="year-list"),
-    url(r'^admin/year/create/$', views_admin.YearCreate.as_view(),
-        name="year-add"),
 
     url(r'^printcsv/(?P<jobid>\d+)$', views_print.candidates_stud_csv,
         name='printcsv'),

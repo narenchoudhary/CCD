@@ -18,8 +18,8 @@ from django.views.generic import (View, ListView, CreateView, DetailView,
                                   TemplateView, UpdateView)
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
-                     Avatar, Signature, Department, Year, Programme,
-                     ProgrammeJobRelation, UserProfile, Event)
+                     Avatar, Signature, Programme, ProgrammeJobRelation,
+                     UserProfile, Event)
 from .forms import (AdminJobEditForm, StudentSearchForm,
                     EditCompany, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm)
@@ -37,77 +37,6 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['admin'] = Admin.objects.get(user=self.request.user)
-        return context
-
-
-class YearList(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    login_url = reverse_lazy('login')
-    queryset = Year.objects.all()
-    template_name = 'jobportal/Admin/year_list.html'
-    context_object_name = 'years'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class YearCreate(UserPassesTestMixin, LoginRequiredMixin, CreateView):
-    login_url = reverse_lazy('login')
-    model = Year
-    fields = '__all__'
-    template_name = 'jobportal/Admin/year_create.html'
-    success_url = reverse_lazy('year-list')
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class DepartmentList(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    login_url = reverse_lazy('login')
-    queryset = Department.objects.all()
-    template_name = 'jobportal/Admin/department_list.html'
-    context_object_name = 'departments'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class DepartmentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    login_url = reverse_lazy('login')
-    model = Department
-    template_name = 'jobportal/Admin/department_detail.html'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class DepartmentCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    login_url = reverse_lazy('login')
-    model = Department
-    fields = '__all__'
-    template_name = 'jobportal/Admin/department_create.html'
-    success_url = reverse_lazy('department-list')
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class DepartmentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    login_url = reverse_lazy('login')
-    model = Department
-    fields = '__all__'
-    template_name = 'jobportal/Admin/department_update.html'
-    success_url = reverse_lazy('department-list')
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get_object(self, queryset=None):
-        obj = Department.objects.get(id=self.kwargs['pk'])
-        return obj
-    
-    def get_context_data(self, **kwargs):
-        context = super(DepartmentUpdate, self).get_context_data(**kwargs)
-        context['deptid'] = self.kwargs['pk']
         return context
 
 
@@ -387,8 +316,6 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
 
             ProgrammeJobRelation.objects.get_or_create(
                 job=job,
-                year=programme.year,
-                dept=programme.dept,
                 prog=programme
             )
         return redirect('admin-job-detail', pk=job.id)
@@ -657,56 +584,33 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         except ValueError:
             return False, 'Roll number is not a valid number'
         # check year
-        try:
-            year = int(str(row[3]).strip())
-        except ValueError:
-            return False, 'Year is not a valid number.'
-        # get year
-        try:
-            year_instance = Year.objects.get(current_year=year)
-        except Year.DoesNotExist:
-            return False, 'Year %s doen not exist in DB' % year
-        # get dept code
-        try:
-            dept_code = str(row[4]).upper()
-            dept_instance = Department.objects.get(year=year_instance,
-                                                   dept_code=dept_code)
-        except Department.DoesNotExist:
-            return False, 'Department %s does not not exist in DB' \
-                   % str(row[4]).upper()
-        # get programme
-        try:
-            prog = str(row[5]).upper()
-            Programme.objects.get(year=year_instance, dept=dept_instance,
-                                  name=prog, minor_status=False,
-                                  discipline__iexact=row[6])
-        except Programme.DoesNotExist:
-            return False, 'Programme %s does not exist in DB' \
-                   % str(row[5]).upper()
+        if '' in [str(row[7]), str(row[8]), str(row[9]), str(row[10])]:
+            return False, 'No programme related fields should be empty.'
+        else:
+            try:
+                year = int(str(row[3]).strip())
+            except ValueError:
+                return False, 'Year is not a valid number.'
+            # get programme
+            try:
+                dept = str(row[4])
+                prog = str(row[5]).upper()
+                Programme.objects.get(year=year, dept=dept,
+                                      name=prog, minor_status=False,
+                                      discipline__iexact=str(row[6]).strip())
+            except Programme.DoesNotExist:
+                return False, 'Programme %s does not exist in DB' \
+                       % str(row[5]).upper()
         # check minor_year
-        try:
-            minor_year = int(str(row[3]).strip())
-        except ValueError:
-            return False, 'Year is not a valid number.'
-        # get minor year
-        if row[7] != '':
+        if '' not in [str(row[7]), str(row[8]), str(row[9]), str(row[10])]:
             try:
-                minor_year = Year.objects.get(current_year=year)
-            except Year.DoesNotExist:
-                return False, 'Minor year %s doen not exist in DB' % year
-        # check minor department
-        if row[8] != '':
+                minor_year = int(str(row[7]).strip())
+            except ValueError:
+                return False, 'Year is not a valid number.'
             try:
-                minor_dept_code = str(row[8]).upper()
-                minor_dept_instance = Department.objects.get(
-                    year=minor_year, dept_code=minor_dept_code)
-            except Department.DoesNotExist:
-                return False, 'Minor Department %s for year %s does not not ' \
-                              'exist in DB ' % (minor_dept_code, minor_year)
-        if row[9] != '' and row[10] != '':
-            try:
+                minor_dept = str(row[8])
                 minor_prog = str(row[9]).upper()
-                Programme.objects.get(year=year_instance, dept=dept_instance,
+                Programme.objects.get(year=minor_year, dept=minor_dept,
                                       name=minor_prog, minor_status=True,
                                       discipline__iexact=str(row[10]).strip())
             except Programme.DoesNotExist:
@@ -769,35 +673,28 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                         user_type='student'
                     )
                     try:
-                        year = None
-                        dept = None
                         prog = None
-                        if row[3] != '':
-                            year = Year.objects.get(current_year=int(row[3]))
-                        if year and row[4] != '':
-                            dept = Department.objects.get(
-                                year=year,
-                                dept_code=str(row[4]).strip().upper())
-                        if year and dept and row[5] != '':
+                        if '' not in [row[3], row[4], row[5], row[6]]:
+                            year = int(row[3])
+                            dept = str(row[4]).strip()
+                            name = str(row[5]).strip()
+                            discipline = str(row[6]).strip()
                             prog = Programme.objects.get(
-                                year=year, dept=dept, name=str(row[5]),
+                                year=year, dept=dept, name=name,
                                 minor_status=False,
-                                discipline__iexact=row[6])
-                        minor_year = None
-                        minor_dept = None
+                                discipline__iexact=discipline)
+
                         minor_prog = None
-                        if row[7] != '':
-                            minor_year = Year.objects.get(
-                                current_year=int(row[7]))
-                        if minor_year and row[8] != '':
-                            minor_dept = Department.objects.get(
-                                year=minor_year, dept_code=str(row[8]).upper())
-                        if minor_year and minor_dept and row[9] != '' and \
-                                row[10] != '':
+                        if '' not in [row[7], row[8], row[9], row[10]]:
+                            minor_year = int(row[7])
+                            minor_dept = str(row[8]).strip()
+                            name = str(row[9]).strip()
+                            discipline = str(row[10]).strip()
                             minor_prog = Programme.objects.get(
                                 year=minor_year, dept=minor_dept,
                                 name=str(row[9]).strip(), minor_status=True,
                                 discipline__iexact=str(row[10]).strip())
+
                         stud = Student.objects.create(
                             user=userprofile,
                             iitg_webmail=str(username) + '@iitg.ac.in',
@@ -811,11 +708,6 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             nationality=str(row[13]).strip(),
                             sex=str(row[14]).upper().strip(),
                         )
-                        if year and dept and prog:
-                            stud.year = year
-                            stud.dept = dept
-                            stud.prog = prog
-                            stud.save()
                         if minor_year and minor_dept and minor_year:
                             stud.minor_year = minor_year
                             stud.minor_dept = minor_dept

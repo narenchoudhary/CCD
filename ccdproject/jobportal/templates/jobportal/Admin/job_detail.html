@@ -246,15 +246,17 @@
                                     <th>Year</th>
                                     <th>Dept</th>
                                     <th>Prog</th>
+                                    <th>Discipline</th>
                                     <th>Major/Minor</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for prog in prog_list %}
                                     <tr>
-                                        <td>{{prog.year}}</td>
-                                        <td>{{prog.dept}}</td>
+                                        <td>{{prog.prog.year}}</td>
+                                        <td>{{prog.prog.dept}}</td>
                                         <td>{{prog.prog}}</td>
+                                        <td>{{prog.prog.discipline}}</td>
                                         <td>{{prog.prog.minor_status|yesno:"Minor, Major"}}</td>
                                     </tr>
                                 {% endfor %}

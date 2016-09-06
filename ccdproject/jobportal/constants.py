@@ -32,18 +32,19 @@ USER_CATEGORY = (
 )
 
 DEPARTMENTS = (
-    ('BT', 'Biotechnology[BT]'),
-    ('CL', 'Chemical[CL]'),
-    ('CHE', 'Chemistry[CHE]'),
-    ('CE', 'Civil[CE]'),
-    ('CSE', 'Computer Science[CSE]'),
-    ('DD', 'Design[DD]'),
-    ('EEE', 'Electrical[EEE]'),
-    ('ECE', 'Electronics[ECE]'),
-    ('HSS', 'Humanities & Social Sciences[HSS]'),
-    ('MA', 'Mathematics[MA]'),
-    ('ME', 'Mechanical[ME]'),
-    ('EP', 'Physics[EP]'),
+    ('Biosciences and Bioengineering', 'Biosciences and Bioengineering'),
+    ('Chemistry', 'Chemistry'),
+    ('Chemical Engineering', 'Chemical Engineering'),
+    ('Civil Engineering', 'Civil Engineering'),
+    ('Computer Science and Engineering', 'Computer Science and Engineering'),
+    ('Design', 'Design'),
+    ('Electronics and Electrical Engineering',
+     'Electronics and Electrical Engineering'),
+    ('ECE', 'Electronics'),
+    ('Humanities & Social Sciences', 'Humanities & Social Sciences'),
+    ('Mathematics', 'Mathematics'),
+    ('Mechanical', 'Mechanical'),
+    ('Physics', 'Physics'),
 )
 
 DEPARTMENTS_JOBCHOICE = DEPARTMENTS + (('ALL', 'All Departments'),)

@@ -372,18 +372,6 @@ class SelectCVForm(forms.Form):
         return self.cleaned_data
 
 
-class AlumniProfileForm(ModelForm):
-    class Meta:
-        model = Alumni
-        exclude = ['user', 'cv']
-
-
-class AlumCVUpload(ModelForm):
-    class Meta:
-        model = Alumni
-        fields = ['cv']
-
-
 class AvatarForm(forms.ModelForm):
     class Meta:
         model = Avatar
@@ -605,7 +593,7 @@ class ProgrammeForm(forms.ModelForm):
     layout = Layout(
         Fieldset(
             "Year, Department and Programme Name",
-            Row('year', 'dept', 'name')
+            'year', 'dept', 'discipline', 'name',
         ),
         Fieldset(
             "Minor status (Check if this programme is a Minor programme)",

@@ -1,5 +1,5 @@
 from django.db import models
-from jobportal.models import Year, Department, Programme, Student, Company
+from jobportal.models import Programme, Student, Company
 from smart_selects.db_fields import ChainedForeignKey
 import datetime
 # Create your models here.
@@ -44,9 +44,7 @@ class StudentInternRelation(models.Model):
 
 class ProgrammeInternRelation(models.Model):
     intern = models.ForeignKey(IndInternship)
-    year = models.ForeignKey(Year, null=True)
-    dept = ChainedForeignKey(Department, chained_field='year', chained_model_field='year', show_all=False, null=True)
-    prog = ChainedForeignKey(Programme, chained_field='dept', chained_model_field='dept', show_all=False, null=True)
+    prog = models.ForeignKey(Programme, null=True)
 
     def __unicode__(self):
         return self.intern.designation

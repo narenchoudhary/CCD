@@ -21,20 +21,9 @@
 
 <li><a href="{% url 'admin-job-list-unapproved' %}">Jobs: Unapproved</a></li>
 
-<li>
-    <a href="{% url 'admin-jobrel-list-unapproved' %}">Hiring Requests</a>
-</li>
+<li><a href="{% url 'admin-jobrel-list-unapproved' %}">Hiring Requests</a></li>
 
-<li>
-    <a class="collapsible-header">Programme Settings</a>
-    <div class="collapsible-body">
-        <ul>
-	        <li><a href="{% url 'year-list' %}">Years</a></li>
-	        <li><a href="{% url 'department-list' %}">Departments</a></li>
-	        <li><a href="{% url 'programme-list' %}">Programmes</a></li>
-        </ul>
-    </div>
-</li>
+<li><a href="{% url 'programme-list' %}">Programmes</a></li>
 
 <li><a href="{% url 'admin-event-list' %}">All Events</a></li>
 

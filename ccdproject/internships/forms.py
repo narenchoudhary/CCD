@@ -8,7 +8,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 
-InternProgFormSet = inlineformset_factory(IndInternship, ProgrammeInternRelation, fields=('year', 'dept', 'prog'),
+InternProgFormSet = inlineformset_factory(IndInternship, ProgrammeInternRelation, fields=('prog',),
                                           extra=10)
 
 

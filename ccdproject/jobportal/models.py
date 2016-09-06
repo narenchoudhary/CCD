@@ -3,12 +3,11 @@ import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
-
-from smart_selects.db_fields import ChainedForeignKey
 from versatileimagefield.fields import VersatileImageField
 
 from constants import *
@@ -65,35 +64,15 @@ class UserProfile(AbstractUser):
         return str(self.username)
 
 
-class Year(models.Model):
-    current_year = models.DecimalField(max_digits=4, decimal_places=0,
-                                       null=True, unique=True)
-    remark = models.CharField(max_length=30, blank=True, null=True)
-
-    def __unicode__(self):
-        return str(self.current_year)
-
-
-class Department(models.Model):
-    year = models.ForeignKey(Year)
-    dept = models.CharField(max_length=90)
-    dept_code = models.CharField(max_length=4)
-
-    class Meta:
-        unique_together = ['dept_code', 'year']
-
-    def __unicode__(self):
-        return str(self.dept)
-
-
 class Programme(models.Model):
-    year = models.ForeignKey(Year, verbose_name='Year')
-    dept = ChainedForeignKey(Department, chained_field="year",
-                             chained_model_field="year", show_all=False,
-                             verbose_name='Department')
+    year = models.IntegerField(null=True, blank=False, verbose_name='Year')
+    dept = models.CharField(choices=DEPARTMENTS, max_length=80, null=True,
+                            blank=False, verbose_name='Department',
+                            help_text='Eg. Department of Chemistry')
+    discipline = models.CharField(max_length=80, null=True, blank=True,
+                                  verbose_name='Discipline')
     name = models.CharField(choices=PROGRAMMES, max_length=10,
                             verbose_name='Programme Name')
-    discipline = models.CharField(max_length=75, null=True, blank=True)
     minor_status = models.BooleanField(default=False,
                                        verbose_name='Minor Status')
     open_for_placement = models.BooleanField(default=False,
@@ -103,7 +82,8 @@ class Programme(models.Model):
                                               'Open for Internship')
 
     class Meta:
-        unique_together = ['year', 'dept', 'name', 'minor_status']
+        unique_together = ['year', 'dept', 'discipline', 'name',
+                           'minor_status']
         managed = True
 
     def __unicode__(self):
@@ -198,17 +178,6 @@ class Alumni(models.Model):
                                     verbose_name="IITG Webmail")
     alternate_email = models.EmailField(max_length=254, blank=True,
                                         verbose_name="Alternate Email")
-    # Foreign Keys
-    year = models.ForeignKey(Year, null=True)
-    dept = ChainedForeignKey(Department, chained_field='year',
-                             chained_model_field='year', show_all=False)
-    prog = ChainedForeignKey(Programme, chained_field='dept',
-                             chained_model_field='dept', show_all=False)
-    year_passing = models.ForeignKey(Year, null=True,
-                                     related_name='year_passing')
-
-    cv = models.FileField(null=True, blank=True,
-                          upload_to=generate_alum_cvname)
 
     class Meta:
         managed = True
@@ -218,7 +187,7 @@ class Alumni(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(UserProfile, blank=True, null=True,
+    user = models.OneToOneField(UserProfile, blank=False, null=False,
                                 limit_choices_to={'user_type': 'student'})
     iitg_webmail = models.CharField(max_length=50, blank=False,
                                     verbose_name="IITG Webmail",
@@ -235,31 +204,24 @@ class Student(models.Model):
                                                        "backlogs", default=0)
     category = models.CharField(max_length=10, choices=CATEGORY, default='GEN')
     nationality = models.CharField(max_length=15, default="INDIAN", blank=True)
-    minor_year = models.ForeignKey(Year, null=True, blank=True,
-                                   related_name='minor_year',
-                                   verbose_name='Minor Programme Year')
-    minor_dept = ChainedForeignKey(Department, chained_field='minor_year',
-                                   chained_model_field='year',
-                                   show_all=False, related_name='minor_dept',
-                                   null=True, blank=True,
-                                   verbose_name='Minor Programme Department')
-    minor_prog = ChainedForeignKey(Programme, chained_field='minor_dept',
-                                   chained_model_field='dept',
-                                   show_all=False, related_name='minor_prog',
-                                   null=True, blank=True,
-                                   limit_choices_to={'minor_status': True},
-                                   verbose_name='Minor Programme Name')
-    year = models.ForeignKey(Year, null=True, blank=True,
-                             verbose_name='Major Programme Year')
-    dept = ChainedForeignKey(Department, chained_field='year',
-                             chained_model_field='year', show_all=False,
-                             null=True, blank=True,
-                             verbose_name='Major Programme Department')
-    prog = ChainedForeignKey(Programme, chained_field='dept',
-                             chained_model_field='dept', show_all=False,
-                             null=True, blank=True,
-                             limit_choices_to={'minor_status': False},
-                             verbose_name='Major Programme Name')
+    minor_year = models.IntegerField(null=True, blank=True,
+                                     verbose_name='Minor Year')
+    minor_dept = models.CharField(choices=DEPARTMENTS, max_length=80,
+                                  null=True, blank=True,
+                                  verbose_name='Minor Department',
+                                  help_text='Eg. Department of Chemistry')
+    minor_discipline = models.CharField(max_length=80, null=True, blank=True,
+                                  verbose_name='Minor Discipline')
+    minor_prog = models.CharField(choices=PROGRAMMES, max_length=10,
+                                  null=True, blank=True)
+    year = models.IntegerField(null=True, blank=False, verbose_name='Year')
+    dept = models.CharField(choices=DEPARTMENTS, max_length=80, null=True,
+                            blank=False, verbose_name='Department',
+                            help_text='Eg. Department of Chemistry')
+    discipline = models.CharField(max_length=80, null=True, blank=False,
+                                  verbose_name='Discipline')
+    prog = models.CharField(choices=PROGRAMMES, max_length=10, null=True,
+                            blank=False)
     # campus information
     hostel = models.CharField(max_length=25, choices=HOSTELS,
                               blank=True, default="")
@@ -269,8 +231,9 @@ class Student(models.Model):
                                          verbose_name='Alternative Email')
     mobile_campus = models.CharField(blank=True, max_length=16,
                                      verbose_name='Mobile (Guwahati)')
-    mobile_campus_alternative = models.CharField(blank=True, max_length=16,
-                                                 verbose_name='Alternative Mobile (Guwahati)')
+    mobile_campus_alternative = models.CharField(
+        blank=True, max_length=16, verbose_name='Alternative Mobile (Guwahati)'
+    )
     mobile_home = models.CharField(blank=True, max_length=16,
                                    verbose_name='Mobile (Home)')
     # permanent address
@@ -370,6 +333,33 @@ class Student(models.Model):
 
     def __unicode__(self):
         return str(self.roll_no)
+
+    def clean(self):
+        if self.year or self.dept or self.prog or self.discipline:
+            try:
+                Programme.objects.get(year=int(self.year), dept=self.dept,
+                                      name=self.prog, minor_status=False,
+                                      discipline=self.discipline)
+            except TypeError:
+                raise ValidationError('No valid Major Programme '
+                                      'found for given data.')
+            except (ValueError, Programme.DoesNotExist):
+                raise ValidationError('No valid programme '
+                                      'found for given data.')
+        else:
+            raise ValidationError("Major Programme Fields "
+                                  "cannot be left blank.")
+        if self.minor_year or self.minor_dept or self.minor_prog or \
+                self.minor_discipline:
+            try:
+                Programme.objects.get(year=int(self.minor_year),
+                                      dept=self.minor_dept,
+                                      name=self.minor_prog,
+                                      discipline=self.minor_discipline,
+                                      minor_status=True)
+            except (ValueError, Programme.DoesNotExist):
+                raise ValidationError('No valid Minor Programme '
+                                      'found for given data.')
 
 
 class Job(models.Model):
@@ -580,17 +570,8 @@ class CV(models.Model):
 
 class ProgrammeJobRelation(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    year = models.ForeignKey(Year, null=True, on_delete=models.CASCADE)
-    dept = ChainedForeignKey(Department, chained_field='year',
-                             chained_model_field='year', show_all=False,
-                             null=True, on_delete=models.CASCADE)
-    prog = ChainedForeignKey(Programme, chained_field='dept',
-                             chained_model_field='dept',
-                             show_all=False, null=True,
+    prog = models.ForeignKey(Programme, null=True,
                              on_delete=models.CASCADE)
 
     def __unicode__(self):
-        if self.prog.minor_status:
-            return str(self.year) + str(self.dept) + str(self.prog) + '-MINOR'
-        else:
-            return str(self.year) + str(self.dept) + str(self.prog) + '-MAJOR'
+        return str(self.prog.name)

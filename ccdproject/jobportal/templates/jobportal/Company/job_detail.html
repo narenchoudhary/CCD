@@ -262,8 +262,8 @@
                             <tbody>
                                 {% for prog in rel_list %}
                                     <tr>
-                                        <td>{{prog.year}}</td>
-                                        <td>{{prog.dept}}</td>
+                                        <td>{{prog.prog.year}}</td>
+                                        <td>{{prog.prog.dept}}</td>
                                         <td>{{prog.prog}}</td>
                                         <td>{{prog.prog.minor_status | yesno:"Minor, Major"}}</td>
                                     </tr>

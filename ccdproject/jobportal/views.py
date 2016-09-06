@@ -14,7 +14,7 @@ from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, TemplateView, DetailView,
                                   CreateView, UpdateView)
 
-from .models import (UserProfile, Admin, Student, Company, Alumni,
+from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
                      Avatar, Signature, CV)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
@@ -374,8 +374,24 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         stud = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
         # Ref: http://stackoverflow.com/a/12600950/3679857
-        major = ProgrammeJobRelation.objects.filter(prog=stud.prog)
-        minor = ProgrammeJobRelation.objects.filter(prog=stud.minor_prog)
+        try:
+            prog = Programme.objects.get(
+                year=stud.year, dept=stud.dept, name=stud.prog,
+                discipline=stud.discipline, minor_status=False,
+                open_for_placement=True)
+        except Programme.DoesNotExist:
+            prog = None
+        try:
+            minor_prog = Programme.objects.get(
+                year=stud.minor_year, dept=stud.minor_dept,
+                name=stud.minor_prog, discipline=stud.minor_discipline,
+                minor_status=True, open_for_placement=True)
+        except Programme.DoesNotExist:
+            minor_prog = None
+
+        major = ProgrammeJobRelation.objects.filter(prog=prog)
+        minor = ProgrammeJobRelation.objects.filter(prog=minor_prog)
+
         return Job.objects.filter(
             Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
         ).filter(
@@ -413,6 +429,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     stud = None
     jobid = None
     job = None
+    prog = None
+    minor_prog = None
 
     def test_func(self):
         is_stud = self.request.user.user_type == 'student'
@@ -465,9 +483,24 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def check_student_eligibility(self):
         # Check Programme eligibility
+        try:
+            self.prog = Programme.objects.get(
+                year=self.stud.year, dept=self.stud.dept,
+                name=self.stud.prog, discipline=self.stud.discipline,
+                minor_status=False, open_for_placement=True)
+        except Programme.DoesNotExist:
+            pass
+        try:
+            self.minor_prog = Programme.objects.get(
+                year=self.stud.minor_year, dept=self.stud.minor_dept,
+                name=self.stud.minor_prog, open_for_placement=True,
+                discipline=self.stud.minor_discipline, minor_status=True
+                )
+        except Programme.DoesNotExist:
+            pass
         progjobrel = ProgrammeJobRelation.objects.filter(
-            Q(job=self.job, prog=self.stud.prog) |
-            Q(job=self.job, prog=self.stud.minor_prog)
+            Q(job=self.job, prog=self.prog) |
+            Q(job=self.job, prog=self.minor_prog)
         )
         if not progjobrel:
             return False
