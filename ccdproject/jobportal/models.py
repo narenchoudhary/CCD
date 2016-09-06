@@ -46,13 +46,31 @@ def get_bond_link_name(instance, filename):
 
 
 class SiteManagement(models.Model):
-    site = models.OneToOneField(Site)
-    student_profile_update_deadline = models.DateField(null=True, blank=True)
-    student_cv_update_deadline = models.DateField(null=True, blank=True)
-    student_sign_update_deadline = models.DateField(null=True, blank=True)
-    block_student_login = models.BooleanField(default=False)
-    block_company_login = models.BooleanField(default=False)
-    block_admin_login = models.BooleanField(default=False)
+    site_id = models.DecimalField(max_digits=1, decimal_places=0,
+                                  blank=False, null=False, default=0.00,
+                                  validators=[MaxValueValidator(1.0),
+                                              MinValueValidator(1.0)])
+    job_student_profile_update_deadline = models.DateField(null=True,
+                                                           blank=True)
+    job_student_cv_update_deadline = models.DateField(null=True, blank=True)
+    job_student_avatar_update_deadline = models.DateField(null=True,
+                                                          blank=True)
+    job_student_sign_update_deadline = models.DateField(null=True, blank=True)
+    intern_student_profile_update_deadline = models.DateField(null=True,
+                                                              blank=True)
+    intern_student_cv_update_deadline = models.DateField(null=True, blank=True)
+    intern_student_avatar_update = models.DateField(null=True, blank=True)
+    intern_student_sign_update = models.DateField(null=True, blank=True)
+    creation_datetime = models.DateTimeField(null=True, blank=True)
+    last_update_datetime = models.DateTimeField(null=True, blank=True)
+    
+    def save(self, **kwargs):
+        if not self.id:
+            self.creation_datetime = timezone.now()
+            self.last_update_datetime = timezone.now()
+        else:
+            self.last_update_datetime = timezone.now()
+        super(SiteManagement, self).save(**kwargs)
 
 
 class UserProfile(AbstractUser):
@@ -329,6 +347,10 @@ class Student(models.Model):
     ppo = models.BooleanField(default=False, blank=True,
                               verbose_name='PPO Status')
 
+    # sitting for placement or intern
+    job_candidate = models.BooleanField(default=False)
+    intern_candidate = models.BooleanField(default=False)
+
     class Meta:
         managed = True
 
@@ -591,6 +613,19 @@ class ProgrammeJobRelation(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     prog = models.ForeignKey(Programme, null=True,
                              on_delete=models.CASCADE)
+
+    def get_year(self):
+        return self.prog.year
+
+    def get_dept(self):
+        return self.prog.dept
+
+    def get_minor_status(self):
+        return 'Yes' if self.prog.minor_status else 'No'
+
+    get_year.short_description = 'year'
+    get_dept.short_description = 'department'
+    get_minor_status.short_description = 'Major/Minor'
 
     def __unicode__(self):
         return str(self.prog.name)
