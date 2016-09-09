@@ -1,5 +1,2 @@
 # Importing from base.txt
 -r base.txt
-
-uWSGI==2.0.13.1
-

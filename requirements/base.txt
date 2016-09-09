@@ -1,11 +1,8 @@
 Django==1.9.8
-git+https://github.com/nkunihiko/django-bootstrap3-datetimepicker.git#egg=django-bootstrap3-datetimepicker
 django-cleanup==0.4.2
-django-crispy-forms==1.6.0
-git+https://github.com/viewflow/django-material.git#egg=django-material
-django-recaptcha==1.0.5
-django-smart-selects==1.2.2
+django-extensions==1.7.4
 django-versatileimagefield==1.4
+git+https://github.com/viewflow/django-material.git#egg=django-material
 Pillow==3.2.0
 reportlab==3.3.0
 six==1.10.0
