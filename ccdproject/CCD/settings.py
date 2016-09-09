@@ -50,6 +50,7 @@ DJANGO_3RD_PARTY_APPS = [
     'material',
     'versatileimagefield',
     'django_cleanup',
+    'django_extensions',
 ]
 
 PROJECT_APPS = [
