@@ -641,10 +641,9 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         self.job = get_object_or_404(Job, id=pk)
         self.jobrel = get_object_or_404(StudentJobRelation,
                                         stud=self.stud, job=self.job)
+        stud_check = self.check_stud_crendentials()
         job_check = self.check_job_credentials()
-        print(job_check)
-        print(self.jobrel.creation_datetime)
-        if job_check:
+        if job_check and stud_check:
             self.jobrel.delete()
             return redirect('stud-job-detail', pk=self.job.id)
         else:
@@ -656,6 +655,13 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         deadline_check = self.job.application_deadline >= time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check
+
+    def check_stud_crendentials(self):
+        if self.jobrel.shortlist_init:
+            return False
+        if self.jobrel.placed_init or self.jobrel.placed_approved:
+            return False
+        return True
 
 
 class EventList(LoginRequiredMixin, ListView):
