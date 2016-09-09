@@ -1,5 +1,4 @@
 import poplib
-import socket
 
 from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin

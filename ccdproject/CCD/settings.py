@@ -27,7 +27,8 @@ SECRET_KEY = 'x&uda4nsg--wxz*f630nb21-$wm+8e)$51m0^)y6)3rzxe8=u3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'iitg.ernet.in', '202.141.80.161',
+                 '202.141.80.86']
 
 AUTH_USER_MODEL = 'jobportal.UserProfile'
 
@@ -38,7 +39,9 @@ DJANGO_CONTRIB_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
@@ -46,11 +49,7 @@ DJANGO_CONTRIB_APPS = [
 DJANGO_3RD_PARTY_APPS = [
     'material',
     'versatileimagefield',
-    'crispy_forms',
-    'smart_selects',
-    'captcha',
     'django_cleanup',
-    'bootstrap3_datetime',
 ]
 
 PROJECT_APPS = [
@@ -135,7 +134,7 @@ SESSION_COOKIE_AGE = 60*60*24*30
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 # https://docs.djangoproject.com/en/1.10/ref/settings/#std:setting-STATICFILES_DIRS
 
-STATIC_URL = '/static/'
+STATIC_URL = '/tnp/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -146,7 +145,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_cdn')
 # Media Files (Uploaded files)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/tnp/media/'
 
 # File Upload Handlers
 FILE_UPLOAD_HANDLERS = (
@@ -156,15 +155,6 @@ FILE_UPLOAD_HANDLERS = (
 
 # Max upload size
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
-
-# https://docs.djangoproject.com/en/1.9/ref/contrib/messages/#message-tags
-MESSAGE_TAGS = {
-    messages.DEBUG: 'debug',
-    messages.INFO: 'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR: 'danger',
-}
 
 #########################################
 # DEPLOYMENT SECURITY SETTINGS START HERE
@@ -176,28 +166,19 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
+#CSRF_COOKIE_HTTPONLY = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
+#SESSION_COOKIE_HTTPONLY = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = 'DENY'
+
+#SECURE_PROXY_SSL_HEADER = False
+#SECURE_SSL_REDIRECT = False
+
+#CSRF_COOKIE_SECURE = True
+
+#SESSION_COOKIE_SECURE = True
 # DEPOLYMENT SECURITY SETTINGS END HERE
 #########################################
-
-# Crispy Forms settings
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-# Django simple captcha settings
-# CAPTCHA_NOISE_FUNCTIONS = 'captcha.helpers.noise_null'
-# CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-# CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
-CAPTCHA_TEST_MODE = True
-
-# Django recaptcha settings
-RECAPTCHA_PUBLIC_KEY = '6Lf7jhcTAAAAAPJpQs1NehJVlYKyIzt9XNJwLEV8'
-RECAPTCHA_PRIVATE_KEY = '6Lf7jhcTAAAAADn1F8xLQ7uPydJXrLtOarPzczrp'
-NOCAPTCHA = True
-RECAPTCHA_USE_SSL = True
-RECAPTCHA_PROXY = 'http://username:password@host:port'
