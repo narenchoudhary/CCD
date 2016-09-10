@@ -2,7 +2,6 @@ from datetime import timedelta
 import uuid
 
 from django.contrib.auth.models import AbstractUser
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models

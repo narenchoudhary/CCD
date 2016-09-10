@@ -1,6 +1,5 @@
 from django.db import models
 from jobportal.models import Programme, Student, Company
-from smart_selects.db_fields import ChainedForeignKey
 import datetime
 # Create your models here.
 
