@@ -30,7 +30,7 @@ handler404 = 'jobportal.views.handler404'
 handler500 = 'jobportal.views.handler500'
 
 urlpatterns = [
-    url(r'^tnp/chaining/', include('smart_selects.urls')),
+    url(r'^tnp/tracking/', include('tracking.urls')),
     url(r'^tnp/jobportal/', include('jobportal.urls')),
     url(r'^tnp/mentormentee/', include('mentormentee.urls',
                                        namespace="mentormentee",

@@ -46,10 +46,16 @@ DJANGO_CONTRIB_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# Third party applications
+# https://github.com/viewflow/django-material
+# https://github.com/bruth/django-tracking2
+# https://github.com/respondcreate/django-versatileimagefield
+# https://github.com/un1t/django-cleanup
 DJANGO_3RD_PARTY_APPS = [
     'material',
     'versatileimagefield',
     'django_cleanup',
+    'tracking',
     'django_extensions',
 ]
 
@@ -63,6 +69,8 @@ PROJECT_APPS = [
 INSTALLED_APPS = DJANGO_CONTRIB_APPS + DJANGO_3RD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
+    # Add tracking MiddleWare before SessionMiddleware
+    'tracking.middleware.VisitorTrackingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -183,3 +191,9 @@ X_FRAME_OPTIONS = 'DENY'
 #SESSION_COOKIE_SECURE = True
 # DEPOLYMENT SECURITY SETTINGS END HERE
 #########################################
+
+
+# django-tracking2 settings
+# https://github.com/bruth/django-tracking2#settings
+TRACK_ANONYMOUS_USERS = False
+TRACK_PAGEVIEWS = True
