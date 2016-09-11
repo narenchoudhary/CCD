@@ -15,7 +15,7 @@ from django.views.generic import (View, ListView, TemplateView, DetailView,
 
 from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
-                     Avatar, Signature, CV)
+                     Avatar, Signature, CV, SiteManagement)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
@@ -339,9 +339,19 @@ class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     raise_exception = True
     model = Student
     template_name = 'jobportal/Student/profile_detail.html'
+    context_object_name = 'student'
 
     def test_func(self):
         return self.request.user.user_type == 'student'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileDetail, self).get_context_data(**kwargs)
+        context['site_management'] = SiteManagement.objects.all()[0]
+        return context
 
 
 class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -349,10 +359,18 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     raise_exception = True
     form_class = EditStudProfileForm
     template_name = 'jobportal/Student/profile_update.html'
-    success_url = reverse_lazy('stud-home')
+    success_url = reverse_lazy('stud-profile-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        site_model = SiteManagement.objects.all()[0]
+        now = timezone.now()
+        date_passed = site_model.job_student_profile_update_deadline < now
+        if date_passed:
+            return False
+        return True
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -390,6 +408,10 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         major = ProgrammeJobRelation.objects.filter(prog=prog)
         minor = ProgrammeJobRelation.objects.filter(prog=minor_prog)
+
+        # evil
+        if stud.cpi < 5:
+            return None
 
         return Job.objects.filter(
             Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
@@ -820,6 +842,11 @@ class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             cv = None
         return cv
 
+    def get_context_data(self, **kwargs):
+        context = super(CVDetail, self).get_context_data()
+        context['site_management'] = SiteManagement.objects.all()[0]
+        return context
+
 
 class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
@@ -829,7 +856,15 @@ class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('stud-cv-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        site_model = SiteManagement.objects.all()[0]
+        now = timezone.now()
+        date_passed = site_model.job_student_cv_update_deadline < now
+        if date_passed:
+            return False
+        return True
 
     def form_valid(self, form):
         cv = form.save(commit=False)
@@ -840,13 +875,22 @@ class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
+    raise_exception = True
     model = CV
     fields = ['cv1', 'cv2']
     template_name = 'jobportal/Student/cv_update.html'
     success_url = reverse_lazy('stud-cv-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        site_model = SiteManagement.objects.all()[0]
+        now = timezone.now()
+        date_passed = site_model.job_student_cv_update_deadline < now
+        if date_passed:
+            return False
+        return True
 
     def get_object(self, queryset=None):
         try:

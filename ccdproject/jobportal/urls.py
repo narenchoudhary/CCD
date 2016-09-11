@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^logout/$', views.Logout.as_view(), name='logout'),
 
     url(r'^stud/home/$', views.HomeView.as_view(), name='stud-home'),
+    url(r'^stud/profile/detail/$', views.ProfileDetail.as_view(),
+        name='stud-profile-detail'),
     url(r'^stud/profile/update/$', views.ProfileUpdate.as_view(),
         name='stud-profile-update'),
 

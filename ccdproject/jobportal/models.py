@@ -45,21 +45,24 @@ def get_bond_link_name(instance, filename):
 
 
 class SiteManagement(models.Model):
-    site_id = models.DecimalField(max_digits=1, decimal_places=0,
-                                  blank=False, null=False, default=0.00,
-                                  validators=[MaxValueValidator(1.0),
-                                              MinValueValidator(1.0)])
-    job_student_profile_update_deadline = models.DateField(null=True,
-                                                           blank=True)
-    job_student_cv_update_deadline = models.DateField(null=True, blank=True)
-    job_student_avatar_update_deadline = models.DateField(null=True,
+    site_id = models.DecimalField(
+        max_digits=1, decimal_places=0, blank=False, null=False, default=0.00,
+        validators=[MaxValueValidator(1.0), MinValueValidator(1.0)]
+    )
+    job_student_profile_update_deadline = models.DateTimeField(
+        null=True, blank=True)
+    job_student_cv_update_deadline = models.DateTimeField(null=True,
                                                           blank=True)
-    job_student_sign_update_deadline = models.DateField(null=True, blank=True)
-    intern_student_profile_update_deadline = models.DateField(null=True,
-                                                              blank=True)
-    intern_student_cv_update_deadline = models.DateField(null=True, blank=True)
-    intern_student_avatar_update = models.DateField(null=True, blank=True)
-    intern_student_sign_update = models.DateField(null=True, blank=True)
+    job_student_avatar_update_deadline = models.DateTimeField(
+        null=True, blank=True)
+    job_student_sign_update_deadline = models.DateTimeField(
+        null=True, blank=True)
+    intern_student_profile_update_deadline = models.DateTimeField(
+        null=True, blank=True)
+    intern_student_cv_update_deadline = models.DateTimeField(
+        null=True, blank=True)
+    intern_student_avatar_update = models.DateTimeField(null=True, blank=True)
+    intern_student_sign_update = models.DateTimeField(null=True, blank=True)
     creation_datetime = models.DateTimeField(null=True, blank=True)
     last_update_datetime = models.DateTimeField(null=True, blank=True)
     
@@ -281,20 +284,20 @@ class Student(models.Model):
     medium_xii = models.CharField(max_length=30, blank=True, null=True,
                                   default="English",
                                   verbose_name='XII Examination Medium')
-    passing_year_x = models.DecimalField(max_digits=4, decimal_places=0,
-                                         default=2003, blank=True,
-                                         verbose_name='X Examination Passing Year')
-    passing_year_xii = models.DecimalField(max_digits=4, decimal_places=0,
-                                           default=2003, blank=True,
-                                           verbose_name='XII Examination Passing Year')
+    passing_year_x = models.DecimalField(
+        max_digits=4, decimal_places=0, default=2003, blank=True,
+        verbose_name='X Examination Passing Year')
+    passing_year_xii = models.DecimalField(
+        max_digits=4, decimal_places=0, default=2003, blank=True,
+        verbose_name='XII Examination Passing Year')
     gap_in_study = models.BooleanField(default=False, blank=True,
                                        verbose_name='Gap In Study')
-    gap_reason = models.TextField(max_length=100, default="", blank=True,
-                                  null=True,
-                                  verbose_name='Reason For Gap In Study')
-    jee_air_rank = models.DecimalField(max_digits=6, decimal_places=0,
-                                       default=0, verbose_name='JEE AIR Rank',
-                                       null=True, blank=True)
+    gap_reason = models.TextField(
+        max_length=100, default="", blank=True, null=True,
+        verbose_name='Reason For Gap In Study (Eg : JEE Preperation)')
+    jee_air_rank = models.DecimalField(
+        max_digits=6, decimal_places=0, default=0, null=True, blank=True,
+        verbose_name='JEE(Advance) All India Rank')
     linkedin_link = models.URLField(max_length=254, blank=True, null=True,
                                     verbose_name='LinkedIn Account Public URL')
     # grades
@@ -349,12 +352,18 @@ class Student(models.Model):
     # sitting for placement or intern
     job_candidate = models.BooleanField(default=False)
     intern_candidate = models.BooleanField(default=False)
+    last_updated = models.DateTimeField(null=True, blank=False,
+                                        verbose_name='Last Updated')
 
     class Meta:
         managed = True
 
     def __unicode__(self):
         return str(self.roll_no)
+
+    def save(self, *args, **kwargs):
+        self.last_updated = timezone.now()
+        return super(Student, self).save(*args, **kwargs)
 
     def clean(self):
         if self.year or self.dept or self.prog or self.discipline:
