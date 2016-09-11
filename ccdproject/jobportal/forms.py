@@ -37,11 +37,14 @@ class EditStudProfileForm(ModelForm):
         Fieldset(
             'Academic Performance',
             Row(
-                Column('percentage_x', 'board_x', 'passing_year_x'),
-                Column('percentage_xii', 'board_xii', 'passing_year_xii'),
+                Column('percentage_x', 'board_x', 'passing_year_x',
+                       'medium_x'),
+                Column('percentage_xii', 'board_xii', 'passing_year_xii',
+                       'medium_xii'),
             ),
             Row('gap_in_study'),
             Row('gap_reason'),
+            Row('jee_air_rank'),
         ),
         Fieldset(
             'IITG Academic Performance',
