@@ -61,8 +61,10 @@ class SiteManagement(models.Model):
         null=True, blank=True)
     intern_student_cv_update_deadline = models.DateTimeField(
         null=True, blank=True)
-    intern_student_avatar_update = models.DateTimeField(null=True, blank=True)
-    intern_student_sign_update = models.DateTimeField(null=True, blank=True)
+    intern_student_avatar_update_deadline = models.DateTimeField(null=True,
+                                                                 blank=True)
+    intern_student_sign_update_deadline = models.DateTimeField(null=True,
+                                                               blank=True)
     creation_datetime = models.DateTimeField(null=True, blank=True)
     last_update_datetime = models.DateTimeField(null=True, blank=True)
     
