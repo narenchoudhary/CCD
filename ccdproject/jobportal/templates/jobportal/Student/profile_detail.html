@@ -231,9 +231,9 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
-                    {% job_student_profile_update_deadline_passed as date_passed %}
+                    {% date_passed 'job_stud_profile' as date_gone %}
                     <p>
-                        {% if date_passed %}
+                        {% if date_gone %}
                             Last date for completing profile information was:
                             <span class="red-text">{{ site_management.job_student_profile_update_deadline | date:"d M Y h:i:s A"}}</span>
                         {% else %}
@@ -242,7 +242,7 @@
                         {% endif %}
                     </p>
                     <p>
-                        {% if date_passed %}
+                        {% if date_gone %}
                             <a href="{% url 'stud-profile-update' %}"
                                class="btn disabled">Update Profile</a>
                         {% else %}

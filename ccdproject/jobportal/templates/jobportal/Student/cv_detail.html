@@ -49,9 +49,9 @@
                     {% else %}
                         <p>You have not uploaded any CV yet.</p>
                     {% endif %}
-                    {% job_student_cv_update_deadline_passed as date_passed %}
+                    {% date_passed 'job_stud_cv' as date_gone %}
                     <br>
-                    {% if date_passed %}
+                    {% if date_gone %}
                         <p>Final deadline for uploading CV was :
                             <span class="red-text">{{ site_management.job_student_cv_update_deadline | date:"d M Y h:i:s A"}}</span>.
                         </p>
@@ -69,7 +69,7 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
-                    {% if date_passed %}
+                    {% if date_gone %}
                         <a class="btn disabled" href="">Upload new file(s)</a>
                     {% else %}
                         {% if cv %}
