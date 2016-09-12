@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-from django.contrib import messages
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -58,6 +56,7 @@ DJANGO_3RD_PARTY_APPS = [
     'django_cleanup',
     'tracking',
     'django_extensions',
+    'maintenancemode',
 ]
 
 PROJECT_APPS = [
@@ -76,6 +75,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -176,20 +176,20 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#csrf-cookie-httponly
-#CSRF_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_HTTPONLY = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#session-cookie-httponly
-#SESSION_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_HTTPONLY = True
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = 'DENY'
 
-#SECURE_PROXY_SSL_HEADER = False
-#SECURE_SSL_REDIRECT = False
+# SECURE_PROXY_SSL_HEADER = False
+# SECURE_SSL_REDIRECT = False
 
-#CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
-#SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 # DEPOLYMENT SECURITY SETTINGS END HERE
 #########################################
 
@@ -198,3 +198,8 @@ X_FRAME_OPTIONS = 'DENY'
 # https://github.com/bruth/django-tracking2#settings
 TRACK_ANONYMOUS_USERS = False
 TRACK_PAGEVIEWS = True
+
+# django-maintenancemode
+# https://github.com/shanx/django-maintenancemode
+MAINTENANCE_MODE = False
+INTERNAL_IPS = ['10.150.35.254']

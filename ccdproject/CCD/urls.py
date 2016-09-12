@@ -28,6 +28,7 @@ handler400 = 'jobportal.views.handler400'
 handler403 = 'jobportal.views.handler403'
 handler404 = 'jobportal.views.handler404'
 handler500 = 'jobportal.views.handler500'
+handler503 = 'jobportal.views.handler503'
 
 urlpatterns = [
     url(r'^tnp/tracking/', include('tracking.urls')),

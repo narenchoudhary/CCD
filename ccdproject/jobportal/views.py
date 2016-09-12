@@ -39,6 +39,10 @@ def handler500(request):
     return render(request, '500.html')
 
 
+def handler503(request):
+    return render(request, '503.html')
+
+
 def check_webmail_auth_at_server():
     return
 
