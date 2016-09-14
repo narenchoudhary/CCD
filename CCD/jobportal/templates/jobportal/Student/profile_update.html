@@ -1,0 +1,53 @@
+{% extends 'base_student.html' %}
+{% load material_form %}
+
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+    Student | Profile Update
+{% endblock %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-profile-update' %}">update profile</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="row">
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Edit Profile</span>
+                    <form method="post" accept-charset="utf-8">
+                        {% csrf_token %}
+                        {% form %}
+                        {% endform %}
+                        <div class="right-align">
+                            <button type="submit" name="_submit"
+                                class="waves-effect waves-light btn">
+                                Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

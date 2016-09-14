@@ -1,0 +1,44 @@
+{% extends 'base_alum.html' %}
+
+{% block content %}
+<h2>Jobs/Internships posted:</h2>
+<hr>
+<div class="col-md-12">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+
+            <th>Designation</th>
+            <th>Openings</th>
+            <th>Profile</th>
+            <th>Posted On</th>
+            <th>Last Updated</th>
+            <th>Students</th>
+            <th>Alumni</th>
+            <th>Edit Job</th>
+            <th>Delete Job</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for job in job_list %}
+        <tr>
+
+            <td> {{ job.designation | capfirst }}</td>
+            <td> {{ job.num_openings }}</td>
+            <td> {{ job.profile_name }}</td>
+            <td> {{ job.posted_on }}</td>
+            <td> {{ job.last_updated }}</td>
+            <td><a href="{% url 'alumcandidates' job.id %}" title="">{{ job.students.count }}</a></td>
+            <td><a href="{% url 'alumcandidates' job.id %}" title="">{{ job.alumns.count }}</a></td>
+            <td><a href="{% url 'editalumjob' job.id %}" title=""><span class="glyphicon glyphicon-pencil"
+                                                                        aria-hidden="true"></span></a></td>
+            <td><a href="{% url 'delalumjob' job.id %}" title=""><span class="glyphicon glyphicon-trash"
+                                                                       aria-hidden="true"></span></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

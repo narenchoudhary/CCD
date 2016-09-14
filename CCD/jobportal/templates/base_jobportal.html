@@ -1,0 +1,122 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+
+    <!-- Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto'
+          rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Allura'
+          rel='stylesheet' type='text/css'>
+    {% include 'material/includes/material_css.html' %}
+    <!--django-smart-selects-->
+    <script src="{% static 'material/js/jquery-2.2.0.js' %}"></script>
+    {% include 'material/includes/material_js.html' %}
+
+    <!--MDL CSS-->
+    <link rel="stylesheet" href="{% static 'material/css/base.css' %}">
+
+    <!--This block is for linking css/js files specifies to some particular template-->
+    {% block head_extra_tags %}
+    {% endblock %}
+
+    <!--This block is for custom styles-->
+    {% block custom_styles %}
+    {% endblock %}
+
+    <style>
+        .breadcrumbs div {
+            height: 70px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <nav class="nav-top">
+        <a href="#" data-activates="nav-mobile" class="button-collapse full"><i
+                class="material-icons">menu</i></a>
+
+        <div class="nav-wrapper">
+            <div class="page-title hide-on-med-and-down">
+                <img style="width:24%;" src="{% static 'img/logo.png' %}">
+            </div>
+
+            <ul class="right">
+                <li>
+                    {% block account_setting %}
+                    {% endblock %}
+                </li>
+            </ul>
+        </div>
+
+        <ul id="nav-mobile" class="side-nav fixed module-menu">
+            <li class="logo valign-wrapper">
+                <a href="/" class="no-navigation"><img
+                        style="width:60%;margin:auto;" class="responsive-img"
+                        src="{% static 'img/iitg_logo.png' %}"></a>
+            </li>
+            <li class="no-padding">
+                <div class="collapsible-body" style="display:block">
+                    <ul class="collapsible" data-collapsible="expandable">
+                        {% block menu %}
+                        {% endblock %}
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+</header>
+<main>
+     {% block level_0 %}
+     {% endblock %}
+</main>
+<div id="load_indicator" class="preloader-wrapper big active"
+     style="position:absolute;left:45%;top:45%;display:none">
+    <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+            <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+            <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+            <div class="circle"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<!--MDL JS-->
+<!--Sorter-->
+<script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $("table").tablesorter();
+    });
+</script>
+<!--Custom Search Script-->
+<script src="{% static 'js/table_search.js' %}"></script>
+
+<script>
+    $('.btnNext').click(function () {
+        $('.nav-tabs > .active').next('li').find('a').trigger('click');
+    });
+
+    $('.btnPrevious').click(function () {
+        $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+    });
+</script>
+</body>
+</html>

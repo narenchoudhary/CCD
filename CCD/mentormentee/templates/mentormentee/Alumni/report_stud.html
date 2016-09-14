@@ -1,0 +1,32 @@
+{% extends 'base_mentormentee.html' %}
+{% load crispy_forms_tags %}
+{% block menu %}
+<li class="account-nav-head">Alumni <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
+<li><a href="{% url 'alum_home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+<li><a href="{% url 'availablejobs' %}"><span class="glyphicon glyphicon-briefcase"></span> Jobs/Internship</a></li>
+<li><a href="{% url 'alum_jobsappliedfor' %}" title=""><span class="glyphicon glyphicon-ok"></span> Jobs applied for</a>
+</li>
+<li><a href="{% url 'postalumjob' %}" title="Post a new job"><span class="glyphicon glyphicon-plus"></span> Post a new
+    Job</a></li>
+<li><a href="{% url 'viewalumjob' %}" title="View posted jobs">View posted jobs</a></li>
+<li><a href="{% url 'mentormentee:add_proposal' %}" title="Add a new proposal"><span
+        class="glyphicon glyphicon-plus"></span> Add new research proposal</a></li>
+<li><a href="{% url 'mentormentee:alum_proposals' %}" title="View all proposals">View proposals</a></li>
+<li><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></li>
+{% endblock %}
+{% block content %}
+
+<h2 class="sub-header">Report an applicant</h2>
+<hr>
+<div class="col-md-9">
+    <form action="{% url 'mentormentee:report_stud' relation_instance.id %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        <div class="well">
+            {{ report_form.non_field_errors }}
+            {{ report_form | crispy}}
+            <input type="Submit" value="Report" class="btn btn-primary">
+        </div>
+    </form>
+</div>
+
+{% endblock %}

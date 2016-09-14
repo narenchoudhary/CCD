@@ -1,0 +1,51 @@
+{% extends 'base_admin.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="row">
+    <div class="section">
+    <div class="col s12 m12 l9">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Approved Job Applications</span>
+                {% if job_list %}
+                <table class="table bordered">
+                    <thead>
+                        <tr>
+                            <th>Posted By</th>
+                            <th>Job Designation</th>
+                            <th class="hide-on-small-only">Profile</th>
+                            <th class="hide-on-small-only">Opening Date</th>
+                            <th class="hide-on-small-only">Closing Date</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in job_list %}
+                        <tr>
+                            <td> {{ job.company_owner.company_name}}</td>
+                            <td> {{ job.designation | capfirst }}</td>
+                            <td class="hide-on-small-only"> {{ job.profile_name}}</td>
+                            <td class="hide-on-small-only"> {{ job.opening_date }}</td>
+                            <td class="hide-on-small-only"> {{ job.application_deadline }}</td>
+                            <td>
+                                <a href="{% url 'admin-job-detail' job.id %}"
+                                   class="btn btn-xs btn-primary">Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h4>No Job Application.</h4>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

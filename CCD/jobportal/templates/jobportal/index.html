@@ -1,0 +1,43 @@
+{% extends 'base_jobportal.html' %}
+
+{% block menu %}
+<a href="{% url 'index' %}"><li>Welcome</li></a>
+<a href="{% url 'login' %}"><li>Login</li></a>
+<a href="{% url 'company-signup' %}"><li>Recruiters Signup</li></a>
+{% endblock %}
+
+{% block level_0 %}
+<div class="row">
+    <div id="welcome-middle-panel" class="col-md-8">
+        <!--
+
+        <h4>Password Link: <a href="https://docs.google.com/document/d/12JnwbDnckFxbibu0dAg2bCRkr9cLMDZkdAwwLp7iCTc/edit?usp=sharing"><u>Password link</u></a></h4>
+        <h4>Do not share this code with anyone.</h4>
+        -->
+        <h3>Center for Career and Developement,<br>IIT Guwahati</h3>
+        <p>Centre for Career Development of the Institute centrally handles all aspects of campus placements for the
+            graduating students of all Departments. CCD is well equipped with excellent infrastructure to support each
+            and every stage of the placement processes. CCD staff members assist in arranging Pre-Placement Talks,
+            Written Tests, Group Discussions, and Interviews etc. are made as per the requirements of the
+            Organizations.</p>
+        <h3>Know More</h3>
+        <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent in maximus mi. Aenean hendrerit neque ut
+            lectus sagittis, ac semper leo gravida. Fusce volutpat urna a mauris eleifend lobortis. Cras congue nec
+            lorem eu auctor. Nam venenatis ex libero, a feugiat tellus sollicitudin non. Morbi a sodales lorem.
+            Curabitur rhoncus finibus enim nec aliquet.
+        </p>
+        <p>
+            Fusce sit amet condimentum lacus, quis condimentum odio. Donec maximus sollicitudin diam sit amet gravida.
+            Aliquam vitae sagittis orci, ac blandit nulla. Suspendisse non hendrerit magna. Nulla ultrices, orci
+            pellentesque varius ultricies, leo orci molestie justo, eu feugiat lacus enim ac tortor. Aenean quis
+            interdum magna, a tempor nisi. Suspendisse finibus mattis tellus ut lacinia. Vestibulum et ex vitae purus
+            ultricies maximus et nec eros.
+        </p>
+
+
+    </div>
+    <div id="welcome-right-panel" class="col-md-4">
+        <h3>Get Connected</h3>
+    </div>
+</div>
+{% endblock %}

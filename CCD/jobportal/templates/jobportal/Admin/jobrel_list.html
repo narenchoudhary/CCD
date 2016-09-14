@@ -1,0 +1,82 @@
+{% extends 'base_admin.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+
+{% endblock%}
+
+{% block content %}
+
+<div href="row">
+
+    <div class="row">
+        <div class="col s12 l12 m12">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Candidates</span>
+                    {% if rel_list.count > 0 %}
+                    <table class="table bordered">
+                        <thead>
+                            <tr>
+                                <th class="center-align">Name</th>
+                                <th class="center-align">Shortlist</th>
+                                <th class="center-align">Place</th>
+                                <th class="center-align">Place <br>Approval</th>
+                                <th class="center-align">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td class="center-align">{{ rel.stud.name }} </td>
+                                    <td class="center-align">
+                                        {% if rel.shortlist_init %}
+                                            <button class="btn light-green tooltipped" data-position="bottom"
+                                                    data-tooltip="Candidate shortlisted on {{rel.placed_init_datetime }}">Shortlisted</button>
+                                        {% else %}
+                                            <button class="btn red lighten-4">Not Shortlisted</button>
+                                        {% endif %}
+                                    </td>
+                                    <td class="center-align">
+                                        {% if rel.placed_init %}
+                                            <button class="btn light-green tooltipped" data-position="bottom"
+                                                    data-tooltip="Candidate selected on {{rel.placed_init_datetime }}">Selected</button>
+                                        {% else %}
+                                            <button class="btn red lighten-4">Not Selected</button>
+                                        {% endif %}
+                                    </td>
+                                    <td class="center-align">
+                                        {% if rel.placed_init %}
+                                            {% if rel.placed_approved == True %}
+                                                <button class="btn green tooltipped" data-toggle="tooltip" data-placement="bottom"
+                                                    data-tooltip="Placement request approved on {{rel.placed_approved_datetime }}">Approved</button>
+                                            {% elif rel.placed_approved == False %}
+                                                <button class="btn-danger btn btn-xs">Rejected</button>
+                                            {% else %}
+                                                <a class="btn tooltipped" role="button" data-position="bottom"
+                                                   href="{% url 'admin-jobrel-place-approve' rel.job.id rel.id %}"
+                                                   data-tooltip="Click to approve placement request.">Approval Required</a>
+                                            {% endif %}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+                                    <td class="center-align">
+                                        <a class="btn"
+                                           href="{% url 'admin-student-detail' rel.stud.id %}">Detail</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                <p><a class="btn" href="#">Print Student Details</a></p>
+            {% else %}
+                <p>No student have applied for this position.</p>
+            {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

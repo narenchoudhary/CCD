@@ -1,0 +1,33 @@
+{% extends 'base_company.html' %}
+{% load staticfiles %}
+
+{% block account_setting%}
+<p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Alumni Job Details:</h2>
+<hr/>
+<div class="col-md-12">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td>Description</td>
+            <td>{{job.description}}</td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td>{{job.designation}}</td>
+        </tr>
+        <tr>
+            <td>Audience</td>
+            <td>{{job.audience}}</td>
+        </tr>
+    </table>
+    <br>
+    <p>
+        <a href="{% url 'alumnijobs:rec_alum_job_all_candidates' job.id %}" class="btn btn-primary">View Candidates</a>
+    </p>
+</div>
+
+{% endblock %}

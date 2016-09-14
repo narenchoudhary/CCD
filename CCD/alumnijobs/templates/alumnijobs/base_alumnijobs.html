@@ -1,0 +1,75 @@
+{% load staticfiles %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CCD | IITG</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!--DatePicker CSS -->
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+    <!--Custom Styles-->
+    <link rel="stylesheet" href="{% static 'css/custom_styles.css' %}">
+    <!--Callout-->
+    <link rel="stylesheet" href="{% static 'css/callout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+    <!--TODO: Performance Issue Here-->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block head_extra %}
+    {% endblock %}
+</head>
+
+<body class="container-fluid">
+<div class="account-setting-container">
+    {% block account_setting %}
+    {% endblock %}
+</div>
+<div class="page-header row">
+    <div class="col-md-12">
+        <img id="iitg_logo_img" src="{% static 'img/iitg_logo.png' %}" alt="iit_logo">
+        <h1 id="name">Center for Career & Developement | IIT Guwahati</h1>
+        <div id="hero_container"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="content-container col-md-10 col-md-offset-1">
+        <div class="navbar-container col-md-3">
+            <ul class="navbar">
+                {% block menu %}
+                {% endblock %}
+            </ul>
+        </div>
+        <div class="right-section col-md-9">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="footer col-md-9 col-md-offset-3"></div>
+    </div>
+</div>
+
+
+<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+<!--Sorter-->
+<script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $("table").tablesorter();
+    });
+</script>
+<!--Custom Search Script-->
+<script src="{% static 'js/table_search.js' %}"></script>
+<script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'dd-mm-yyyy'
+        });
+    });
+</script>
+{% block extra_scripts %}
+{% endblock %}
+</body>
+</html>

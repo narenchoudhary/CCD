@@ -1,0 +1,188 @@
+{% extends 'base_admin.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'admin_logout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+        <h2 class="sub-header">Applicant's Profile:</h2>
+        <hr>
+        <div class="col-md-12">
+            <h4>Student Details:</h4>
+            <table class="table table-striped">
+                <tr>
+                    <td>Job Designation </td>
+                    <td>{{rel.intern.description | capfirst }}</td>
+                </tr>
+                <tr>
+                    <td>Student Name </td>
+                    <td> {{rel.stud.first_name}} {{rel.stud.middle_name }} {{rel.stud.last_name}}</td>
+                </tr>
+                <tr>
+                    <td>Programme, Department, Batch</td>
+                    <td>
+                        {{ rel.stud.prog.name }},
+                        {{ rel.stud.dept.dept }},
+                        {{ rel.stud.year.current_year }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>CVs</td>
+                    <td>
+                        {% if rel.cv1 == True and rel.cv2 == True %}
+                        <span>Both</span>
+                        {% elif rel.cv1 == True %}
+                        <span>CV1</span>
+                        {% elif rel.cv2 == True %}
+                        <span>CV2</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <h4>Application Status:</h4>
+            <table class="table table-striped">
+                <tr>
+                    <td>Round</td>
+                    <td> {{ rel.round }}</td>
+                </tr>
+                <tr>
+                    <td>Dropped</td>
+                    <td>
+                        {% if rel.dropped == True %}
+                            <span class="label label-danger">Dropped </span>  in Round {{ rel.round }}
+                        {% else %}
+                            <span class="label label-success">Not Dropped Yet</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Intern Shortlist Request</td>
+                    <td>
+                        {% if rel.shortlist_init == True%}
+                            <span class="label label-success">Shortlisted</span>
+                        {% else %}
+                            <span class="label label-danger">Not Shortlisted</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Intern Shortlist Approval</td>
+                    <td>
+                        {% if rel.shortlist_approved == True%}
+                            <span class="label label-success">Shortlist Approved</span>
+                        {% elif rel.shortlist_approved == False %}
+                            <span class="label label-danger">Shortlist Rejected</span>
+                        {% else %}
+                            <span class="label label-default">Action Pending</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Intern Hiring Request</td>
+                    <td>
+                        {% if rel.intern_init == True%}
+                            <span class="label label-success">Intern Request</span>
+                        {% else %}
+                            <span class="label label-danger">No Placement Request</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Intern Hiring Approval</td>
+                    <td>
+                        {% if rel.intern_approved == True%}
+                            <span class="label label-success">Intern Request Approved</span>
+                        {% elif rel.intern_approved == False %}
+                            <span class="label label-danger">Intern Request Rejected</span>
+                        {% else %}
+                            <span class="label label-default">Action Pending</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>PPO Request</td>
+                    <td>
+                        {% if rel.ppo_init == True%}
+                            <span class="label label-success">PPO Request</span>
+                        {% else %}
+                            <span class="label label-danger">No PPO Request</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>PPO Approval</td>
+                    <td>
+                        {% if rel.ppo_approved == True %}
+                            <span class="label label-success">PPO Request Approved</span>
+                        {% elif rel.ppo_approved == False %}
+                            <span class="label label-danger">PPO Request Rejected</span>
+                        {% else %}
+                            <span class="label label-default">Action Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <h4></h4>
+        </div>
+        <h2>Admin Approvals</h2>
+        <hr>
+        <div>
+            {% if rel.dropped %}
+                <p>Game-Over</p>
+            {% else %}
+                {% if rel.shortlist_init == True %}
+                    {% if rel.shortlist_approved == True %}
+                        {% if rel.intern_init %}
+                            {% if rel.intern_approved  == True%}
+                                {% if rel.ppo_init == True%}
+                                    {% if rel.ppo_approved == True%}
+                                    {% elif rel.ppo_approved == False%}
+                                    {% else %}
+                                        <p>PPO request required approval</p>
+                                        <p>
+                                            <a href="{% url 'internships:admin_intern_ppo' rel.id %}"
+                                                class="btn">Approve</a>
+                                            <a href="{% url 'internships:admin_reject_ppo' rel.id %}"
+                                                class="btn">Reject</a>
+                                        </p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>PPO request not initiated by recruiter yet.</p>
+                                {% endif %}
+                            {% elif rel.intern_approved  == False %}
+                                <p>Intern hiring request rejected by Admin.</p>
+                            {% else %}
+                                <p>Inten hiring request requires approval.</p>
+                                <p>
+                                    <a href="{% url 'internships:admin_intern_intern' rel.id %}"
+                                        class="btn">Approve</a>
+                                    <a href="{% url 'internships:admin_reject_intern' rel.id %}"
+                                        class="btn">Reject</a>
+                                </p>
+                            {% endif %}
+                        {% else %}
+                            <p>Candidate not selected for intern hiring yet.</p>
+                        {% endif %}
+                    {% elif rel.shortlist_approved == False %}
+                        <p>Shortlist Request Rejected By Admin.</p>
+                    {% else %}
+                        <p>Shortlist request required approval.</p>
+                        <p>
+                            <a href="{% url 'internships:admin_intern_shortlist' rel.id %}"
+                                class="btn">Approve</a>
+                            <a href="{% url 'internships:admin_reject_shortlist' rel.id %}"
+                                class="btn">Reject</a>
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p>Not Shortlisted yet. No approval Reqquired.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+{% endblock %}

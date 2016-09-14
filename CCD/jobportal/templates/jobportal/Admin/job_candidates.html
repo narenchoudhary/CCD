@@ -1,0 +1,64 @@
+{% extends 'base_admin.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+
+{% endblock%}
+
+{% block content %}
+        <h2 class="sub-header">Applicants</h2>
+        <hr>
+        <div class="col-md-12">
+
+            <h4>Job Designation: {{ job_instance.designation }}</h4>
+            <h4>Owner:{{ job_instance.company_owner | capfirst }} [Recruiter]</h4>
+            <br>
+            {% if  relation_list_stud %}
+                <h4 class="sub-header">Studnet Applicants</h4>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Round</th>
+                        <th>Status</th>
+                        <th>Approve</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relation in  relation_list_stud %}
+                        <tr>
+                            <td>{{ relation.stud.first_name }} {{ relation.stud.last_name }}</td>
+                            <td>{{ relation.stud.dept.dept }}</td>
+                            <td>{{ relation.round }}</td>
+                            <td>
+                                {% if relation.shortlist_init %}
+                                    <span class="label label-success">Shortlist_Init</span>
+                                    {% if relation.shortlist_approved %}
+                                        <span class="label label-success">Shortlist_Approved</span>
+                                        {% if relation.placed_init %}
+                                            <span class="label label-success">Placed_Init</span>
+                                            {% if relation.placed_approved %}
+                                                <span class="label label-success">Placed_Approved</span>
+                                            {% else %}
+                                                <span class="label label-danger">Approval Required</span>
+                                            {% endif %}
+                                        {% endif%}
+                                    {% else %}
+                                        <span class="label label-danger">Approval Required</span>
+                                    {% endif %}
+                                {% endif %}
+                                {% if relation.dropped %}
+                                    <span class="label label-danger">Dropped</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'approve_action' 'stud' relation.id %}" class="btn btn-xs btn-primary">Approval</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h4>Bummer. No student applicant.</h4>
+            {% endif %}
+        </div>
+{% endblock %}

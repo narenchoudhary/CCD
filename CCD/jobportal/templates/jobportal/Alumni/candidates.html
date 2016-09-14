@@ -1,0 +1,59 @@
+{% extends 'base_alum.html' %}
+
+{% block content %}
+<h3>Interested candidates</h3>
+<hr>
+<p><strong>Students:</strong></p>
+{% for stud in stud_list %}
+<table class="table">
+    <caption>List of students</caption>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Department</th>
+        <th>Year</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ stud.first_name | capfirst}} {{ stud.middle_name | capfirst }} {{ stud.last_name | capfirst}}</td>
+        <td>{{ stud.roll_no }}</td>
+        <td>{{ stud.dept }}</td>
+        <td>{{ stud.year}}</td>
+        <td><a href="{% url 'alum_jobaction' jobid stud.id %}">Take action</a></td>
+    </tr>
+    </tbody>
+</table>
+{% empty %}
+<p>No student have applied for this position.</p>
+{% endfor %}
+<!--Alumni Candidates-->
+<p><strong>Alumni:</strong></p>
+{% for alum in alum_list %}
+<table class="table">
+    <caption>List of alums</caption>
+    <thead>
+    <tr>
+        <th>Webmail</th>
+        <th>CV1</th>
+        <th>CV2</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ alum.iitg_webmail }}</td>
+        <td></td>
+        <td></td>
+        <td><a href="{% url 'alum_jobaction2' jobid alum.id %}">Take action</a></td>
+    </tr>
+    </tbody>
+</table>
+{% empty %}
+<p>No alumni have applied for this position.</p>
+{% endfor %}
+<p><a href="{% url 'alum_home' %}" title="">Home</a></p>
+<p><a href="{% url 'logout' %}" title="Logout">Logout</a></p>
+{% endblock %}

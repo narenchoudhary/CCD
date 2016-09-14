@@ -1,0 +1,49 @@
+{% extends 'base_student.html' %}
+
+{% block account_setting%}
+<p><a href="{% url 'stud_logout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Student Internships:</h2>
+<hr/>
+<div class="col-md-12">
+    {% if intern_list %}
+    <div class="col-md-3 input-group pull-right form-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+        <input type="text" class="filter form-control" placeholder="What you looking for?">
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Designation</th>
+            <th>Profile</th>
+            <th>Stipend</th>
+            <th>Duration</th>
+            <th>Opening Date</th>
+            <th>Deadline</th>
+            <th>Detials</th>
+        </tr>
+        </thead>
+        <tbody class="searchable">
+        {% for intern in intern_list %}
+        <tr>
+            <td>{{ intern.designation }}</td>
+            <td>{{ intern.profile }}</td>
+            <td>{{ intern.stipend }}</td>
+            <td>{{ intern.duration }} month(s)</td>
+            <td>{{ intern.opening_date | date:'d-N-Y' }}</td>
+            <td>{{ intern.closing_date | date:'d-N-Y'}}</td>
+            <td><a href="{% url 'internships:stud_intern_details' intern.id %}" class="btn btn-info btn-xs">Details</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No internship matches your profile.</p>
+    {% endif %}
+    <br>
+    <br>
+</div>
+{% endblock %}

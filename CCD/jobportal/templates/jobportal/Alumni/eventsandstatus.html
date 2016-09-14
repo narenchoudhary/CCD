@@ -1,0 +1,34 @@
+{% extends 'base_alum.html' %}
+
+
+{% block content %}
+	<h2 class="sub-header">Events</h2>
+        <div class="col-md-9">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>Event</th>
+						<th>Date #1</th>
+						<th>Date #2</th>
+						<th>Date #3</th>
+						<th>Event Finalised</th>
+						<th>Date Finalised</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for event in event_list %}
+						<tr>
+							<td>{{ event.title }}</td>
+							<td>{{ event.date1 }}</td>
+							<td>{{ event.date2 }}</td>
+							<td>{{ event.date3  }}</td>
+							<td>{{ event.finalised }}</td>
+							<td>{{ event.final_date }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<br>
+			<p><button class="btn btn-default"><a href="{% url 'pdfgen' %}" title="PDF", target="_blank">PDF</a></button></p>
+		</div>
+{% endblock %}

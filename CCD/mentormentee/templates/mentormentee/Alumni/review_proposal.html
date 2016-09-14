@@ -1,0 +1,39 @@
+{% extends 'base_mentormentee.html' %}
+{% block menu %}
+<li class="account-nav-head">Alumni <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
+<li><a href="{% url 'alum_home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+<li><a href="{% url 'availablejobs' %}"><span class="glyphicon glyphicon-briefcase"></span> Jobs/Internship</a></li>
+<li><a href="{% url 'alum_jobsappliedfor' %}" title=""><span class="glyphicon glyphicon-ok"></span> Jobs applied for</a>
+</li>
+<li><a href="{% url 'postalumjob' %}" title="Post a new job"><span class="glyphicon glyphicon-plus"></span> Post a new
+    Job</a></li>
+<li><a href="{% url 'viewalumjob' %}" title="View posted jobs">View posted jobs</a></li>
+<li><a href="{% url 'mentormentee:add_proposal' %}" title="Add a new proposal"><span
+        class="glyphicon glyphicon-plus"></span> Add new research proposal</a></li>
+<li><a href="{% url 'mentormentee:alum_proposals' %}" title="View all proposals">View proposals</a></li>
+<li><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></li>
+{% endblock %}
+{% block content %}
+        <h2>Review Proposal</h2>
+        <hr>
+        <div class="col-md-9">
+            <h4><u>Alumni Current Affiliations:</u></h4>
+            <p> Institute: {{ proposal_instance.alum_current_institute }}</p>
+            <p> Address: {{ proposal_instance.alum_current_address }}</p>
+            <h4><u>Proposal Details</u></h4>
+            <p> Title: {{ proposal_instance.title }}</p>
+            <p> Description: {{ proposal_instance.description }}</p>
+            <p> Duration: {{ proposal_instance.duration }} months</p>
+            <p> Estimated hours/week: {{ proposal_instance.hours_week }} hours/week</p>
+            <p> Outcome: {{ proposal_instance.outcome }}</p>
+            <h4>Applicants: <a href="{% url 'mentormentee:applicants' proposal_instance.id %}">{{ proposal_instance.applicants.count }}</a></h4>
+            <h4><u>Edit</u></h4>
+            <div class="bs-callout bs-callout-default">
+                <h4>Edit</h4>
+                <p><a href="{% url 'mentormentee:edit_proposal' proposal_instance.id %}">Edit this proposal.</a></p>
+                <h4>Delete</h4>
+                <p><a href="{% url 'mentormentee:delete_proposal' proposal_instance.id %}">Delete this proposal.</a>({{ delete_date | timeuntil }} Left.)</p>
+            </div>
+        </div>
+
+{% endblock %}

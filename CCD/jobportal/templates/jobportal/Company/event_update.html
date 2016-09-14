@@ -1,0 +1,49 @@
+{% extends 'base_company.html' %}
+{% load material_form %}
+
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+
+{% block title %}
+    Recruiter | Update Event
+{% endblock %}
+
+{% block account_setting%}
+<a href="{% url 'logout' %}" title="logout">Logout</a>
+{% endblock%}
+
+{% block content %}
+
+<div class="breadcrumbs">
+    <div>
+        <a href="{% url 'company-home' %}">Home</a> ⟩
+        <a href="#">Update Event</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col s12 m8 l9">
+        <div class="card">
+            <div class="card-content">
+                <form method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    {% form %}
+                    {% endform %}
+                    <div class="card-action">
+                        <div class="right-align">
+                            <button class="btn btn-primary pull-right"
+                                    type="submit">Save changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

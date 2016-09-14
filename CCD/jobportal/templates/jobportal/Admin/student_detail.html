@@ -1,0 +1,364 @@
+{% extends 'base_admin.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="row">
+
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Student Details</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+
+            <ul class="s12 m12 l12 tabs z-depth-1">
+                <li class="tab col s6 m2 l2">
+                    <a class="teal-text" href="#profile">Basic Info</a>
+                </li>
+                <li class="tab col s2 m2 l2">
+                    <a href="#programme" class="teal-text">Programme</a>
+                </li>
+                <li class="tab col s2 m2 l2">
+                    <a href="#address" class="teal-text">Address</a>
+                </li>
+                <li class="tab col s2 m2 l2">
+                    <a href="#academic" class="teal-text">Acads</a>
+                </li>
+                <li class="tab col s2 m2 l2">
+                    <a href="#cpi" class="teal-text">CPI</a>
+                </li>
+                <li class="tab col s2 m2 l2">
+                    <a href="#cv" class="teal-text">CV</a>
+                </li>
+            </ul>
+
+            <div class="col s12 m12 l12  white" id="profile">
+                <table class="table bordered">
+                    <tr>
+                        <td>Webmail</td>
+                        <td>{{student.iitg_webmail }}</td>
+                    </tr>
+                    <tr>
+                        <td>Full Name</td>
+                        <td>{{student.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Roll No</td>
+                        <td>{{student.roll_no}}</td>
+                    </tr>
+                    <tr>
+                        <td>DOB</td>
+                        <td>{{student.dob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sex</td>
+                        <td>{{student.sex}}</td>
+                    </tr>
+                    <tr>
+                        <td>Nationality</td>
+                        <td>{{student.nationality}}</td>
+                    </tr>
+                    <tr>
+                        <td>Category</td>
+                        <td>{{student.category}}</td>
+                    </tr>
+                    <tr>
+                        <td>Hostel</td>
+                        <td>{{student.hostel}}</td>
+                    </tr>
+                    <tr>
+                        <td>Room No</td>
+                        <td>{{student.room_no}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12  white" id="programme">
+                <table class="table bordered">
+                    <tr>
+                        <td>Minor Year</td>
+                        <td>{{student.minor_year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Minor Department</td>
+                        <td>{{student.minor_dept}}</td>
+                    </tr>
+                    <tr>
+                        <td>Minor Programme</td>
+                        <td>{{student.minor_prog}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Year</td>
+                        <td>{{student.year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Department</td>
+                        <td>{{student.dept}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Programme</td>
+                        <td>{{student.prog}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12 white" id="address">
+                <table class="table bordered">
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>PIN Code</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12 white" id="academic">
+                <table class="table bordered">
+                    <tr>
+                        <td>JEE Air Rank</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Percentage X</td>
+                        <td>{{student.percentage_x}}</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage XII</td>
+                        <td>{{student.percentage_xii}}</td>
+                    </tr>
+                    <tr>
+                        <td>X Examination Board</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>XII Examination Board</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>X Examination Medium</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>XII Examination Medium</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Gap In Study</td>
+                        <td>{{student.gap_in_study | yesno }}</td>
+                    </tr>
+                    <tr>
+                        <td>Reason for Gap in Study</td>
+                        <td>{{student.gap_reason}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 l12 m12 white" id="cpi">
+                <table class="table bordered">
+                    <tr>
+                        <td>CPI</td>
+                        <td>{{student.cpi}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 1st Sem</td>
+                        <td>{{student.spi_1_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 2nd Sem</td>
+                        <td>{{student.spi_2_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 3rd Sem</td>
+                        <td>{{student.spi_3_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 4th Sem</td>
+                        <td>{{student.spi_4_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 5th Sem</td>
+                        <td>{{student.spi_5_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 6th Sem</td>
+                        <td>{{student.spi_6_sem}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 l12 m12 white" id="cv">
+                <table class="table bordered">
+                    <tr>
+                        <td>CV1</td>
+                        <td>
+                            {% if cv.cv1 %}
+                                <a href="{% url 'admin-student-cv-download' student.id 1 %}"
+                                        class="btn">CV1</a>
+                            {% else %}
+                                No CV uploaded
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CV2</td>
+                        <td>
+                            {% if cv.cv2 %}
+                                <a href="{% url 'admin-student-cv-download' student.id 2 %}"
+                                        class="btn">CV2</a>
+                            {% else %}
+                                No CV uploaded
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col s12 l12 m12">
+
+            <ul class="s12 m12 l12 tabs z-depth-1">
+                <li class="tab col s6 m6 l6">
+                    <a class="teal-text" href="#avatar">Avatar</a>
+                </li>
+                <li class="tab col s6 m6 l6">
+                    <a class="teal-text" href="#sign" >Sign</a>
+                </li>
+            </ul>
+
+            <div class="col s12 m12 l12  white" id="avatar">
+                {% if avatar.avatar %}
+                    <p>
+                        <img class="responsive-img"
+                             src="{{avatar.avatar.thumbnail.400x400}}">
+                    </p>
+                {% else %}
+                    <p>Not avatar found for this profile.</p>
+                {% endif %}
+            </div>
+
+            <div class="col s12 m12 l12  white" id="sign">
+                {% if signature.signature %}
+                    <p>
+                        <img class="responsive-img"
+                             src="{{ signature.signature.url }}">
+                    </p>
+                {% else %}
+                    <p>No signature found for this profile.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col s12 l12 m12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Student Applications</span>
+                    {% if rel_list.count > 0 %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Job Designation</th>
+                                    <th>Applied On</th>
+
+                                    <th>Shortlist Status</th>
+                                    <th>Shortlisted DateTime</th>
+
+                                    <th>Placement Status</th>
+                                    <th>Placement DateTime</th>
+                                    <th>Placement Approval</th>
+                                    <th>Approval DateTime</th>
+                                    <th>CV Selected</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{rel.job.company_owner}}</td>
+                                    <td>{{rel.job.designation}}</td>
+                                    <td>{{rel.creation_datetime}}</td>
+
+                                    <td>{{rel.shortlist_init | yesno }}</td>
+                                    <td>
+                                        {% if rel.shortlist_init %}
+                                            {{rel.shortlist_init_datetime}}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+
+                                    <td>{{rel.placed_init | yesno }}</td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            {{rel.placed_init_datetime}}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            {{rel.placed_approved | yesno:"Approved, Rejected, Pending"}}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.placed_approved == None %}
+                                            ---
+                                        {% else %}
+                                            {{rel.placed_approved_datetime}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.cv1 %}
+                                            CV1
+                                        {% elif rel.cv2 %}
+                                            CV2
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h5>No job applications.</h5>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

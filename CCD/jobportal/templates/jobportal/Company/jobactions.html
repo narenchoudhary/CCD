@@ -1,0 +1,153 @@
+{% extends 'base_company.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+
+{% endblock%}
+
+{% block content %}
+        <h2 class="sub-header">Job Actions</h2>
+        <hr>
+        <div class="col-md-9">
+            <table class="table table-striped">
+                <tr>
+                    <td>Name: </td>
+                    <td>{{ stud_instance.first_name }} {{ stud_instance.middle_name }} {{ stud_instance.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>CPI</td>
+                    <td>{{ stud_instance.cpi }}</td>
+                </tr>
+                <tr>
+                    <td>Department</td>
+                    <td>{{ stud_instance.dept.dept }}</td>
+                </tr>
+                <tr>
+                    <td>Year of Admission</td>
+                    <td>{{ stud_instance.year }}</td>
+                </tr>
+                <tr>
+                    <td>Programme</td>
+                    <td>{{ stud_instance.prog }}</td>
+                </tr>
+            </table>
+            <!--TODO: Add more student details-->
+            <!--TODO: Add CV links-->
+            <h4>Application Status</h4>
+            <table class="table table-striped">
+                <tr>
+                    <td>Round</td>
+                    <td>{{relation_instance.round}}</td>
+                </tr>
+                <tr>
+                    <td>Dropped</td>
+                    <td>
+                        {% if relation_instance.dropped %}
+                            <span class="label label-danger">Dropped </span>  in Round {{ rel_instance.round }}
+                        {% else %}
+                            <span class="label label-success">Not Dropped Yet</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Job Shortlist Request</td>
+                    <td>
+                        {% if relation_instance.shortlist_init == True%}
+                            <span class="label label-success">Shortlisted</span>
+                        {% else %}
+                            <span class="label label-danger">Not Shortlisted</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Job Shortlist Approval </td>
+                    <td>
+                        {% if relation_instance.shortlist_approved == True%}
+                            <span class="label label-success">Shortlist Approved</span>
+                        {% elif rel_instance.shortlist_approved == False %}
+                            <span class="label label-danger">Shortlist Rejected</span>
+                        {% else %}
+                            <span class="label label-default">Action Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Job Hiring Request</td>
+                    <td>
+                        {% if relation_instance.placed_init == True%}
+                            <span class="label label-success">Intern Request</span>
+                        {% else %}
+                            <span class="label label-danger">No Placement Request</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Job Hiring Approval</td>
+                    <td>
+                        {% if relation_instance.placed_approved == True%}
+                            <span class="label label-success">Intern Request Approved</span>
+                        {% elif rel_instance.placed_approved == False %}
+                            <span class="label label-danger">Intern Request Rejected</span>
+                        {% else %}
+                            <span class="label label-default">Action Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <div class="panel panel-info">
+                <div class="panel-heading">Actions</div>
+                <div class="panel-body">
+                    {% if relation_instance.shortlist_init %}
+                        {% if relation_instance.shortlist_approved == True %}
+                            {% if relation_instance.placed_init %}
+                                {% if relation_instance.placed_approved == True %}
+                                    <h4>
+                                        <mark>Hiring request approved.</mark>
+                                    </h4>
+                                {% elif relation_instance.placed_approved == False %}
+                                    <h4>
+                                        Hiring request rejected.
+                                    </h4>
+                                {% else %}
+                                    <h4>
+                                        <mark>Hiring request approval is pending.</mark>
+                                    </h4>
+                                {% endif %}
+                            {% else %}
+                                <h4>
+                                    <p>Candidate not selected for hiring.</p>
+                                    <p>Hire this candidate:
+
+                                        <a href="{% url 'place' relation_instance.id %}" class="btn btn-success">
+                                            Place
+                                        </a>
+                                    </p>
+                                </h4>
+                            {% endif %}
+                        {% elif relation_instance.shortlist_approved == False %}
+                            <h4>
+                                <mark>
+                                    Shortlist request rejected by admin.
+                                </mark>
+                            </h4>
+                        {% else %}
+                            <h4>
+                                <mark>
+                                    Shortlist request approval is pending.
+                                </mark>
+                            </h4>
+                        {% endif %}
+                    {% else %}
+                        <h4>
+                            <p>Candidate not shortlisted.</p>
+                            <p>Shortlist this application:
+                                <a href="{% url 'shortlist' relation_instance.id %}" class="btn btn-success">
+                                    Add to Shortlist
+                                </a>
+                            </p>
+                        </h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+{% endblock %}

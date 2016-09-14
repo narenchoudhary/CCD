@@ -1,0 +1,59 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+
+{% endblock%}
+
+{% block content %}
+
+<div class="row">
+    <div class="row">
+        <div class="col s12 m12 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Event Details</span>
+                    <table class="table table-responsive bordered">
+                        <tr>
+                            <td>Title</td>
+                            <td>{{event.title}}</td>
+                        </tr>
+                        <tr>
+                            <td>Event Type</td>
+                            <td>{{event.event_type}}</td>
+                        </tr>
+                        <tr>
+                            <td>Event Duration</td>
+                            <td>{{event.duration}} hour</td>
+                        </tr>
+                        <tr>
+                            <td>Logistics</td>
+                            <td>{{event.logistics}}</td>
+                        </tr>
+                        <tr>
+                            <td>Remark</td>
+                            <td>{{event.remark}}</td>
+                        </tr>
+                        <tr>
+                            <td>Approval Status</td>
+                            <td>{{event.is_approved}}</td>
+                        </tr>
+                        <tr>
+                            <td>Approved Date</td>
+                            <td>{{event.final_date}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-action">
+                     <div class="right-align">
+                        <a class="btn btn-primary pull-right"
+                                href="{% url 'admin-event-update' event.id %}">Edit Event</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

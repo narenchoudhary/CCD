@@ -1,0 +1,54 @@
+{% extends 'base_mentormentee.html' %}
+{% block menu %}
+<li class="account-nav-head">Alumni <span class="glyphicon glyphicon-triangle-bottom pull-right"></span></li>
+<li><a href="{% url 'alum_home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+<li><a href="{% url 'availablejobs' %}"><span class="glyphicon glyphicon-briefcase"></span> Jobs/Internship</a></li>
+<li><a href="{% url 'alum_jobsappliedfor' %}" title=""><span class="glyphicon glyphicon-ok"></span> Jobs applied for</a>
+</li>
+<li><a href="{% url 'postalumjob' %}" title="Post a new job"><span class="glyphicon glyphicon-plus"></span> Post a new
+    Job</a></li>
+<li><a href="{% url 'viewalumjob' %}" title="View posted jobs">View posted jobs</a></li>
+<li><a href="{% url 'mentormentee:add_proposal' %}" title="Add a new proposal"><span
+        class="glyphicon glyphicon-plus"></span> Add new research proposal</a></li>
+<li><a href="{% url 'mentormentee:alum_proposals' %}" title="View all proposals">View proposals</a></li>
+<li><a href="{% url 'alum_logout' %}" title="alum_logout">Logout</a></li>
+{% endblock %}
+{% block content %}
+
+<h2 class="sub-header">Applicants</h2>
+<div class="col-md-9">
+    {% if relations_list %}
+    <div class="col-md-3 input-group pull-right form-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+        <input type="text" class="filter form-control" placeholder="What you looking for?">
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Roll No</th>
+            <th>Year</th>
+            <th>Review</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for relation in relations_list %}
+        <tr>
+            <td>{{ relation.stud.first_name }} {{ relation.stud.last_name }}</td>
+            <td>{{ relation.stud.dept }}</td>
+            <td>{{ relation.stud.roll_no }}</td>
+            <td>{{ relation.stud.year }}</td>
+            <td><a href="{% url 'mentormentee:review_applicant' relation.proposal.id relation.stud.id %}">Review</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>Bummer. There isn't anything to show here right now.</h4>
+    {% endif %}
+
+</div>
+
+{% endblock %}

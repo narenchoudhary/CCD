@@ -1,0 +1,15 @@
+{% extends 'base_jobportal.html' %}
+
+{% block menu %}
+    <a href="{% url 'login' %}"><li>Login</li></a>
+    <a href="{% url 'signup' %}"><li>Recruiters Signup</li></a>
+{% endblock %}
+
+{% block level_0 %}
+    <h3>Successfully logged out.</h3>
+    <hr>
+    <div class="logout_img col-md-offset-5"></div>
+    <h4 style="text-align:center">Thankyou for using this service</h4>
+	<p style="text-align:center"><a href="{% url 'index' %}" title="index">click here to go to Portal Home</a></p>
+	<p style="text-align:center"><a href="{% url 'login' %}" title="index">click here to go to Login Screen</a></p>
+{% endblock %}

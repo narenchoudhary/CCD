@@ -1,0 +1,67 @@
+{% extends 'base_admin.html' %}
+
+{% block account_setting%}
+    <p><a href="{% url 'admin_logout' %}" title="alum_logout">Logout</a></p>
+    <p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+        <h2 class="sub-header"><strong>Applicants</strong></h2>
+        <hr>
+        <div class="col-md-9">
+            <h4>Internship: {{ intern.designation }}</h4>
+            <h4>Owner: <a href="#">{{ intern.company_owner | capfirst }} </a></h4>
+            <br>
+            {% if rel_stud_list.count > 0 %}
+                <!--Student Applicants-->
+                <h4 class="sub-header">Studnet Applicants</h4>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Round</th>
+                        <th>Status</th>
+                        <th>Approve</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for relation in rel_stud_list %}
+                        <tr>
+                            <td>{{ relation.stud.first_name }} {{ relation.stud.last_name }}</td>
+                            <td>{{ relation.stud.dept.dept }}</td>
+                            <td>{{ relation.round }}</td>
+                            <td>
+                                {% if relation.shortlist_init == True %}
+                                    <span class="label label-success">Shortlist_Init</span>
+                                    {% if relation.shortlist_approved == True %}
+                                        <span class="label label-success">Shortlist_Approved</span>
+                                        {% if relation.intern_init == True %}
+                                            <span class="label label-success">Intern_Init</span>
+                                            {% if relation.intern_approved == True %}
+                                                <span class="label label-success">Intern_Approved</span>
+                                            {% elif relation.intern_aproval == False%}
+                                                <span class="label label-danger">Intern Approval</span>
+                                            {% else %}
+                                                <span class="label label-default">Intern Approval</span>
+                                            {% endif %}
+                                        {% endif%}
+                                    {% else %}
+                                        <span class="label label-danger">Approval Required</span>
+                                    {% endif %}
+                                {% endif %}
+                                {% if relation.dropped %}
+                                    <span class="label label-danger">Dropped</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'internships:admin_intern_rel' relation.id %}"
+                                   class="btn btn-xs btn-primary">Approval</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No student applicant.</p>
+            {% endif %}
+        </div>
+{% endblock %}

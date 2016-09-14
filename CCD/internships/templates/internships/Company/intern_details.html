@@ -1,0 +1,97 @@
+{% extends 'base_company.html' %}
+
+{% block account_setting%}
+<p><a href="{% url 'companylogout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<div class="col-md-12">
+    <h2 class="sub-header">Internship Details:</h2>
+    <hr/>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td>Description</td>
+            <td>{{intern.description}}</td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td>{{intern.designation}}</td>
+        </tr>
+        <tr>
+            <td>Stipend</td>
+            <td>{{intern.stipend}}</td>
+        </tr>
+        <tr>
+            <td>Profile</td>
+            <td>{{intern.profile}}</td>
+        </tr>
+        <tr>
+            <td>Duration</td>
+            <td>{{intern.duration}} months</td>
+        </tr>
+        <tr>
+            <td>Added On</td>
+            <td>{{intern.posted_on}}</td>
+        </tr>
+        <tr>
+            <td>Approved</td>
+            <td>
+                {% if intern.approved == True %}
+                    <span class="label label-success">Approved</span>
+                {% elif intern.approved == False %}
+                    <span class="label label-danger">Rejected</span>
+                {% else %}
+                    <span class="label label-default">Approval Pending</span>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="col-md-12">
+    <h2 class="sub-header">Programmes:</h2>
+    <hr>
+    {% if prog_empty == False %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Dept</th>
+                <th>Prog</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prog in prog_list %}
+                <tr>
+                    <td>
+                        {% if prog.year%}
+                            {{prog.year}}
+                        {%endif%}
+                    </td>
+                    <td>
+                        {% if prog.dept%}
+                            {{prog.dept}}
+                        {%endif%}
+                    </td>
+                    <td>
+                        {% if prog.prog%}
+                            {{prog.prog}}
+                        {%endif%}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h4>You haven't added any programme for this internship proposal.</h4>
+    {% endif %}
+</div>
+<div class="col-md-12">
+    <h2 class="sub-header">Actions:</h2>
+    <hr>
+    <p><a href="{% url 'internships:rec_add_progs' intern.id %}" class="btn btn-primary">Add Programmes</a></p>
+    <p><a href="{% url 'internships:rec_intern_candidates' intern.id %}" class="btn btn-primary">View Candidates</a></p>
+    <p><a href="{% url 'internships:rec_edit_intern' intern.id %}" class="btn btn-primary">Edit Intern</a></p>
+</div>
+
+{% endblock %}

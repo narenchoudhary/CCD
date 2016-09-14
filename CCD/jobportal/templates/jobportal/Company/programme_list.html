@@ -1,0 +1,86 @@
+{% extends 'base_company.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Recruiter | Open Programmes
+{% endblock %}
+
+{% block account_setting%}
+    <a href="{% url 'logout' %}" title="logout">Logout</a>
+{% endblock%}
+
+{% block content %}
+
+<div class="breadcrumbs">
+  <div>
+      <a href="/tnp/admin/home/">Home</a> ⟩
+      <a href="#">Open Programmes</a>
+  </div>
+</div>
+<div class="row">
+    <div class="col s12 m8 l9 mdl-grid">
+        <div class="card mdl-card mdl-shadow--2dp">
+    	   <div class="card-content">
+        	    <span class="card-title">Minor programmes open for placement</span>
+                    {% if prog_minor_list.count > 0 %}
+        	        <p>These minor programmes are open for placement for this session.</p>
+    	            <table class="table bordered" role="grid">
+                        <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                    <th>Discipline</th>
+                                </tr>
+                            </thead>
+                        <tbody>
+                            {% for prog in prog_minor_list %}
+                                <tr>
+                                    <td>{{ prog.year }}</td>
+                                    <td>{{ prog.dept }}</td>
+                                    <td>{{ prog.name }}</td>
+                                    <td>{{ prog.discipline }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h5>Sorry! There isn't anything here yet.</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col s12 m8 l9">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Major programmes open for placement</span>
+                {% if prog_major_list.count > 0 %}
+                    <p>These major programmes are open for placement for this session.</p>
+                    <table class="table bordered" role="grid">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prog in prog_major_list %}
+                                <tr>
+                                    <td>{{ prog.year }}</td>
+                                    <td>{{ prog.dept }}</td>
+                                    <td>{{ prog.name }}</td>
+                                    <td>{{ prog.discipline }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h5>Sorry! There isn't anything here yet.</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

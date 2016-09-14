@@ -1,0 +1,77 @@
+{% extends 'base_alum.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+<p><a href="{% url 'stud_logout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Company Profile and Job Details</h2>
+<hr/>
+<div class="col-md-12">
+    <h4><strong>About Recruiter:</strong></h4>
+    <table class="table table-striped">
+        <tr >
+            <td >Name</td>
+            <td >{{ job.company_owner.company_name }}</td>
+        </tr>
+        <tr >
+            <td >Description</td>
+            <td >{{ job.company_owner.description }}</td>
+        </tr>
+        <tr >
+            <td >Website</td>
+            <td >{{ job.company_owner.website }}</td>
+        </tr>
+        <tr >
+            <td >Organization Type</td>
+            <td >{{ job.company_owner.organization_type }}</td>
+        </tr>
+        <tr >
+            <td >Industry Sector</td>
+            <td >{{ job.company_owner.industry_sector }}</td>
+        </tr>
+    </table>
+    <h4><strong>jobship Details</strong></h4>
+    <table class="table table-striped">
+        <tr >
+            <td >Designation</td>
+            <td >{{ job.designation }}</td>
+        </tr>
+        <tr >
+            <td >Description</td>
+            <td >{{ job.description }}</td>
+        </tr>
+        <tr >
+            <td >Profile</td>
+            <td >{{ job.profile_name }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="col-md-12">
+    {% if alum_rel == None %}
+        {% if deadline_passed %}
+            <h4>Deadline has passed. You can't apply now.</h4>
+        {% else %}
+            {% if job_open %}
+                {% if cv %}
+                    <h4><a href="{% url 'alumnijobs:alum_alum_job_apply' job.id %}">Apply</a></h4>
+                {% else %}
+                    <h4>You haven't uploded any CV.</h4>
+                    <a href="{% url 'alum_cv_upload' %}">Upload CV Here</a>
+                {% endif %}
+            {% else %}
+                <h4>Opening date is {{job.opening_date}}. </h4>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {% if deadline_passed %}
+            <h4>Deadline has passed. You can't remove your application now.</h4>
+        {% else %}
+            <h4><a href="{% url 'alumnijobs:alum_alum_job_deapply' job.id %}">DeApply</a></h4>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base_alum.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2 class="sub-header">Company Account Information</h2>
+    <hr/>
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <tr>
+                <td> IITG Webmail</td>
+                <td> {{ alum_instance.iitg_webmail }}</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td> {{ alum_instance.alternate_email }}</td>
+            </tr>
+            <tr>
+                <td>Year of Admission</td>
+                <td> {{ alum_instance.year }}</td>
+            </tr>
+            <tr>
+                <td>Department</td>
+                <td> {{ alum_instance.dept }}</td>
+            </tr>
+            <tr>
+                <td>Programme</td>
+                <td> {{ alum_instance.prog }}</td>
+            </tr>
+            <tr>
+                <td>Year of passing:</td>
+                <td> {{ alum_instance.year_passing }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

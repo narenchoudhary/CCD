@@ -1,0 +1,85 @@
+{% extends 'base_student.html' %}
+{% load crispy_forms_tags %}
+
+{% block account_setting%}
+<p><a href="{% url 'stud_logout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Company Profile and Internship Details</h2>
+<hr/>
+<div class="col-md-12">
+    <h4><strong>About Recruiter:</strong></h4>
+    <table class="table table-striped">
+        <tr >
+            <td >Name</td>
+            <td >{{ intern.company_owner.company_name }}</td>
+        </tr>
+        <tr >
+            <td >Description</td>
+            <td >{{ intern.company_owner.description }}</td>
+        </tr>
+        <tr >
+            <td >Website</td>
+            <td >{{ intern.company_owner.website }}</td>
+        </tr>
+        <tr >
+            <td >Organization Type</td>
+            <td >{{ intern.company_owner.organization_type }}</td>
+        </tr>
+        <tr >
+            <td >Industry Sector</td>
+            <td >{{ intern.company_owner.industry_sector }}</td>
+        </tr>
+    </table>
+    <h4><strong>Internship Details</strong></h4>
+    <table class="table table-striped">
+        <tr >
+            <td >Designation</td>
+            <td >{{ intern.designation }}</td>
+        </tr>
+        <tr >
+            <td >Description</td>
+            <td >{{ intern.description }}</td>
+        </tr>
+        <tr >
+            <td >Profile</td>
+            <td >{{ intern.profile }}</td>
+        </tr>
+        <tr >
+            <td >Stipend</td>
+            <td >{{ intern.stipend }}</td>
+        </tr>
+        <tr >
+            <td >Duration</td>
+            <td >{{ intern.duration }}</td>
+        </tr>
+
+    </table>
+
+    <div>
+        {% if stud_rel %}
+            {% if deadline_gone %}
+            {% else %}
+                <p><a class="btn btn-danger" href="{% url 'internships:stud_intern_deapply' intern.id %}"><span>Remove Application</span></a></p>
+            {% endif %}
+        {% else %}
+            {% if nocv %}
+            <div class="col-md-9 bs-callout bs-callout-danger">
+                <h4>No CV uploaded.</h4>
+                <p>Please upload at least one CV <a class="intext_link" href="{% url 'viewcvs' %}">here</a>.</p>
+                <p>Only then you'll be able to apply for job/internship positions.</p>
+            </div>
+            {% else %}
+                {% if deadline_gone %}
+                    <p>Closing date has passed. You cannot apply now.</p>
+                {% else %}
+                    <p><a class="btn btn-success" href="{% url 'internships:stud_intern_apply' intern.id %}">Apply</a></p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

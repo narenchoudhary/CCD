@@ -1,0 +1,69 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2 class="sub-header">Job Info</h2>
+<hr>
+<div class="col-md-12">
+    <!--TODO: Represent this data properly -->
+    <!--TODO: Do something with this mess -->
+    <!--https://ux.stackexchange.com/questions/1459/how-to-display-too-much-data-->
+    <table class="table table-striped">
+        <tr>
+            <td>Description</td>
+            <td>{{ job_instance.description }}</td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td>{{job_instance.designation}}</td>
+        </tr>
+        <tr>
+            <td>Profile Name:</td>
+            <td>{{job_instance.profile_name}}</td>
+        </tr>
+        <tr>
+            <td>Audience</td>
+            <td>{{ job_instance.audience}}</td>
+        </tr>
+        <tr>
+            <td>Posted On:</td>
+            <td>{{ job_instance.posted_on }}</td>
+        </tr>
+        <tr>
+            <td>Approved</td>
+            <td>{{ job_instance.approved }}</td>
+        </tr>
+        {% if job_instance.approved %}
+        <tr>
+            <td>Approval Date</td>
+            <td>{{ job_instance.approved_on }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Opening Date:</td>
+            <td>{{ job_instance.opening_date }}</td>
+        </tr>
+        <tr>
+            <td>Closing Date:</td>
+            <td>{{ job_instance.closing_date }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="col-md-6">
+    <h3>Applicants Data</h3>
+    <hr>
+    <h4><a href="#" class="btn btn-primary">Applicants' List</a></h4>
+    <h4><a href="#" class="btn btn-primary">Download Applicants' Data</a></h4>
+</div>
+
+<div class="col-md-6">
+    <h3>Edit and Delete</h3>
+    <hr>
+    <h4 ><a href="{% url 'alumnijobs:admin_edit_alum_job' job_instance.id %}" class="btn btn-warning">Edit</a></h4>
+
+    <h4><a href="#" class="btn btn-danger">Delete</a></h4>
+</div>
+
+{% endblock %}

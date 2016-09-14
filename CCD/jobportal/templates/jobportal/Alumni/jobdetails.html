@@ -1,0 +1,53 @@
+{% extends 'base_alum.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2 class="sub-header">Company Profile and Job Details</h2>
+<hr>
+<div class="col-md-9">
+    {% if job_instance.posted_by_alumnus == True %}
+    <h4>Alum Details</h4>
+    {% elif job_instance.posted_by_company == True %}
+    <h3>Company Details</h3>
+    <p>Name : {{ job_instance.company_owner.company_name }}</p>
+    <p>Description : {{ job_instance.company_owner.description }}</p>
+    <p>Website : {{ job_instance.company_owner.website }}</p>
+    <p>Organization Type: {{ job_instance.company_owner.organization_type }}</p>
+    <p>Industry Sector: {{ job_instance.company_owner.industry_sector }}</p>
+    {% endif %}
+    <h3>Job Details</h3>
+
+    <p>Designation: {{ job_instance.designation }}</p>
+
+    <p>Description: {{ job_instance.description }}</p>
+
+    <p>Openings: {{ job_instance.num_openings }}</p>
+
+    <p>Other Requirements: {{ job_instance.other_requirements }}</p>
+
+    <p>Take home during training: {{ job_instance.take_home_during_training }}</p>
+
+    <p>Take home after training: {{ job_instance.take_home_after_training }}</p>
+
+    {% if relation_instance %}
+    <p><a class="btn btn-default" href="{% url 'alum_deapplyforjob' job_instance.id %}" title=""><span
+            style="color: red">Remove Application</span></a></p>
+
+    {% if relation_instance.shortlist_status %}
+    <p>You have been shortlisted.</p>
+    {% endif %}
+
+    {% else %}
+    <p><a class="btn btn-default" href="{% url 'alum_applyforjob' job_instance.id %}"><span
+            style="color: green">Apply</span></a>
+    </p>
+    {% endif %}
+
+</div>
+<div class="col-md-9">
+    <h3>Links</h3>
+    <h4><a href="{% url 'alum_home' %}"> Home</a></h4>
+    <h4><a href="{% url 'logout' %}"> Logout</a></h4>
+</div>
+
+{% endblock %}

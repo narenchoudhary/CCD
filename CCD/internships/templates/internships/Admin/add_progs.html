@@ -1,0 +1,54 @@
+{% extends 'base_admin.html' %}
+{% load staticfiles %}
+
+{% block head_extra %}
+
+
+{% endblock %}
+
+{% block account_setting%}
+<p><a href="{% url 'admin_logout' %}" title="alum_logout">Logout</a></p>
+<p><a href="#" title="">My Account</a></p>
+{% endblock%}
+
+{% block content %}
+<h2 class="sub-header">Add programmes:</h2>
+<hr>
+<div class="col-md-12">
+    <!--TODO: Style this form-->
+    <form id='myForm' action="{% url 'internships:admin_add_progs' internid %}" method="post" accept-charset="utf-8">
+        <table class="table table-striped tablesorter table-hover">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <tbody>
+            {% for form in formset %}
+            <tr>
+                <td>
+                    {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+                </td>
+                {% for hidden in form.hidden_fields %}
+                <td>{{hidden}}</td>
+                {% endfor %}
+                {% for field in form.visible_fields%}
+                <td>{{field}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" class="btn btn-primary" value="Save">
+    </form>
+</div>
+{% endblock %}
+{% block extra_scripts%}
+<script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script type="text/javascript">
+        $(function() {
+            $('#myForm tbody tr').formset();
+        })
+
+
+</script>
+{% endblock %}
+

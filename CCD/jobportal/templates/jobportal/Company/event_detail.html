@@ -1,0 +1,70 @@
+{% extends 'base_company.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Recruiter | Event
+{% endblock %}
+
+{% block account_setting%}
+<a href="{% url 'logout' %}" title="logout">Logout</a>
+{% endblock%}
+
+{% block content %}
+
+<div class="breadcrumbs">
+    <div>
+        <a href="{% url 'company-home' %}">Home</a> ⟩
+        <a href="{% url 'company-event-list' %}">Events and Status</a> ⟩
+        <a href="#">Event Details</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col s12 m8 l9">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Event Details</span>
+                <table class="table bordered">
+                    <tr>
+                        <td>Title</td>
+                        <td>{{event.title}}</td>
+                    </tr>
+                    <tr>
+                        <td>Event Type</td>
+                        <td>{{event.event_type}}</td>
+                    </tr>
+                    <tr>
+                        <td>Event Duration</td>
+                        <td>{{event.duration}} hour</td>
+                    </tr>
+                    <tr>
+                        <td>Logistics</td>
+                        <td>{{event.logistics}}</td>
+                    </tr>
+                    <tr>
+                        <td>Remark</td>
+                        <td>{{event.remark}}</td>
+                    </tr>
+                    <tr>
+                        <td>Approval Status</td>
+                        <td>
+                            {{event.is_approved | yesno:"Approved, Rejected, Pending"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Approved Date</td>
+                        <td>
+                            {% if event.is_approved == True %}
+                            {{event.final_date}}
+                            {% else %}
+                            Not Approved yet
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

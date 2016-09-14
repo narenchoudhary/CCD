@@ -1,0 +1,15 @@
+{% extends 'base_alum.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+	<h2 class="sub-header">Edit Details and Click Save</h2>
+	<div class="col-md-9">
+		<form action="{% url 'editalumjob' job.id %}" method="post" accept-charset="utf-8">
+			{% csrf_token %}
+            <div class="well">
+                {% crispy edit_job_form edit_job_form.helper %}
+                <input type="submit" class="btn btn-primary" value="Save">
+            </div>
+		</form>
+	</div>
+{% endblock %}

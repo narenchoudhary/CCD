@@ -1,0 +1,258 @@
+{% extends 'base_student.html' %}
+{% load material_form %}
+{% load jobportal_tags %}
+
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+    Student | Profile Detail
+{% endblock %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="breadcrumbs">
+    <div class="valign-wrapper">
+        <a href="{% url 'stud-home' %}">Home</a> ⟩
+        <a href="{% url 'stud-profile-update' %}">Profile Detail</a>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="row">
+
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Student Details</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l12">
+
+            <ul class="s12 m12 l12 tabs z-depth-1">
+                <li class="tab col s6 m2 l2">
+                    <a class="teal-text" href="#profile">Basic Info</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#address" class="teal-text">Address</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#academic" class="teal-text">Acads</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#cpi" class="teal-text">CPI</a>
+                </li>
+            </ul>
+
+            <div class="col s12 m12 l12  white" id="profile">
+            <table class="table bordered">
+                <tr>
+                    <td>Webmail</td>
+                    <td>{{student.iitg_webmail }}</td>
+                </tr>
+                <tr>
+                    <td>Full Name</td>
+                    <td>{{student.name}}</td>
+                </tr>
+                <tr>
+                    <td>Roll No</td>
+                    <td>{{student.roll_no}}</td>
+                </tr>
+                <tr>
+                    <td>DOB</td>
+                    <td>{{student.dob}}</td>
+                </tr>
+                <tr>
+                    <td>Sex</td>
+                    <td>{{student.sex}}</td>
+                </tr>
+                <tr>
+                    <td>Nationality</td>
+                    <td>{{student.nationality}}</td>
+                </tr>
+                <tr>
+                    <td>Category</td>
+                    <td>{{student.category}}</td>
+                </tr>
+                <tr>
+                    <td>Hostel</td>
+                    <td>{{student.hostel}}</td>
+                </tr>
+                <tr>
+                    <td>Room No</td>
+                    <td>{{student.room_no}}</td>
+                </tr>
+            </table>
+        </div>
+
+            <div class="col s12 m12 l12 white" id="address">
+                <table class="table bordered">
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Permanent Address Line1 </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>PIN Code</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12 white" id="academic">
+                <table class="table bordered">
+                    <tr>
+                        <td>Percentage X</td>
+                        <td>{{ student.percentage_x }}</td>
+                    </tr>
+                    <tr>
+                        <td>X Examination Board</td>
+                        <td>{{ student.board_x }}</td>
+                    </tr>
+                    <tr>
+                        <td>X Examination Medium</td>
+                        <td>{{ student.medium_x | capfirst}}</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage XII</td>
+                        <td>{{ student.percentage_xii }}</td>
+                    </tr>
+                    <tr>
+                        <td>XII Examination Board</td>
+                        <td>{{ student.board_xii }}</td>
+                    </tr>
+                    <tr>
+                        <td>XII Examination Medium</td>
+                        <td>{{ student.medium_xii }}</td>
+                    </tr>
+                    <tr>
+                        <td>Gap In Study</td>
+                        <td>{{ student.gap_in_study | yesno | capfirst}}</td>
+                    </tr>
+                    <tr>
+                        <td>Reason for Gap in Study</td>
+                        <td>{{ student.gap_reason }}</td>
+                    </tr>
+                    <tr>
+                        <td>JEE Air Rank</td>
+                        <td>
+                            {{ student.jee_air_rank | default_if_none:"---"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Minor Department</td>
+                        <td>
+                            {{ student.minor_dept | default_if_none:"---"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Minor Programme</td>
+                        <td>
+                            {{ student.minor_prog | default_if_none:"---"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Major Year (Year of Admission)</td>
+                        <td>{{student.year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Department</td>
+                        <td>{{student.dept}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Programme</td>
+                        <td>{{student.prog}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 l12 m12 white" id="cpi">
+                <table class="table bordered">
+                    <tr>
+                        <td>CPI</td>
+                        <td>{{student.cpi}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 1st Sem</td>
+                        <td>{{student.spi_1_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 2nd Sem</td>
+                        <td>{{student.spi_2_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 3rd Sem</td>
+                        <td>{{student.spi_3_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 4th Sem</td>
+                        <td>{{student.spi_4_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 5th Sem</td>
+                        <td>{{student.spi_5_sem}}</td>
+                    </tr>
+                    <tr>
+                        <td>SPI 6th Sem</td>
+                        <td>{{student.spi_6_sem}}</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Edit Details</span>
+                    {% if student.last_updated %}
+                        <p>This profile was last updated on {{ student.last_updated | date:"d M Y"}}.</p>
+                    {% endif %}
+                </div>
+                <div class="card-action">
+                    {% date_passed 'job_stud_profile' as date_gone %}
+                    <p>
+                        {% if date_gone %}
+                            Last date for completing profile information was:
+                            <span class="red-text">{{ site_management.job_student_profile_update_deadline | date:"d M Y h:i:s A"}}</span>
+                        {% else %}
+                            Last date for completing profile information is:
+                            <span class="green-text">{{ site_management.job_student_profile_update_deadline | date:"d M Y h:i:s A"}}</span>
+                        {% endif %}
+                    </p>
+                    <p>
+                        {% if date_gone %}
+                            <a href="{% url 'stud-profile-update' %}"
+                               class="btn disabled">Update Profile</a>
+                        {% else %}
+                            <a class="btn" href="{% url 'stud-profile-update' %}">Update Profile</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

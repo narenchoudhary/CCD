@@ -1,0 +1,279 @@
+{% extends 'base_admin.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{% block account_setting%}
+<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="row">
+    <div class="row">
+
+        <div class="col s12 m9 l10">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Job Details</span>
+                </div>
+            </div>
+
+            <ul class="tabs z-depth-1">
+                <li class="tab col s3 l2">
+                    <a class="teal-text" href="#basicinfo">Basic Information</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#requirements" class="teal-text">Requirements</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#salary" class="teal-text">Salary Breakdown</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#bond" class="teal-text">Legal Document</a>
+                </li>
+                <li class="tab col s3 m3 l2">
+                    <a href="#status" class="teal-text">Status</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col s12 m9 l10">
+
+            <div class="col s12 m12 l12  white" id="basicinfo">
+                <table class="table bordered">
+                    <tr>
+                        <td>Description</td>
+                        <td>{{job.description}}</td>
+                    </tr>
+                    <tr>
+                        <td>Designation</td>
+                        <td>{{job.designation}}</td>
+                    </tr>
+                    <tr>
+                        <td>Profile Name</td>
+                        <td>{{job.profile_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Expected number of recruitments</td>
+                        <td>{{job.num_openings}}</td>
+                    </tr>
+                    <tr>
+                        <td>Approval Status</td>
+                        <td>{{job.approved|yesno:"Approved, Rejected, Approval Pending"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Opening Date</td>
+                        <td>{{job.opening_date}}</td>
+                    </tr>
+                    <tr>
+                        <td>Application Deadline</td>
+                        <td>{{job.application_deadline}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div  class="col s12 m12 l12  white" id="requirements">
+                <table class="table bordered">
+                    <tr>
+                        <td>CPI Shortlist</td>
+                        <td>{{job.cpi_shortlist|yesno}}</td>
+                    </tr>
+                    <tr>
+                        <td>Minimum CPI</td>
+                        <td>
+                            {% if job.cpi_shortlist %}
+                                {{job.minimum_cpi}}
+                            {% else %}
+                                No CPI shortlisting
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Percentage X</td>
+                        <td>{{job.percentage_x}}</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage XII</td>
+                        <td>{{job.percentage_xii}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12  white" id="salary">
+                <table class="table bordered">
+                    <tr>
+                        <td>Currency</td>
+                        <td>{{job.currency}}</td>
+                    </tr>
+                    <tr>
+                        <td>CTC BTech</td>
+                        <td>{{job.ctc_btech | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross BTech</td>
+                        <td>{{job.gross_btech | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>CTC MTech</td>
+                        <td>{{job.ctc_mtech | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross MTech</td>
+                        <td>{{job.gross_mtech | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>CTC MSc</td>
+                        <td>{{job.ctc_msc | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross MSc</td>
+                        <td>{{job.gross_msc | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>CTC MA</td>
+                        <td>{{job.ctc_ma | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross MA</td>
+                        <td>{{job.gross_ma | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>CTC PhD</td>
+                        <td>{{job.ctc_phd | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross PhD</td>
+                        <td>{{job.gross_phd | intcomma}}</td>
+                    </tr>
+                    <tr>
+                        <td>Additional Information</td>
+                        <td>{{job.additional_info}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12  white" id="bond">
+                <table class="table bordered">
+                    <tr>
+                        <td>Bond Document URL</td>
+                        <td>
+                            {% if job.bond_link %}
+                                <a href="{% url 'admin-job-download-bond' job.pk %}" target="_blank"
+                                   class="btn ">Download Bond Document</a>
+                            {% else %}
+                                No bond document uploaded
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col s12 m12 l12  white" id="status">
+                <table class="table bordered">
+                    <tr>
+                        <td>Posted On</td>
+                        <td>{{job.posted_on}}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Updated</td>
+                        <td>{{job.last_updated}}</td>
+                    </tr>
+                    <tr>
+                        <td>Approval Status</td>
+                        <td>{{job.approved|yesno:"Approved, Rejected, Approval Pending"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Approved On</td>
+                        <td>
+                            {% if job.approved %}
+                                {{job.approved_on}}
+                            {% else %}
+                                Not approved yet.
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m9 l10">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Approval Status</span>
+                </div>
+                <div class="card-action">
+                    {% if job.approved %}
+                        <a class="btn disabled">Approve</a>
+                    {% else %}
+                        <a href="{% url 'admin-job-approve' job.id %}"
+                           class="btn btn-success">Approve</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m9 l10">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Actions</span>
+                </div>
+                <div class="card-action">
+                    <a href="{% url 'admin-jobrel-list' job.id %}"
+                       class="btn btn-primary">Applicants' List</a>
+                    <a href="{% url 'admin-job-update' job.id %}"
+                       class="btn btn-warning">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col s12 m9 l10">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Programmes</span>
+                    {% if prog_list.count > 0 %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Dept</th>
+                                    <th>Prog</th>
+                                    <th>Discipline</th>
+                                    <th>Major/Minor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prog in prog_list %}
+                                    <tr>
+                                        <td>{{prog.prog.year}}</td>
+                                        <td>{{prog.prog.dept}}</td>
+                                        <td>{{prog.prog}}</td>
+                                        <td>{{prog.prog.discipline}}</td>
+                                        <td>{{prog.prog.minor_status|yesno:"Minor, Major"}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                    {% endif %}
+                </div>
+
+                <div class="card-content">
+                    <a href="{% url 'admin-job-jobprog-list-update' job.id %}"
+                       class="btn btn-primary">Edit Programmes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
