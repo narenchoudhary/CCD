@@ -203,3 +203,8 @@ TRACK_PAGEVIEWS = True
 # https://github.com/shanx/django-maintenancemode
 MAINTENANCE_MODE = False
 INTERNAL_IPS = ['10.150.35.254']
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
