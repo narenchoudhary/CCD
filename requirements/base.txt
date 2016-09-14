@@ -1,8 +1,15 @@
 Django==1.9.8
+django-appconf==1.0.2
 django-cleanup==0.4.2
 django-extensions==1.7.4
+django-maintenancemode==0.11.2
+django-material==0.8.0
+django-ratelimit==1.0.0
+django-tracking2==0.3.2
 django-versatileimagefield==1.4
-git+https://github.com/viewflow/django-material.git#egg=django-material
+IPy==0.83
 Pillow==3.2.0
+psycopg2==2.6.2
+pytz==2016.6.1
 reportlab==3.3.0
 six==1.10.0
