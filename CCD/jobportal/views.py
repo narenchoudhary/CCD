@@ -116,18 +116,21 @@ class Login(View):
                 username=request.user.username)
             user_type = userprofile.user_type
             if user_type == 'admin':
-                return redirect('admin-home')
+                if Admin.objects.filter(user=userprofile).exists():
+                    return redirect('admin-home')
             elif user_type == 'company':
-                return redirect('company-home')
+                if Company.objects.filter(user=userprofile).exists():
+                    return redirect('company-home')
             elif user_type == 'student':
-                return redirect('stud-home')
+                if Student.objects.filter(user=userprofile).exists():
+                    return redirect('stud-home')
+            elif user_type == 'verifier':
+                return redirect('verifier-home')
             else:
                 auth.logout(request)
-                return redirect('index')
-        else:
-            # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
-            request.session.set_test_cookie()
-            return render(request, self.template_name, dict(form=form))
+        # https://docs.djangoproject.com/en/1.9/topics/http/sessions/#setting-test-cookies
+        request.session.set_test_cookie()
+        return render(request, self.template_name, dict(form=form))
 
     def post(self, request):
         form = LoginForm(request.POST)
