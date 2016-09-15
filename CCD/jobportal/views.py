@@ -148,7 +148,8 @@ class Login(View):
                     user_profile = None
                 if user_profile is not None:
                     user_type = user_profile.user_type
-                    if user_type == 'admin':
+                    if user_type == 'admin' and \
+                            Admin.objects.filter(user=user_profile).exists():
                         if user_profile.is_active:
                             user = auth.authenticate(username=username,
                                                      password=password)
@@ -298,7 +299,7 @@ class Login(View):
                     elif user_type == 'alumni':
                         pass
                     else:
-                        error = 'Unknown error occurred'
+                        error = 'User has not been activated yet.'
                         args = dict(form=form, error=error)
                         return render(request, self.template_name, args)
                 else:
