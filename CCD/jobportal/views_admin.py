@@ -584,7 +584,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
         except ValueError:
             return False, 'Roll number is not a valid number'
         # check year
-        if '' in [str(row[7]), str(row[8]), str(row[9]), str(row[10])]:
+        if '' in [str(row[3]), str(row[4]), str(row[5]), str(row[6])]:
             return False, 'No programme related fields should be empty.'
         else:
             try:
@@ -593,13 +593,13 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                 return False, 'Year is not a valid number.'
             # get programme
             try:
-                dept = str(row[4])
-                prog = str(row[5]).upper()
+                dept = str(row[4]).strip()
+                prog = str(row[5]).strip().upper()
                 Programme.objects.get(year=year, dept=dept,
                                       name=prog, minor_status=False,
                                       discipline__iexact=str(row[6]).strip())
             except Programme.DoesNotExist:
-                return False, 'Programme %s does not exist in DB' \
+                return False, 'Major Programme %s does not exist in DB' \
                        % str(row[5]).upper()
         # check minor_year
         if '' not in [str(row[7]), str(row[8]), str(row[9]), str(row[10])]:
@@ -638,12 +638,12 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     # TODO: Add Transaction
     def post(self, request):
         form = StudentProfileUploadForm(request.POST, request.FILES)
-        print("form ready")
         if form.is_valid():
+            job_candidate = form.cleaned_data['job_candidate']
+            intern_candidate = form.cleaned_data['intern_candidate']
             csvfile = form.cleaned_data['csv']
             reader = csv.reader(csvfile, delimiter=',')
-            error_rows = []
-            error_msg = []
+            error_rows = error_msg = []
             rowcount = 0
             for row in reader:
                 rowcount += 1
@@ -673,7 +673,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                         user_type='student'
                     )
                     try:
-                        prog = None
+                        year = prog = dept = discipline = None
                         if '' not in [row[3], row[4], row[5], row[6]]:
                             year = int(row[3])
                             dept = str(row[4]).strip()
@@ -684,12 +684,13 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                                 minor_status=False,
                                 discipline__iexact=discipline)
 
-                        minor_prog = None
+                        minor_year = minor_dept = minor_prog = None
+                        minor_discipline = None
                         if '' not in [row[7], row[8], row[9], row[10]]:
                             minor_year = int(row[7])
                             minor_dept = str(row[8]).strip()
                             name = str(row[9]).strip()
-                            discipline = str(row[10]).strip()
+                            minor_discipline = str(row[10]).strip()
                             minor_prog = Programme.objects.get(
                                 year=minor_year, dept=minor_dept,
                                 name=str(row[9]).strip(), minor_status=True,
@@ -703,15 +704,19 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             year=year,
                             dept=dept,
                             prog=prog,
+                            discipline=discipline,
                             category=str(row[11]).upper(),
                             cpi=float(row[12]),
                             nationality=str(row[13]).strip(),
                             sex=str(row[14]).upper().strip(),
+                            job_candidate=job_candidate,
+                            intern_candidate=intern_candidate
                         )
                         if minor_year and minor_dept and minor_year:
                             stud.minor_year = minor_year
                             stud.minor_dept = minor_dept
                             stud.minor_prog = minor_prog
+                            stud.minor_discipline = minor_discipline
                             stud.save()
                     except (ValueError, TypeError, IntegrityError):
                         userprofile.delete()
@@ -757,15 +762,12 @@ class StudentFeeStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
         if form.is_valid():
             csvfile = form.cleaned_data['csv']
             reader = csv.reader(csvfile, delimiter=',')
-            print("reader init done")
             error_rows = []
             error_msg = []
             rowcount = 0
             for row in reader:
                 rowcount += 1
-                print(row)
                 row_ok, error = self._validate_csv_row(row)
-                print("row ok " + str(row_ok))
                 if not row_ok:
                     error_rows.append(rowcount)
                     error_msg.append(error)

@@ -615,8 +615,28 @@ class ProgrammeForm(forms.ModelForm):
 
 class StudentProfileUploadForm(forms.Form):
 
-    csv = forms.FileField(required=False, allow_empty_file=True,
+    layout = Layout(
+        Fieldset("Content of CSV File",
+                 Row('job_candidate'), Row('intern_candidate')),
+        Fieldset("Select CSV File", 'csv')
+    )
+
+    csv = forms.FileField(required=True, allow_empty_file=True,
                           label='Upload CSV')
+
+    job_candidate = forms.BooleanField(required=True, initial=True,
+                                       label='List of Job candidates')
+    intern_candidate = forms.BooleanField(required=False, initial=True,
+                                          label='List of Intern candidates')
+
+    def clean(self):
+        cleaned_data = super(StudentProfileUploadForm, self).clean()
+        job_candidate = cleaned_data['job_candidate']
+        intern_candidate = cleaned_data['intern_candidate']
+        if job_candidate and intern_candidate:
+            raise ValidationError("Select only one option: Job or Intern")
+        if not bool(job_candidate) and not bool(intern_candidate):
+            raise ValidationError("Select one option: Job or Intern")
 
 
 class StudentFeeCSVForm(forms.Form):

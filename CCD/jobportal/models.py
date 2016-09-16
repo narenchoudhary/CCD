@@ -47,7 +47,8 @@ def get_bond_link_name(instance, filename):
 class SiteManagement(models.Model):
     site_id = models.DecimalField(
         max_digits=1, decimal_places=0, blank=False, null=False, default=0.00,
-        validators=[MaxValueValidator(1.0), MinValueValidator(1.0)]
+        validators=[MaxValueValidator(1.0), MinValueValidator(1.0)],
+        unique=True
     )
     job_student_profile_update_deadline = models.DateTimeField(
         null=True, blank=True)
@@ -57,6 +58,10 @@ class SiteManagement(models.Model):
         null=True, blank=True)
     job_student_sign_update_deadline = models.DateTimeField(
         null=True, blank=True)
+    job_stud_photo_allowed = models.BooleanField(
+        default=False, verbose_name='Allow Avatar Upload for Job Candidates')
+    job_stud_sign_allowed = models.BooleanField(
+        default=False, verbose_name='Allow Sign Upload for Intern Candidates')
     intern_student_profile_update_deadline = models.DateTimeField(
         null=True, blank=True)
     intern_student_cv_update_deadline = models.DateTimeField(
@@ -219,12 +224,12 @@ class Student(models.Model):
                                   verbose_name="Roll No", default=0)
     name = models.CharField(max_length=80, default="",
                             verbose_name="Full Name")
-    dob = models.DateField(default=timezone.now, blank=True,
+    dob = models.DateField(default=timezone.now, blank=False, null=True,
                            verbose_name='DOB')
     sex = models.CharField(max_length=1, choices=SEX, default='M',
                            verbose_name='Gender')
-    active_backlogs = models.IntegerField(verbose_name="Number of active "
-                                                       "backlogs", default=0)
+    active_backlogs = models.IntegerField(
+        default=0, blank=False, verbose_name="Number of active backlogs")
     category = models.CharField(max_length=10, choices=CATEGORY, default='GEN')
     nationality = models.CharField(max_length=15, default="INDIAN", blank=True)
     minor_year = models.IntegerField(null=True, blank=True,
@@ -246,64 +251,71 @@ class Student(models.Model):
     prog = models.CharField(choices=PROGRAMMES, max_length=10, null=True,
                             blank=False)
     # campus information
-    hostel = models.CharField(max_length=25, choices=HOSTELS,
-                              blank=True, default="")
-    room_no = models.CharField(max_length=6, blank=True, default="",
-                               verbose_name='Room No')
-    alternative_email = models.CharField(max_length=50, blank=True, null=True,
-                                         verbose_name='Alternative Email')
-    mobile_campus = models.CharField(blank=True, max_length=16,
-                                     verbose_name='Mobile (Guwahati)')
+    hostel = models.CharField(
+        max_length=25, choices=HOSTELS, blank=False, default="Manas")
+    room_no = models.CharField(
+        max_length=6, blank=False, default="B-208", verbose_name='Room No')
+    alternative_email = models.CharField(
+        max_length=50, blank=False, null=True,
+        verbose_name='Alternative Email')
+    mobile_campus = models.CharField(
+        blank=False, max_length=16, verbose_name='Mobile (Guwahati)')
     mobile_campus_alternative = models.CharField(
         blank=True, max_length=16, verbose_name='Alternative Mobile (Guwahati)'
     )
-    mobile_home = models.CharField(blank=True, max_length=16,
-                                   verbose_name='Mobile (Home)')
+    mobile_home = models.CharField(
+        blank=False, null=True, max_length=16, verbose_name='Mobile (Home)')
     # permanent address
-    address_line1 = models.CharField(default="", max_length=50, blank=True,
+    address_line1 = models.CharField(default="", max_length=50, blank=False,
                                      verbose_name='Permanent Address Line1')
-    address_line2 = models.CharField(default="", max_length=50, blank=True,
+    address_line2 = models.CharField(default="", max_length=50, blank=False,
                                      verbose_name='Permanent Address Line2')
     address_line3 = models.CharField(default="", max_length=50, blank=True,
                                      verbose_name='Permanent Address Line3')
     pin_code = models.DecimalField(max_digits=10, decimal_places=0,
                                    default=781039, verbose_name='PIN Code')
     # board exams
-    percentage_x = models.DecimalField(blank=True, max_digits=5,
-                                       decimal_places=2, default=40,
-                                       verbose_name='Percentage X')
-    percentage_xii = models.DecimalField(blank=True, max_digits=5,
-                                         decimal_places=2, default=40,
-                                         verbose_name='Percentage XII')
-    board_x = models.CharField(max_length=30, blank=True, default="CBSE",
-                               null=True, verbose_name='X Examination Board')
-    board_xii = models.CharField(max_length=30, blank=True, default="CBSE",
-                                 null=True,
-                                 verbose_name='XII Examination Board')
-    medium_x = models.CharField(max_length=30, blank=True, null=True,
-                                default="English",
-                                verbose_name='X Examination Medium')
-    medium_xii = models.CharField(max_length=30, blank=True, null=True,
-                                  default="English",
-                                  verbose_name='XII Examination Medium')
+    percentage_x = models.DecimalField(
+        blank=False, null=True, max_digits=5, decimal_places=2, default=40,
+        verbose_name='Class X Percentage (out of 100) OR CGPA (out of 10)',
+        help_text='Do not multiply CGPA with any factor. Fill it as it is.'
+    )
+    percentage_xii = models.DecimalField(
+        blank=False, null=True, max_digits=5, decimal_places=2, default=40,
+        verbose_name='Class XII Percentage (out of 100) OR CGPA (out of 10)',
+        help_text='Do not multiply CGPA with any factor. Fill it as it is.'
+    )
+    board_x = models.CharField(
+        max_length=30, blank=False, default="CBSE", null=True,
+        verbose_name='X Examination Board')
+    board_xii = models.CharField(
+        max_length=30, blank=False, default="CBSE", null=True,
+        verbose_name='XII Examination Board')
+    medium_x = models.CharField(
+        max_length=30, blank=False, null=True, default="English",
+        verbose_name='X Examination Medium')
+    medium_xii = models.CharField(
+        max_length=30, blank=False, null=True, default="English",
+        verbose_name='XII Examination Medium')
     passing_year_x = models.DecimalField(
-        max_digits=4, decimal_places=0, default=2003, blank=True,
+        max_digits=4, decimal_places=0, default=2003, blank=False,
         verbose_name='X Examination Passing Year')
     passing_year_xii = models.DecimalField(
-        max_digits=4, decimal_places=0, default=2003, blank=True,
+        max_digits=4, decimal_places=0, default=2003, blank=False,
         verbose_name='XII Examination Passing Year')
-    gap_in_study = models.BooleanField(default=False, blank=True,
-                                       verbose_name='Gap In Study')
+    gap_in_study = models.BooleanField(
+        default=False, blank=True, verbose_name='Gap In Study')
     gap_reason = models.TextField(
         max_length=100, default="", blank=True, null=True,
         verbose_name='Reason For Gap In Study (Eg : JEE Preperation)')
     jee_air_rank = models.DecimalField(
-        max_digits=6, decimal_places=0, default=0, null=True, blank=True,
-        verbose_name='JEE(Advance) All India Rank')
-    linkedin_link = models.URLField(max_length=254, blank=True, null=True,
-                                    verbose_name='LinkedIn Account Public URL')
+        max_digits=6, decimal_places=0, default=0, null=True, blank=False,
+        verbose_name='JEE(Advance) All India Rank (General Rank)')
+    linkedin_link = models.URLField(
+        max_length=254, blank=True, null=True,
+        verbose_name='LinkedIn Account Public URL')
     # grades
-    cpi = models.DecimalField(max_digits=4, decimal_places=2, blank=True,
+    cpi = models.DecimalField(max_digits=4, decimal_places=2, blank=False,
                               default=0.00, verbose_name='CPI',
                               validators=[MaxValueValidator(10.0),
                                           MinValueValidator(0.0)])

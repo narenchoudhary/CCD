@@ -31,19 +31,19 @@ handler500 = 'jobportal.views.handler500'
 handler503 = 'jobportal.views.handler503'
 
 urlpatterns = [
-    url(r'^tnp/tracking/', include('tracking.urls')),
-    url(r'^tnp/jobportal/', include('jobportal.urls')),
-    url(r'^tnp/mentormentee/', include('mentormentee.urls',
+    url(r'^tracking/', include('tracking.urls')),
+    url(r'^jobportal/', include('jobportal.urls')),
+    url(r'^mentormentee/', include('mentormentee.urls',
                                        namespace="mentormentee",
                                        app_name="mentormentee")),
-    url(r'^tnp/internships/', include('internships.urls',
+    url(r'^internships/', include('internships.urls',
                                       namespace="internships",
                                       app_name="internships")),
-    url(r'^tnp/alumnijobs/', include('alumnijobs.urls',
+    url(r'^alumnijobs/', include('alumnijobs.urls',
                                      namespace="alumnijobs",
                                      app_name="alumnijobs")),
-    url(r'^tnp/admin/', include(admin.site.urls)),
-    url(r'^tnp/', include('jobportal.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('jobportal.urls')),
 ]
 
 if settings.DEBUG:

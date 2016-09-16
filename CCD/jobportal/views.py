@@ -741,7 +741,13 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('stud-avatar-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        site_management = SiteManagement.objects.all()[0]
+        if site_management.job_stud_photo_allowed is False:
+            return False
+        return True
 
     def get_object(self, queryset=None):
         try:
@@ -766,7 +772,16 @@ class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('stud-avatar-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        stud_id = self.request.session['student_instance_id']
+        if Avatar.objects.filter(stud__id=stud_id).exists():
+            return False
+        site_management = SiteManagement.objects.all()[0]
+        if site_management.job_stud_photo_allowed is False:
+            return False
+        return True
 
     def form_valid(self, form):
         avatar = form.save(commit=False)
@@ -803,7 +818,13 @@ class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('stud-sign-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        site_management = SiteManagement.objects.all()[0]
+        if site_management.job_stud_sign_allowed is False:
+            return False
+        return True
 
     def form_valid(self, form):
         signature = form.save(commit=False)
@@ -821,7 +842,16 @@ class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('stud-sign-detail')
 
     def test_func(self):
-        return self.request.user.user_type == 'student'
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        stud_id = self.request.session['student_instance_id']
+        if Signature.objects.filter(stud__id=stud_id).exists():
+            return False
+        site_management = SiteManagement.objects.all()[0]
+        if site_management.job_stud_sign_allowed is False:
+            return False
+        return True
 
     def get_object(self, queryset=None):
         try:

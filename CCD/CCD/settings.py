@@ -24,11 +24,12 @@ SECRET_KEY = 'x&uda4nsg--wxz*f630nb21-$wm+8e)$51m0^)y6)3rzxe8=u3'
 
 SITE_ID = 1
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'iitg.ernet.in', '202.141.80.161',
-                 '202.141.80.86']
+                 '202.141.80.86', '172.16.0.91']
 
+LOGIN_URL = '/tnp/login/'
 AUTH_USER_MODEL = 'jobportal.UserProfile'
 
 # Application definition
@@ -144,7 +145,7 @@ SESSION_COOKIE_AGE = 60*60*24*30
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 # https://docs.djangoproject.com/en/1.10/ref/settings/#std:setting-STATICFILES_DIRS
 
-STATIC_URL = '/tnp/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -155,7 +156,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_cdn')
 # Media Files (Uploaded files)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/tnp/media/'
+MEDIA_URL = '/media/'
 
 # File Upload Handlers
 FILE_UPLOAD_HANDLERS = (
@@ -202,7 +203,7 @@ TRACK_PAGEVIEWS = True
 # django-maintenancemode
 # https://github.com/shanx/django-maintenancemode
 MAINTENANCE_MODE = False
-INTERNAL_IPS = ['10.150.35.254']
+INTERNAL_IPS = ['202.141.80.86', '172.16.0.91']
 
 try:
     from local_settings import *

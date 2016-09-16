@@ -1,5 +1,6 @@
 {% extends 'base_student.html' %}
 {% load staticfiles %}
+{% load jobportal_tags %}
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
@@ -35,6 +36,8 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
+                    {% is_allowed 'job_stud_photo' as photo_allowed %}
+                    {% if photo_allowed %}
                     {% if avatar and avatar.avatar %}
                         <a class="btn" href="{% url 'stud-avatar-update' %}">
                             Upload new avatar
@@ -45,6 +48,12 @@
                         </a>
                     {% else %}
                         <a class="btn" href="{% url 'stud-avatar-create' %}">
+                            Upload avatar
+                        </a>
+                    {% endif %}
+                    {% else %}
+                        <p class="red-text">Avatar uploading has been disabled temporarily.</p>
+                        <a class="btn disabled" href="">
                             Upload avatar
                         </a>
                     {% endif %}

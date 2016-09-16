@@ -6,6 +6,16 @@
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 {% endblock%}
 
+{% block custom_styles %}
+<style type="text/css">
+    .section h5 {
+        font-size: 1.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
@@ -16,18 +26,18 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Upload Student Users</span>
+                    <p>Note: Since uploaded files are validated row-wise, do not upload files with
+                    more than 100 records. In case of network errors, request may timeout leaving
+                    many rows unprocessed.</p>
                     <form method="post" accept-charset="utf-8" enctype="multipart/form-data"
                           action="{% url 'admin-student-create' %}">
                         {% csrf_token %}
                         {% form %}
                         {% endform %}
-                        <input type="submit" class="btn" value="Upload">
+                        <div class="right-align">
+                           <input type="submit" class="btn" value="Upload">
+                        </div>
                     </form>
-
-                    <p>Note: Since uploaded files are validated row-wise, do not upload files with
-                    more than 100 records. In case of network errors, request may timeout leaving
-                    many rows unprocessed.</p>
-
                 </div>
             </div>
 
@@ -110,20 +120,26 @@
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Department Code (Major)</td>
-                                <td>Department code in less than 5 characters; Cannot be left blank</td>
+                                <td>Department Name (Major)</td>
+                                <td>Major department name; Cannot be left blank</td>
                             </tr>
                             <tr>
                                 <td>6</td>
                                 <td>Programme (Major)</td>
-                                <td>Programme name in all caps and no periods. Eg. BTECH, MDES, MSR . M.Tech. would fail.
-                                Cannot be left blank</td>
+                                <td>
+                                    Programme name in all caps and no periods. Eg. BTECH, MDES, MSR
+                                    (M.Tech. would fail).
+                                    Cannot be left blank
+                                </td>
                             </tr>
                             <tr>
                                 <td>7</td>
                                 <td>Discipline (Major)</td>
-                                <td>Exact name of discipline as present in database. In most cases, it will be same as
-                                Department name. Cannot be left blank</td>
+                                <td>
+                                    Exact name of discipline as present in database.
+                                    In most cases, it will be same as Department name.
+                                    Cannot be left blank.
+                                </td>
                             </tr>
                             <tr>
                                 <td>8</td>
@@ -133,18 +149,22 @@
                             <tr>
                                 <td>9</td>
                                 <td>Department Code (Minor)</td>
-                                <td>Department code in less than 5 characters; Optional</td>
+                                <td>Department name; Optional</td>
                             </tr>
                             <tr>
                                 <td>10</td>
                                 <td>Programme (Minor)</td>
-                                <td>Programme name in all caps and no periods. Eg. BTECH, MDES, MSR . M.Tech. would fail.</td>
+                                <td>
+                                    Minor programme name in all caps and no periods.
+                                    Eg. BTECH, MDES, MSR (M.Tech. would fail).</td>
                             </tr>
                             <tr>
                                 <td>11</td>
                                 <td>Discipline (Minor)</td>
-                                <td>Exact name of discipline as present in database. In most cases, it will be same as
-                                Department name.</td>
+                                <td>
+                                    Exact name of discipline as present in database.
+                                    In most cases, it will be same as Department name.
+                                </td>
                             </tr>
                             <tr>
                                 <td>12</td>

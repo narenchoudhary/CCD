@@ -1,5 +1,6 @@
 {% extends 'base_student.html' %}
 {% load staticfiles %}
+{% load jobportal_tags %}
 
 {% block account_setting%}
     <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
@@ -35,16 +36,24 @@
                     {% endif %}
                 </div>
                 <div class="card-action">
-                    {% if signature and signature.signature %}
-                        <a class="btn" href="{% url 'stud-sign-update' %}">
-                            Upload new signature
-                        </a>
-                    {% elif signature %}
-                        <a class="btn" href="{% url 'stud-sign-update' %}">
-                            Upload signature
-                        </a>
+                    {% is_allowed 'job_stud_sign' as sign_allowed %}
+                    {% if sign_allowed %}
+                        {% if signature and signature.signature %}
+                            <a class="btn" href="{% url 'stud-sign-update' %}">
+                                Upload new signature
+                            </a>
+                        {% elif signature %}
+                            <a class="btn" href="{% url 'stud-sign-update' %}">
+                                Upload signature
+                            </a>
+                        {% else %}
+                            <a class="btn" href="{% url 'stud-sign-create' %}">
+                                Upload signature
+                            </a>
+                        {% endif %}
                     {% else %}
-                        <a class="btn" href="{% url 'stud-sign-create' %}">
+                        <p class="red-text">Signature uploading has been disabled temporarily.</p>
+                        <a class="btn disabled" href="">
                             Upload signature
                         </a>
                     {% endif %}

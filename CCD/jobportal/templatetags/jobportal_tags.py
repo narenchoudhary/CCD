@@ -33,3 +33,15 @@ def date_passed(value):
         return site_management.intern_student_profile_update_deadline < now
     else:
         return True
+
+
+@register.simple_tag
+def is_allowed(value):
+    site_management = SiteManagement.objects.all()[0]
+    value = str(value)
+    if value == 'job_stud_photo':
+        return site_management.job_stud_photo_allowed
+    elif value == 'job_stud_sign':
+        return site_management.job_stud_sign_allowed
+    else:
+        return False
