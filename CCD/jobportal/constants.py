@@ -40,11 +40,13 @@ DEPARTMENTS = (
     ('Design', 'Design'),
     ('Electronics and Electrical Engineering',
      'Electronics and Electrical Engineering'),
-    ('ECE', 'Electronics'),
+    ('Electronics and Communication Engineering',
+     'Electronics and Communication Engineering'),
     ('Humanities & Social Sciences', 'Humanities & Social Sciences'),
     ('Mathematics', 'Mathematics'),
-    ('Mechanical', 'Mechanical'),
+    ('Mechanical Engineering', 'Mechanical Engineering'),
     ('Physics', 'Physics'),
+    ('Center for Energy', 'Center for Energy'),
 )
 
 DEPARTMENTS_JOBCHOICE = DEPARTMENTS + (('ALL', 'All Departments'),)
