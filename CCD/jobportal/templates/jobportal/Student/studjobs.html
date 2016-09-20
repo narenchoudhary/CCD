@@ -43,7 +43,7 @@
             </td>
             <td><a class="btn btn-info btn-xs" href="{% url 'jobdetails' job.id %}"><span
                 class="glyphicon glyphicon-list"></span>&nbspDetails</a></td>
-            <td>{{ job.opening_date | date:'d-N-Y' }}</td>
+            <td>{{ job.opening_datetime | date:'d-N-Y' }}</td>
             <td>{{ job.application_deadline | date:'d-N-Y'}}</td>
         </tr>
         {% endfor %}

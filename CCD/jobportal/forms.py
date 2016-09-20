@@ -186,7 +186,7 @@ class AdminJobEditForm(ModelForm):
         Fieldset('Legal Document', 'bond_link'),
         Fieldset(
             'Opening and Closing Dates',
-            'opening_date',
+            'opening_datetime',
             'application_deadline',
         )
     )
@@ -198,7 +198,7 @@ class AdminJobEditForm(ModelForm):
                   'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
-                  'bond_link', 'opening_date', 'application_deadline',
+                  'bond_link', 'opening_datetime', 'application_deadline',
                   'backlog_filter', 'num_backlogs_allowed', 'additional_info']
 
     def __init__(self, *args, **kwargs):

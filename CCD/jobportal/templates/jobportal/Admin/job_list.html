@@ -30,7 +30,7 @@
                             <td> {{ job.company_owner.company_name}}</td>
                             <td> {{ job.designation | capfirst }}</td>
                             <td class="hide-on-small-only"> {{ job.profile_name}}</td>
-                            <td class="hide-on-small-only"> {{ job.opening_date }}</td>
+                            <td class="hide-on-small-only"> {{ job.opening_datetime }}</td>
                             <td class="hide-on-small-only"> {{ job.application_deadline }}</td>
                             <td>
                                 <a href="{% url 'admin-job-detail' job.id %}"

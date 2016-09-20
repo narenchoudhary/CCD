@@ -492,10 +492,10 @@ class Job(models.Model):
                                        verbose_name='Approval Status')
     approved_on = models.DateField(blank=True, null=True,
                                    verbose_name='Approval Date')
-    opening_date = models.DateField(blank=True, null=True,
-                                    verbose_name='Opening Date')
-    application_deadline = models.DateField(blank=True, null=True,
-                                            verbose_name='Closing Date')
+    opening_datetime = models.DateTimeField(blank=True, null=True,
+                                            verbose_name='Opening Date')
+    application_deadline = models.DateTimeField(blank=True, null=True,
+                                                verbose_name='Closing Date')
 
     class Meta:
         managed = True
@@ -506,7 +506,7 @@ class Job(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.posted_on = timezone.now()
-            self.opening_date = timezone.now() + timedelta(days=30)
+            self.opening_datetime = timezone.now() + timedelta(days=30)
             self.application_deadline = timezone.now() + timedelta(days=45)
         self.last_updated = timezone.now()
         if self.minimum_cpi is None:

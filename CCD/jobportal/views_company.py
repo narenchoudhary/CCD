@@ -237,8 +237,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['rel_list'] = ProgrammeJobRelation.objects.filter(
             job=self.object)
-        date_today = timezone.now().date()
-        context['deadline_over'] = self.job.application_deadline <= date_today
+        now = timezone.now()
+        context['deadline_over'] = self.job.application_deadline < now
         return context
 
 
@@ -287,7 +287,7 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
             return False
         # deadline has passed
         deadline = self.job.application_deadline
-        deadline_over = deadline < timezone.now().date()
+        deadline_over = deadline < timezone.now()
         if not deadline_over:
             return False
         return True
@@ -560,7 +560,7 @@ class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
             return False
         # check application_deadline
         job = get_object_or_404(Job, id=self.kwargs['jobpk'])
-        deadline = job.application_deadline < timezone.now().date()
+        deadline = job.application_deadline < timezone.now()
         if not deadline:
             return False
         # check job owner
@@ -609,7 +609,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         is_owner = self.job.company_owner.id == session_id
         if not is_owner:
             return False
-        deadline_ok = self.job.application_deadline > timezone.now().date()
+        deadline_ok = self.job.application_deadline > timezone.now()
         if not deadline_ok:
             return False
         return True

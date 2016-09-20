@@ -253,9 +253,6 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         is_admin = self.request.user.user_type == 'admin'
         if not is_admin:
             return False
-        deadline_ok = self.job.application_deadline > timezone.now().date()
-        if not deadline_ok:
-            return False
         return True
 
     def get(self, request, jobpk):
@@ -455,7 +452,7 @@ class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
         if not is_admin:
             return True
         job = get_object_or_404(Job, id=self.kwargs['jobpk'])
-        deadline_ok = job.application_deadline < timezone.now().date()
+        deadline_ok = job.application_deadline < timezone.now()
         if not deadline_ok:
             return False
         return True

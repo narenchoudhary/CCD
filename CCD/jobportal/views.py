@@ -433,9 +433,9 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         ).filter(
             approved=True
         ).filter(
-            opening_date__lte=timezone.now().date()
+            opening_datetime__lte=timezone.now()
         ).filter(
-            application_deadline__gte=timezone.now().date()
+            application_deadline__gte=timezone.now()
         ).filter(
             percentage_x__lte=stud.percentage_x
         ).filter(
@@ -478,12 +478,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['no_cv'] = self.no_cv()
-        context['deadline_passed'] = \
-            self.job.application_deadline < timezone.now().date()
-        print(self.job.application_deadline)
-        print(timezone.now().date())
-        print(timezone.now())
-        print(context['deadline_passed'])
+        now = timezone.now()
+        context['deadline_passed'] = self.job.application_deadline < now
         context['jobrel'] = self.get_jobrel_or_none()
         return context
 
@@ -645,8 +641,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         return True
 
     def check_job_credentials(self):
-        time_now = timezone.now().date()
-        opening_date_check = self.job.opening_date <= time_now
+        time_now = timezone.now()
+        opening_date_check = self.job.opening_datetime <= time_now
         deadline_check = self.job.application_deadline >= time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check
@@ -680,8 +676,8 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
             return redirect('stud-job-detail', pk=self.job.id)
 
     def check_job_credentials(self):
-        time_now = timezone.now().date()
-        opening_date_check = self.job.opening_date <= time_now
+        time_now = timezone.now()
+        opening_date_check = self.job.opening_datetime <= time_now
         deadline_check = self.job.application_deadline >= time_now
         approved_check = self.job.approved is True
         return opening_date_check and deadline_check and approved_check

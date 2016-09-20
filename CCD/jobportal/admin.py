@@ -56,7 +56,7 @@ class EventAdmin(admin.ModelAdmin):
 
 class JobAdmin(admin.ModelAdmin):
     list_display = ('company_owner', 'designation', 'profile_name',
-                    'opening_date', 'application_deadline', 'approved')
+                    'opening_datetime', 'application_deadline', 'approved')
     list_filter = ('cpi_shortlist', 'backlog_filter', 'approved')
 
 
