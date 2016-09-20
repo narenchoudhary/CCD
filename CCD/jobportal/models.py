@@ -230,7 +230,7 @@ class Student(models.Model):
                            verbose_name='Gender')
     active_backlogs = models.IntegerField(
         default=0, blank=False, verbose_name="Number of active backlogs")
-    category = models.CharField(max_length=10, choices=CATEGORY, default='GEN')
+    category = models.CharField(max_length=40, choices=CATEGORY, default='GEN')
     nationality = models.CharField(max_length=15, default="INDIAN", blank=True)
     minor_year = models.IntegerField(null=True, blank=True,
                                      verbose_name='Minor Year')
