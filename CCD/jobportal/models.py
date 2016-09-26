@@ -91,6 +91,12 @@ class UserProfile(AbstractUser):
     def __unicode__(self):
         return str(self.username)
 
+    def stud_programme(self):
+        stud = Student.objects.filter(user__username=self.username)
+        if len(stud) > 0:
+            return str(stud[0].prog)
+        return ""
+
 
 class Programme(models.Model):
     year = models.IntegerField(null=True, blank=False, verbose_name='Year')

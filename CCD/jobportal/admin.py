@@ -22,8 +22,8 @@ class UserProfileAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('user_type', 'login_server')}),
     )
-    list_display = ('username', 'user_type', 'is_active')
-    list_filter = ('user_type', 'is_active',)
+    list_display = ('username', 'user_type', 'is_active', 'stud_programme')
+    list_filter = ('user_type', 'is_active')
 
 
 class ComanyAdmin(admin.ModelAdmin):
