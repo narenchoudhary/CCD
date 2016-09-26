@@ -34,7 +34,9 @@ class ComanyAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'roll_no', 'year', 'dept', 'prog')
+    list_display = ('name', 'roll_no', 'year', 'dept', 'prog', 'minor_dept')
+    list_filter = ('year', 'dept', 'prog', 'minor_year', 'category', 'sex',
+                   'placed', 'ppo')
 
 
 class DepartmentAdmin(admin.ModelAdmin):
