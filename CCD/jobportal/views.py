@@ -587,7 +587,7 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         self.stud = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
         self.job = get_object_or_404(Job, id=self.kwargs['pk'])
-        stud_cv_check = self.check_stud_credentials()
+        stud_cv_check = self.check_stud_cv()
         stud_check = self.check_stud_credentials()
         job_check = self.check_job_credentials()
         if not stud_cv_check or not stud_check or not job_check:
