@@ -690,7 +690,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             minor_discipline = str(row[10]).strip()
                             minor_prog = Programme.objects.get(
                                 year=minor_year, dept=minor_dept,
-                                name=str(row[9]).strip(), minor_status=True,
+                                name=name, minor_status=True,
                                 discipline__iexact=str(row[10]).strip())
 
                         stud = Student.objects.create(
@@ -715,11 +715,15 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             stud.minor_prog = minor_prog
                             stud.minor_discipline = minor_discipline
                             stud.save()
-                    except (ValueError, TypeError, IntegrityError):
-                        userprofile.delete()
-                        error_rows.append(rowcount)
-                        error = 'Student creation failed. Integrity Error'
-                        error_msg.append(error)
+                    except IntegrityError:
+                        error = 'Student creation failed. IntegrityError'
+                    except ValueError:
+                        error = 'Student creation failed. ValueError'
+                    except TypeError:
+                        error = 'Student creation failed. TypeError'
+                    userprofile.delete()
+                    error_rows.append(rowcount)
+                    error_msg.append(error)
             zipped_data = zip(error_rows, error_msg)
             args = dict(zipped_data=zipped_data, form=form)
             return render(request, self.template_name, args)
