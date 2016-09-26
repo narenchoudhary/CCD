@@ -137,7 +137,8 @@ fabric.properties
 db.*
 
 #Django media files
-media/*
+media/**
+CCD/media/**
 
 # Idea folder
 .idea/
