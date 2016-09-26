@@ -700,7 +700,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             name=str(row[2]).strip(),
                             year=year,
                             dept=dept,
-                            prog=prog,
+                            prog=prog.name,
                             discipline=discipline,
                             category=str(row[11]).upper(),
                             cpi=float(row[12]),
@@ -712,7 +712,7 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                         if minor_year and minor_dept and minor_year:
                             stud.minor_year = minor_year
                             stud.minor_dept = minor_dept
-                            stud.minor_prog = minor_prog
+                            stud.minor_prog = minor_prog.name
                             stud.minor_discipline = minor_discipline
                             stud.save()
                     except IntegrityError:
