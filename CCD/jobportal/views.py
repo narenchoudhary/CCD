@@ -625,9 +625,7 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
             cv = CV.objects.get(stud=self.stud)
         except CV.DoesNotExist:
             return False
-        if not bool(cv.cv1) and not bool(cv.cv2):
-            return False
-        return True
+        return bool(cv.cv1) or bool(cv.cv2)
 
     def check_stud_credentials(self):
         progjobrel = ProgrammeJobRelation.objects.filter(
