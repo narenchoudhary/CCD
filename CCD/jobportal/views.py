@@ -421,6 +421,16 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         if stud.cpi < 5:
             return None
 
+        # fix for filtering is CGPA is filled
+        # multiply CGPA by 10 before filtering
+        stud_percentage_x = stud.percentage_x
+        if stud_percentage_x <= 10:
+            stud_percentage_x *= 10
+        stud_percentage_xii = stud.percentage_xii
+        if stud_percentage_xii <= 10:
+            stud_percentage_xii *= 10
+
+        # return job queryset obtained by filtering against required checks
         return Job.objects.filter(
             Q(id__in=major.values('job_id')) | Q(id__in=minor.values('job_id'))
         ).filter(
@@ -437,9 +447,9 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         ).filter(
             application_deadline__gte=timezone.now()
         ).filter(
-            percentage_x__lte=stud.percentage_x
+            percentage_x__lte=stud_percentage_x
         ).filter(
-            percentage_xii__lte=stud.percentage_xii
+            percentage_xii__lte=stud_percentage_xii
         )
 
     def get_context_data(self, **kwargs):
