@@ -716,14 +716,21 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
                             stud.minor_discipline = minor_discipline
                             stud.save()
                     except IntegrityError:
+                        userprofile.delete()
                         error = 'Student creation failed. IntegrityError'
+                        error_rows.append(rowcount)
+                        error_msg.append(error)
                     except ValueError:
+                        userprofile.delete()
                         error = 'Student creation failed. ValueError'
+                        error_rows.append(rowcount)
+                        error_msg.append(error)
                     except TypeError:
+                        userprofile.delete()
                         error = 'Student creation failed. TypeError'
-                    userprofile.delete()
-                    error_rows.append(rowcount)
-                    error_msg.append(error)
+                        error_rows.append(rowcount)
+                        error_msg.append(error)
+
             zipped_data = zip(error_rows, error_msg)
             args = dict(zipped_data=zipped_data, form=form)
             return render(request, self.template_name, args)
