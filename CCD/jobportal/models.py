@@ -279,7 +279,8 @@ class Student(models.Model):
     address_line3 = models.CharField(default="", max_length=50, blank=True,
                                      verbose_name='Permanent Address Line3')
     pin_code = models.DecimalField(max_digits=10, decimal_places=0,
-                                   default=781039, verbose_name='PIN Code')
+                                   blank=False, null=False, default=781039,
+                                   verbose_name='PIN Code')
     # board exams
     percentage_x = models.DecimalField(
         blank=False, null=True, max_digits=5, decimal_places=2, default=40,
@@ -316,7 +317,9 @@ class Student(models.Model):
         verbose_name='Reason For Gap In Study (Eg : JEE Preperation)')
     jee_air_rank = models.DecimalField(
         max_digits=6, decimal_places=0, default=0, null=True, blank=False,
-        verbose_name='JEE(Advance) All India Rank (General Rank)')
+        verbose_name='JEE(Advance) All India Rank (General Rank)',
+        validators=[MaxValueValidator(40000), MinValueValidator(1)]
+    )
     linkedin_link = models.URLField(
         max_length=254, blank=True, null=True,
         verbose_name='LinkedIn Account Public URL')
