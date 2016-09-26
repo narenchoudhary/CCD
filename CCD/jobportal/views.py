@@ -631,8 +631,8 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def check_stud_credentials(self):
         progjobrel = ProgrammeJobRelation.objects.filter(
-            Q(job=self.job, prog=self.stud.prog) |
-            Q(job=self.job, prog=self.stud.minor_prog)
+            Q(job=self.job, prog__name=self.stud.prog) |
+            Q(job=self.job, prog__name=self.stud.minor_prog)
         )
         if not progjobrel:
             return False
