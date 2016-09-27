@@ -74,7 +74,7 @@
                 </tr>
                 <tr>
                     <td>DOB</td>
-                    <td>{{student.dob}}</td>
+                    <td>{{student.dob | default_if_none:" " }}</td>
                 </tr>
                 <tr>
                     <td>Sex</td>
