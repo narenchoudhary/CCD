@@ -51,9 +51,9 @@ class Login(View):
     template_name = 'jobportal/login.html'
     server_dict = {
         'dikrong': '202.141.80.13',
-        # 'teesta': '202.141.80.12',
+        'teesta': '202.141.80.12',
         'tamdil': '202.141.80.11',
-        # 'naambor': '202.141.80.9',
+        'naambor': '202.141.80.9',
         'disbang': '202.141.80.10'
     }
     server_port = 995
