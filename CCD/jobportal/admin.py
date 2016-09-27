@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import *
 
+admin.site.site_header = 'CCD administration'
+
 
 class UserProfileChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
