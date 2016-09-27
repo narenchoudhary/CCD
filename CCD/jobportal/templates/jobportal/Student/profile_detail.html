@@ -181,6 +181,22 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Major Year (Year of Admission)</td>
+                        <td>{{student.year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Department</td>
+                        <td>{{student.dept}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Programme</td>
+                        <td>{{student.prog}}</td>
+                    </tr>
+                    <tr>
+                        <td>Major Discipline</td>
+                        <td>{{student.discipline}}</td>
+                    </tr>
+                    <tr>
                         <td>Minor Department</td>
                         <td>
                             {{ student.minor_dept | default_if_none:"---"}}
@@ -193,16 +209,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Major Year (Year of Admission)</td>
-                        <td>{{student.year}}</td>
-                    </tr>
-                    <tr>
-                        <td>Major Department</td>
-                        <td>{{student.dept}}</td>
-                    </tr>
-                    <tr>
-                        <td>Major Programme</td>
-                        <td>{{student.prog}}</td>
+                        <td>Minor Discipline</td>
+                        <td>
+                            {{ student.minor_discipline|default_if_none:"---"}}
+                        </td>
                     </tr>
                 </table>
             </div>
