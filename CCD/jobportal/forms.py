@@ -1,6 +1,8 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm
 from django.forms import ModelForm
+from django.template.defaultfilters import filesizeformat
 
 from material import *
 
@@ -388,19 +390,27 @@ class SignatureForm(forms.ModelForm):
 
 class CVForm(forms.ModelForm):
 
-    widgets = {
-
-    }
-
     class Meta:
         model = CV
         fields = ['cv1', 'cv2']
 
     def clean(self):
         cleaned_data = super(CVForm, self).clean()
-        if not bool(cleaned_data['cv1']) and not bool(cleaned_data['cv2']):
+        cv1 = self.cleaned_data.get('cv1', None)
+        cv2 = self.cleaned_data.get('cv2', None)
+        if not bool(cv1) and not bool(cv2):
             raise ValidationError("Provide at least one file.",
                                   code='invalid')
+        if bool(cv1):
+            if cv1.size > 1024*1024:
+                raise forms.ValidationError(
+                    'File size must be under %s' %(filesizeformat(1024*1024))
+                )
+        if bool(cv2):
+            if cv2.size > 1024*1024:
+                raise forms.ValidationError(
+                    'File size must be under %s' % (filesizeformat(1024*1024))
+                )
         return cleaned_data
 
 

@@ -918,8 +918,9 @@ class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
     raise_exception = True
-    model = CV
-    fields = ['cv1', 'cv2']
+    # model = CV
+    # fields = ['cv1', 'cv2']
+    form_class = CVForm
     template_name = 'jobportal/Student/cv_update.html'
     success_url = reverse_lazy('stud-cv-detail')
 
