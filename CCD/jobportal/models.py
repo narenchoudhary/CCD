@@ -315,10 +315,16 @@ class Student(models.Model):
     gap_reason = models.TextField(
         max_length=100, default="", blank=True, null=True,
         verbose_name='Reason For Gap In Study (Eg : JEE Preperation)')
+    # this field was initially meant to store JEE Rank
+    # but later on, for masters student GATE/JAM/etc. rank was needed.
+    # So this field is now a "rank" field.
+    # Do not get confused by name "jee_rank_field"
     jee_air_rank = models.DecimalField(
         max_digits=6, decimal_places=0, default=0, null=True, blank=False,
-        verbose_name='JEE(Advance) All India Rank (General Rank)',
-        validators=[MaxValueValidator(40000), MinValueValidator(1)]
+        verbose_name='JEE/GATE/JAM/Other Entrance Exam All India Rank ',
+        validators=[MaxValueValidator(40000), MinValueValidator(1)],
+        help_text="Fill Common Merit List (CML) Rank "
+                  "in the entrance examination."
     )
     linkedin_link = models.URLField(
         max_length=254, blank=True, null=True,
