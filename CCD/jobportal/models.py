@@ -289,7 +289,8 @@ class Student(models.Model):
     )
     percentage_xii = models.DecimalField(
         blank=False, null=True, max_digits=5, decimal_places=2, default=40,
-        verbose_name='Class XII Percentage (out of 100) OR CGPA (out of 10)',
+        verbose_name='Class XII Percentage/Diploma (out of 100) '
+                     'OR CGPA (out of 10)',
         help_text='Do not multiply CGPA with any factor. Fill it as it is.'
     )
     board_x = models.CharField(
