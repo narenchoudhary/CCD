@@ -29,14 +29,14 @@ RANK_CATEGORY = (
     ('Non-CML PD', 'Non-CML PD'),
     ('MA Entrance Exam Marks', 'MA Entrance Exam Marks'),
 )
-
 PD_STATUS = (
     ('No Disability', 'No Disability'),
     ('Blindness or Low Vision', 'Blindness or Low Vision'),
     ('Hearing Impairment', 'Hearing Impairment'),
-    ('Locometer Disability/Cerebral Palsy',
-     'Locometer Disability/Cerebral Palsy'),
+    ('Locomotor Disability/Cerebral Palsy',
+     'Locomotor Disability/Cerebral Palsy'),
 )
+
 USER_TYPE = (
     ('student', 'student'),
     ('alumni', 'alumni'),
@@ -44,7 +44,6 @@ USER_TYPE = (
     ('company', 'company'),
     ('verifier', 'verifier'),
 )
-
 
 USER_CATEGORY = (
     ('Current Student', 'Current Student'),
