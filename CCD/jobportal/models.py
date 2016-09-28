@@ -315,7 +315,7 @@ class Student(models.Model):
         default=False, blank=True, verbose_name='Gap In Study')
     gap_reason = models.TextField(
         max_length=100, default="", blank=True, null=True,
-        verbose_name='Reason For Gap In Study (Eg : JEE Preperation)')
+        verbose_name='Reason For Gap In Study (Eg : JEE Preparation)')
     # this field was initially meant to store JEE Rank
     # but later on, for masters student GATE/JAM/etc. rank was needed.
     # So this field is now a "rank" field.
