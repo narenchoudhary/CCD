@@ -20,6 +20,23 @@ CATEGORY = (
     ('OPEN MERIT/NON HOSTELLER', 'OPEN MERIT/NON HOSTELLER'),
 )
 
+RANK_CATEGORY = (
+    ('Common Merit List', 'Common Merit List'),
+    ('Non-CML SC', 'Non-CML SC'),
+    ('Non-CML ST', 'Non-CML ST'),
+    ('Non-CML OBC', 'Non-CML OBC'),
+    ('Non-CML NT', 'Non-CML NT'),
+    ('Non-CML PD', 'Non-CML PD'),
+    ('MA Entrance Exam Marks', 'MA Entrance Exam Marks'),
+)
+
+PD_STATUS = (
+    ('No Disability', 'No Disability'),
+    ('Blindness or Low Vision', 'Blindness or Low Vision'),
+    ('Hearing Impairment', 'Hearing Impairment'),
+    ('Locometer Disability/Cerebral Palsy',
+     'Locometer Disability/Cerebral Palsy'),
+)
 USER_TYPE = (
     ('student', 'student'),
     ('alumni', 'alumni'),

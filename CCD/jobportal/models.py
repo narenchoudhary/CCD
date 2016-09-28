@@ -324,8 +324,22 @@ class Student(models.Model):
         max_digits=6, decimal_places=0, default=0, null=True, blank=False,
         verbose_name='JEE/GATE/JAM/Other Entrance Exam All India Rank ',
         validators=[MaxValueValidator(40000), MinValueValidator(1)],
-        help_text="Fill Common Merit List (CML) Rank "
-                  "in the entrance examination."
+        help_text="MA students should fill their clearance exam marks. Other "
+                  "students should fill their clearance exam rank."
+    )
+    # since some students do not get a CML rank but get only category
+    # rank, this field was added to accomodate those cases.
+    rank_category = models.CharField(
+        max_length=30, choices=RANK_CATEGORY, default='CML', blank=False,
+        null=True, verbose_name='Rank Category',
+        help_text='If your rank was not in CML (Common Merit List), then '
+                  'select from Non-CML categories. MA students should select '
+                  'MA Entrance Exam Marks.'
+    )
+    # physical disability status
+    pd_status = models.CharField(
+        max_length=50, choices=PD_STATUS, default='No Disability', null=True,
+        blank=False, verbose_name='Physical Disability Status'
     )
     linkedin_link = models.URLField(
         max_length=254, blank=True, null=True,

@@ -31,6 +31,7 @@ class EditStudProfileForm(ModelForm):
             Row('mobile_home'),
             Row('alternative_email'),
             Row('linkedin_link'),
+            Row('pd_status'),
         ),
         Fieldset(
             'Permanent Address',
@@ -46,7 +47,7 @@ class EditStudProfileForm(ModelForm):
             ),
             Row('gap_in_study'),
             Row('gap_reason'),
-            Row('jee_air_rank'),
+            Row('jee_air_rank', 'rank_category'),
         ),
         Fieldset(
             'IITG Academic Performance',
@@ -67,7 +68,7 @@ class EditStudProfileForm(ModelForm):
                   'gap_in_study', 'gap_reason', 'jee_air_rank',
                   'linkedin_link', 'spi_1_sem', 'spi_2_sem',
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
-                  'active_backlogs']
+                  'active_backlogs', 'rank_category', 'pd_status']
 
         widgets = {
             'gap_reason': forms.Textarea(attrs={'rows': 4}),

@@ -116,6 +116,10 @@
                     <td>LinkedIn Account Public URL</td>
                     <td>{{student.linkedin_link}}</td>
                 </tr>
+                <tr>
+                    <td>Public Disability Status</td>
+                    <td>{{student.pd_status}}</td>
+                </tr>
             </table>
         </div>
 
@@ -175,10 +179,18 @@
                         <td>{{ student.gap_reason }}</td>
                     </tr>
                     <tr>
-                        <td>JEE Air Rank</td>
+                        {% if student.prog == 'MA' %}
+                             <td>MA Entarance Exam Marks</td>
+                        {% else %}
+                             <td>JEE/GATE/JAM Rank</td>
+                        {% endif %}
                         <td>
                             {{ student.jee_air_rank | default_if_none:"---"}}
                         </td>
+                    </tr>
+                    <tr>
+                        <td>Rank Category</td>
+                        <td>{{ student.rank_category }}</td>
                     </tr>
                     <tr>
                         <td>Major Year (Year of Admission)</td>
