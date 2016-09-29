@@ -152,7 +152,7 @@
 
                     {% if jobrel %}
                         {% if deadline_passed %}
-                            <a class="btn disabled" href="{% url 'stud-jobrel-delete' job.id %}">
+                            <a class="btn disabled" href="#">
                             Remove Application</a>
                         {% else %}
                             <a href="{% url 'stud-jobrel-delete' job.id %}" class="btn">
@@ -161,15 +161,12 @@
 
                     {% else %}
                         {% if no_cv %}
-                            <a href="{% url 'stud-jobrel-create' job.id %}" class="btn disabled">
+                            <a href="#" class="btn disabled">
                                 Apply
                             </a>
                         {% else %}
                             {% if deadline_passed %}
-                                <a href="{% url 'stud-jobrel-create' job.id %}"
-                                   class="btn disabled">
-                                    Apply
-                                </a>
+                                <a href="#" class="btn disabled"> Apply </a>
                             {% else %}
                                 <a href="{% url 'stud-jobrel-create' job.id %}" class="btn">
                                     Apply
