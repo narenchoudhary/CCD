@@ -73,7 +73,7 @@
                     <tr>
                         <td>Gross Salary</td>
                         <td>
-                            {% stud.prog == 'BTECH' or stud.prog == 'BDES' %}
+                            {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
                                 {{ job.gross_btech }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
                                 {{ job.gross_mtech }}
