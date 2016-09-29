@@ -57,7 +57,7 @@
                     <tr>
                         <td>CTC</td>
                         <td>
-                            {% stud.prog == 'BTECH' or stud.prog == 'BDES' %}
+                            {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
                                 {{ job.ctc_btech }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
                                 {{ job.ctc_mtech }}
