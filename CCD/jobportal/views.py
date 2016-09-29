@@ -421,6 +421,9 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         if stud.cpi < 5:
             return None
 
+        if stud.ppo:
+            return None
+
         # fix for filtering is CGPA is filled
         # multiply CGPA by 10 before filtering
         stud_percentage_x = stud.percentage_x
