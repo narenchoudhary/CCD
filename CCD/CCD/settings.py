@@ -135,11 +135,11 @@ USE_TZ = True
 
 # Sessions settings
 # https://docs.djangoproject.com/en/1.9/ref/settings/#sessions
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_SECURE = True
 
-# Remember session for one month
-SESSION_COOKIE_AGE = 60*60*24*30
+# Remember for 1 hour
+SESSION_COOKIE_AGE = 60*60
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

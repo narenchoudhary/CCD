@@ -51,9 +51,9 @@ class Login(View):
     template_name = 'jobportal/login.html'
     server_dict = {
         'dikrong': '202.141.80.13',
-        'teesta': '202.141.80.12',
+        # 'teesta': '202.141.80.12',
         'tamdil': '202.141.80.11',
-        'naambor': '202.141.80.9',
+        # 'naambor': '202.141.80.9',
         'disbang': '202.141.80.10'
     }
     server_port = 995
@@ -66,29 +66,21 @@ class Login(View):
         :return: login status
         """
         server_ip = self.server_dict.get(str(server).lower())
-        print("server and ip : %s and %s " % (server, server_ip))
         try:
-            print("server poplib start")
             print(server_ip)
             print(type(server_ip))
             serv = poplib.POP3_SSL(server_ip, self.server_port)
-            print('serv_created')
             serv.user(username)
-            print("username complete")
             p_str = serv.pass_(password)
-            print("password complete")
             if 'OK' in p_str:
                 serv.quit()
                 print("all OK and True")
                 return True
         except poplib.error_proto:
             serv.quit()
-            print("poplib.error_proto: -ERR Authentication failed.")
             return False
         except:
-            print("exception and False")
             return False
-        print("no exception and False")
         return False
 
     def _auth_all_servers(self, username, password):
@@ -293,7 +285,8 @@ class Login(View):
                                                   args)
 
                         else:
-                            error = 'Fee not paid'
+                            error = 'User login has been disabled for ' \
+                                    'some time. Please try later.'
                             args = dict(form=form, error=error)
                             return render(request, self.template_name, args)
                     elif user_type == 'alumni':
