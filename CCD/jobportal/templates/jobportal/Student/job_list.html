@@ -31,7 +31,6 @@
                                     <th>Company</th>
                                     <th>Designation</th>
                                     <th>Profile</th>
-                                    <th>CTC</th>
                                     <th>Deadline</th>
                                     <th>Details</th>
                                 </tr>
@@ -42,16 +41,7 @@
                                     <td>{{ job.company_owner }}</td>
                                     <td>{{ job.designation }}</td>
                                     <td>{{ job.profile_name }}</td>
-                                    <td>
-                                        {% if stud.prog.name == 'BTECH' %}
-                                            {{job.currency}} {{job.ctc_btech | intcomma }}
-                                        {% elif stud.prog.name == 'MTECH' %}
-                                            {{job.currency}} {{job.ctc_mtech | intcomma}}
-                                        {% elif stud.prog.name == 'PHD' %}
-                                            {{job.currency}} {{job.ctc_phd | intcomma}}
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ job.application_deadline | date:'d N Y'}}</td>
+                                    <td>{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
                                     <td>
                                         <a href="{% url 'stud-job-detail' job.id %}"
                                            class="btn">Details</a>
