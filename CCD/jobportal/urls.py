@@ -194,7 +194,11 @@ urlpatterns = [
     url(r'^printcsv/(?P<jobid>\d+)$', views_print.candidates_stud_csv,
         name='printcsv'),
     url(r'^companies_csv/$', views_print.companies_csv, name='companies_csv'),
-
+    url(r'^admin/stud/list/download/$', views_admin.DownloadStudList.as_view(),
+        name='admin-stud-list-download'),
+    url(r'^admin/company/list/download/$',
+        views_admin.DownloadCompanyList.as_view(),
+        name='admin-company-list-download'),
 
     url(r'^verifier/home/$', views_verifier.Home.as_view(),
         name="verifier-home"),

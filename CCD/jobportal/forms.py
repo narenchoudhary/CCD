@@ -654,3 +654,202 @@ class StudentFeeCSVForm(forms.Form):
 
     csv = forms.FileField(required=False, allow_empty_file=True,
                           label='Upload CSV')
+
+
+class StudentDetailDownloadForm(forms.Form):
+    name = forms.BooleanField(initial=True, required=False)
+    iitg_webmail = forms.BooleanField(initial=False, required=False,
+                                      label='IITG Webmail')
+    roll_no = forms.BooleanField(initial=True, required=True, label='Roll No')
+    cpi = forms.BooleanField(initial=False, required=False)
+    dob = forms.BooleanField(initial=False, required=False, label='DOB')
+    sex = forms.BooleanField(initial=False, required=False, label='Gender')
+    category = forms.BooleanField(initial=False, required=False)
+    nationality = forms.BooleanField(initial=False, required=False)
+    minor_year = forms.BooleanField(initial=False, required=False,
+                                    label='Minor Year')
+    minor_dept = forms.BooleanField(initial=False, required=False,
+                                    label='Minor Departent')
+    minor_prog = forms.BooleanField(initial=False, required=False,
+                                    label='Minor Programme')
+    minor_discipline = forms.BooleanField(initial=False, required=False,
+                                          label='Minor Discipline')
+    year = forms.BooleanField(initial=False, required=False,
+                              label='Major Year')
+    dept = forms.BooleanField(initial=False, required=False,
+                              label='Major Department')
+    prog = forms.BooleanField(initial=False, required=False,
+                              label='Major Programme')
+    discipline = forms.BooleanField(initial=False, required=False,
+                                    label='Major Discipline')
+    hostel = forms.BooleanField(required=False, initial=False, label='Hostel')
+    room_no = forms.BooleanField(required=False, initial=False,
+                                 label='Room No')
+    alternative_email = forms.BooleanField(required=False, initial=False,
+                                           label='Alternative Email')
+    mobile_campus = forms.BooleanField(required=False, initial=False,
+                                       label='Mobile (Campus)')
+    mobile_campus_alternative = forms.BooleanField(
+        initial=False, required=False, label='Mobile Alternative (Campus)')
+    mobile_home = forms.BooleanField(initial=False, required=False,
+                                     label='Mobile Home')
+    percentage_x = forms.BooleanField(initial=False, required=False,
+                                      label='Percentage X')
+    percentage_xii = forms.BooleanField(initial=False, required=False,
+                                        label='Percentage XII')
+    board_x = forms.BooleanField(initial=False, required=False,
+                                 label='X Examination Board')
+    board_xii = forms.BooleanField(initial=False, required=False,
+                                   label='XII Examination Board')
+    medium_x = forms.BooleanField(initial=False, required=False,
+                                  label='X Examination Medium')
+    medium_xii = forms.BooleanField(initial=False, required=False,
+                                    label='XII Examination Medium')
+    passing_year_x = forms.BooleanField(initial=False, required=False,
+                                        label='X Examination Passing Year')
+    passing_year_xii = forms.BooleanField(initial=False, required=False,
+                                          label='XII Examination Passing Year')
+    gap_in_study = forms.BooleanField(initial=False, required=False,
+                                      label='Gap in study')
+    jee_air_rank = forms.BooleanField(initial=False, required=False,
+                                      label='JEE/GATE/JAM Rank or MA Marks')
+    rank_category = forms.BooleanField(initial=False, required=False,
+                                       label='Rank Category')
+    pd_status = forms.BooleanField(initial=False, required=False,
+                                   label='Physical Disability')
+    spi_1_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 1st Sem')
+    spi_2_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 2nd Sem')
+    spi_3_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 3rd Sem')
+    spi_4_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 4th Sem')
+    spi_5_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 5th Sem')
+    spi_6_sem = forms.BooleanField(initial=False, required=False,
+                                   label='SPI 6th Sem')
+    fee_transaction_id = forms.BooleanField(initial=False, required=False,
+                                            label='Fee Transaction ID')
+
+    layout = Layout(
+        Fieldset(
+            'Basic Information',
+            Row('roll_no'),
+            Row('name', 'iitg_webmail'),
+            Row('sex'),
+            Row('dob'),
+            Row('category', 'nationality'),
+            Row('pd_status'),
+            Row('fee_transaction_id'),
+            Row('hostel', 'room_no'),
+        ),
+        Fieldset(
+            'Contact',
+            Row('mobile_campus', 'mobile_campus_alternative', 'mobile_home'),
+        ),
+        Fieldset(
+            'Major/Minor Programmes',
+            Row('minor_year', 'year'),
+            Row('minor_dept', 'dept'),
+            Row('minor_prog', 'prog'),
+            Row('minor_discipline', 'discipline'),
+        ),
+        Fieldset(
+            'Board Exams',
+            Row('percentage_x', 'percentage_xii'),
+            Row('board_x', 'board_xii'),
+            Row('medium_x', 'medium_xii'),
+            Row('passing_year_x', 'passing_year_xii'),
+            Row('gap_in_study'),
+            Row('jee_air_rank', 'rank_category'),
+        ),
+        Fieldset(
+            'CPI',
+            Row('spi_1_sem', 'spi_2_sem'),
+            Row('spi_3_sem', 'spi_4_sem'),
+            Row('spi_5_sem', 'spi_6_sem'),
+        )
+    )
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        if not cleaned_data.get('roll_no'):
+            raise ValidationError('Roll No cannot be left unselected.')
+
+        all_fields_false = True
+        for field_value in cleaned_data.values():
+            if bool(field_value):
+                all_fields_false = False
+                break
+
+        if all_fields_false:
+            raise ValidationError('Select at least one field.')
+        return self.cleaned_data
+
+
+class CompanyDetailDownloadForm(forms.Form):
+    company_name = forms.BooleanField(initial=True, required=True,
+                                      label='Company Name')
+    website = forms.BooleanField(initial=False, required=False,
+                                 label='website')
+    office_contact_no = forms.BooleanField(initial=False, required=False,
+                                           label='Office Contact Number')
+    organization_type = forms.BooleanField(initial=False, required=False,
+                                           label='Organization Type')
+    industry_sector = forms.BooleanField(initial=False, required=False,
+                                         label='Industry Sector')
+    head_hr_name = forms.BooleanField(initial=False, required=False,
+                                      label='1st HR Name')
+    head_hr_mobile = forms.BooleanField(initial=False, required=False,
+                                        label='1st HR Mobile')
+    head_hr_designation = forms.BooleanField(initial=False, required=False,
+                                             label='1st HR Designation')
+    head_hr_email = forms.BooleanField(initial=False, required=False,
+                                       label='1st HR Email')
+    head_hr_fax = forms.BooleanField(initial=False, required=False,
+                                     label='1st HR Fax')
+    first_hr_name = forms.BooleanField(initial=False, required=False,
+                                       label='2nd HR Name')
+    first_hr_mobile = forms.BooleanField(initial=False, required=False,
+                                         label='2nd HR Mobile')
+    first_hr_designation = forms.BooleanField(initial=False, required=False,
+                                              label='2nd HR Designation')
+    first_hr_email = forms.BooleanField(initial=False, required=False,
+                                        label='2nd HR Email')
+    first_hr_fax = forms.BooleanField(initial=False, required=False,
+                                      label='2nd HR Fax')
+
+    layout = Layout(
+        Fieldset(
+            'Company Details',
+            Row('company_name', 'website'),
+            Row('organization_type', 'industry_sector'),
+            Row('office_contact_no'),
+        ),
+        Fieldset(
+            'HR Details',
+            Row('head_hr_name', 'first_hr_name'),
+            Row('head_hr_mobile', 'first_hr_mobile'),
+            Row('head_hr_designation', 'first_hr_designation'),
+            Row('head_hr_email', 'first_hr_email'),
+            Row('head_hr_fax', 'first_hr_fax'),
+        )
+    )
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        if not cleaned_data.get('company_name'):
+            raise ValidationError('Company Name cannot be left unselected.')
+
+        all_fields_false = True
+        for field_value in cleaned_data.values():
+            if bool(field_value):
+                all_fields_false = False
+                break
+
+        if all_fields_false:
+            raise ValidationError('Select at least one field.')
+        return self.cleaned_data

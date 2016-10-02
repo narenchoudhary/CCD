@@ -22,7 +22,8 @@ from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      UserProfile, Event)
 from .forms import (AdminJobEditForm, StudentSearchForm,
                     EditCompany, ProgrammeForm, AdminEventForm,
-                    StudentProfileUploadForm, StudentFeeCSVForm)
+                    StudentProfileUploadForm, StudentFeeCSVForm,
+                    StudentDetailDownloadForm, CompanyDetailDownloadForm)
 from .constants import CATEGORY
 
 
@@ -840,3 +841,90 @@ class DownloadStudCV(LoginRequiredMixin, UserPassesTestMixin, View):
             return response
         else:
             raise Http404()
+
+
+class DownloadStudList(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    template_name = 'jobportal/Admin/student_download.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request):
+        form = StudentDetailDownloadForm(None)
+        return render(request, self.template_name, dict(form=form))
+
+    def post(self, request):
+        form = StudentDetailDownloadForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; ' \
+                                              'filename="studdetails.csv"'
+            wr = csv.writer(response, quoting=csv.QUOTE_NONE)
+
+            # write header row
+            headers = []
+            for k, v in cleaned_data.iteritems():
+                if v:
+                    headers.append(k)
+            wr.writerow(headers)
+
+            # queyset for all students
+            all_studs = Student.objects.all()
+            # iterate over queryset
+            for stud in all_studs:
+                row = []
+                # only add fields asked in form
+                for k, v in cleaned_data.iteritems():
+                    if v:
+                        row.append(getattr(stud, k))
+                # write student details to as row to csv
+                wr.writerow(row)
+            return response
+        else:
+            return render(request, self.template_name, dict(form=form))
+
+
+class DownloadCompanyList(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    template_name = 'jobportal/Admin/company_download.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request):
+        form = CompanyDetailDownloadForm(None)
+        return render(request, self.template_name, dict(form=form))
+
+    def post(self, request):
+        form = CompanyDetailDownloadForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; ' \
+                                              'filename="companydetails.csv"'
+            wr = csv.writer(response, quoting=csv.QUOTE_ALL)
+            # write header row
+            headers = []
+            for k, v in cleaned_data.iteritems():
+                if v:
+                    headers.append(k)
+            wr.writerow(headers)
+
+            # queyset for all companies
+            all_companies = Company.objects.all()
+            # iterate over queryset
+            for company in all_companies:
+                row = []
+                # only add fields asked in form
+                for k, v in cleaned_data.iteritems():
+                    if v:
+                        row.append(getattr(company, k).encode('utf8'))
+                # write company details to as row to csv
+                wr.writerow(row)
+            return response
+        else:
+            return render(request, self.template_name, dict(form=form))
