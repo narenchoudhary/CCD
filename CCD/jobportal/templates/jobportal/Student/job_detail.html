@@ -67,6 +67,8 @@
                                 {{ job.ctc_ma }}
                             {% elif stud.prog == 'PHD' %}
                                 {{ job.ctc_phd }}
+                            {% elif stud.prog == 'MSR' %}
+                                {{ job.ctc_msr }}
                             {% endif %}
                         </td>
                     </tr>
@@ -83,6 +85,8 @@
                                 {{ job.gross_ma }}
                             {% elif stud.prog == 'PHD' %}
                                 {{ job.gross_phd }}
+                            {% elif stud.prog == 'MSR' %}
+                                {{ job.gross_msr }}
                             {% endif %}
                         </td>
                     </tr>

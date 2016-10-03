@@ -80,6 +80,7 @@ PROGRAMMES = (
     ('PHD', 'Ph.D.'),
     ('MSC', 'M.Sc.'),
     ('MA', 'M.A.'),
+    ('MSR', 'MSR'),
 )
 
 HOSTELS = (

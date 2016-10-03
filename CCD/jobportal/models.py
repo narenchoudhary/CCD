@@ -486,6 +486,9 @@ class Job(models.Model):
     ctc_phd = models.DecimalField(max_digits=16, decimal_places=2,
                                   default=0.00, null=True,
                                   blank=True, verbose_name='Ph.D. CTC/year')
+    ctc_msr = models.DecimalField(max_digits=16, decimal_places=2,
+                                  default=0.00, null=True,
+                                  blank=True, verbose_name='MS(R) CTC/year')
     gross_btech = models.DecimalField(max_digits=16, decimal_places=2,
                                       default=0.00, null=True,
                                       blank=True,
@@ -506,6 +509,10 @@ class Job(models.Model):
                                     default=0.00, null=True,
                                     blank=True,
                                     verbose_name='Ph.D. Gross Salary')
+    gross_msr = models.DecimalField(max_digits=16, decimal_places=2,
+                                    default=0.00, null=True,
+                                    blank=True,
+                                    verbose_name='MS(R) Gross Salary')
     additional_info = models.TextField(blank=True, null=True, default="",
                                        verbose_name='Additional Information '
                                                     'About Salary (if any)')

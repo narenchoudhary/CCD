@@ -321,6 +321,53 @@
                     </div>
                     {% endif %}
 
+                    {% if msr_list.count > 0 %}
+                    <div class="card-content">
+                        <span class="card-title">MSR Programmes</span>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Discipline</th>
+                                    <th>Year of Admission</th>
+                                    <th>Department</th>
+                                    <th>Programme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="leader_msr">
+                                                <label for="leader_msr">
+                                                    Select all B.Tech/B.Des. programmes
+                                                </label>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% for programme in btech_bdes_list %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_msr_ids"
+                                                   value="{{programme.id}}"
+                                                   id="selected_msr_{{programme.id}}"
+                                                   {%if programme.id in saved_jobrels %}
+                                                   checked="checked" {% endif %}
+                                                   class="msr">
+                                            <label for="selected_msr_{{programme.id}}">
+                                                {{programme.discipline}}
+                                            </label>
+                                        </td>
+                                        <td>{{programme.year}}</td>
+                                        <td>{{programme.dept}}</td>
+                                        <td>{{programme.name}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
                     <div class="card-action">
                         <button type="submit" name="_submit"
                            class="waves-effect waves-light btn btn-primary btn-lg align-right">
@@ -410,6 +457,19 @@
     $('.phd').change(function(){
         if(this.checked == false){
             $("#leader_phd")[0].checked = false;
+        }
+    });
+
+    $("#leader_msr").change(function(){
+        var status = this.checked;
+        $('.msr').each(function(){
+            this.checked = status;
+        });
+    });
+
+    $('.msr').change(function(){
+        if(this.checked == false){
+            $("#leader_msr")[0].checked = false;
         }
     });
 

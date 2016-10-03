@@ -97,6 +97,7 @@ class CompanyJobForm(ModelForm):
                  Row('ctc_msc', 'gross_msc'),
                  Row('ctc_ma', 'gross_ma'),
                  Row('ctc_phd', 'gross_phd'),
+                 Row('ctc_msr', 'gross_msr'),
                  Row('additional_info')
                  ),
         Fieldset('Legal Document', 'bond_link')
@@ -109,7 +110,7 @@ class CompanyJobForm(ModelForm):
                   'percentage_xii', 'num_openings', 'currency', 'ctc_btech',
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
-                  'bond_link', 'additional_info']
+                  'bond_link', 'additional_info', 'ctc_msr', 'gross_msr']
 
     def clean(self):
         cleaned_data = super(CompanyJobForm, self).clean()
@@ -123,6 +124,8 @@ class CompanyJobForm(ModelForm):
         gross_ma = cleaned_data['gross_ma']
         ctc_phd = cleaned_data['ctc_phd']
         gross_phd = cleaned_data['gross_phd']
+        ctc_msr = cleaned_data['ctc_msr']
+        gross_msr = cleaned_data['gross_msr']
 
         if ctc_btech < gross_btech:
             raise ValidationError("Error: In Salary section, Gross B.Tech. "
@@ -139,6 +142,9 @@ class CompanyJobForm(ModelForm):
         elif ctc_phd < gross_phd:
             raise ValidationError("Error: In Salary section, Gross Ph.D. "
                                   "cannot be greater than CTC Ph.D.")
+        elif ctc_msr < gross_msr:
+            raise ValidationError("Error: In Salary section, Gross MS(R) "
+                                  "cannot be greater than CTC MS(R).")
 
         cpi_shortlist = cleaned_data['cpi_shortlist']
         minimum_cpi = cleaned_data['minimum_cpi']
@@ -184,6 +190,7 @@ class AdminJobEditForm(ModelForm):
                  Row('ctc_msc', 'gross_msc'),
                  Row('ctc_ma', 'gross_ma'),
                  Row('ctc_phd', 'gross_phd'),
+                 Row('ctc_msr', 'gross_msr'),
                  Row('additional_info')
                  ),
         Fieldset('Legal Document', 'bond_link'),
@@ -202,7 +209,8 @@ class AdminJobEditForm(ModelForm):
                   'ctc_mtech', 'ctc_msc', 'ctc_ma', 'ctc_phd', 'gross_btech',
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link', 'opening_datetime', 'application_deadline',
-                  'backlog_filter', 'num_backlogs_allowed', 'additional_info']
+                  'backlog_filter', 'num_backlogs_allowed', 'additional_info',
+                  'ctc_msr', 'gross_msr']
 
     def __init__(self, *args, **kwargs):
         super(AdminJobEditForm, self).__init__(*args, **kwargs)

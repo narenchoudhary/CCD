@@ -284,10 +284,13 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         msc_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='MSC')
+        msr_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='MSR')
         args = dict(minor_list=minor_list, btech_bdes_list=btech_bdes_list,
                     ma_list=ma_list, mtech_mdes_list=mtech_mdes_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
-                    saved_jobrels=saved_jobrels)
+                    saved_jobrels=saved_jobrels, msr_list=msr_list)
         return render(request, self.template_name, args)
 
     def post(self, request, jobpk):

@@ -636,10 +636,13 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         msc_list = Programme.objects.filter(open_for_placement=True,
                                             minor_status=False,
                                             name='MSC')
+        msr_list = Programme.objects.filter(open_for_placement=True,
+                                            minor_status=False,
+                                            name='MSR')
         args = dict(minor_list=minor_list, btech_bdes_list=bachelors_list,
                     ma_list=ma_list, mtech_mdes_list=masters_list,
                     msc_list=msc_list, phd_list=phd_list, jobpk=jobpk,
-                    saved_jobrels=saved_jobrels)
+                    saved_jobrels=saved_jobrels, msr_list=msr_list)
         return render(request, self.template_name, args)
 
     def post(self, request, jobpk):
@@ -652,6 +655,7 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
         msc_list_ids = request.POST.getlist('selected_msc_ids')
+        msr_list_ids = request.POST.getlist('selected_msr_ids')
 
         programme_list = Programme.objects.filter(
             Q(id__in=minor_list_ids) |
@@ -659,7 +663,8 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
             Q(id__in=phd_list_ids) |
             Q(id__in=ma_list_ids) |
             Q(id__in=mtech_mdes_list_ids) |
-            Q(id__in=msc_list_ids)
+            Q(id__in=msc_list_ids) |
+            Q(id__in=msr_list_ids)
         )
 
         for programme in programme_list:
