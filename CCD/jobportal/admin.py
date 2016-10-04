@@ -93,7 +93,8 @@ class AdminAdmin(admin.ModelAdmin):
 
 class AnnouncementAdmin(admin.ModelAdmin):
     model = Announcement
-    list_display = ('category', 'hide', 'last_updated')
+    list_display = ('title', 'category', 'hide', 'last_updated')
+    list_filter = ('category', 'hide')
 
 admin.site.register(SiteManagement)
 
