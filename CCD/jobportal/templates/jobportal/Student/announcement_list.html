@@ -6,7 +6,7 @@
 {% endblock%}
 
 {% block title %}
-    Student | All Jobs
+    Student | All Announcements
 {% endblock %}
 
 {% block content %}
@@ -31,8 +31,11 @@
                     <div class="card">
                         <div class="card-content">
                             <span class="card-title">{{ announcement.title }}</span>
-                            <p>{{ announcement.category}}</p>
+                            <p> <strong>{{ announcement.category}}</strong></p>
+                            <br>
                             <p>{{ announcement.detail }}</p>
+                            <br>
+                            <p><strong>Posted On:</strong> {{ announcement.creation_datetime | date:"M d, Y h:i A" }} ( {{ announcement.creation_datetime | timesince }} ago)</p>
                         </div>
                     </div>
                 {% endfor %}
