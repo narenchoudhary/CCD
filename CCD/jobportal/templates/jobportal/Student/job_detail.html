@@ -57,6 +57,7 @@
                     <tr>
                         <td>CTC</td>
                         <td>
+                            {{ job.currency }}
                             {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
                                 {{ job.ctc_btech }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
@@ -75,6 +76,7 @@
                     <tr>
                         <td>Gross Salary</td>
                         <td>
+                            {{ job.currency }}
                             {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
                                 {{ job.gross_btech }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}

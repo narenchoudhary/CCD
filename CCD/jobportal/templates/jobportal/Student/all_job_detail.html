@@ -150,9 +150,9 @@
                             <td style="width: 50%">Minimum CPI</td>
                             <td style="width: 50%">
                                 {% if job.cpi_shortlist %}
-                                    No CPI filtering
-                                {% else %}
                                     {{ job.cpi}}
+                                {% else %}
+                                    No CPI filtering
                                 {% endif %}
                             </td>
                         </tr>
@@ -171,10 +171,10 @@
                         <tr>
                             <td style="width: 50%">Backlogs Allowed</td>
                             <td style="width: 50%">
-                                {% if job.cpi_shortlist %}
-                                    No Backlog Filtering
-                                {% else %}
+                                {% if job.backlog_filter %}
                                     {{ job.num_backlogs_allowed}}
+                                {% else %}
+                                    No Backlog Filtering
                                 {% endif %}
                             </td>
                         </tr>

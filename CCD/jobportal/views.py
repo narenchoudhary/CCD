@@ -535,6 +535,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         now = timezone.now()
         context['deadline_passed'] = self.job.application_deadline < now
         context['jobrel'] = self.get_jobrel_or_none()
+        context['stud'] = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
         return context
 
     def no_cv(self):
