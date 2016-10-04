@@ -17,8 +17,14 @@ urlpatterns = [
     url(r'^stud/profile/update/$', views.ProfileUpdate.as_view(),
         name='stud-profile-update'),
 
-    url(r'^stud/job/list/$', views.JobList.as_view(), name='stud-job-list'),
-    url(r'^stud/job/(?P<pk>\d+)/detail/$', views.JobDetail.as_view(),
+    url(r'^stud/job/all/list/$', views.AllJobList.as_view(),
+        name='stud-all-job-list'),
+    url(r'^stud/job/all/(?P<pk>\d+)/detail/$', views.AllJobDetail.as_view(),
+        name='stud-all-job-detail'),
+
+    url(r'^stud/job/eligible/list/$', views.JobList.as_view(),
+        name='stud-job-list'),
+    url(r'^stud/job/eligible/(?P<pk>\d+)/detail/$', views.JobDetail.as_view(),
         name='stud-job-detail'),
 
     url(r'^stud/jobrel/list/$', views.JobRelList.as_view(),

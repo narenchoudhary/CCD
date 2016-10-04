@@ -379,6 +379,54 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             id=self.request.session['student_instance_id'])
 
 
+class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    template_name = 'jobportal/Student/all_job_list.html'
+    context_object_name = 'job_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get_queryset(self):
+        return Job.objects.filter(
+            approved=True, opening_datetime__lte=timezone.now(),
+            application_deadline__gte=timezone.now()
+        )
+
+
+class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    login_url = reverse_lazy('login')
+    raise_exception = True
+    model = Job
+    template_name = 'jobportal/Student/all_job_detail.html'
+    context_object_name = 'job'
+
+    def test_func(self):
+        is_stud = self.request.user.user_type == 'student'
+        if not is_stud:
+            return False
+        job = get_object_or_404(Job, id=self.kwargs['pk'])
+        if job.opening_datetime > timezone.now():
+            return False
+        if job.application_deadline < timezone.now():
+            return False
+        return True
+    
+    def get_context_data(self, **kwargs):
+        context = super(AllJobDetail, self).get_context_data(**kwargs)
+        context['stud'] = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
+        context['prog_list'] = ProgrammeJobRelation.objects.filter(
+            job__id=self.kwargs['pk'], prog__minor_status=False
+        )
+        print context['prog_list']
+        context['minor_prog_list'] = ProgrammeJobRelation.objects.filter(
+            job__id=self.kwargs['pk'], prog__minor_status=True
+        )
+        return context
+
+
 class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     raise_exception = True

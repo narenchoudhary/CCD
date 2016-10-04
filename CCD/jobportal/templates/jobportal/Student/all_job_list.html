@@ -14,7 +14,7 @@
 <div class="breadcrumbs">
     <div class="valign-wrapper">
         <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-job-list' %}">All Jobs</a>
+        <a href="{% url 'stud-all-job-list' %}">All Jobs</a>
     </div>
 </div>
 
@@ -23,7 +23,7 @@
         <div class="col s12 m12 l9">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title">Job Applications (Eligible) List</span>
+                    <span class="card-title">Job Applications List</span>
                     {% if job_list.count > 0 %}
                         <table class="table bordered">
                             <thead>
@@ -43,7 +43,7 @@
                                     <td>{{ job.profile_name }}</td>
                                     <td>{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
                                     <td>
-                                        <a href="{% url 'stud-job-detail' job.id %}"
+                                        <a href="{% url 'stud-all-job-detail' job.id %}"
                                            class="btn">Details</a>
                                     </td>
                                 </tr>
@@ -51,7 +51,7 @@
                             </tbody>
                         </table>
                     {% else %}
-                        <p>No job matches your profile.</p>
+                        <p>No job available.</p>
                     {% endif %}
                 </div>
             </div>
