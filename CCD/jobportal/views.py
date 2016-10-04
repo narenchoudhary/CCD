@@ -15,7 +15,7 @@ from django.views.generic import (View, ListView, TemplateView, DetailView,
 
 from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
-                     Avatar, Signature, CV, SiteManagement)
+                     Avatar, Signature, CV, SiteManagement, Announcement)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
 
 STUD_LOGIN_URL = reverse_lazy('login')
@@ -1016,3 +1016,18 @@ class DownloadCV(LoginRequiredMixin, UserPassesTestMixin, View):
             return response
         else:
             raise Http404()
+
+
+class AnnouncementList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = reverse_lazy('login')
+    raise_exception = False
+    template_name = 'jobportal/Student/announcement_list.html'
+    context_object_name = 'announcement_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get_queryset(self):
+        return Announcement.objects.filter(
+            hide=False).order_by('-last_updated')
+

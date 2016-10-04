@@ -91,6 +91,9 @@ class AdminAdmin(admin.ModelAdmin):
     list_display = ('user', 'position')
 
 
+class AnnouncementAdmin(admin.ModelAdmin):
+    model = Announcement
+    list_display = ('category', 'hide', 'last_updated')
 
 admin.site.register(SiteManagement)
 
@@ -111,3 +114,4 @@ admin.site.register(Signature, SignatureAdmin)
 admin.site.register(CV)
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(Announcement, AnnouncementAdmin)

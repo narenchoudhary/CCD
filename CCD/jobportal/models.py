@@ -688,3 +688,23 @@ class ProgrammeJobRelation(models.Model):
 
     def __unicode__(self):
         return str(self.prog.name)
+
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200, verbose_name='Title', null=True,
+                             blank=True)
+    category = models.CharField(max_length=25, verbose_name='Category',
+                                null=True, blank=True)
+    detail = models.TextField(max_length=1000, verbose_name='Detail',
+                              null=True, blank=True)
+    hide = models.BooleanField(default=True, blank=True)
+    creation_datetime = models.DateTimeField(null=True, blank=True,
+                                             verbose_name='Created On')
+    last_updated = models.DateTimeField(null=True, blank=True,
+                                        verbose_name='Last Updated On')
+
+    def save(self, **kwargs):
+        if not self.id:
+            self.creation_datetime = timezone.now()
+        self.last_updated = timezone.now()
+        super(Announcement, self).save(**kwargs)

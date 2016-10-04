@@ -59,6 +59,9 @@ urlpatterns = [
     url(r'^stud/sign/update/$', views.SignatureUpdate.as_view(),
         name='stud-sign-update'),
 
+    url(r'^stud/announcement/list/$', views.AnnouncementList.as_view(),
+        name='stud-announcement-list'),
+
     url(r'^signup/$', views_company.CompanySignUpView.as_view(),
         name='sigup'),
     url(r'^company/signup/$', views_company.CompanySignUpView.as_view(),
