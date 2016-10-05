@@ -420,7 +420,6 @@ class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['prog_list'] = ProgrammeJobRelation.objects.filter(
             job__id=self.kwargs['pk'], prog__minor_status=False
         )
-        print context['prog_list']
         context['minor_prog_list'] = ProgrammeJobRelation.objects.filter(
             job__id=self.kwargs['pk'], prog__minor_status=True
         )

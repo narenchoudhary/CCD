@@ -97,7 +97,7 @@
                         <td>{{job.additional_info}}</td>
                     </tr>
                     <tr>
-                        <td>Opening DateTime</td>
+                        <td>Opening Date</td>
                         <td>{{job.opening_datetime | date:"d M Y h:i A"}}</td>
                     </tr>
                     <tr>
@@ -150,7 +150,7 @@
                             <td style="width: 50%">Minimum CPI</td>
                             <td style="width: 50%">
                                 {% if job.cpi_shortlist %}
-                                    {{ job.cpi}}
+                                    {{ job.minimum_cpi}}
                                 {% else %}
                                     No CPI filtering
                                 {% endif %}
@@ -227,9 +227,9 @@
                         <tbody>
                             {% for prog in minor_prog_list %}
                             <tr>
-                                <td>{{ prog.year }}</td>
-                                <td>{{ prog.name }}</td>
-                                <td>{{ prog.dept }}</td>
+                                <td>{{ prog.prog.year }}</td>
+                                <td>{{ prog.prog.name }}</td>
+                                <td>{{ prog.prog.dept }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
