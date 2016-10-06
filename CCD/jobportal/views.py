@@ -1053,7 +1053,7 @@ class DownloadDeclaration(LoginRequiredMixin, UserPassesTestMixin, View):
         pdf_file = HTML(
             string=rendered_html, base_url=request.build_absolute_uri()
         ).write_pdf(
-            stylesheets=[CSS(string='body { font-family: "Palatino Linotype" }')])
+            stylesheets=[CSS(string='body { font-family: "Helvetica" }')])
         http_response = HttpResponse(pdf_file, content_type='application/pdf')
         http_response['Content-Disposition'] = 'filename="declaration.pdf"'
         return http_response
