@@ -62,6 +62,9 @@ urlpatterns = [
     url(r'^stud/announcement/list/$', views.AnnouncementList.as_view(),
         name='stud-announcement-list'),
 
+    url(r'^stud/declaration/download/$', views.DownloadDeclaration.as_view(),
+        name='stud-declaration-download'),
+
     url(r'^signup/$', views_company.CompanySignUpView.as_view(),
         name='sigup'),
     url(r'^company/signup/$', views_company.CompanySignUpView.as_view(),

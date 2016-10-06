@@ -1,0 +1,376 @@
+<html>
+    <head>
+        <style>
+            @page {
+                size: a4 portrait;
+                margin: 0mm 10mm 0mm 10mm;
+                counter-increment: page;
+            }
+            .header {
+                display: flex;
+                width: 100%;
+            }
+            .header .logo {
+                flex: 1;
+                float: left;
+                width: 10%;
+                margin-right: 10px;
+                height: 100px;
+            }
+            .header .logo img {
+                margin: auto;
+                height:90%;
+            }
+            .header .ccd-title {
+                flex: 1;
+                padding-top: 0;
+                margin-top: 0;
+                margin-left: 110px;
+                height: 100px;
+                width: 60%;
+            }
+            .main {
+                width: 100%;
+            }
+            .main .form-heading{
+                width: 100%;
+                text-align:center;
+            }
+            .main .form-body {
+                width: 100%;
+            }
+
+            table {
+                width: inherit;
+            }
+            table tr {
+                width: inherit;
+            }
+            table tr .label {
+                width: 20%;
+            }
+            table tr .label-text {
+                width: 100%;
+                float: left;
+                font-size: 15px;
+            }
+            table tr .data {
+                width: 80%;
+                float: right;
+            }
+            table tr .data .data-text{
+                width: 100%;
+                float: left;
+                font-weight: bold;
+                font-size: 15px;
+            }
+
+            .data-text table thead th {
+                border: 1px solid black;
+            }
+            .data-text table tbody td {
+                border: 1px solid black;
+            }
+
+            .declaration .form-heading{
+                width: 100%;
+                text-align:center;
+            }
+            .cv-declaration .form-heading{
+                width: 100%;
+                text-align:center;
+            }
+            .cv-declaration {
+                width: 100%;
+            }
+            .cv-declaration .form-body {
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="logo">
+                <img src="http://iitg.ernet.in/tnp/static/img/iitg_logo.png">
+            </div>
+            <div class="ccd-title">
+                <h2 style="margin: 5px">Centre for Career Development</h2>
+                <p style="font-weight: 900; margin: 5px;" >INDIAN INSTITUTE OF TECHNOLOGY GUWAHATI</p>
+                <p style="font-weight: 800; margin: 5px;">GUWAHATI-781039</p>
+            </div>
+        </div>
+        <hr>
+        <div class="main">
+            <div class="form-heading">
+                <h4 align="middle">REGISTRATION FORM FOR 2016-2017</h4>
+            </div>
+            <div class="form-body">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Roll No</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.roll_no }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Name</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.name }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Date of Birth</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.dob }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                           <td class="label">
+                               <span class="label-text">Gender</span>
+                           </td>
+                           <td class="data">
+                                <span class="data-text">: {{ stud.sex }}</span>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="label">
+                               <span class="label-text">Category</span>
+                           </td>
+                           <td class="data">
+                                <span class="data-text">: {{ stud.category }}</span>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="label">
+                               <span class="label-text">Nationality</span>
+                           </td>
+                           <td class="data">
+                                <span class="data-text">: {{ stud.nationality }}</span>
+                           </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Program</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.prog }} {{ stud.dept }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Minor Program</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.minor_dept }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">JEE/GATE/JAM Rank</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.jee_air_rank }} ({{ stud.rank_category }})</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Hostel</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.hostel }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Room No</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.room_no }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Email</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: (1) {{ stud.iitg_webmail }} (2) {{ stud.alternative_email }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Mobile No.</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: (1) {{ stud.mobile_campus }} (2) {{ stud.mobile_campus_alternative }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Telephone</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.mobile_home }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Permanent Address</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.address_line1 }}, {{ stud.address_line2 }}. {{ stud.address_line3 }}, {{ stud.pin_code }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Academic Details</td>
+                            <td class="data">
+                                <span class="data-text">
+                                    <table style="border-collapse: collapse">
+                                        <thead>
+                                            <tr>
+                                                <th>Level</th>
+                                                <th>Board</th>
+                                                <th>Medium</th>
+                                                <th>%/GPA</th>
+                                                <th>Year of Passing</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="font-weight: normal">
+                                                <td>X STD</td>
+                                                <td>{{ stud.board_x }}</td>
+                                                <td>{{ stud.medium_x }}</td>
+                                                <td>{{ stud.percentage_x }}</td>
+                                                <td>{{ stud.passing_year_x }}</td>
+                                            </tr>
+                                            <tr style="font-weight: normal">
+                                                <td>XII STD</td>
+                                                <td>{{ stud.board_xii }}</td>
+                                                <td>{{ stud.medium_xii }}</td>
+                                                <td>{{ stud.percentage_xii }}</td>
+                                                <td>{{ stud.passing_year_xii }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Gap In Study</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.gap_in_study | yesno | capfirst }}</span>
+                            </td>
+                        </tr>
+                        {% if stud.gap_in_study == True %}
+                            <tr>
+                            <td class="label">
+                                <span class="label-text">Reason for Gap</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.gap_reason }}</span>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">CPI(Upto 6th semester)</span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.cpi }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="declaration">
+            <div class="form-heading">
+                <h4 align="middle">DECLARATION</h4>
+            </div>
+            <p>I hereby declare that the information furnished in the Profile Form
+                are true to the best of my knowledge and belief. I shall strictly abide by
+                the policies and regulations set by the Centre for Career Development
+                for Campus recruitment session 2016-2017.</p>
+            <p>Date:</p>
+            <p><span>Place:</span><span style="float: right">Student Signature</span></p>
+            <p>Centre for Career Development has the authority to take appropriate action
+                against any student found violating the policies and regulations.</p>
+            <hr>
+            <p>Phone: +91 361 258 2175, E-mail: placement@iitg.ernet.in & ccd@iitg.ernet.in</p>
+        </div>
+        <div class="cv-declaration">
+            <div class="form-heading">
+                <h4 align="middle">CV-Declaration submission by Student
+for the Placement Session 2016-17</h4>
+            </div>
+                <p>I hereby declare that the points mentioned in my Curriculum Vitae are true to the best of my knowledge and belief. I shall strictly
+                    abide by the policies and regulations set by the Centre for Career Development for Campus recruitment session 2016-2017.</p>
+            <div class="form-body">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text" style="float: left">Name of Student </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.name }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text" style="float: left">Roll No </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.roll_no }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Department: </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.dept }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Program and Specialization: </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.prog }} {{ stud.discipline }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Contact No: </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: {{ stud.mobile_campus }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <span class="label-text">Date: </span>
+                            </td>
+                            <td class="data">
+                                <span class="data-text">: </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <br>
+            <br>
+            <p><span style="float: right">Student Signature</span></p>
+        </div>
+    </body>
+</html>

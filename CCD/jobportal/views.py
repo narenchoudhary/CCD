@@ -8,10 +8,14 @@ from django.forms import FileInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import RequestContext
+from django.template.loader import get_template
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, TemplateView, DetailView,
                                   CreateView, UpdateView)
+
+from weasyprint import HTML, CSS, images
 
 from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
@@ -1031,3 +1035,25 @@ class AnnouncementList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return Announcement.objects.filter(
             hide=False).order_by('-last_updated')
 
+
+class DownloadDeclaration(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    template_name = 'jobportal/Student/declaration.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get(self, request):
+        html_template = get_template(self.template_name)
+        stud = get_object_or_404(
+            Student, id=self.request.session['student_instance_id'])
+        rendered_html = html_template.render(
+            RequestContext(request, dict(stud=stud))
+        )
+        pdf_file = HTML(
+            string=rendered_html, base_url=request.build_absolute_uri()
+        ).write_pdf(
+            stylesheets=[CSS(string='body { font-family: "Palatino Linotype" }')])
+        http_response = HttpResponse(pdf_file, content_type='application/pdf')
+        http_response['Content-Disposition'] = 'filename="declaration.pdf"'
+        return http_response
