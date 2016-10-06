@@ -293,8 +293,9 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return True
 
     def get_queryset(self):
-        return StudentJobRelation.objects.filter(job__id=self.kwargs[
-            'pk']).order_by('placed_init', 'placed_approved', 'shortlist_init')
+        return StudentJobRelation.objects.filter(
+            job__id=self.kwargs['pk'], is_debarred=False).order_by(
+            'placed_init', 'placed_approved', 'shortlist_init')
 
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)

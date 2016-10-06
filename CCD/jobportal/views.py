@@ -605,7 +605,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
-            stud__id=self.request.session['student_instance_id'])
+            stud__id=self.request.session['student_instance_id'],
+            is_debarred=False)
 
 
 class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):

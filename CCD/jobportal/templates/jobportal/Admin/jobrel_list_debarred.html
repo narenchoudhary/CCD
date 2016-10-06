@@ -1,0 +1,64 @@
+{% extends 'base_admin.html' %}
+{% load material_form %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+<div class="row">
+
+    <div class="row">
+        <div class="col s12 m12 l9">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Debarred Candidates</span>
+                    <form method="post" accept-charset="utf-8"
+                      action="{% url 'admin-jobrel-list-debarred'%}">
+                        {% csrf_token %}
+                        {% form %}
+                        {% endform %}
+                        <div class="right-align">
+                            <button class="waves-effect waves-light btn"
+                                    type="submit"> Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Debarred Candidates</span>
+                    {% if rel_list.count > 0 %}
+                    <table class="table bordered">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Job Designation</th>
+                                <th>Name</th>
+                                <th>Roll No</th>
+                                <th>Department</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                            <tr>
+                                <td>{{rel.job.company_owner}}</td>
+                                <td>{{rel.job.designation}}</td>
+                                <td>{{rel.stud.name}}</td>
+                                <td>{{rel.stud.roll_no }}</td>
+                                <td>{{rel.stud.dept }}</td>
+                            </tr>
+                            {% endfor%}
+                        </tbody>
+                    {% else %}
+                        <p>No student has been debarred yet.</p>
+                    {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

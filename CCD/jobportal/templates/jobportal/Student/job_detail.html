@@ -143,7 +143,14 @@
                 <div class="card-content">
                     <span class="card-title">Apply</span>
                     {% if jobrel %}
-                        <p>You applied for this Job on {{jobrel.creation_datetime}}.</p>
+                        {% if not jobrel.is_debarred %}
+                            <p>You applied for this Job on {{jobrel.creation_datetime}}.</p>
+                        {% else %}
+                            <p class="red-text">
+                                You are debarred from applying for this job profile.
+                                If you think this is incorrect, please contact CCD.
+                            </p>
+                        {% endif %}
                     {% else %}
                         {% if no_cv %}
                             <p class="red-text"> WARNING: You have not uploaded any CV. You must upload at least one CV to apply.</p>
@@ -158,13 +165,15 @@
 
                     {% if jobrel %}
                         {% if deadline_passed %}
-                            <a class="btn disabled" href="#">
-                            Remove Application</a>
+                            <a class="btn disabled" href="#">Remove Application</a>
                         {% else %}
-                            <a href="{% url 'stud-jobrel-delete' job.id %}" class="btn">
-                            Remove Application</a>
+                            {% if jobrel.is_debarred %}
+                                <a class="btn disabled" href="#">Apply</a>
+                            {% else %}
+                                <a href="{% url 'stud-jobrel-delete' job.id %}"
+                                   class="btn"> Remove Application</a>
+                            {% endif %}
                         {% endif %}
-
                     {% else %}
                         {% if no_cv %}
                             <a href="#" class="btn disabled">

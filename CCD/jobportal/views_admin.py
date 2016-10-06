@@ -20,7 +20,7 @@ from django.views.generic import (View, ListView, CreateView, DetailView,
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Programme, ProgrammeJobRelation,
                      UserProfile, Event)
-from .forms import (AdminJobEditForm, StudentSearchForm,
+from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
                     EditCompany, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm,
                     StudentDetailDownloadForm, CompanyDetailDownloadForm)
@@ -349,7 +349,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
-        return StudentJobRelation.objects.filter(job__id=self.kwargs['pk'])
+        return StudentJobRelation.objects.filter(
+            job__id=self.kwargs['pk'], is_debarred=False)
 
 
 class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -440,6 +441,40 @@ class JobRelListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
             Q(placed_approved__isnull=True, placed_init=True))
+
+
+class JobRelListDebarred(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = False
+    template_name = 'jobportal/Admin/jobrel_list_debarred.html'
+    model = StudentJobRelation
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request):
+        form = StudentDebarForm()
+        rel_list = StudentJobRelation.objects.filter(is_debarred=True)
+        args = dict(rel_list=rel_list, form=form)
+        return render(request, self.template_name, args)
+
+    def post(self, request):
+        form = StudentDebarForm(request.POST)
+        if form.is_valid():
+            roll_no = form.cleaned_data.get('roll_no')
+            stud = Student.objects.get(roll_no=roll_no)
+            studjobrel, created = StudentJobRelation.objects.get_or_create(
+                stud=stud,
+                job=form.cleaned_data.get('job')
+            )
+            if not studjobrel.is_debarred:
+                studjobrel.is_debarred = True
+                studjobrel.save()
+            return redirect('admin-jobrel-list-debarred')
+        else:
+            rel_list = StudentJobRelation.objects.filter(is_debarred=True)
+            args = dict(rel_list=rel_list, form=form)
+            return render(request, self.template_name, args)
 
 
 class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):

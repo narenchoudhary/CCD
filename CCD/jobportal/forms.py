@@ -861,3 +861,21 @@ class CompanyDetailDownloadForm(forms.Form):
         if all_fields_false:
             raise ValidationError('Select at least one field.')
         return self.cleaned_data
+
+
+class StudentDebarForm(forms.Form):
+
+    layout = Layout(
+        Row('job', 'roll_no')
+    )
+
+    job = forms.ModelChoiceField(
+        queryset=Job.objects.all().order_by('designation'), label='Job')
+    roll_no = forms.DecimalField(
+        max_digits=15, decimal_places=0, label='Roll No')
+
+    def clean_roll_no(self):
+        roll_no = self.cleaned_data.get('roll_no')
+        if not Student.objects.filter(roll_no=roll_no).exists():
+            raise ValidationError('No student with this roll number')
+        return roll_no

@@ -538,7 +538,7 @@ class Job(models.Model):
         managed = True
 
     def __unicode__(self):
-        return str(self.designation)
+        return str(self.designation) + " (" + str(self.company_owner.company_name) + ")"
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -565,6 +565,9 @@ class StudentJobRelation(models.Model):
 
     cv1 = models.BooleanField(default=False)
     cv2 = models.BooleanField(default=False)
+
+    # debar student from participating in a particular job
+    is_debarred = models.BooleanField(default=False)
 
     stud = models.ForeignKey(Student, null=True, blank=True)
     job = models.ForeignKey(Job, null=True, blank=True)

@@ -178,6 +178,12 @@ urlpatterns = [
     url(r'^admin/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place/approve',
         views_admin.StudJobRelPlaceApprove.as_view(),
         name='admin-jobrel-place-approve'),
+    url(r'^admin/jobrel/list/debarred/$',
+        views_admin.JobRelListDebarred.as_view(),
+        name='admin-jobrel-list-debarred'),
+    url(r'^admin/jobrel/list/debarred/$',
+        views_admin.JobRelListDebarred.as_view(),
+        name='admin-jobrel-list-debarred'),
 
     url(r'^admin/event/list/$', views_admin.EventList.as_view(),
         name='admin-event-list'),

@@ -59,17 +59,17 @@
                         <td>
                             {{ job.currency }}
                             {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
-                                {{ job.ctc_btech }}
+                                {{ job.ctc_btech | intcomma }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
-                                {{ job.ctc_mtech }}
+                                {{ job.ctc_mtech | intcomma }}
                             {% elif stud.prog == 'MSC' %}
-                                {{ job.ctc_msc }}
+                                {{ job.ctc_msc | intcomma }}
                             {% elif stud.prog == 'MA' %}
-                                {{ job.ctc_ma }}
+                                {{ job.ctc_ma | intcomma }}
                             {% elif stud.prog == 'PHD' %}
-                                {{ job.ctc_phd }}
+                                {{ job.ctc_phd | intcomma }}
                             {% elif stud.prog == 'MSR' %}
-                                {{ job.ctc_msr }}
+                                {{ job.ctc_msr | intcomma }}
                             {% endif %}
                         </td>
                     </tr>
@@ -78,17 +78,17 @@
                         <td>
                             {{ job.currency }}
                             {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
-                                {{ job.gross_btech }}
+                                {{ job.gross_btech | intcomma }}
                             {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
-                                {{ job.gross_mtech }}
+                                {{ job.gross_mtech | intcomma }}
                             {% elif stud.prog == 'MSC' %}
-                                {{ job.gross_msc }}
+                                {{ job.gross_msc | intcomma }}
                             {% elif stud.prog == 'MA' %}
-                                {{ job.gross_ma }}
+                                {{ job.gross_ma | intcomma }}
                             {% elif stud.prog == 'PHD' %}
-                                {{ job.gross_phd }}
+                                {{ job.gross_phd | intcomma }}
                             {% elif stud.prog == 'MSR' %}
-                                {{ job.gross_msr }}
+                                {{ job.gross_msr | intcomma }}
                             {% endif %}
                         </td>
                     </tr>
