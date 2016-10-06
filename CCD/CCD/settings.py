@@ -145,7 +145,7 @@ SESSION_COOKIE_AGE = 60*60
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 # https://docs.djangoproject.com/en/1.10/ref/settings/#std:setting-STATICFILES_DIRS
 
-STATIC_URL = '/static/'
+STATIC_URL = '/tnp/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -156,7 +156,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_cdn')
 # Media Files (Uploaded files)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/tnp/media/'
 
 # File Upload Handlers
 FILE_UPLOAD_HANDLERS = (
