@@ -303,6 +303,7 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
         phd_list_ids = request.POST.getlist('selected_phd_ids')
         ma_list_ids = request.POST.getlist('selected_ma_ids')
         msc_list_ids = request.POST.getlist('selected_msc_ids')
+        msr_list_ids = request.POST.getlist('selected_msr_ids')
 
         programme_list = Programme.objects.filter(
             Q(id__in=minor_list_ids) |
@@ -310,11 +311,11 @@ class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
             Q(id__in=phd_list_ids) |
             Q(id__in=ma_list_ids) |
             Q(id__in=mtech_mdes_list_ids) |
-            Q(id__in=msc_list_ids)
+            Q(id__in=msc_list_ids) |
+            Q(id__in=msr_list_ids)
         )
 
         for programme in programme_list:
-
             ProgrammeJobRelation.objects.get_or_create(
                 job=job,
                 prog=programme
