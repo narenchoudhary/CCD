@@ -116,16 +116,14 @@ class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class StudentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
-    raise_exception = False
     form_class = StudentProfileForm
     template_name = 'jobportal/Verifier/student_profile_update.html'
-    success_url = reverse_lazy('')
 
     def test_func(self):
         return self.request.user.user_type == 'verifier'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Student, id=self.kwargs['studid'])
+        return Student.objects.get(id=self.kwargs['pk'])
 
     def get_success_url(self):
         return reverse_lazy('verifier-student-detail', args=(self.object.id,))
@@ -171,11 +169,12 @@ class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_object(self, queryset=None):
         try:
-            cv = CV.objects.get(stud__id=self.kwargs['studid'])
+            cv = CV.objects.get(stud__id=self.kwargs['pk'])
         except CV.DoesNotExist:
-            cv = None
+            stud = get_object_or_404(Student, id=self.kwargs['pk'])
+            cv = CV.objects.create(stud=stud)
         return cv
 
     def get_success_url(self):
         return reverse_lazy('verifier-student-detail',
-                            args=(self.kwargs['studid'],))
+                            args=(self.kwargs['pk'],))
