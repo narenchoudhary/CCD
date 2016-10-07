@@ -384,22 +384,36 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    View class which handles showing all jobs to students.
+    """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    raise_exception = False
     template_name = 'jobportal/Student/all_job_list.html'
     context_object_name = 'job_list'
 
     def test_func(self):
+        """
+        Test method to limit access based on certain tests.
+        :return: True if user is permitted otherwise False
+        """
         return self.request.user.user_type == 'student'
 
     def get_queryset(self):
+        """
+        Get queryset of all Jobs
+        :return: queryset of Job
+        """
         return Job.objects.filter(
-            approved=True, opening_datetime__lte=timezone.now(),
-            application_deadline__gte=timezone.now()
+            approved=True,
+            opening_datetime__lte=timezone.now()
         )
 
 
 class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View class which handles showing all jobs to students.
+    """
     login_url = reverse_lazy('login')
     raise_exception = True
     model = Job
@@ -407,17 +421,25 @@ class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     context_object_name = 'job'
 
     def test_func(self):
+        """
+        Test method to limit access based on certain tests
+        :return: True if user is permitted otherwise False
+        :return:
+        """
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
             return False
         job = get_object_or_404(Job, id=self.kwargs['pk'])
         if job.opening_datetime > timezone.now():
             return False
-        if job.application_deadline < timezone.now():
-            return False
         return True
     
     def get_context_data(self, **kwargs):
+        """
+        Add Student instance and lists of ProgrammeJobRelation to context.
+        :param kwargs: keyword arguments
+        :return: Context
+        """
         context = super(AllJobDetail, self).get_context_data(**kwargs)
         context['stud'] = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
