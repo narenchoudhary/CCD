@@ -34,8 +34,10 @@ class StudentProfileForm(forms.ModelForm):
         Fieldset(
             'Academic Performance',
             Row(
-                Column('percentage_x', 'board_x', 'passing_year_x'),
-                Column('percentage_xii', 'board_xii', 'passing_year_xii'),
+                Column('percentage_x', 'board_x', 'passing_year_x',
+                       'medium_x',),
+                Column('percentage_xii', 'board_xii', 'passing_year_xii',
+                       'medium_xii'),
             ),
             Row('jee_air_rank'),
             Row('gap_in_study'),
@@ -122,11 +124,23 @@ class StudentUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return self.request.user.user_type == 'verifier'
 
-    def get_object(self, queryset=None):
-        return Student.objects.get(id=self.kwargs['pk'])
+    def get(self, request, *args, **kwargs):
+        stud = get_object_or_404(Student, id=self.kwargs['pk'])
+        form = StudentProfileForm(instance=stud)
+        args = dict(form=form, stud=stud)
+        return render(request, self.template_name, args)
 
-    def get_success_url(self):
-        return reverse_lazy('verifier-student-detail', args=(self.object.id,))
+    def post(self, request, *args, **kwargs):
+        stud = get_object_or_404(Student, id=self.kwargs['pk'])
+        form = StudentProfileForm(instance=stud, data=request.POST)
+        if form.is_valid():
+            print "form valid"
+            form.save()
+            return redirect('verifier-student-detail', studid=stud.id)
+        else:
+            print "form invalid"
+            args = dict(form=form, stud=stud)
+            return render(request, self.template_name, args)
 
 
 class StudentCVDownload(LoginRequiredMixin, UserPassesTestMixin, View):

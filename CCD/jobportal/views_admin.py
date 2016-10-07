@@ -231,11 +231,11 @@ class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
-    def get_success_url(self):
-        return reverse_lazy('admin-job-detail', args=(self.object.id,))
-
     def get_object(self, queryset=None):
         return get_object_or_404(Job, id=self.kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse_lazy('admin-job-detail', args=(self.object.id,))
 
 
 class JobProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
