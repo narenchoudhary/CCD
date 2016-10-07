@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.html import format_html
+from material.frontend.templatetags.material_frontend import verbose_name
 
 from versatileimagefield.fields import VersatileImageField
 
@@ -100,6 +101,8 @@ class UserProfile(AbstractUser):
 
 class Programme(models.Model):
     year = models.IntegerField(null=True, blank=False, verbose_name='Year')
+    year_passing = models.IntegerField(null=True, blank=False, default=2017,
+                                       verbose_name='Year of passing', )
     dept = models.CharField(choices=DEPARTMENTS, max_length=80, null=True,
                             blank=False, verbose_name='Department',
                             help_text='Eg. Department of Chemistry')
@@ -240,15 +243,21 @@ class Student(models.Model):
     nationality = models.CharField(max_length=15, default="INDIAN", blank=True)
     minor_year = models.IntegerField(null=True, blank=True,
                                      verbose_name='Minor Year')
+    minor_year_passing = models.IntegerField(
+        null=True, blank=True, default=2017,
+        verbose_name='Minor Year of Passing'
+    )
     minor_dept = models.CharField(choices=DEPARTMENTS, max_length=80,
                                   null=True, blank=True,
                                   verbose_name='Minor Department',
                                   help_text='Eg. Department of Chemistry')
     minor_discipline = models.CharField(max_length=80, null=True, blank=True,
-                                  verbose_name='Minor Discipline')
+                                        verbose_name='Minor Discipline')
     minor_prog = models.CharField(choices=PROGRAMMES, max_length=10,
                                   null=True, blank=True)
     year = models.IntegerField(null=True, blank=False, verbose_name='Year')
+    year_passing = models.IntegerField(null=True, blank=True, default=2017,
+                                       verbose_name='Year of Passing')
     dept = models.CharField(choices=DEPARTMENTS, max_length=80, null=True,
                             blank=False, verbose_name='Department',
                             help_text='Eg. Department of Chemistry')

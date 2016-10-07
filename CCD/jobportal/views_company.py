@@ -236,7 +236,7 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['rel_list'] = ProgrammeJobRelation.objects.filter(
-            job=self.object)
+            job=self.object, prog__open_for_placement=True)
         now = timezone.now()
         context['deadline_over'] = self.job.application_deadline < now
         return context
@@ -668,8 +668,19 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
             Q(id__in=msr_list_ids)
         )
 
+        all_programmes = []
         for programme in programme_list:
+            all_related_programmes = Programme.objects.filter(
+                year_passing=programme.year_passing,
+                dept=programme.dept,
+                discipline=programme.discipline,
+                name=programme.name,
+                minor_status=programme.minor_status
+            )
+            for related_programme in all_related_programmes:
+                all_programmes.append(related_programme)
 
+        for programme in all_programmes:
             ProgrammeJobRelation.objects.get_or_create(
                 job=job,
                 prog=programme

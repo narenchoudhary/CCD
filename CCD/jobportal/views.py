@@ -431,30 +431,39 @@ class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 
 class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    Class which handles filtering eligible job for Students.
+    """
     login_url = reverse_lazy('login')
     raise_exception = True
     template_name = 'jobportal/Student/job_list.html'
     context_object_name = 'job_list'
 
     def test_func(self):
+        """
+        Test method to limit access based on certain tests
+        :return: True if user is permitted otherwise False
+        """
         return self.request.user.user_type == 'student'
 
     def get_queryset(self):
+        """
+        Get eligible Jobs based on student profile.
+        :return: queryset of Job
+        """
         stud = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
-        # Ref: http://stackoverflow.com/a/12600950/3679857
         try:
             prog = Programme.objects.get(
                 year=stud.year, dept=stud.dept, name=stud.prog,
-                discipline=stud.discipline, minor_status=False,
-                open_for_placement=True)
+                discipline=stud.discipline, minor_status=False)
         except Programme.DoesNotExist:
             prog = None
         try:
             minor_prog = Programme.objects.get(
                 year=stud.minor_year, dept=stud.minor_dept,
                 name=stud.minor_prog, discipline=stud.minor_discipline,
-                minor_status=True, open_for_placement=True)
+                minor_status=True)
         except Programme.DoesNotExist:
             minor_prog = None
 
@@ -465,6 +474,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         if stud.cpi < 5:
             return None
 
+        # blessing
         if stud.ppo:
             return None
 
@@ -500,6 +510,11 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         )
 
     def get_context_data(self, **kwargs):
+        """
+        Get context data with 'stud' added to context.
+        :param kwargs: keyword arguments
+        :return: context
+        """
         context = super(JobList, self).get_context_data(**kwargs)
         context['stud'] = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
@@ -571,7 +586,7 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             self.prog = Programme.objects.get(
                 year=self.stud.year, dept=self.stud.dept,
                 name=self.stud.prog, discipline=self.stud.discipline,
-                minor_status=False, open_for_placement=True)
+                minor_status=False)
         except Programme.DoesNotExist:
             pass
         try:
@@ -634,14 +649,21 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
             return False
-        self.stud = get_object_or_404(
-            Student, id=self.request.session['student_instance_id'])
+
+        stud_id = self.request.session['student_instance_id']
+        self.stud = get_object_or_404(Student, id=stud_id)
         self.job = get_object_or_404(Job, id=self.kwargs['pk'])
+
         stud_cv_check = self.check_stud_cv()
-        stud_check = self.check_stud_credentials()
-        job_check = self.check_job_credentials()
-        if not stud_cv_check or not stud_check or not job_check:
+        if not stud_cv_check:
             return False
+        stud_check = self.check_stud_credentials()
+        if not stud_check:
+            return False
+        job_check = self.check_job_credentials()
+        if not job_check:
+            return False
+
         return True
 
     def get(self, request, pk):
@@ -662,6 +684,10 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
                           dict(form=form, job=self.job))
 
     def get_questions(self):
+        """
+        Get list of CVs uploaded by student.
+        :return: list of CVs
+        """
         cv = get_object_or_404(CV, stud=self.stud)
         questions = []
         if bool(cv.cv1):
@@ -671,6 +697,10 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         return questions
 
     def check_stud_cv(self):
+        """
+        Check if student has uploaded any CV
+        :return: True if student has uploaded at least one CV otherwise False
+        """
         try:
             cv = CV.objects.get(stud=self.stud)
         except CV.DoesNotExist:
@@ -678,10 +708,14 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         return bool(cv.cv1) or bool(cv.cv2)
 
     def check_stud_credentials(self):
+        """
+        Check if Student is eligible for applying for the Job.
+        :return: True if student is eligible otherwise False
+        """
         progjobrel = ProgrammeJobRelation.objects.filter(
             Q(job=self.job, prog__name=self.stud.prog) |
             Q(job=self.job, prog__name=self.stud.minor_prog)
-        )
+        ).exists()
         if not progjobrel:
             return False
         # Check CPI eligibility
@@ -690,12 +724,13 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         # Check BackLog eligibility
         if self.job.backlog_filter and self.job.num_backlogs_allowed < self.stud.active_backlogs:
             return False
-        # if already applied, then cannot apply again
+        # if debarred or already applied, then cannot apply again
         try:
             StudentJobRelation.objects.get(job=self.job, stud=self.stud)
             return False
         except StudentJobRelation.DoesNotExist:
             pass
+        # Otherwise
         return True
 
     def check_job_credentials(self):

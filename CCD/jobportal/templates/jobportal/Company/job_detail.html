@@ -253,7 +253,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Year</th>
+                                    <th>Year of Passing</th>
                                     <th>Dept</th>
                                     <th>Prog</th>
                                     <th>Minor/Major</th>
@@ -262,7 +262,7 @@
                             <tbody>
                                 {% for prog in rel_list %}
                                     <tr>
-                                        <td>{{prog.prog.year}}</td>
+                                        <td>{{prog.prog.year_passing}}</td>
                                         <td>{{prog.prog.dept}}</td>
                                         <td>{{prog.prog}}</td>
                                         <td>{{prog.prog.minor_status | yesno:"Minor, Major"}}</td>

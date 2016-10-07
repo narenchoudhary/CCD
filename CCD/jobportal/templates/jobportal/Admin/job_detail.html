@@ -251,7 +251,7 @@
                             </thead>
                             <tbody>
                                 {% for prog in prog_list %}
-                                    <tr>
+                                    <tr {% if not prog.prog.open_for_placement %} class="red lighten-4" {% endif %}>
                                         <td>{{prog.prog.year}}</td>
                                         <td>{{prog.prog.dept}}</td>
                                         <td>{{prog.prog}}</td>
