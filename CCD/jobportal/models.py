@@ -88,6 +88,10 @@ class UserProfile(AbstractUser):
     login_server = models.CharField(max_length=30, default='dikrong',
                                     blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'User Profile'
+        verbose_name_plural = 'User Profiles'
+
     def __unicode__(self):
         return str(self.username)
 
@@ -123,7 +127,11 @@ class Programme(models.Model):
         managed = True
 
     def __unicode__(self):
-        return str(self.name)
+        year = str(self.year)
+        dept = str(self.dept)
+        discipline = str(self.discipline)
+        minor = "Minor" if self.minor_status else "Major"
+        return year + " " + dept + " " + discipline + " " + minor
 
 
 class Admin(models.Model):
@@ -581,8 +589,12 @@ class StudentJobRelation(models.Model):
     job = models.ForeignKey(Job, null=True, blank=True)
     creation_datetime = models.DateTimeField(null=True)
 
+    class Meta:
+        verbose_name = 'Student-Job-Relation'
+        verbose_name_plural = 'Students-Job-Relations'
+
     def __unicode__(self):
-        return str(self.id)
+        return str(self.stud.name) + " " + str(self.job)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -633,6 +645,10 @@ class Avatar(models.Model):
                                  blank=False, null=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Avatar'
+        verbose_name_plural = 'Avatars'
+
     def save(self, *args, **kwargs):
         self.last_updated = timezone.now()
         super(Avatar, self).save(*args, **kwargs)
@@ -654,6 +670,10 @@ class Signature(models.Model):
                                     null=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Signature'
+        verbose_name_plural = 'Signatures'
+
     def save(self, *args, **kwargs):
         self.last_updated = timezone.now()
         super(Signature, self).save(*args, **kwargs)
@@ -673,7 +693,11 @@ class CV(models.Model):
     cv1 = models.FileField(upload_to=get_cv1_name, blank=True, null=True)
     cv2 = models.FileField(upload_to=get_cv2_name, blank=True, null=True)
     last_updated = models.DateTimeField(null=True, blank=True)
-    
+
+    class Meta:
+        verbose_name = 'Curriculum Vitae'
+        verbose_name_plural = 'Curriculum Vitae'
+
     def save(self, *args, **kwargs):
         self.last_updated = timezone.now()
         super(CV, self).save(*args, **kwargs)
@@ -696,6 +720,10 @@ class ProgrammeJobRelation(models.Model):
     get_year.short_description = 'year'
     get_dept.short_description = 'department'
     get_minor_status.short_description = 'Major/Minor'
+
+    class Meta:
+        verbose_name = 'Programme-Job-Relation'
+        verbose_name_plural = 'Programme-Job-Relations'
 
     def __unicode__(self):
         return str(self.prog.name)
