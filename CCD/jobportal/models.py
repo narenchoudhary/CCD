@@ -103,6 +103,34 @@ class UserProfile(AbstractUser):
 
 
 class Programme(models.Model):
+    """
+    Model representing structure of a single Programme.
+    It can be used to represent Major and Minor programmes.
+
+    Fields:
+        year                    Year of Admission
+        year_passing            Year of Passing
+        dept                    Department
+        discipline              Discipline (or Specialization)
+        name                    Name of Programme
+        minor_status            Major Programme or Minor Programme
+        open_for_placement      Flag representing registration status for
+                                current placement session
+        open_for_internship     Flag representing registration status for
+                                current internship session
+
+    Example:
+        year                    2015
+        year_passing            2017
+        dept                    Computer Science and Engineering
+        discipline              Theoretical Computer Science
+        name                    BTECH
+        minor_status            False
+        open_for_placement      True
+        open_for_internship     False
+
+
+    """
     year = models.IntegerField(null=True, blank=False, verbose_name='Year')
     year_passing = models.IntegerField(null=True, blank=False, default=2017,
                                        verbose_name='Year of passing', )
@@ -122,11 +150,20 @@ class Programme(models.Model):
                                               'Open for Internship')
 
     class Meta:
+        """
+        Meta class for Programme model.
+        """
         unique_together = ['year', 'dept', 'discipline', 'name',
                            'minor_status']
         managed = True
 
     def __unicode__(self):
+        """
+        Get representation of Programme model instance as a string.
+        Example:
+            "2013 Computer Science and Engineering Theoretical Computer Science Major"
+        :return: String representation of Programme model instance
+        """
         year = str(self.year)
         dept = str(self.dept)
         discipline = str(self.discipline)

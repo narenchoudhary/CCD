@@ -8,17 +8,25 @@ admin.site.site_header = 'CCD administration'
 
 
 class UserProfileChangeForm(UserChangeForm):
+    """
+    Form for creating User Profile instances.
+    """
     class Meta(UserChangeForm.Meta):
         model = UserProfile
 
 
 class UserProfileCreationForm(UserCreationForm):
-
+    """
+    Subclass of UserCreationForm used for add_form field
+    """
     class Meta(UserCreationForm.Meta):
         model = UserProfile
 
 
 class UserProfileAdmin(UserAdmin):
+    """
+    Class that represents UserProfile model in the admin interface.
+    """
     form = UserProfileChangeForm
     add_form = UserProfileCreationForm
     fieldsets = UserAdmin.fieldsets + (
@@ -30,6 +38,9 @@ class UserProfileAdmin(UserAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
+    """
+    Class that represents Company model in the admin interface.
+    """
     list_display = ('company_name', 'website', 'head_hr_name',
                     'head_hr_mobile')
     list_display_links = ('company_name', 'website')
@@ -38,6 +49,9 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
+    """
+    Class that represents Student model in the admin interface.
+    """
     list_display = ('name', 'roll_no', 'year', 'dept', 'prog', 'minor_dept')
     list_filter = ('year', 'dept', 'prog', 'minor_year', 'category', 'sex',
                    'placed', 'ppo')
@@ -45,6 +59,9 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class ProgrammeAdmin(admin.ModelAdmin):
+    """
+    Class that represents Programme model in the admin interface.
+    """
     list_display = ('year', 'dept', 'discipline', 'name', 'minor_status',
                     'open_for_placement', 'open_for_internship')
     list_filter = ('minor_status', 'open_for_placement', 'open_for_internship',
@@ -53,12 +70,18 @@ class ProgrammeAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(admin.ModelAdmin):
+    """
+    Class that represents Event model in the admin interface.
+    """
     list_display = ('company_owner', 'title', 'duration', 'final_date',
                     'is_approved')
     list_filter = ('is_approved',)
 
 
 class JobAdmin(admin.ModelAdmin):
+    """
+    Class that represents Job model in the admin interface.
+    """
     list_display = ('company_owner', 'designation', 'profile_name',
                     'opening_datetime', 'application_deadline', 'approved')
     list_filter = ('cpi_shortlist', 'backlog_filter', 'approved')
@@ -66,11 +89,17 @@ class JobAdmin(admin.ModelAdmin):
 
 
 class ProgrammeJobRelationAdmin(admin.ModelAdmin):
+    """
+    Class that represents ProgrammeJobRelation model in the admin interface.
+    """
     model = ProgrammeJobRelation
     list_display = ('job', 'get_year', 'get_dept', 'prog', 'get_minor_status')
 
 
 class StudentJobRelationAdmin(admin.ModelAdmin):
+    """
+    Class that represents StudentJobRelation model in the admin interface.
+    """
     list_display = ('stud', 'shortlist_init', 'placed_init',
                     'placed_approved',)
     list_filter = ('shortlist_init', 'placed_init', 'placed_approved')
@@ -78,6 +107,9 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
 
 
 class AvatarAdmin(admin.ModelAdmin):
+    """
+    Class that represents Avatar model in the admin interface.
+    """
     model = Avatar
     list_display = ('stud', 'stud_name', 'last_updated', )
     readonly_fields = ('image_tag', 'stud_name')
@@ -85,6 +117,9 @@ class AvatarAdmin(admin.ModelAdmin):
 
 
 class SignatureAdmin(admin.ModelAdmin):
+    """
+    Class that represents Signature model in the admin interface.
+    """
     model = Signature
     list_display = ('stud', 'stud_name', 'last_updated')
     readonly_fields = ('image_tag', 'stud_name')
@@ -92,16 +127,25 @@ class SignatureAdmin(admin.ModelAdmin):
 
 
 class CVAdmin(admin.ModelAdmin):
+    """
+    Class that represents CV model in the admin interface.
+    """
     model = CV
     list_display = ('stud', 'last_updated')
     search_fields = ('stud__name', 'stud__roll_no')
 
 
 class AdminAdmin(admin.ModelAdmin):
+    """
+    Class that represents Admin model in the admin interface.
+    """
     list_display = ('user', 'position')
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
+    """
+    Class that represents Announcement model in the admin interface.
+    """
     model = Announcement
     list_display = ('title', 'category', 'hide', 'last_updated')
     list_filter = ('category', 'hide')
