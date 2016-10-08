@@ -161,14 +161,15 @@ class Programme(models.Model):
         """
         Get representation of Programme model instance as a string.
         Example:
-            "2013 Computer Science and Engineering Theoretical Computer Science Major"
+            "2015 MTECH Computer Science and Engineering Theoretical Computer Science Major"
         :return: String representation of Programme model instance
         """
         year = str(self.year)
+        name = str(self.name)
         dept = str(self.dept)
         discipline = str(self.discipline)
         minor = "Minor" if self.minor_status else "Major"
-        return year + " " + dept + " " + discipline + " " + minor
+        return year + " " + name + " " + dept + " " + discipline + " " + minor
 
 
 class Admin(models.Model):
