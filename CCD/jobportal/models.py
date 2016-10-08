@@ -7,7 +7,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.html import format_html
-from material.frontend.templatetags.material_frontend import verbose_name
 
 from versatileimagefield.fields import VersatileImageField
 
