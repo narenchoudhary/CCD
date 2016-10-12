@@ -100,8 +100,8 @@ urlpatterns = [
 
     url(r'^company/job/(?P<pk>\d+)/jobrel/list/$',
         views_company.JobRelList.as_view(), name='company-jobrel-list'),
-    url(r'^company/job/(?P<jobpk>\d+)/jobrel/(?P<pk>\d+)/list/$',
-        views_company.JobRelUpdate.as_view(), name='company-jobrel-update'),
+    url(r'^company/job/(?P<pk>\d+)/jobrel/list/csv/$',
+        views_company.JobRelListCSV.as_view(), name='company-jobrel-list-csv'),
     url(r'company/jobrel/(?P<pk>\d+)/cv/(?P<cvno>\d+)',
         views_company.DownloadStudCV.as_view(), name='company-jobrel-cv'),
     url(r'company/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/shortlist',
@@ -109,6 +109,7 @@ urlpatterns = [
         name='company-jobrel-shortlist'),
     url(r'company/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place',
         views_company.StudJobRelPlace.as_view(), name='company-jobrel-place'),
+
     url(r'company/job/(?P<jobpk>\d+)/jobrel/create/',
         views_company.JobProgrammeCreate.as_view(),
         name='company-job-jobprog-create'),

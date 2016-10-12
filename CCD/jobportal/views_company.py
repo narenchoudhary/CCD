@@ -1,6 +1,7 @@
-import zipfile
+import csv
 import os
 import StringIO
+import zipfile
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -301,6 +302,72 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context = super(JobRelList, self).get_context_data(**kwargs)
         context['jobid'] = self.job.id
         return context
+
+
+class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    View class which handles downloading list of candidates for a Job
+    """
+    login_url = reverse_lazy('login')
+    raise_exception = False
+
+    def test_func(self):
+        """
+        Check if user is allowed to perform the action.
+        Tests:
+            - User is a Company user
+            - User owns the Job whose id is passed
+            - Application deadline for the Job has passed
+        :return: True if User is allowed else False.
+        """
+        # user is company
+        is_company = self.request.user.user_type == 'company'
+        if not is_company:
+            return False
+        # user is job owner
+        job = get_object_or_404(Job, id=self.kwargs['pk'])
+        company_user_id = self.request.session['company_instance_id']
+        company_owner = job.company_owner.id == company_user_id
+        if not company_owner:
+            return False
+        # deadline has passed
+        deadline_passed = job.application_deadline < timezone.now()
+        if not deadline_passed:
+            return False
+        return True
+
+    @staticmethod
+    def get(request, pk):
+        """
+        Returns the CSV containing applicant data.
+        CSV Fields:
+            1. Roll No
+            2. Name
+            3. Discipline (Specialization or Branch)
+            4. Program
+            5. CPI
+        :param request: HttpRequest object
+        :param pk: id of Job object
+        :return: HttpResponse object
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; ' \
+                                          'filename="iitg_students_detail.csv"'
+        wr = csv.writer(response, quoting=csv.QUOTE_ALL)
+        headers = ['Roll No', 'Name', 'Branch/Specialization', 'Programme',
+                   'CPI']
+        wr.writerow(headers)
+        all_studrels = StudentJobRelation.objects.filter(job__id=pk)
+        for studrel in all_studrels:
+            row = [
+                smart_str(studrel.stud.roll_no),
+                smart_str(studrel.stud.name),
+                smart_str(studrel.stud.discipline),
+                smart_str(studrel.stud.prog),
+                smart_str(studrel.stud.cpi)
+            ]
+            wr.writerow(row)
+        return response
 
 
 class JobRelUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
