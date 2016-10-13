@@ -592,7 +592,10 @@ class Job(models.Model):
         managed = True
 
     def __unicode__(self):
-        return str(self.designation) + " (" + str(self.company_owner.company_name) + ")"
+        try:
+            return str(self.designation) + " (" + str(self.company_owner.company_name) + ")"
+        except UnicodeEncodeError:
+            return str(self.company_owner.company_name)
 
     def save(self, *args, **kwargs):
         if not self.id:
