@@ -353,6 +353,77 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return StudentJobRelation.objects.filter(
             job__id=self.kwargs['pk'], is_debarred=False)
 
+    def get_context_data(self, **kwargs):
+        context = super(JobRelList, self).get_context_data(**kwargs)
+        context['jobid'] = self.kwargs['pk']
+        return context
+
+
+class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    View class which handles downloading list of candidates for a Job
+    """
+    login_url = reverse_lazy('login')
+    raise_exception = False
+
+    def test_func(self):
+        """
+        Check if user is allowed to perform the action.
+        :return: True if User is allowed else False.
+        """
+        # user is company
+        is_admin = self.request.user.user_type == 'admin'
+        if not is_admin:
+            return False
+        return True
+
+    @staticmethod
+    def get(request, pk):
+        """
+        Returns the CSV containing applicant data.
+        CSV Fields:
+            1. Roll No
+            2. Name
+            3. Web-mail
+            4. Gender
+            5. Department
+            6. Discipline (Specialization or Branch)
+            7. Program
+            8. CPI
+            9. Percentage X
+            10. Percentage XII
+        :param request: HttpRequest object
+        :param pk: id of Job object
+        :return: HttpResponse object
+        """
+        job = get_object_or_404(Job, id=pk)
+        company_name = str(job.company_owner.company_name).replace(' ', '_')
+        file_name = '{}_{}_list.csv'.format(smart_str(company_name), pk)
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; ' \
+                                          'filename=%s' % file_name
+        wr = csv.writer(response, quoting=csv.QUOTE_ALL)
+        headers = ['Roll No', 'Name', 'Web-mail', 'Gender', 'Department',
+                   'Branch/Specialization', 'Programme', 'CPI', 'Percentage X',
+                   'Percentage XII']
+        wr.writerow(headers)
+        stud_rel_list = StudentJobRelation.objects.filter(job__id=pk)
+        for stud_rel in stud_rel_list:
+            row = [
+                smart_str(stud_rel.stud.roll_no),
+                smart_str(stud_rel.stud.name),
+                smart_str(stud_rel.stud.iitg_webmail),
+                smart_str(stud_rel.stud.sex),
+                smart_str(stud_rel.stud.dept),
+                smart_str(stud_rel.stud.discipline),
+                smart_str(stud_rel.stud.prog),
+                smart_str(stud_rel.stud.cpi),
+                smart_str(stud_rel.stud.percentage_x),
+                smart_str(stud_rel.stud.percentage_xii),
+            ]
+            wr.writerow(row)
+        return response
+
 
 class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
     """

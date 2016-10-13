@@ -179,6 +179,8 @@ urlpatterns = [
         name='admin-jobrel-list-unapproved'),
     url(r'^admin/job/(?P<pk>\d+)/jobrel/list/$',
         views_admin.JobRelList.as_view(), name='admin-jobrel-list'),
+    url(r'^admin/job/(?P<pk>\d+)/jobrel/list/csv/$',
+        views_admin.JobRelListCSV.as_view(), name='admin-jobrel-list-csv'),
     url(r'^admin/job/(?P<jobpk>\d+)/jobrel/(?P<jobrelpk>\d+)/place/approve',
         views_admin.StudJobRelPlaceApprove.as_view(),
         name='admin-jobrel-place-approve'),
