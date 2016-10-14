@@ -101,13 +101,13 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
     Class that represents StudentJobRelation model in the admin interface.
     """
     list_display = ('stud', 'shortlist_init', 'placed_init',
-                    'placed_approved',)
+                    'placed_approved', 'cv1', 'cv2')
     list_filter = ('shortlist_init', 'placed_init', 'placed_approved')
     search_fields = (
         'stud__roll_no', 'stud__name', 'job__designation',
         'job__company_owner__company_name'
     )
-    ordering = ('creation_datetime',)
+    ordering = ('creation_datetime', 'cv1', 'cv2')
 
 
 class AvatarAdmin(admin.ModelAdmin):
