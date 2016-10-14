@@ -103,7 +103,11 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
     list_display = ('stud', 'shortlist_init', 'placed_init',
                     'placed_approved',)
     list_filter = ('shortlist_init', 'placed_init', 'placed_approved')
-    search_fields = ('stud__roll_no', 'stud__name', 'job__designation')
+    search_fields = (
+        'stud__roll_no', 'stud__name', 'job__designation',
+        'job__company_owner__company_name'
+    )
+    ordering = ('creation_datetime',)
 
 
 class AvatarAdmin(admin.ModelAdmin):
