@@ -863,6 +863,89 @@ class CompanyDetailDownloadForm(forms.Form):
         return self.cleaned_data
 
 
+class JobDetailDownloadForm(forms.Form):
+    """
+    Forms class for downloading Job Details.
+    """
+
+    layout = Layout(
+        Fieldset(
+            'Basic Details',
+            Row('company_name', 'designation'),
+            Row('profile_name', 'num_openings'),
+            Row('backlog_filter', 'num_backlogs_allowed'),
+            Row('cpi_shortlist', 'minimum_cpi'),
+            Row('percentage_x', 'percentage_xii'),
+        ),
+        Fieldset(
+            'Salary Breakdown',
+            Row('currency'),
+            Row('ctc_btech', 'gross_btech'),
+            Row('ctc_mtech', 'gross_mtech'),
+            Row('ctc_msc', 'gross_msc'),
+            Row('ctc_ma', 'gross_ma'),
+            Row('ctc_msr', 'gross_msr'),
+            Row('ctc_phd', 'gross_phd'),
+        ),
+        Fieldset(
+            'Status',
+            Row('approved'),
+            Row('opening_datetime', 'application_deadline'),
+        )
+    )
+
+    company_owner = forms.BooleanField(initial=True, label='Company')
+    designation = forms.BooleanField(initial=True, label='Designation')
+    profile_name = forms.BooleanField(initial=True, label='Profile Name')
+    num_openings = forms.BooleanField(initial=False, required=False,
+                                      label='Openings')
+    backlog_filter = forms.BooleanField(initial=False, required=False,
+                                        label='Backlog Filter')
+    num_backlogs_allowed = forms.BooleanField(initial=False, required=False,
+                                              label='Backlogs Allowed')
+    cpi_shortlist = forms.BooleanField(initial=False, required=False,
+                                       label='CPI Shortlist')
+    minimum_cpi = forms.BooleanField(initial=False, required=False,
+                                     label='Minimum CPI')
+    percentage_x = forms.BooleanField(initial=False, required=False,
+                                      label='Percentage X')
+    percentage_xii = forms.BooleanField(initial=False, required=False,
+                                        label='Percentage XII')
+    currency = forms.BooleanField(initial=False, required=False,
+                                  label='Currency')
+    ctc_btech = forms.BooleanField(initial=False, required=False,
+                                   label='CTC BTECH')
+    ctc_mtech = forms.BooleanField(initial=False, required=False,
+                                   label='CTC MTECH')
+    ctc_msc = forms.BooleanField(initial=False, required=False,
+                                 label='CTC MSC')
+    ctc_ma = forms.BooleanField(initial=False, required=False, label='CTC MA')
+    ctc_msr = forms.BooleanField(initial=False, required=False,
+                                 label='CTC MSR')
+    ctc_phd = forms.BooleanField(initial=False, required=False,
+                                 label='CTC PHD')
+    gross_btech = forms.BooleanField(initial=False, required=False,
+                                     label='Gross BTECH')
+    gross_mtech = forms.BooleanField(initial=False, required=False,
+                                     label='Gross MTECH')
+    gross_msc = forms.BooleanField(initial=False, required=False,
+                                   label='Gross MSC')
+    gross_ma = forms.BooleanField(initial=False, required=False,
+                                  label='Gross MA')
+    gross_msr = forms.BooleanField(initial=False, required=False,
+                                   label='Gross MSR')
+    gross_phd = forms.BooleanField(initial=False, required=False,
+                                   label='Gross PHD')
+    approved = forms.BooleanField(initial=False, required=False,
+                                  label='Approval Status')
+    opening_datetime = forms.BooleanField(
+        initial=False, required=False, label='Opening Date'
+    )
+    application_deadline = forms.BooleanField(
+        initial=False, required=False, label='Application deadline'
+    )
+
+
 class StudentDebarForm(forms.Form):
 
     layout = Layout(

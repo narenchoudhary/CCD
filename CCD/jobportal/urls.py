@@ -158,6 +158,9 @@ urlpatterns = [
 
     url(r'^admin/job/list/$', views_admin.JobList.as_view(),
         name='admin-job-list'),
+    url(r'^admin/job/list/(?P<get_page>[a-z]+)/$',
+        views_admin.JobListCSV.as_view(),
+        name='admin-job-list-download'),
     url(r'^admin/job/list/unapproved$',
         views_admin.JobListUnapproved.as_view(),
         name='admin-job-list-unapproved'),

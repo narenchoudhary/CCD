@@ -197,6 +197,83 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'admin'
 
 
+class JobListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    View class for downloading CSV of all Jobs.
+    """
+    login_url = reverse_lazy('login')
+    raise_exception = False
+    template_name = 'jobportal/Admin/job_download.html'
+
+    def test_func(self):
+        """
+        Check if user is allowed to perform the action.
+        :return: True if User is allowed else False.
+        """
+        # user is company
+        is_admin = self.request.user.user_type == 'admin'
+        if not is_admin:
+            return False
+        return True
+
+    def get(self, request, get_page='page'):
+        """
+        Returns a CSV containing job details.
+        :param request: HttpRequest object
+        :param get_page: string
+        :return: HttpResponse object
+        """
+        if get_page == 'page':
+            return render(request, self.template_name, dictionary=None)
+        elif get_page == 'file':
+            file_name = 'JobList_{}.csv'.format(smart_str(timezone.now().date()))
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; ' \
+                                              'filename=%s' % file_name
+            wr = csv.writer(response, quoting=csv.QUOTE_ALL)
+            headers = ['Company', 'designation', 'Profile', 'Openings',
+                       'CPI Shortlist', 'Minimum CPI', 'Backlog Filter',
+                       'Backlogs Allowed', 'Percentage X', 'Percentage XII',
+                       'CTC BTECH', 'Gross BTECH', 'CTC MTECH', 'Gross MTECH',
+                       'CTC MA', 'Gross MA', 'CTC MSC', 'Gross MSC',
+                       'CTC MSR', 'Gross MSR', 'CTC PHD', 'Gross PHD',
+                       'Approval Status','Opening DateTime', 'Closing DateTime']
+            wr.writerow(headers)
+            job_list = Job.objects.all()
+            for job in job_list:
+                row = [
+                    smart_str(job.company_owner.company_name),
+                    smart_str(job.designation),
+                    smart_str(job.profile_name),
+                    smart_str(job.num_openings),
+                    smart_str(job.cpi_shortlist),
+                    smart_str(job.minimum_cpi),
+                    smart_str(job.backlog_filter),
+                    smart_str(job.num_backlogs_allowed),
+                    smart_str(job.percentage_x),
+                    smart_str(job.percentage_xii),
+                    smart_str(job.ctc_btech),
+                    smart_str(job.gross_btech),
+                    smart_str(job.ctc_mtech),
+                    smart_str(job.gross_mtech),
+                    smart_str(job.ctc_ma),
+                    smart_str(job.gross_ma),
+                    smart_str(job.ctc_msc),
+                    smart_str(job.gross_msc),
+                    smart_str(job.ctc_msr),
+                    smart_str(job.gross_msr),
+                    smart_str(job.ctc_phd),
+                    smart_str(job.gross_phd),
+                    smart_str(job.approved),
+                    smart_str(job.opening_datetime),
+                    smart_str(job.application_deadline),
+                ]
+                wr.writerow(row)
+            return response
+        else:
+            return Http404()
+
+
 class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     queryset = Job.objects.filter(Q(approved=None) | Q(approved=False))
