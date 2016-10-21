@@ -1,17 +1,41 @@
 {% extends 'base_jobportal.html' %}
 
 {% block menu %}
-    <li><a href="{% url 'company-home' %}" title="Company Home">Home</a></li>
-    <li><a href="{% url 'company-profile-detail' %}" title="Profile">Company Profile</a></li>
     <li>
-        <a href="{% url 'company-job-create' %}" title="Add Job">Job Application Form</a>
+        <a href="{% url 'company-home' %}" title="Company Home">
+            <strong>Home</strong>
+        </a>
     </li>
     <li>
-        <a href="{% url 'company-job-list' %}" title="View Jobs">Job Application List</a>
+        <a href="{% url 'company-profile-detail' %}" title="Profile">
+            <strong>Company Profile</strong>
+        </a>
     </li>
-    <li><a href="{% url 'company-event-create' %}" title="Request Event">Event Form</a></li>
-    <li><a href="{% url 'company-event-list' %}" title="Events and Status">All Events</a></li>
-    <li><a href="{% url 'company-password-update' %}" title="Change Password">Change Password</a></li>
+    <li>
+        <a href="{% url 'company-job-create' %}" title="Add Job">
+            <strong>Job Application Form</strong>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'company-job-list' %}" title="View Jobs">
+            <strong>Job Application List</strong>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'company-event-create' %}" title="Request Event">
+            <strong>Event Form</strong>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'company-event-list' %}" title="Events and Status">
+            <strong>All Events</strong>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'company-password-update' %}" title="Change Password">
+            <strong>Change Password</strong>
+        </a>
+    </li>
 {% endblock %}
 
 {% block level_0 %}

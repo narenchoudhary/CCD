@@ -10,15 +10,22 @@
 {% endblock%}
 
 {% block content %}
-
+<div class="breadcrumbs">
+    <div>
+        <a href="{% url 'company-home' %}">Home</a> ⟩
+        <a href="{% url 'company-job-detail' jobid %}">Job Details</a> ⟩
+        <a href="{% url 'company-jobrel-list' jobid %}">Candidate List</a>
+    </div>
+</div>
 <div class="row">
     <div class="row">
         <div class="col s12 m12 l12">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Download Student Details</span>
-                    <p>Students details (Roll No, Name, Branch/Specialization, Programme, CPI) can
-                        be downloaded by clicking the button below.</p>
+                    <p>Students details (<strong>Roll No</strong>, <strong>Name</strong>,
+                        <strong>Branch/Specialization</strong>, <strong>Programme</strong>,
+                        <strong>CPI</strong>) can be downloaded by clicking the button below.</p>
                 </div>
                 <div class="card-action">
                     <a class="btn" href="{% url 'company-jobrel-list-csv' jobid %}">Download Student Details</a>
@@ -28,7 +35,7 @@
                 <div class="card-content">
                     <span class="card-title">Candidates</span>
                     {% if rel_list.count > 0 %}
-                        <table class="table bordered">
+                        <table class="table bordered highlight responsive-table">
                             <thead>
                                 <tr>
                                     <th>Name</th>

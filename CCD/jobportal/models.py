@@ -591,6 +591,18 @@ class Job(models.Model):
     class Meta:
         managed = True
 
+    @property
+    def deadline_passed(self):
+        if self.application_deadline < timezone.now():
+            return True
+        return False
+
+    @property
+    def job_opened(self):
+        if self.opening_datetime < timezone.now():
+            return True
+        return False
+
     def __unicode__(self):
         try:
             return str(self.designation) + " (" + str(self.company_owner.company_name) + ")"

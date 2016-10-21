@@ -407,7 +407,7 @@ class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return Job.objects.filter(
             approved=True,
             opening_datetime__lte=timezone.now()
-        )
+        ).order_by('-application_deadline')
 
 
 class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -529,7 +529,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
             percentage_x__lte=stud_percentage_x
         ).filter(
             percentage_xii__lte=stud_percentage_xii
-        )
+        ).order_by('-application_deadline')
 
     def get_context_data(self, **kwargs):
         """
@@ -647,7 +647,7 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
             stud__id=self.request.session['student_instance_id'],
-            is_debarred=False)
+            is_debarred=False).order_by('-creation_datetime')
 
 
 class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):

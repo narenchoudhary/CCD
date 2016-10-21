@@ -11,42 +11,73 @@
 
 {% block menu %}
 
-<li><a href="{% url 'admin-home' %}">Home</a></li>
-
-<li><a href="{% url 'admin-company-list' %}">Companies</a></li>
-
-<li><a href="{% url 'admin-company-signup-list' %}">SignUp Requests</a></li>
-
-<li><a href="{% url 'admin-job-list' %}">Jobs: Approved</a></li>
-
-<li><a href="{% url 'admin-job-list-unapproved' %}">Jobs: Unapproved</a></li>
-
-<li><a href="{% url 'admin-jobrel-list-unapproved' %}">Hiring Requests</a></li>
-
-<li><a href="{% url 'programme-list' %}">Programmes</a></li>
-
-<li><a href="{% url 'admin-event-list' %}">All Events</a></li>
-
-<li><a href="{% url 'admin-student-list' %}">Search Students</a></li>
-<li><a href="{% url 'admin-jobrel-list-debarred' %}">Debarred Students</a></li>
-
 <li>
-    <a class="collapsible-header">Upload</a>
+    <a href="{% url 'admin-home' %}">
+        <strong>Home</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-company-list' %}">
+        <strong>Companies</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-company-signup-list' %}">
+        <strong>SignUp Requests</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-job-list' %}">
+        <strong>Jobs: Approved</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-job-list-unapproved' %}">
+        <strong>Jobs: Unapproved</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-jobrel-list-unapproved' %}">
+        <strong>Hiring Requests</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'programme-list' %}">
+        <strong>Programmes</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-event-list' %}">
+        <strong>All Events</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-student-list' %}">
+        <strong>Search Students</strong>
+    </a>
+</li>
+<li>
+    <a href="{% url 'admin-jobrel-list-debarred' %}">
+        <strong>Debarred Students</strong>
+    </a>
+</li>
+<li>
+    <a class="collapsible-header"><strong>Upload</strong></a>
     <div class="collapsible-body">
        <ul>
-	        <li><a href="{% url 'admin-student-create' %}">Students CSV</a></li>
-	        <li><a href="{% url 'admin-student-fee-update' %}">Fee CSV</a></li>
+	        <li><a href="{% url 'admin-student-create' %}"><strong>Students CSV</strong></a></li>
+	        <li><a href="{% url 'admin-student-fee-update' %}"><strong>Fee CSV</strong></a></li>
        </ul>
     </div>
 </li>
 
 <li>
-    <a class="collapsible-header">Download</a>
+    <a class="collapsible-header"><strong>Download</strong></a>
     <div class="collapsible-body">
        <ul>
-            <li><a href="{% url 'admin-stud-list-download' %}">Students Details</a></li>
-            <li><a href="{% url 'admin-company-list-download' %}">Company Details</a></li>
-            <li><a href="{% url 'admin-job-list-download' 'page' %}">Job Details</a></li>
+            <li><a href="{% url 'admin-stud-list-download' %}"><strong>Students Details</strong></a></li>
+            <li><a href="{% url 'admin-company-list-download' %}"><strong>Company Details</strong></a></li>
+            <li><a href="{% url 'admin-job-list-download' 'page' %}"><strong>Job Details</strong></a></li>
        </ul>
     </div>
 </li>

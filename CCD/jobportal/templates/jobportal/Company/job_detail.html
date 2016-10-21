@@ -14,23 +14,27 @@
 <div class="breadcrumbs">
     <div>
         <a href="{% url 'company-home' %}">Home</a> ⟩
-        <a href="#">Job Details</a>
+        <a href="{% url 'company-job-detail' job.id %}">Job Details</a>
     </div>
 </div>
 
 <div class="row">
     <div class="row">
-        <div class="col s12 l9 m9">
+        <div class="col s12 m12 l9">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Job Application Details</span>
+                    <ul>
+                        <li>All details related to Job application is available on this page.</li>
+                        <li></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         {% if rel_list.count  == 0%}
         <div class="row">
-            <div class="col s12 m9 l9">
+            <div class="col s12 m12 l9">
                 <div class=" card red lighten-5">
                     <div class="red-text card-content">
                         <i class="mdi-alert-error"></i>
@@ -46,7 +50,8 @@
             </div>
         </div>
         {% endif %}
-        <div class="col s12 m9 l9">
+
+        <div class="col s12 m12 l9">
             <ul class="tabs z-depth-1">
                 <li class="tab col s3">
                     <a class="teal-text" href="#basicinfo">Basic Information</a>
@@ -63,7 +68,7 @@
             </ul>
         </div>
 
-        <div class="col s12 m9 l9">
+        <div class="col s12 m12 l9">
 
             <div class="col s12 m12 l12  white" id="basicinfo">
                 <table class="table bordered">
@@ -211,7 +216,7 @@
     </div>
 
     <div class="row">
-        <div class="col s12 m9 l9">
+        <div class="col s12 m12 l9">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Actions</span>
@@ -220,7 +225,7 @@
                     please contact the administrator.</p>
                 </div>
                 <div class="card-action">
-                    {% if deadline_over == True %}
+                    {% if job.deadline_passed %}
                         <a href="{% url 'company-jobrel-list' job.id %}"
                        class="btn btn-primary">View Candidates</a>
                     {% else %}
@@ -233,8 +238,7 @@
                         <a href="{% url 'company-job-update' job.id %}"
                        class="btn btn-primary ">Edit Job</a>
                     {% else %}
-                        <a href="{% url 'company-job-update' job.id %}"
-                       class="btn disabled tooltipped" data-tooltip="This job has been already
+                        <a href='#' class="btn disabled tooltipped" data-tooltip="This job has been already
                        approved. No changes can be made now." data-position="bottom">Edit Job</a>
                     {% endif %}
 
@@ -245,7 +249,7 @@
 
 
     <div class="row">
-        <div class="col s12 m9 l9">
+        <div class="col s12 m12 l9">
             <div class="card">
                  <div class="card-content">
                      <span class="card-title">Programmes</span>

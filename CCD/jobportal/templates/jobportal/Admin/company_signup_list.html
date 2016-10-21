@@ -18,22 +18,24 @@
                             <thead>
                                 <tr>
                                     <th>Company Name</th>
-                                    <th>Company Profile</th>
+                                    <th>Username</th>
                                     <th>Head HR Email</th>
                                     <th>Head HR Mobile</th>
+                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody class="searchable">
                                 {% for company in company_list %}
                                     <tr>
                                         <td>{{ company.company_name }}</td>
+                                        <td>{{ company.user.username}}</td>
+                                        <td>{{ company.head_hr_email }}</td>
+                                        <td>{{ company.head_hr_mobile }}</td>
                                         <td>
                                             <a class="btn btn-info btn-xs"
                                                href = "{% url 'admin-company-detail' company.id %}">
                                                 Request Profile</a>
                                         </td>
-                                        <td>{{ company.head_hr_email }}</td>
-                                        <td>{{ company.head_hr_mobile }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

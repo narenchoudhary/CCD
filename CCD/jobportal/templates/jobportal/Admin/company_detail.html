@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <div class="col s12 m9 l9">
+        <div class="col s12 m12 l12">
             <ul class="s12 m12 l12 tabs z-depth-1">
                 <li class="tab col s6 m6 l6">
                     <a class="teal-text" href="#profile">Basic Information</a>
@@ -45,7 +45,8 @@
             </ul>
 
             <div class="col s12 m12 l12  white" id="profile">
-                <table class="table centered responsive-table" id="result_list" role="grid">
+                <table class="table centered bordered highlight responsive-table"
+                       id="result_list" role="grid">
                     <tr>
                         <td> Username:</td>
                         <td> {{ company.user.username }}</td>
@@ -82,7 +83,7 @@
             </div>
 
             <div class="col s12 m12 l12  white" id="hrdetails">
-                <table class="table bordered centered responsive-table">
+                <table class="table bordered centered highlight responsive-table">
                     <tr>
                         <td>Head HR Name</td>
                         <td> {{ company.head_hr_name }}</td>
@@ -127,8 +128,11 @@
             </div>
         </div>
 
-        <div class="col s12 m9 l9">
+        <div class="col s12 m12 l12">
             <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Edit Company Details</span>
+                </div>
                 <div class="card-action">
                     <a class="btn btn-info"
                        href="{% url 'admin-company-update' company.id %}">
@@ -137,17 +141,18 @@
             </div>
         </div>
 
-        <div class="col s12 m8 l9">
+        <div class="col s12 m12 l12">
             <div class="card">
                 <div class="card-content">
                     {% if job_list.count > 0 %}
-                        <span class="card-title">Jobs posted from this recruiter profile:</span>
+                        <span class="card-title">Jobs posted from this recruiter's profile:</span>
                         <div class="results">
                             <div class="dataTables_wrapper no-footer" id="result_list_wrapper">
                                 <table class="table">
                                     <tr>
                                         <th>Designation</th>
                                         <th>Posted On</th>
+                                        <th>Application Deadline</th>
                                         <th>Approved</th>
                                         <th>Details</th>
                                     </tr>
@@ -155,6 +160,7 @@
                                     <tr>
                                         <td>{{ job.designation }}</td>
                                         <td>{{ job.posted_on }}</td>
+                                        <td>{{ job.application_deadline }}</td>
                                         <td>{{ job.approved | yesno:"Approved, Not Approved"}}</td>
                                         <td><a style="color:white;" class="btn btn-xs btn-primary"
                                                href="{% url 'admin-job-detail' job.id %}">Details</a></td>

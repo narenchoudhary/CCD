@@ -20,12 +20,14 @@
 <div class="row">
     <div class="row">
 
-        <div class="col s12 m12 l9">
+        <div class="col s12 m12 l12">
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Your Job Applications</span>
+                <p><strong>Note: Job applications appear in descending order of date of application.</strong></p>
+                <hr>
                 {% if jobrel_list.count > 0 %}
-                    <table class="table bordered">
+                    <table class="table bordered highlight">
                         <thead>
                             <tr>
                                 <th>Company</th>
@@ -38,10 +40,10 @@
                         <tbody>
                             {% for jobrel in jobrel_list %}
                                 <tr>
-                                    <td>{{ jobrel.job.company_owner}}</td>
-                                    <td>{{jobrel.job.designation}}</td>
-                                    <td>{{jobrel.creation_datetime}}</td>
-                                    <td>
+                                    <td width="20%">{{ jobrel.job.company_owner}}</td>
+                                    <td width="20%">{{jobrel.job.designation}}</td>
+                                    <td width="20%">{{jobrel.creation_datetime}}</td>
+                                    <td width="20%">
                                         {% if jobrel.placed_approved == True %}
                                             <span class="green-text">Placed</span>
                                         {% else %}
@@ -52,7 +54,7 @@
                                             {% endif%}
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td width="20%">
                                         <a href="{% url 'stud-job-detail' jobrel.job.id %}"
                                            class="btn" >Details</a>
                                     </td>
