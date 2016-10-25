@@ -643,8 +643,8 @@ class StudentJobRelation(models.Model):
     creation_datetime = models.DateTimeField(null=True)
 
     class Meta:
-        verbose_name = 'Student-Job-Relation'
-        verbose_name_plural = 'Students-Job-Relations'
+        verbose_name = 'StudentJobRelation'
+        verbose_name_plural = 'StudentsJobRelations'
 
     def __unicode__(self):
         return str(self.stud.name) + " " + str(self.job)

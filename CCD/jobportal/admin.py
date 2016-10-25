@@ -100,6 +100,7 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
     """
     Class that represents StudentJobRelation model in the admin interface.
     """
+    model = StudentJobRelation
     list_display = ('stud', 'shortlist_init', 'placed_init',
                     'placed_approved', 'cv1', 'cv2')
     list_filter = ('shortlist_init', 'placed_init', 'placed_approved')
@@ -108,6 +109,82 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
         'job__company_owner__company_name'
     )
     ordering = ('creation_datetime', 'cv1', 'cv2')
+    actions = ['shortlist_init_true', 'shortlist_init_false',
+               'placed_init_true', 'placed_init_false']
+
+    def shortlist_init_true(self, request, queryset):
+        """
+        Action method for shortlisting selected StudentJobRelation instances
+        :param request:
+        :param queryset:
+        :return:
+        """
+        rows_updated = queryset.update(shortlist_init=True)
+        if rows_updated == 1:
+            message_bit = '1 applicant was'
+        else:
+            message_bit = '%s applicants were' % rows_updated
+        self.message_user(
+            request, '%s successfully marked as shortlisted.' % message_bit)
+
+    shortlist_init_true.short_description = \
+        'Add selected StudentsJobRelations(s) to shortlist'
+
+    def shortlist_init_false(self, request, queryset):
+        """
+        Action method for un-shortlisting selected StudentJobRelation instances
+        :param request:
+        :param queryset:
+        :return:
+        """
+        rows_updated = queryset.update(shortlist_init=False)
+        if rows_updated == 1:
+            message_bit = '1 applicant was'
+        else:
+            message_bit = '%s applicants were' % rows_updated
+        self.message_user(
+            request, '%s successfully removed from shortlist.' % message_bit)
+
+    shortlist_init_false.short_description = \
+        'Remove selected StudentsJobRelations(s) from shortlist'
+
+    def placed_init_true(self, request, queryset):
+        """
+        Action method for initiating placement request for selected
+        StudentJobRelation instances
+        :param request:
+        :param queryset:
+        :return:
+        """
+        rows_updated = queryset.update(placed_init=True)
+        if rows_updated == 1:
+            message_bit = '1 applicant'
+        else:
+            message_bit = '%s applicants' % rows_updated
+        self.message_user(
+            request, 'Placement request initiated for %s' % message_bit)
+
+    placed_init_true.short_description = \
+        'Initiate placement request for selected StudentsJobRelations(s)'
+
+    def placed_init_false(self, request, queryset):
+        """
+        Action method for cancelling placement request for selected
+        StudentJobRelation instances
+        :param request:
+        :param queryset:
+        :return:
+        """
+        rows_updated = queryset.update(placed_init=False)
+        if rows_updated == 1:
+            message_bit = '1 applicant'
+        else:
+            message_bit = '%s applicants' % rows_updated
+        self.message_user(
+            request, 'Placement request cancelled for %s' % message_bit)
+
+    placed_init_false.short_description = \
+        'Cancel placement request for selected StudentsJobRelations(s)'
 
 
 class AvatarAdmin(admin.ModelAdmin):
