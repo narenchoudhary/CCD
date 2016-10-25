@@ -177,6 +177,10 @@ urlpatterns = [
         views_admin.JobProgrammeUpdate.as_view(),
         name='admin-job-jobprog-list-update'),
 
+    url(r'^admin/job/(?P<pk>\d+)/cv/download/',
+        views_admin.DownloadCVZip.as_view(),
+        name='admin-job-cv-download'),
+
     url(r'^admin/jobrel/list/unapproved/$',
         views_admin.JobRelListUnapproved.as_view(),
         name='admin-jobrel-list-unapproved'),

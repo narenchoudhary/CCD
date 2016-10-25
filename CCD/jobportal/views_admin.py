@@ -1,6 +1,9 @@
 import csv
-import string
+import os
 import random
+import string
+import StringIO
+import zipfile
 
 from sqlite3.dbapi2 import IntegrityError
 
@@ -1115,3 +1118,45 @@ class DownloadCompanyList(LoginRequiredMixin, UserPassesTestMixin, View):
             return response
         else:
             return render(request, self.template_name, dict(form=form))
+
+
+class DownloadCVZip(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = reverse_lazy('login')
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    @staticmethod
+    def get(request, pk):
+        job = Job.objects.get(id=pk)
+        stud_rel_list = StudentJobRelation.objects.filter(job__id=pk)
+        cv_list = []
+        for stud_rel in stud_rel_list:
+            try:
+                cv = CV.objects.get(stud=stud_rel.stud)
+                cv_path = None
+                if bool(stud_rel.cv1):
+                    cv_path = cv.cv1.path
+                if bool(stud_rel.cv2):
+                    cv_path = cv.cv2.path
+                if cv_path is not None:
+                    cv_list.append(cv_path)
+            except CV.DoesNotExist:
+                pass
+
+        zip_filename = "IITG_%s_CV.zip" % smart_str(job.id)
+
+        s = StringIO.StringIO()
+
+        zf = zipfile.ZipFile(s, mode="w")
+        for cv_path in cv_list:
+            cv_dir, cv_name = os.path.split(cv_path)
+            print cv_path
+            print cv_name
+            zf.write(cv_path, cv_name)
+        zf.close()
+
+        resp = HttpResponse(s.getvalue(),
+                            content_type="application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+        return resp
