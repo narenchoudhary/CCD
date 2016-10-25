@@ -230,6 +230,19 @@ class AnnouncementAdmin(admin.ModelAdmin):
     model = Announcement
     list_display = ('title', 'category', 'hide', 'last_updated')
     list_filter = ('category', 'hide')
+    actions = ['hide_announcement']
+
+    def hide_announcement(self, request, queryset):
+        rows_updated = queryset.update(hide=True)
+        if rows_updated == 1:
+            message_bit = '1 Announcement was'
+        else:
+            message_bit = '%s Announcements were' % rows_updated
+        message = 'Status of %s successfully updated to hidden.' % message_bit
+        self.message_user(request, message)
+
+    hide_announcement.short_description = 'Mark selected Announcement(s) ' \
+                                          'as hidden'
 
 admin.site.register(SiteManagement)
 
