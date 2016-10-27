@@ -1151,8 +1151,8 @@ class DownloadCVZip(UserPassesTestMixin, LoginRequiredMixin, View):
         zf = zipfile.ZipFile(s, mode="w")
         for cv_path in cv_list:
             cv_dir, cv_name = os.path.split(cv_path)
-            print cv_path
-            print cv_name
+            # rename filename in archive
+            cv_name = 'IITG_' + cv_name[:9] + '.pdf'
             zf.write(cv_path, cv_name)
         zf.close()
 
