@@ -472,6 +472,8 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
             8. CPI
             9. Percentage X
             10. Percentage XII
+            11. Mobile (IITG Campus)
+            12. Alternate Email
         :param request: HttpRequest object
         :param pk: id of Job object
         :return: HttpResponse object
@@ -500,6 +502,8 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
                 smart_str(stud_rel.stud.cpi),
                 smart_str(stud_rel.stud.percentage_x),
                 smart_str(stud_rel.stud.percentage_xii),
+                smart_str(stud_rel.stud.mobile_campus),
+                smart_str(stud_rel.stud.alternative_email),
             ]
             wr.writerow(row)
         return response
