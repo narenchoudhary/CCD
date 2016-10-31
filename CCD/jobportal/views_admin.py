@@ -1073,7 +1073,7 @@ class DownloadStudList(LoginRequiredMixin, UserPassesTestMixin, View):
                 # only add fields asked in form
                 for k, v in cleaned_data.iteritems():
                     if v:
-                        row.append(getattr(stud, k))
+                        row.append(smart_str(getattr(stud, k)))
                 # write student details to as row to csv
                 wr.writerow(row)
             return response

@@ -755,6 +755,7 @@ class StudentDetailDownloadForm(forms.Form):
         Fieldset(
             'Contact',
             Row('mobile_campus', 'mobile_campus_alternative', 'mobile_home'),
+            Row('alternative_email'),
         ),
         Fieldset(
             'Major/Minor Programmes',
