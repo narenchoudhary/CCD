@@ -30,20 +30,22 @@
                     <table class="table bordered highlight">
                         <thead>
                             <tr>
-                                <th>Company</th>
-                                <th>Designation</th>
-                                <th>Applied on</th>
-                                <th>Status</th>
-                                <th>Details</th>
+                                <th width="10%">Sr. No.</th>
+                                <th width="10%">Company</th>
+                                <th width="18%">Designation</th>
+                                <th width="18%">Applied on</th>
+                                <th width="18%">Status</th>
+                                <th width="18%">Details</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for jobrel in jobrel_list %}
                                 <tr>
-                                    <td width="20%">{{ jobrel.job.company_owner}}</td>
-                                    <td width="20%">{{jobrel.job.designation}}</td>
-                                    <td width="20%">{{jobrel.creation_datetime}}</td>
-                                    <td width="20%">
+                                    <td width="10%">{{ forloop.counter }}</td>
+                                    <td width="18%">{{ jobrel.job.company_owner}}</td>
+                                    <td width="18%">{{jobrel.job.designation}}</td>
+                                    <td width="18%">{{jobrel.creation_datetime}}</td>
+                                    <td width="18%">
                                         {% if jobrel.placed_approved == True %}
                                             <span class="green-text">Placed</span>
                                         {% else %}
@@ -54,7 +56,7 @@
                                             {% endif%}
                                         {% endif %}
                                     </td>
-                                    <td width="20%">
+                                    <td width="18%">
                                         <a href="{% url 'stud-job-detail' jobrel.job.id %}"
                                            class="btn" >Details</a>
                                     </td>

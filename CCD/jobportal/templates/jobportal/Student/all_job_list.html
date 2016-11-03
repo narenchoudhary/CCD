@@ -30,21 +30,23 @@
                         <table class="table bordered highlight ">
                             <thead>
                                 <tr>
-                                    <th width="20%">Company</th>
-                                    <th width="20%">Designation</th>
-                                    <th width="20%">Profile</th>
-                                    <th width="20%">Deadline</th>
-                                    <th width="20%">Details</th>
+                                    <th width="10%">SR. No.</th>
+                                    <th width="18%">Company</th>
+                                    <th width="18%">Designation</th>
+                                    <th width="18%">Profile</th>
+                                    <th width="18%">Deadline</th>
+                                    <th width="18%">Details</th>
                                 </tr>
                             </thead>
                             <tbody class="searchable">
                                 {% for job in job_list %}
                                 <tr>
-                                    <td>{{ job.company_owner }}</td>
-                                    <td>{{ job.designation }} </td>
-                                    <td>{{ job.profile_name }}</td>
-                                    <td>{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
-                                    <td>
+                                    <td width="10%">{{ forloop.counter }}</td>
+                                    <td width="18%">{{ job.company_owner }}</td>
+                                    <td width="18%">{{ job.designation }} </td>
+                                    <td width="18%">{{ job.profile_name }}</td>
+                                    <td width="18%">{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
+                                    <td width="18%">
                                         <a href="{% url 'stud-all-job-detail' job.id %}"
                                            class="btn">Details</a>
                                     </td>
