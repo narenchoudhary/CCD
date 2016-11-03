@@ -71,14 +71,11 @@ class Login(View):
         """
         server_ip = self.server_dict.get(str(server).lower())
         try:
-            print(server_ip)
-            print(type(server_ip))
             serv = poplib.POP3_SSL(server_ip, self.server_port)
             serv.user(username)
             p_str = serv.pass_(password)
             if 'OK' in p_str:
                 serv.quit()
-                print("all OK and True")
                 return True
         except poplib.error_proto:
             serv.quit()
@@ -96,13 +93,9 @@ class Login(View):
         login_status == False implies wrong_password.
         """
         for server in self.server_dict.items():
-            print("Auth all servers with %s" % server[0])
             status = self._auth_one_server(username, password, server[0])
-            print("%s returned %s" % (server[0], str(status)))
             if status:
-                print("Lgin success")
                 return server[0], True
-            print("Iteration for another server")
         return None, False
 
     def get(self, request):
@@ -209,13 +202,11 @@ class Login(View):
                         if user_profile.is_active:
                             # check if server is saved
                             if bool(user_profile.login_server):
-                                print("Student login_server found.")
                                 status = self._auth_one_server(
                                     username=username, password=password,
                                     server=user_profile.login_server)
                                 # if saved server worked
                                 if status:
-                                    print("Login Successful for login_server")
                                     # authenticate
                                     # TODO: Write auth backend
                                     # http://stackoverflow.com/a/2788053/3679857
@@ -234,9 +225,7 @@ class Login(View):
                                         return redirect('stud-home')
                                 # if saved server did not work
                                 else:
-                                    print("Login Failed for login_server")
                                     # try all the servers
-                                    print("Login Successful")
                                     server, status = self._auth_all_servers(
                                         username=username, password=password
                                     )
