@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <td>Designation</td>
-                        <td>{{job.designation}}</td>
+                        <td>{{job.designation | linebreaksbr}}</td>
                     </tr>
                     <tr>
                         <td>Profile Name</td>
@@ -111,15 +111,15 @@
                 <table class="table bordered">
                     <tr>
                         <td width="30%"> Company Name:</td>
-                        <td width="70%"> {{ job.company_owner.company_name }}</td>
+                        <td width="70%"> {{ job.company_owner.company_name}}</td>
                     </tr>
                     <tr>
                         <td width="30%">Description:</td>
-                        <td width="70%"> {{ job.company_owner.description }}</td>
+                        <td width="70%"> {{ job.company_owner.description | linebreaksbr}}</td>
                     </tr>
                     <tr>
                         <td>Postal Address:</td>
-                        <td> {{ job.company_owner.postal_address }}</td>
+                        <td> {{ job.company_owner.postal_address | linebreaksbr}}</td>
                     </tr>
                     <tr>
                         <td>Website:</td>

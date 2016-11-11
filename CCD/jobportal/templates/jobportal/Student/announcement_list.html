@@ -33,7 +33,7 @@
                             <span class="card-title">{{ announcement.title }}</span>
                             <p> <strong>{{ announcement.category}}</strong></p>
                             <br>
-                            <p>{{ announcement.detail }}</p>
+                            <p>{{ announcement.detail | linebreaksbr}}</p>
                             <br>
                             <p><strong>Posted On:</strong> {{ announcement.creation_datetime | date:"M d, Y h:i A" }} ( {{ announcement.creation_datetime | timesince }} ago)</p>
                         </div>
