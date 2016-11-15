@@ -775,6 +775,7 @@ class StudentDetailDownloadForm(forms.Form):
         ),
         Fieldset(
             'CPI',
+            Row('cpi'),
             Row('spi_1_sem', 'spi_2_sem'),
             Row('spi_3_sem', 'spi_4_sem'),
             Row('spi_5_sem', 'spi_6_sem'),
