@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.utils import timezone
 
-from .models import *
+from .models import (UserProfile, Admin, Company, Job, Programme,
+                     ProgrammeJobRelation, Student, StudentJobRelation, Avatar,
+                     CV, Signature, SiteManagement, Announcement, Event)
 
 admin.site.site_header = 'CCD administration'
 
@@ -119,7 +122,9 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
         :param queryset:
         :return:
         """
-        rows_updated = queryset.update(shortlist_init=True)
+        rows_updated = queryset.update(
+            shortlist_init=True, shortlist_init_datetime=timezone.now()
+        )
         if rows_updated == 1:
             message_bit = '1 applicant was'
         else:
@@ -137,7 +142,9 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
         :param queryset:
         :return:
         """
-        rows_updated = queryset.update(shortlist_init=False)
+        rows_updated = queryset.update(
+            shortlist_init=False, shortlist_init_datetime=None
+        )
         if rows_updated == 1:
             message_bit = '1 applicant was'
         else:
@@ -156,7 +163,9 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
         :param queryset:
         :return:
         """
-        rows_updated = queryset.update(placed_init=True)
+        rows_updated = queryset.update(
+            placed_init=True, placed_init_datetime=timezone.now()
+        )
         if rows_updated == 1:
             message_bit = '1 applicant'
         else:
@@ -175,7 +184,9 @@ class StudentJobRelationAdmin(admin.ModelAdmin):
         :param queryset:
         :return:
         """
-        rows_updated = queryset.update(placed_init=False)
+        rows_updated = queryset.update(
+            placed_init=False, placed_init_datetime=None
+        )
         if rows_updated == 1:
             message_bit = '1 applicant'
         else:
