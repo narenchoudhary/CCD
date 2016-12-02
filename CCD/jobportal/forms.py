@@ -964,3 +964,14 @@ class StudentDebarForm(forms.Form):
         if not Student.objects.filter(roll_no=roll_no).exists():
             raise ValidationError('No student with this roll number')
         return roll_no
+
+
+class ShortlistCSVForm(forms.Form):
+    layout = Layout(
+        Row('job'),
+        Row('csv')
+    )
+
+    job = forms.ModelChoiceField(queryset=Job.objects.filter(approved=True))
+    csv = forms.FileField(required=True, allow_empty_file=False,
+                          label='Upload CSV')

@@ -1,0 +1,66 @@
+{% extends 'base_admin.html' %}
+{% load staticfiles %}
+{% load material_form %}
+
+{% block account_setting%}
+    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% endblock%}
+
+{% block content %}
+
+<div class="row">
+    <div class="row">
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        Upload Student Shortlist
+                    </span>
+                    <form method="post" accept-charset="utf-8" enctype="multipart/form-data"
+                          action="{% url 'admin-jobrel-shortlist-csv' %}">
+                        {% csrf_token %}
+                        {% form %}
+                        {% endform %}
+                        <input type="submit" class="btn" value="Upload">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% if zipped_data.count > 1 %}
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <table class="table bordered">
+                            <thead>
+                                <tr>
+                                    <th>Row Number</th>
+                                    <th>Error</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i, j in zipped_data %}
+                                    <tr>
+                                        <td>{{i}}</td>
+                                        <td>{{j}}</td>
+                                        <td>Not Saved</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% elif zipped_data.count == 0 %}
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <h5>All records updated successfully.</h5>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

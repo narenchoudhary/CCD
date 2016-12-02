@@ -18,7 +18,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, CreateView, DetailView,
-                                  TemplateView, UpdateView)
+                                  TemplateView, UpdateView, FormView)
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Programme, ProgrammeJobRelation,
@@ -26,7 +26,8 @@ from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
 from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
                     EditCompany, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm,
-                    StudentDetailDownloadForm, CompanyDetailDownloadForm)
+                    StudentDetailDownloadForm, CompanyDetailDownloadForm,
+                    ShortlistCSVForm)
 from .constants import CATEGORY
 
 
@@ -1164,3 +1165,57 @@ class DownloadCVZip(UserPassesTestMixin, LoginRequiredMixin, View):
                             content_type="application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
         return resp
+
+
+class ShortlistCSV(LoginRequiredMixin, UserPassesTestMixin, FormView):
+
+    login_url = reverse_lazy('login')
+    template_name = 'jobportal/Admin/jobrel_shortlist_csv.html'
+    form_class = ShortlistCSVForm
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    @staticmethod
+    def _validate_row(row):
+        if len(row) != 1:
+            return False, 'More than one columns'
+        try:
+            int(row[0])
+        except TypeError:
+            return False, 'Failed to convert roll number to integer'
+        return True, ''
+
+    def form_valid(self, form):
+        csv_file = form.cleaned_data['csv']
+        job = form.cleaned_data['job']
+        reader = csv.reader(csv_file, delimiter=',')
+        error_rows = error_msgs = []
+        row_count = 0
+        for row in reader:
+            row_count += 1
+            status, msg = ShortlistCSV._validate_row(row)
+            if not status:
+                error_rows.append(row_count)
+                error_msgs.append(msg)
+                continue
+            try:
+                stud = Student.objects.get(roll_no=row[0])
+            except Student.DoesNotExist:
+                error_rows.append(row_count)
+                msg = 'No student matching roll no {}'.format(row[0])
+                error_msgs.append(msg)
+                continue
+            try:
+                stud_job = StudentJobRelation.objects.get(stud=stud, job=job)
+                if not stud_job.shortlist_init:
+                    stud_job.shortlist_init = True
+                    stud_job.shortlist_init_datetime = timezone.now()
+                    stud_job.save()
+            except StudentJobRelation.DoesNotExist:
+                error_rows.append(row_count)
+                msg = '{} has not applied for this Job'.format(row[0])
+                error_msgs.append(msg)
+        errors = zip(error_rows, error_msgs)
+        context = dict(form=form, errors=errors)
+        return render(self.request, self.template_name, context)

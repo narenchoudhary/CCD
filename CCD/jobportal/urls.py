@@ -197,6 +197,8 @@ urlpatterns = [
     url(r'^admin/jobrel/list/debarred/$',
         views_admin.JobRelListDebarred.as_view(),
         name='admin-jobrel-list-debarred'),
+    url(r'^admin/csv/jobrel/update', views_admin.ShortlistCSV.as_view(),
+        name='admin-jobrel-shortlist-csv'),
 
     url(r'^admin/event/list/$', views_admin.EventList.as_view(),
         name='admin-event-list'),
