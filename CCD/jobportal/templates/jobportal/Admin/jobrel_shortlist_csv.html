@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        {% if zipped_data.count > 1 %}
+        {% if errors.count > 1 %}
         <div class="col s12 m9 l9">
             <div class="card">
                 <div class="card-content">
@@ -39,7 +39,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for i, j in zipped_data %}
+                                {% for i, j in errors %}
                                     <tr>
                                         <td>{{i}}</td>
                                         <td>{{j}}</td>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-        {% elif zipped_data.count == 0 %}
+        {% elif errors.count == 0 %}
         <div class="col s12 m9 l9">
             <div class="card">
                 <div class="card-content">
