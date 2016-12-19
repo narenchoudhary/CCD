@@ -1,0 +1,103 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="msapplication-tap-highlight" content="no">
+	<meta name="description" content="Centre for Career Development IIT Guwahati">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {% block custom_styles %}{% endblock %}
+</head>
+
+<body>
+
+<header>
+    {% block nav %}{% endblock %}
+    {% block breadcrumb %}{% endblock %}
+</header>
+
+<main>
+	{% block main %}{% endblock %}
+</main>
+
+<footer class="page-footer fixed grey darken-1">
+	<div class="container">
+		<div class="row">
+			<div class="col l6 s12">
+				<h5 class="white-text">CCD, IIT Guwahati</h5>
+				<p class="white-text">
+                    Lorem ipsum dolor sit amet, duis congue eligendi et eum,
+                    doctus timeam fabellas an pri, augue molestie reformidans
+                    nec ut. Vix solet detraxit te. Sit ne zril invidunt.
+                    Fabellas sapientem neglegentur vel te. Tacimates sensibus
+                    mediocritatem qui ut, eu per porro erroribus percipitur,
+                    eius mediocrem id has. Antiopam vulputate inciderint ex.
+				</p>
+			</div>
+			<div class="col l3 s12">
+				<h5 class="white-text">Header</h5>
+				<ul>
+					<li><a class="white-text" href="#">Link1</a></li>
+					<li><a class="white-text" href="#">Link2</a></li>
+				</ul>
+			</div>
+			<div class="col l3 s12">
+				<h5 class="white-text">Connect</h5>
+				<ul>
+					<li><a class="white-text" href="#">Link1</a></li>
+					<li><a class="white-text" href="#">Link2</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="divider"></div>
+		<div class="row">
+			<div class="col l12 m12 s12">
+				<p class="grey-text darken-4">Designed and built by
+					<span class="white-text">Narendra Choudhary</span>
+					and maintained by the
+                    <span class="white-text">Academic Initiatives Club.</span>
+			</div>
+		</div>
+	</div>
+	<div class="footer-copyright grey darken-4">
+		<div class="container">
+			&copy; 2016 IIT Guwahati.
+		</div>
+	</div>
+</footer>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+
+<script>
+    $(".button-collapse").sideNav({
+        draggable: true
+    });
+    $('.datepicker').pickadate({
+        selectMonths: true,
+        selectYears: 100,
+        format: 'yyyy-mm-dd',
+      });
+	$(document).ready(function(){
+	    $(".dropdown-button").dropdown();
+	    $('select').material_select();
+		$('.toc-wrapper').pushpin({
+			top: 250
+		});
+		$('.scrollspy').scrollSpy();
+	});
+</script>
+
+{% block end_scripts %}{% endblock %}
+
+</body>
+</html>

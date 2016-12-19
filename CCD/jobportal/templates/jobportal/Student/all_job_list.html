@@ -1,64 +1,63 @@
-{% extends 'base_student.html' %}
+{% extends 'base_student2.html' %}
 {% load humanize %}
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
 
-{% endblock%}
+{% block title %}Student | All Jobs{% endblock %}
 
-{% block title %}
-    Student | All Jobs
+{% block page_title %} Job Applications List {% endblock %}
+
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">All Jobs</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-all-job-list' %}">All Jobs</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m12 l12">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Job Applications List</span>
-                    <p><strong>Note: Job applications appear in descending order of application deadline.</strong></p>
-                    <hr>
-                    {% if job_list.count > 0 %}
-                        <table class="table bordered highlight ">
-                            <thead>
-                                <tr>
-                                    <th width="10%">SR. No.</th>
-                                    <th width="18%">Company</th>
-                                    <th width="18%">Designation</th>
-                                    <th width="18%">Profile</th>
-                                    <th width="18%">Deadline</th>
-                                    <th width="18%">Details</th>
-                                </tr>
-                            </thead>
-                            <tbody class="searchable">
-                                {% for job in job_list %}
-                                <tr>
-                                    <td width="10%">{{ forloop.counter }}</td>
-                                    <td width="18%">{{ job.company_owner }}</td>
-                                    <td width="18%">{{ job.designation }} </td>
-                                    <td width="18%">{{ job.profile_name }}</td>
-                                    <td width="18%">{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
-                                    <td width="18%">
-                                        <a href="{% url 'stud-all-job-detail' job.id %}"
-                                           class="btn">Details</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p>No job available.</p>
-                    {% endif %}
-                </div>
-            </div>
+        <div class="col s12">
+            <h4 class="header">All Jobs</h4>
+            <div class="divider"></div>
+
+            {% if job_list.count < 1 %}
+                <p>There is nothing here right now. Please try again later.</p>
+            {% endif %}
+
+            {% if job_list.count > 0 %}
+                <table class="table responsive-table centered">
+                    <thead>
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Company</th>
+                            <th>Designation</th>
+                            <th>Profile</th>
+                            <th>Deadline</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in job_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ job.company_owner.company_name }}</td>
+                            <td>{{ job.designation }}</td>
+                            <td>{{ job.profile_name }}</td>
+                            <td>{{ job.application_deadline | date:'d M Y h:i:s A'}}</td>
+                            <td>
+                                <a href="{% url 'stud-all-job-detail' job.id %}"
+                                   class="btn">Detail</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -52,6 +52,11 @@ def check_webmail_auth_at_server():
 
 
 class Login(View):
+    """
+    View that handles login for all the users.
+    """
+
+    # TODO: Create a separate auth.py file and put IMAP login logic there.
     template_name = 'jobportal/login.html'
     server_dict = {
         'dikrong': '202.141.80.13',
@@ -305,6 +310,8 @@ class Logout(LoginRequiredMixin, UserPassesTestMixin, View):
     login_url = reverse_lazy('login')
 
     def test_func(self):
+        # check if user exists and is authenticated.
+        # TODO: Check if authentication check is really required.
         return self.request.user and self.request.user.is_authenticated()
 
     def get(self, request):
@@ -328,7 +335,9 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
 
 class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-
+    """
+    View that handles rendering the profile details for Student users.
+    """
     login_url = reverse_lazy('login')
     raise_exception = True
     model = Student
@@ -349,6 +358,9 @@ class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 
 class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    View that handles rendering the profile update form for Student users.
+    """
     login_url = reverse_lazy('login')
     raise_exception = True
     form_class = EditStudProfileForm
@@ -356,10 +368,14 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('stud-profile-detail')
 
     def test_func(self):
+        # check if user is student.
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
             return False
-        site_model = SiteManagement.objects.all()[0]
+        # TODO: Add internship check here. Currently since FTE students are
+        # uploaded on portal, the following check does not check for intern
+        # students.
+        site_model = SiteManagement.objects.all().first()
         now = timezone.now()
         date_passed = site_model.job_student_profile_update_deadline < now
         if date_passed:
@@ -367,9 +383,9 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return True
 
     def get_object(self, queryset=None):
+        # return logged in user
         return get_object_or_404(
-            Student,
-            id=self.request.session['student_instance_id'])
+            Student, id=self.request.session['student_instance_id'])
 
 
 class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -390,13 +406,18 @@ class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         """
-        Get queryset of all Jobs
-        :return: queryset of Job
+        Returns queryset of Job instances
+
+        ``select_related`` used for fetching ``company_owner`` in one query.
+        Check ``select_related`` documentation.
+        https://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related
+
+        :return: queryset of Job instances
         """
         return Job.objects.filter(
             approved=True,
             opening_datetime__lte=timezone.now()
-        ).order_by('-application_deadline')
+        ).select_related('company_owner').order_by('-application_deadline')
 
 
 class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -413,7 +434,6 @@ class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         """
         Test method to limit access based on certain tests
         :return: True if user is permitted otherwise False
-        :return:
         """
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
@@ -422,22 +442,31 @@ class AllJobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if job.opening_datetime > timezone.now():
             return False
         return True
-    
+
+    def get_object(self, queryset=None):
+        """
+        Return Job instance with ``company_owner`` fetched in single query.
+        This method was overridden for performance reasons only.
+        Check ``select_related`` documentation.
+        https://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related
+        :param queryset: None
+        :return: Job instance
+        """
+        pk = self.kwargs.get('pk')
+        return Job.objects.select_related('company_owner').get(pk=pk)
+
     def get_context_data(self, **kwargs):
         """
         Add Student instance and lists of ProgrammeJobRelation to context.
         :param kwargs: keyword arguments
-        :return: Context
+        :return: context dict
         """
         context = super(AllJobDetail, self).get_context_data(**kwargs)
         context['stud'] = get_object_or_404(
             Student, id=self.request.session['student_instance_id'])
         context['prog_list'] = ProgrammeJobRelation.objects.filter(
-            job__id=self.kwargs['pk'], prog__minor_status=False
-        )
-        context['minor_prog_list'] = ProgrammeJobRelation.objects.filter(
-            job__id=self.kwargs['pk'], prog__minor_status=True
-        )
+            job__id=self.kwargs['pk']
+        ).select_related('prog')
         return context
 
 
@@ -608,11 +637,11 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 )
         except Programme.DoesNotExist:
             pass
-        progjobrel = ProgrammeJobRelation.objects.filter(
+        prog_job_rels = ProgrammeJobRelation.objects.filter(
             Q(job=self.job, prog=self.prog) |
             Q(job=self.job, prog=self.minor_prog)
         )
-        if not progjobrel:
+        if not prog_job_rels:
             return False
         # Check CPI eligibility
         if self.job.cpi_shortlist and self.job.minimum_cpi > self.stud.cpi:
@@ -636,7 +665,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         return StudentJobRelation.objects.filter(
             stud__id=self.request.session['student_instance_id'],
-            is_debarred=False).order_by('-creation_datetime')
+            is_debarred=False
+        ).order_by('-creation_datetime').select_related('job')
 
 
 class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -647,6 +677,10 @@ class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         return self.request.user.user_type == 'student'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        return StudentJobRelation.objects.select_related('job')
 
 
 class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -974,15 +1008,19 @@ class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            cv = CV.objects.get(
+            cv = CV.objects.select_related('stud').get(
                 stud__id=self.request.session['student_instance_id'])
         except CV.DoesNotExist:
             cv = None
+        print(bool(cv))
+        if cv is not None:
+            print(bool(cv.cv1))
+            print(bool(cv.cv2))
         return cv
 
     def get_context_data(self, **kwargs):
         context = super(CVDetail, self).get_context_data()
-        context['site_management'] = SiteManagement.objects.all()[0]
+        context['site_management'] = SiteManagement.objects.all().first()
         return context
 
 

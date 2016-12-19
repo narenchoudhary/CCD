@@ -1,44 +1,50 @@
-{% extends 'base_student.html' %}
-{% load material_form %}
+{% extends 'base_student2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %}Student | Upload CV{% endblock %}
+{% block page_title %}Upload CVs{% endblock %}
 
-{% endblock%}
-
-{% block title %}
-    Student | Upload CV
-{% endblock %}
-
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-cv-create' %}">Upload CV</a>
-    </div>
-</div>
-
-<div class="row">
-
-    <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Upload CVs</span>
-                    <form enctype="multipart/form-data"
-                          action="{% url 'stud-cv-create' %}"
-                          method="post" accept-charset="utf-8">
-                        {% csrf_token %}
-                        {% form %}
-                        {% endform %}
-                        <input type="submit" class="btn" value="Upload">
-                    </form>
-
-                </div>
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-cv-detail' %}" class="breadcrumb">CV Detail</a>
+                <a class="breadcrumb">Upload CVs</a>
             </div>
         </div>
     </div>
+</nav>
+{% endblock %}
 
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Upload CVs</h4>
+                <div class="divider bottom10"></div>
+                <form enctype="multipart/form-data" method="post" accept-charset="utf-8" action="">
+                    {% csrf_token %}
+                    {% for field in  form %}
+                        <div class="row">
+                            <div class="input-field file-field col s12">
+                                <span class="red-text">{{ field.error }}</span>
+                                <label for="{{ field.id_for_label }}"></label>
+                                    <div class="btn">
+                                        <span>{{ field.label }}</span>
+                                        <input type="file">
+                                    </div>
+                                <div class="file-path-wrapper">
+                                    <input id="{{ field.id_for_label }}" class="file-path validate" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <input type="submit" class="btn" value="Upload">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

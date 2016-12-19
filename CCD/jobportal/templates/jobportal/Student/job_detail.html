@@ -1,199 +1,213 @@
-{% extends 'base_student.html' %}
+{% extends 'base_student2.html' %}
 {% load humanize %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %}Student | Job Detail{% endblock %}
 
-{% block title %}
-    Student | Job Detail
+{% block page_title %}Job Application Detail{% endblock %}
+
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-jobrel-list' %}" class="breadcrumb">Eligible Jobs</a>
+                <a class="breadcrumb">Job Application Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-job-list' %}">All Jobs</a> ⟩
-        <a href="{% url 'stud-job-detail' job.id %}">Job Details</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Job Details</span>
+        <div class="col l8 m9 s12">
+            <div id="job" class="section scrollspy">
+                <h4>Job Application Detail</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.designation }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-small-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.description | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Profile Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.profile_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC ({{ stud.prog }})
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.currency }}
+                        {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
+                            {{ job.ctc_btech | intcomma }}
+                        {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
+                            {{ job.ctc_mtech | intcomma }}
+                        {% elif stud.prog == 'MSC' %}
+                            {{ job.ctc_msc | intcomma }}
+                        {% elif stud.prog == 'MA' %}
+                            {{ job.ctc_ma | intcomma }}
+                        {% elif stud.prog == 'PHD' %}
+                            {{ job.ctc_phd | intcomma }}
+                        {% elif stud.prog == 'MSR' %}
+                            {{ job.ctc_msr | intcomma }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Additional Information
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.additional_info }}
+                    </div>
+                </div>
+                 <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Opening Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.opening_datetime | date:"d M Y h:i A"}}
+                    </div>
+                </div>
+                 <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Closing date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.application_deadline | date:"d M Y h:i A"}}
+                    </div>
                 </div>
             </div>
-
-            <ul class="tabs z-depth-1">
-                <li class="tab col s3 l2">
-                    <a class="teal-text" href="#job">Job Information</a>
-                </li>
-                <li class="tab col s3 m3 l2">
-                    <a href="#recruiter" class="teal-text">Company Information</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="col s112 m12 l9">
-            <div class="col s12 m12 l12  white" id="job">
-                <table class="table bordered">
-                    <tr>
-                        <td width="30%">Description</td>
-                        <td width="70%">{{job.description}}</td>
-                    </tr>
-                    <tr>
-                        <td>Designation</td>
-                        <td>{{job.designation | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Profile Name</td>
-                        <td>{{job.profile_name}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC</td>
-                        <td>
-                            {{ job.currency }}
-                            {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
-                                {{ job.ctc_btech }}
-                            {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
-                                {{ job.ctc_mtech }}
-                            {% elif stud.prog == 'MSC' %}
-                                {{ job.ctc_msc }}
-                            {% elif stud.prog == 'MA' %}
-                                {{ job.ctc_ma }}
-                            {% elif stud.prog == 'PHD' %}
-                                {{ job.ctc_phd }}
-                            {% elif stud.prog == 'MSR' %}
-                                {{ job.ctc_msr }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Gross Salary</td>
-                        <td>
-                            {{ job.currency }}
-                            {% if stud.prog == 'BTECH' or stud.prog == 'BDES' %}
-                                {{ job.gross_btech }}
-                            {% elif stud.prog == 'MTECH' or stud.prog == 'MDES'%}
-                                {{ job.gross_mtech }}
-                            {% elif stud.prog == 'MSC' %}
-                                {{ job.gross_msc }}
-                            {% elif stud.prog == 'MA' %}
-                                {{ job.gross_ma }}
-                            {% elif stud.prog == 'PHD' %}
-                                {{ job.gross_phd }}
-                            {% elif stud.prog == 'MSR' %}
-                                {{ job.gross_msr }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Additional Information</td>
-                        <td>{{job.additional_info}}</td>
-                    </tr>
-                    <tr>
-                        <td>Opening DateTime</td>
-                        <td>{{job.opening_datetime}}</td>
-                    </tr>
-                    <tr>
-                        <td>Application Deadline</td>
-                        <td>{{job.application_deadline}}</td>
-                    </tr>
-                </table>
+            <div id="recruiter" class="section scrollspy">
+                <h4>Recruiter Detail</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.company_name }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-small-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.description | default_if_none:'' | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Address
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.postal_address | default_if_none:'' | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Website
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.website }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Organization Type
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.organization_type }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Industry Sector
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.company_owner.industry_sector }}
+                    </div>
+                </div>
             </div>
-
-            <div class="col s12 m12 l12 white" id="recruiter">
-                <table class="table bordered">
-                    <tr>
-                        <td width="30%"> Company Name:</td>
-                        <td width="70%"> {{ job.company_owner.company_name}}</td>
-                    </tr>
-                    <tr>
-                        <td width="30%">Description:</td>
-                        <td width="70%"> {{ job.company_owner.description | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Postal Address:</td>
-                        <td> {{ job.company_owner.postal_address | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Website:</td>
-                        <td> {{ job.company_owner.website }}</td>
-                    </tr>
-                    <tr>
-                        <td>Organization Type:</td>
-                        <td> {{ job.company_owner.organization_type }}</td>
-                    </tr>
-                    <tr>
-                        <td>Industry Sector:</td>
-                        <td> {{ job.company_owner.industry_sector }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="col s12 m12 l9">
-            <div class="card">
-
-                <div class="card-content">
-                    <span class="card-title">Apply</span>
-                    {% if jobrel %}
-                        {% if not jobrel.is_debarred %}
-                            <p>You applied for this Job on {{jobrel.creation_datetime}}.</p>
-                        {% else %}
-                            <p class="red-text">
-                                You are debarred from applying for this job profile.
-                                If you think this is incorrect, please contact CCD.
-                            </p>
-                        {% endif %}
+            <div id="apply" class="section scrollspy">
+                <h4>Apply</h4>
+                <div class="divider"></div>
+                {% if jobrel %}
+                    {% if not jobrel.is_debarred %}
+                        <p>You applied for this Job on {{jobrel.creation_datetime}}.</p>
                     {% else %}
-                        {% if no_cv %}
-                            <p class="red-text"> WARNING: You have not uploaded any CV. You must upload at least one CV to apply.</p>
+                        <p class="red-text">
+                            You are debarred from applying for this job profile.
+                            If you think this is incorrect, please contact CCD.
+                        </p>
+                    {% endif %}
+                {% else %}
+                    {% if no_cv %}
+                        <p class="red-text">
+                            WARNING: You have not uploaded any CV. You must upload at least one CV to apply.
+                        </p>
+                    {% else %}
+                        <p>You can remove your application before deadline only. Once deadline has passed, no changes
+                        can be made to your application status.</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if jobrel %}
+                    {% if deadline_passed %}
+                        <a class="btn disabled" href="#">Remove Application</a>
+                    {% else %}
+                        {% if jobrel.is_debarred %}
+                            <a class="btn disabled" href="#">Apply</a>
                         {% else %}
-                            <p>You can remove your application before deadline only. Once deadline has passed, no changes
-                            can be made to your application status.</p>
+                            <a href="{% url 'stud-jobrel-delete' job.id %}"
+                               class="btn"> Remove Application</a>
                         {% endif %}
                     {% endif %}
-                </div>
-
-                <div class="card-action">
-
-                    {% if jobrel %}
-                        {% if deadline_passed %}
-                            <a class="btn disabled" href="#">Remove Application</a>
-                        {% else %}
-                            {% if jobrel.is_debarred %}
-                                <a class="btn disabled" href="#">Apply</a>
-                            {% else %}
-                                <a href="{% url 'stud-jobrel-delete' job.id %}"
-                                   class="btn"> Remove Application</a>
-                            {% endif %}
-                        {% endif %}
+                {% else %}
+                    {% if no_cv %}
+                        <a href="#" class="btn disabled">
+                            Apply
+                        </a>
                     {% else %}
-                        {% if no_cv %}
-                            <a href="#" class="btn disabled">
+                        {% if deadline_passed %}
+                            <a href="#" class="btn disabled"> Apply </a>
+                        {% else %}
+                            <a href="{% url 'stud-jobrel-create' job.id %}" class="btn">
                                 Apply
                             </a>
-                        {% else %}
-                            {% if deadline_passed %}
-                                <a href="#" class="btn disabled"> Apply </a>
-                            {% else %}
-                                <a href="{% url 'stud-jobrel-create' job.id %}" class="btn">
-                                    Apply
-                                </a>
-                            {% endif %}
                         {% endif %}
                     {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
-
+        <div class="col l4 m3 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <ul class="section table-of-contents">
+                    <li><a href="#job">Job Detail</a></li>
+                    <li><a href="#recruiter">Recruiter Detail</a></li>
+                    <li><a href="#apply">Apply</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
-
 {% endblock %}

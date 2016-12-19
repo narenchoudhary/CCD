@@ -20,46 +20,14 @@ class LoginForm(forms.Form):
 
 
 class EditStudProfileForm(ModelForm):
+    """
+    Modelform that handles profile update for Students.
 
-    layout = Layout(
-        Fieldset(
-            'Basic Information',
-            Row('dob'),
-            Row('hostel', 'room_no'),
-            Row('mobile_campus'),
-            Row('mobile_campus_alternative'),
-            Row('mobile_home'),
-            Row('alternative_email'),
-            Row('linkedin_link'),
-            Row('pd_status'),
-        ),
-        Fieldset(
-            'Permanent Address',
-            'address_line1', 'address_line2', 'address_line3', 'pin_code'
-        ),
-        Fieldset(
-            'Academic Performance',
-            Row(
-                Column('percentage_x', 'board_x', 'passing_year_x',
-                       'medium_x'),
-                Column('percentage_xii', 'board_xii', 'passing_year_xii',
-                       'medium_xii'),
-            ),
-            Row('gap_in_study'),
-            Row('gap_reason'),
-            Row('jee_air_rank', 'rank_category'),
-        ),
-        Fieldset(
-            'IITG Academic Performance',
-            Row('spi_1_sem', 'spi_2_sem', 'spi_3_sem'),
-            Row('spi_4_sem', 'spi_5_sem', 'spi_6_sem'),
-            Row('active_backlogs')
-        )
-    )
-
+    Some classes are added to field widgets for materialize.css compatibility.
+    """
     class Meta:
         model = Student
-        fields = ['dob','hostel', 'room_no','alternative_email',
+        fields = ['dob', 'hostel', 'room_no', 'alternative_email',
                   'mobile_campus', 'mobile_campus_alternative',
                   'mobile_home', 'address_line1', 'address_line2',
                   'address_line3', 'pin_code', 'percentage_x',
@@ -71,7 +39,16 @@ class EditStudProfileForm(ModelForm):
                   'active_backlogs', 'rank_category', 'pd_status']
 
         widgets = {
-            'gap_reason': forms.Textarea(attrs={'rows': 4}),
+            # add 'materialize-textarea' for materialize.css
+            'gap_reason': forms.Textarea(attrs={
+                'class': 'materialize-textarea'
+            }),
+            # add 'datepicker' for materialize.css
+            'dob': forms.DateInput(attrs={
+                'class': 'datepicker'
+            }),
+            # add 'filled-in' for materialize.css
+            'gap_in_study': forms.CheckboxInput(attrs={'class': 'filled-in'})
         }
 
 

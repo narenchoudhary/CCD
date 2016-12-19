@@ -1,11 +1,21 @@
-{% extends 'base_student.html' %}
+{% extends 'base_student2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %}Student | Job Application{% endblock %}
 
-{% block title %}
-    Student | Job Application
+{% block page_title %}Job Application Detail{% endblock %}
+
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-jobrel-list' %}" class="breadcrumb">Applied Jobs</a>
+                <a class="breadcrumb">Job Application Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}

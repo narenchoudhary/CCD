@@ -1,0 +1,29 @@
+<div class="error-alert">
+    {% if form.field_errors %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Please correct the errors as shown in the form.</p>
+        {% endif %}
+    {% endif %}
+</div>
+<form method="post">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+        <div class="row">
+            <div class="input-field">
+                <span class="red-text">{{ field.errors }}</span>
+                {{ field }}
+                {{ field.label_tag }}
+                {% if field.help_text %}<p>{{ field.help_text | safe }}</p>{% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</form>

@@ -1,53 +1,294 @@
-{% extends 'base_student.html' %}
-{% load material_form %}
+{% extends 'base_student2.html' %}
 
-{% block custom_styles %}
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
-{% endblock %}
+{% block title %} Student | Profile Update {% endblock %}
 
-{% block title %}
-    Student | Profile Update
-{% endblock %}
+{% block page_title %} Update Profile {% endblock %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
-
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-profile-update' %}">update profile</a>
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-profile-detail' %}" class="breadcrumb">Profile Detail</a>
+                <a class="breadcrumb">Update Profile</a>
+            </div>
+        </div>
     </div>
-</div>
+</nav>
+{% endblock %}
 
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Edit Profile</span>
-                    <form method="post" accept-charset="utf-8">
-                        {% csrf_token %}
-                        {% form %}
-                        {% endform %}
-                        <div class="right-align">
-                            <button type="submit" name="_submit"
-                                class="waves-effect waves-light btn">
-                                Save changes</button>
+        <div class="col s12">
+            <h4>Update Profile</h4>
+            <p><strong>Notes:</strong></p>
+            <ol>
+                <li>
+                    <strong>
+                        This is a lengthy form. So please make sure you fill all the fields.
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        After successful form submission, confirm the changes in
+                        the <a href="{% url 'stud-profile-detail' %}">Profile Detail</a> section.
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Not all fields listed in <a href="{% url 'stud-profile-detail' %}">Profile Detail</a>
+                        section are editable. Only editable fields are included in this form.
+                    </strong>
+                </li>
+            </ol>
+            <div class="divider bottom10"></div>
+            {% if form.errors %}
+                <p class="red-text">Please correct the errors in the form.</p>
+            {% endif %}
+            <div>
+                {{ form.non_field_errors }}
+            </div>
+            <form method="post" class="col l8 m8 s12">
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                <div id="basic-info" class="section scrollspy">
+                    <h5 class="subheader">Basic Information</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.dob.errors }}</span>
+                            {{ form.dob }}
+                            {{ form.dob.label_tag }}
+                            {% if form.dob.help_text %}<p>{{ form.dob.help_text }}</p>{% endif %}
                         </div>
-                    </form>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.hostel.errors }}</span>
+                            {{ form.hostel }}
+                            {{ form.hostel.label_tag }}
+                            {% if form.hostel.help_text %}<p>{{ form.hostel.help_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.room_no.errors }}</span>
+                            {{ form.room_no }}
+                            {{ form.room_no.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.alternative_email.errors }}</span>
+                            {{ form.alternative_email }}
+                            {{ form.alternative_email.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.mobile_campus.errors }}</span>
+                            {{ form.mobile_campus }}
+                            {{ form.mobile_campus.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.mobile_campus_alternative.errors }}</span>
+                            {{ form.mobile_campus_alternative }}
+                            {{ form.mobile_campus_alternative.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.mobile_home.errors }}</span>
+                            {{ form.mobile_home }}
+                            {{ form.mobile_home.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.linkedin_link.errors }}</span>
+                            {{ form.linkedin_link }}
+                            {{ form.linkedin_link.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.pd_status.errors }}</span>
+                            {{ form.pd_status }}
+                            {{ form.pd_status.label_tag }}
+                        </div>
+                    </div>
+                </div>
+                <div id="address" class="section scrollspy">
+                    <h5 class="subheader">Address</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.address_line1.errors }}</span>
+                            {{ form.address_line1 }}
+                            {{ form.address_line1.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.address_line2.errors }}</span>
+                            {{ form.address_line2 }}
+                            {{ form.address_line2.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.address_line3.errors }}</span>
+                            {{ form.address_line3 }}
+                            {{ form.address_line3.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                        <span class="red-text">{{ form.pin_code.errors }}</span>
+                            {{ form.pin_code }}
+                            {{ form.pin_code.label_tag }}
+                        </div>
+                    </div>
+                </div>
+                <div id="schooling" class="section scrollspy">
+                    <h5 class="subheader">Schooling</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.board_x.errors }}</span>
+                            {{ form.board_x }}
+                            {{ form.board_x.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.medium_x.errors }}</span>
+                            {{ form.medium_x }}
+                            {{ form.medium_x.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.passing_year_x.errors }}</span>
+                            {{ form.passing_year_x }}
+                            {{ form.passing_year_x.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.percentage_x.errors }}</span>
+                            {{ form.percentage_x }}
+                            {{ form.percentage_x.label_tag }}
+                            {% if form.percentage_x.help_text %}<p>{{ form.percentage_x.help_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.board_xii.errors }}</span>
+                            {{ form.board_xii }}
+                            {{ form.board_xii.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.medium_xii.errors }}</span>
+                            {{ form.medium_xii }}
+                            {{ form.medium_xii.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.passing_year_xii.errors }}</span>
+                            {{ form.passing_year_xii }}
+                            {{ form.passing_year_xii.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.percentage_xii.errors }}</span>
+                            {{ form.percentage_xii }}
+                            {{ form.percentage_xii.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.gap_in_study.errors }}</span>
+                            {{ form.gap_in_study }}
+                            {{ form.gap_in_study.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.gap_reason.errors }}</span>
+                            {{ form.gap_reason }}
+                            {{ form.gap_reason.label_tag }}
+                        </div>
+                    </div>
+                </div>
+                <div id="academics" class="section scrollspy">
+                    <h5 class="subheader">Academics</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.active_backlogs.errors }}</span>
+                            {{ form.active_backlogs }}
+                            {{ form.active_backlogs.label_tag }}
+                            {% if form.active_backlogs.help_text %}<p>{{ form.dob.help_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div id="clearance" class="section scrollspy">
+                    <h5 class="subheader">Clearance Exam</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.jee_air_rank.errors }}</span>
+                            {{ form.jee_air_rank }}
+                            {{ form.jee_air_rank.label_tag }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <span class="red-text">{{ form.rank_category.errors }}</span>
+                            {{ form.rank_category }}
+                            {{ form.rank_category.label_tag }}
+                            {% if form.rank_category.help_text %}<p>{{ form.rank_category.help_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div id="grades" class="section scrollspy">
+                    <h5 class="subheader">Grades</h5>
+                    <div class="divider bottom10"></div>
+                    {% include 'field.html' with field=form.spi_1_sem %}
+                    {% include 'field.html' with field=form.spi_2_sem %}
+                    {% include 'field.html' with field=form.spi_3_sem %}
+                    {% include 'field.html' with field=form.spi_4_sem %}
+                    {% include 'field.html' with field=form.spi_5_sem %}
+                    {% include 'field.html' with field=form.spi_6_sem %}
+                </div>
+                <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                    Save
+                </button>
+            </form>
+            <div class="col l4 m4 hide-on-small-and-down fixed">
+                <div class="toc-wrapper pin-top" style="margin-left: 30px">
+                    <ul class="section table-of-contents">
+                        <li><a href="#basic-info">Basic Information</a></li>
+                        <li><a href="#address">Address</a></li>
+                        <li><a href="#schooling">Schooling</a></li>
+                        <li><a href="#academics">Academics</a></li>
+                        <li><a href="#clearance">Clearance Exam</a></li>
+                        <li><a href="#grades">Grades</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

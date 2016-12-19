@@ -1,0 +1,52 @@
+{% extends 'base_jobportal2.html' %}
+{% load static %}
+
+{% block nav %}
+    <nav class="top-nav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a class="page-title">
+                    {% block page_title %}{% endblock %}
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="#" data-activates="slide-out"
+           class="button-collapse top-nav full hide-on-large-only">
+            <i class="material-icons">menu</i>
+        </a>
+    </div>
+
+    <ul class="side-nav fixed" id="slide-out">
+		<li class="logo">
+			<p id="logo-container" class="brand-logo">
+				<img id="institute-logo" src="{% static 'img/logo.png' %}">
+			</p>
+		</li>
+        <li><a href="{% url 'stud-profile-detail' %}">Profile</a></li>
+		<li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li>
+                    <a class="collapsible-header">
+                        Jobs<i class="material-icons">arrow_drop_down</i>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li><a href="{% url 'stud-all-job-list' %}">All Jobs</a></li>
+                            <li><a href="{% url 'stud-job-list' %}">Eligible Jobs</a></li>
+                            <li><a href="{% url 'stud-jobrel-list' %}">Applied Jobs</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </li>
+        <li><a href="{% url 'stud-cv-detail' %}">CV</a></li>
+        <li><a href="{% url 'stud-avatar-detail' %}">Avatar</a></li>
+        <li><a href="{% url 'stud-sign-detail' %}">Signature</a></li>
+        <li><a href="{% url 'stud-announcement-list' %}">All Announcement</a></li>
+        <li><div class="divider"></div></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+	</ul>
+{% endblock %}

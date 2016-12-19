@@ -1,97 +1,88 @@
-{% extends 'base_student.html' %}
-{% load staticfiles %}
+{% extends 'base_student2.html' %}
+{% load static %}
 {% load jobportal_tags %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Student | CV {% endblock %}
 
-{% endblock%}
+{% block page_title %}CV{% endblock %}
 
-{% block title %}
-    Student | CV
+{% block breadcrumb %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">CV Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-cv-detail' %}">CV</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Student CVs</span>
-                    <!--TODO: Server Error-->
-                    {% if cv %}
-                        {%if cv.cv1 or cv.cv2 %}
-                            {% if cv.cv1 %}
-                                <p>
-                                    <a href="{% url 'stud-cv-download' 1 %}" target="_blank">
-                                        <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV1
-                                    </a>
-                                </p>
-                            {% endif %}
-                            {%if cv.cv2 %}
-                                <p>
-                                    <a href="{% url 'stud-cv-download' 2 %}" target="_blank">
-                                        <img src="{% static 'img/cv_icon.png' %}" alt="cv_icon" height="50px">CV2
-                                    </a>
-                                </p>
-                            {% endif %}
-                        {% else %}
-                            <p>You have not uploaded any CV yet.</p>
-                        {% endif %}
-                    {% else %}
-                        <p>You have not uploaded any CV yet.</p>
+        <div class="col s12">
+            <div class="section">
+                <h4>CV</h4>
+                <div class="divider"></div>
+                {% if cv or not cv.cv1 and not cv.cv2 %}
+                    <p><strong>You have not uploaded any CV.</strong></p>
+                {% else %}
+                    {% if cv.cv1 %}
+                        <div class="row model-field">
+                            <div class="col l2 m3 s4 field-name">
+                                CV1 (Technical CV)
+                            </div>
+                            <div class="col l10 m9 s8 field-value">
+                                <a href="{% url 'stud-cv-download' 1 %}">CV1</a>
+                            </div>
+                        </div>
                     {% endif %}
+                    {% if cv.cv2 %}
+                        <div class="row model-field">
+                            <div class="col l2 m3 s4 field-name">
+                                CV2 (Other CV)
+                            </div>
+                            <div class="col l10 m9 s8 field-value">
+                                <a href="{% url 'stud-cv-download' 2 %}">CV1</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <h4>Upload CV</h4>
+                <div class="divider"></div>
+
                     {% date_passed 'job_stud_cv' as date_gone %}
-                    <br>
+
                     {% if date_gone %}
                         <p>Final deadline for uploading CV was :
                             <span class="red-text">{{ site_management.job_student_cv_update_deadline | date:"d M Y h:i:s A"}}</span>.
-                        </p>
-                        <p>
-                            It passed <span class="red-text">
-                            {{  site_management.job_student_cv_update_deadline | timesince }}</span> ago.
                         </p>
                     {% else %}
                         <p>Final deadline for uploading CV is :
                             <span class="green-text">{{ site_management.job_student_cv_update_deadline | date:"d M Y h:i:s A"}}</span>.
                         </p>
-                        <p>
-                        Upload final version of your CV within next
-                            <span class="green-text">{{ site_management.job_student_cv_update_deadline | timeuntil }}</span>.</p>
                     {% endif %}
-                </div>
-                <div class="card-action">
+
                     {% if date_gone %}
-                        <a class="btn disabled" href="">Upload new file(s)</a>
+                        <p><a class="btn disabled">Upload CV</a></p>
                     {% else %}
                         {% if cv %}
                             {% if cv.cv1 or cv.cv2 %}
-                                <p><a class="btn" href="{% url 'stud-cv-update' %}">
-                                    Upload new file(s)
-                                </a></p>
+                                <a class="btn" href="{% url 'stud-cv-update' %}">Upload new Files(s)</a>
                             {% else %}
-                                <a class="btn" href="{% url 'stud-cv-update' %}">
-                                    Upload file(s)
-                                </a>
+                                <a class="btn" href="{% url 'stud-cv-update' %}">Upload files</a>
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-lg btn-info" href="{% url 'stud-cv-create' %}">
-                                Upload file(s)
-                            </a>
+                            <a class="btn" href="{% url 'stud-cv-create' %}">Upload files</a>
                         {% endif %}
                     {% endif %}
-                </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
