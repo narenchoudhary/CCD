@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.forms import FileInput
 from django.forms.models import modelform_factory
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
@@ -66,6 +66,7 @@ class Login(View):
         'disbang': '202.141.80.10'
     }
     server_port = 995
+    next = ""
 
     def _auth_one_server(self, username, password, server):
         """
@@ -105,18 +106,19 @@ class Login(View):
 
     def get(self, request):
         form = LoginForm(None)
+        self.next = request.GET.get('next', "")
         if request.user.is_authenticated():
-            userprofile = UserProfile.objects.get(
+            user_profile = UserProfile.objects.get(
                 username=request.user.username)
-            user_type = userprofile.user_type
+            user_type = user_profile.user_type
             if user_type == 'admin':
-                if Admin.objects.filter(user=userprofile).exists():
+                if Admin.objects.filter(user=user_profile).exists():
                     return redirect('admin-home')
             elif user_type == 'company':
-                if Company.objects.filter(user=userprofile).exists():
+                if Company.objects.filter(user=user_profile).exists():
                     return redirect('company-home')
             elif user_type == 'student':
-                if Student.objects.filter(user=userprofile).exists():
+                if Student.objects.filter(user=user_profile).exists():
                     return redirect('stud-home')
             elif user_type == 'verifier':
                 return redirect('verifier-home')
@@ -142,8 +144,7 @@ class Login(View):
                     user_profile = None
                 if user_profile is not None:
                     user_type = user_profile.user_type
-                    if user_type == 'admin' and \
-                            Admin.objects.filter(user=user_profile).exists():
+                    if user_type == 'admin':
                         if user_profile.is_active:
                             user = auth.authenticate(username=username,
                                                      password=password)
@@ -154,15 +155,14 @@ class Login(View):
                                 request.session['admin_instance_id'] = admin.id
                                 return redirect('admin-home')
                             else:
-                                error = 'Incorrect password.'
-                                args = dict(form=form, error=error)
+                                form.add_error(None, 'Incorrect password.')
                                 return render(request, self.template_name,
-                                              args)
+                                              dict(form=form))
 
                         else:
-                            error = 'User not active yet.'
-                            args = dict(form=form, error=error)
-                            return render(request, self.template_name, args)
+                            form.add_error(None, 'User not active yet.')
+                            return render(request, self.template_name,
+                                          dict(form=form))
                     elif user_type == 'verifier':
                         if user_profile.is_active:
                             user = auth.authenticate(username=username,
@@ -173,14 +173,13 @@ class Login(View):
                                     user_profile.id
                                 return redirect('verifier-home')
                             else:
-                                error = 'Incorrect password.'
-                                args = dict(form=form, error=error)
+                                form.add_error(None, 'Incorrect password.')
                                 return render(request, self.template_name,
-                                              args)
+                                              dict(form=form))
                         else:
-                            error = 'User not active yet.'
-                            args = dict(form=form, error=error)
-                            return render(request, self.template_name, args)
+                            form.add_error(None, 'User not active yet.')
+                            return render(request, self.template_name,
+                                          dict(form=form))
                     elif user_type == 'company':
                         if user_profile.is_active:
                             user = auth.authenticate(username=username,
@@ -192,16 +191,16 @@ class Login(View):
                                 request.session['company_instance_id'] = company.id
                                 return redirect('company-home')
                             else:
-                                error = 'Incorrect password.'
-                                args = dict(form=form, error=error)
+                                form.add_error(None, 'Incorrect password.')
                                 return render(request, self.template_name,
-                                              args)
+                                              dict(form=form))
                         else:
                             error = 'Your signup request has not been ' \
                                     'approved yet. Please visit again after ' \
                                     'some time.'
-                            args = dict(form=form, error=error)
-                            return render(request, self.template_name, args)
+                            form.add_error(None, error)
+                            return render(request, self.template_name,
+                                          dict(form=form))
                     elif user_type == 'student':
                         # fee paid
                         if user_profile.is_active:
@@ -227,6 +226,9 @@ class Login(View):
                                         )
                                         request.session[
                                             'student_instance_id'] = stud.id
+                                        if self.next != "":
+                                            print(self.next)
+                                            return HttpResponseRedirect(self.next)
                                         return redirect('stud-home')
                                 # if saved server did not work
                                 else:
@@ -252,7 +254,8 @@ class Login(View):
                                         return redirect('stud-home')
                                     else:
                                         error = 'Wrong password'
-                                        args = dict(form=form, error=error)
+                                        form.add_error(None, error)
+                                        args = dict(form=form)
                                         return render(
                                             request, self.template_name, args
                                         )
@@ -277,10 +280,9 @@ class Login(View):
                                         'student_instance_id'] = stud.id
                                     return redirect('student-home')
                                 else:
-                                    error = 'Wrong password'
-                                    args = dict(form=form, error=error)
+                                    form.add_error(None, 'Wrong password')
                                     return render(request, self.template_name,
-                                                  args)
+                                                  dict(form=form))
 
                         else:
                             error = 'User login has been disabled for ' \
@@ -294,16 +296,14 @@ class Login(View):
                         args = dict(form=form, error=error)
                         return render(request, self.template_name, args)
                 else:
-                    error = 'Invalid username'
-                    args = dict(form=form, error=error)
-                    return render(request, self.template_name, args)
+                    form.add_error(None, 'Invalid username')
+                    return render(request, self.template_name, dict(form=form))
             else:
                 return render(request, self.template_name, dict(form=form))
 
         else:
-            error = 'Please enable cookies and try again.'
-            args = dict(form=form, error=error)
-            return render(request, self.template_name, args)
+            form.add_error(None, 'Please enable cookies and try again.')
+            return render(request, self.template_name, dict(form=form))
 
 
 class Logout(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -320,9 +320,12 @@ class Logout(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-
+    """
+    View class that handles rendering the home page for Student Users
+    """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Student/home.html'
 
     def test_func(self):
@@ -339,7 +342,8 @@ class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     View that handles rendering the profile details for Student users.
     """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Student
     template_name = 'jobportal/Student/profile_detail.html'
     context_object_name = 'student'
@@ -393,6 +397,7 @@ class AllJobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     View class which handles showing all jobs to students.
     """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
     raise_exception = False
     template_name = 'jobportal/Student/all_job_list.html'
     context_object_name = 'job_list'
@@ -475,7 +480,8 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     Class which handles filtering eligible job for Students.
     """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Student/job_list.html'
     context_object_name = 'job_list'
 
@@ -655,7 +661,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Student/jobrel_list.html'
     context_object_name = 'jobrel_list'
 
@@ -671,7 +678,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = ProgrammeJobRelation
     template_name = 'jobportal/Student/jobrel_detail.html'
 
@@ -680,7 +688,7 @@ class JobRelDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk')
-        return StudentJobRelation.objects.select_related('job')
+        return StudentJobRelation.objects.select_related('job').get(id=pk)
 
 
 class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -719,14 +727,13 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         form = SelectCVForm(request.POST, extra=self.get_questions())
         if form.is_valid():
             jobrel = StudentJobRelation(stud=self.stud, job=self.job)
-            jobrel.save()
             for (question, answer) in form.extra_answers():
                 setattr(jobrel, str(question).lower(), answer)
             jobrel.save()
             return redirect('stud-job-detail', pk=self.job.id)
         else:
-            return render(request, self.template,
-                          dict(form=form, job=self.job))
+            context = dict(form=form, job=self.job)
+            return render(request, self.template, context)
 
     def get_questions(self):
         """
@@ -843,7 +850,8 @@ class EventDetail(LoginRequiredMixin, DetailView):
 
 class AvatarDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Avatar
     template_name = 'jobportal/Student/avatar_detail.html'
     context_object_name = 'avatar'
@@ -852,8 +860,18 @@ class AvatarDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
+        """
+        Return Avatar object related to logged in Student user.
+
+        `select_related`` used for fetching ``stud`` in one query.
+        Check ``select_related`` documentation.
+        https://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related
+
+        :param queryset: None
+        :return: Avatar instance
+        """
         try:
-            avatar = Avatar.objects.get(
+            avatar = Avatar.objects.select_related('stud').get(
                 stud__id=self.request.session['student_instance_id'])
         except Avatar.DoesNotExist:
             avatar = None
@@ -864,13 +882,7 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
     raise_exception = True
     model = Avatar
-    form_class = modelform_factory(
-        Avatar,
-        fields=['avatar'],
-        widgets={
-            'avatar': FileInput
-        }
-    )
+    fields = ['avatar']
     template_name = 'jobportal/Student/avatar_update.html'
     success_url = reverse_lazy('stud-avatar-detail')
 
@@ -894,14 +906,10 @@ class AvatarUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
+    # raise 403 error instead of rendering login page
     raise_exception = True
-    form_class = modelform_factory(
-        Avatar,
-        fields=['avatar'],
-        widgets={
-            'avatar': FileInput
-        }
-    )
+    model = Avatar
+    fields = ['avatar']
     template_name = 'jobportal/Student/avatar_create.html'
     success_url = reverse_lazy('stud-avatar-detail')
 
@@ -909,6 +917,7 @@ class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
             return False
+        # check if Avatar instance already exists
         stud_id = self.request.session['student_instance_id']
         if Avatar.objects.filter(stud__id=stud_id).exists():
             return False
@@ -926,7 +935,8 @@ class AvatarCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class SignatureDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Signature
     template_name = 'jobportal/Student/signature_detail.html'
     context_object_name = 'signature'
@@ -935,8 +945,18 @@ class SignatureDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user.user_type == 'student'
 
     def get_object(self, queryset=None):
+        """
+        Return Signature object related to logged in Student user.
+
+        `select_related`` used for fetching ``stud`` in one query.
+        Check ``select_related`` documentation.
+        https://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related
+
+        :param queryset: None
+        :return: Signature instance
+        """
         try:
-            signature = Signature.objects.get(
+            signature = Signature.objects.select_related('stud').get(
                 stud__id=self.request.session['student_instance_id'])
         except Signature.DoesNotExist:
             signature = None
@@ -945,6 +965,7 @@ class SignatureDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
+    # raise 403 error instead of rendering login page
     raise_exception = True
     model = Signature
     fields = ['signature']
@@ -954,6 +975,10 @@ class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def test_func(self):
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
+            return False
+        # check if Signature instance already exists
+        stud_id = self.request.session['student_instance_id']
+        if Signature.objects.filter(stud__id=stud_id).exists():
             return False
         site_management = SiteManagement.objects.all()[0]
         if site_management.job_stud_sign_allowed is False:
@@ -969,6 +994,7 @@ class SignatureCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
+    # raise 403 error instead of rendering login page
     raise_exception = True
     model = Signature
     fields = ['signature']
@@ -978,9 +1004,6 @@ class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         is_stud = self.request.user.user_type == 'student'
         if not is_stud:
-            return False
-        stud_id = self.request.session['student_instance_id']
-        if Signature.objects.filter(stud__id=stud_id).exists():
             return False
         site_management = SiteManagement.objects.all()[0]
         if site_management.job_stud_sign_allowed is False:
@@ -998,7 +1021,8 @@ class SignatureUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = CV
     template_name = 'jobportal/Student/cv_detail.html'
     context_object_name = 'cv'
@@ -1012,10 +1036,6 @@ class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 stud__id=self.request.session['student_instance_id'])
         except CV.DoesNotExist:
             cv = None
-        print(bool(cv))
-        if cv is not None:
-            print(bool(cv.cv1))
-            print(bool(cv.cv2))
         return cv
 
     def get_context_data(self, **kwargs):
@@ -1026,6 +1046,7 @@ class CVDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
+    # raise 403 error instead of rendering login page
     raise_exception = True
     form_class = CVForm
     template_name = 'jobportal/Student/cv_create.html'
@@ -1051,9 +1072,8 @@ class CVCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class CVUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
+    # raise 403 error instead of rendering login page
     raise_exception = True
-    # model = CV
-    # fields = ['cv1', 'cv2']
     form_class = CVForm
     template_name = 'jobportal/Student/cv_update.html'
     success_url = reverse_lazy('stud-cv-detail')

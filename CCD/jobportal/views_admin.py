@@ -27,7 +27,7 @@ from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
                     EditCompany, ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm,
                     StudentDetailDownloadForm, CompanyDetailDownloadForm,
-                    ShortlistCSVForm)
+                    ShortlistCSVForm, CompanyProfileEdit)
 from .constants import CATEGORY
 
 
@@ -126,7 +126,13 @@ class CompanyList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class CompanyDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View class that renders details of Company instance from Admin User's
+    account.
+    """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Company
     template_name = 'jobportal/Admin/company_detail.html'
     context_object_name = 'company'
@@ -134,39 +140,32 @@ class CompanyDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
+    def get_object(self, queryset=None):
+        return Company.objects.select_related('user').get(id=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = super(CompanyDetail, self).get_context_data(**kwargs)
-        company_instance = Company.objects.get(id=self.kwargs['pk'])
-        context['company'] = company_instance
-        context['job_list'] = Job.objects.filter(company_owner=
-                                                 company_instance)
+        context['job_list'] = Job.objects.filter(company_owner=self.object)
         return context
 
 
-class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, View):
+class CompanyUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    View class that handles updating Company instance from Admin User's
+    account.
+    """
     login_url = reverse_lazy('login')
-    form_class = EditCompany
+    # render login page instead of raising 403 error
+    raise_exception = False
+    form_class = CompanyProfileEdit
     model = Company
     template_name = 'jobportal/Admin/company_update.html'
 
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
-    def get(self, request, pk):
-        company = Company.objects.get(id=pk)
-        form = EditCompany(instance=company)
-        return render(request, self.template_name,
-                      dict(form=form, company=company))
-
-    def post(self, request, pk):
-        company = Company.objects.get(id=pk)
-        form = EditCompany(request.POST, instance=company)
-        approved = company.approved
-        if form.is_valid():
-            form.save()
-            return redirect('admin-company-detail', pk=company.id)
-        else:
-            return render(request, self.template_name, dict(form=form))
+    def get_success_url(self):
+        return reverse_lazy('admin-company-detail', args=(self.object.id,))
 
 
 class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -192,7 +191,12 @@ class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    View that renders all approved Job instances for Admin Users.
+    """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     queryset = Job.objects.filter(approved=True)
     template_name = 'jobportal/Admin/job_list.html'
     context_object_name = 'job_list'
@@ -279,8 +283,13 @@ class JobListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    View that renders all unapproved Job instances for Admin Users.
+    """
     login_url = reverse_lazy('login')
-    queryset = Job.objects.filter(Q(approved=None) | Q(approved=False))
+    # render login page instead of raising 403 error
+    raise_exception = False
+    queryset = Job.objects.all().exclude(approved=True)
     template_name = 'jobportal/Admin/job_list_unapproved.html'
     context_object_name = 'job_list'
 
@@ -289,18 +298,22 @@ class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View that renders details of Job instance for Admin users.
+    """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Job
     template_name = 'jobportal/Admin/job_detail.html'
 
     def test_func(self):
-        is_admin = self.request.user.user_type == 'admin'
-        return is_admin
+        return self.request.user.user_type == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['prog_list'] = ProgrammeJobRelation.objects.filter(
-            job=self.object.id)
+            job=self.object)
         return context
 
 
@@ -313,7 +326,8 @@ class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.user_type == 'admin'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Job, id=self.kwargs['pk'])
+        return Job.objects.select_related('company_owner').get(
+            id=self.kwargs.get('pk'))
 
     def get_success_url(self):
         return reverse_lazy('admin-job-detail', args=(self.object.id,))
@@ -424,6 +438,8 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     Displays list of candidates for a particular Job object.
     """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Admin/jobrel_list.html'
     context_object_name = 'rel_list'
 
@@ -431,12 +447,14 @@ class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.user_type == 'admin'
 
     def get_queryset(self):
-        return StudentJobRelation.objects.filter(
+        return StudentJobRelation.objects.select_related('stud').filter(
             job__id=self.kwargs['pk'], is_debarred=False)
 
     def get_context_data(self, **kwargs):
         context = super(JobRelList, self).get_context_data(**kwargs)
-        context['jobid'] = self.kwargs['pk']
+        context['job'] = Job.objects.select_related('company_owner').get(
+            id=self.kwargs['pk']
+        )
         return context
 
 
@@ -445,6 +463,7 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
     View class which handles downloading list of candidates for a Job
     """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
     raise_exception = False
 
     def test_func(self):
@@ -452,11 +471,7 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
         Check if user is allowed to perform the action.
         :return: True if User is allowed else False.
         """
-        # user is company
-        is_admin = self.request.user.user_type == 'admin'
-        if not is_admin:
-            return False
-        return True
+        return self.request.user.user_type == 'admin'
 
     @staticmethod
     def get(request, pk):
@@ -510,39 +525,33 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
         return response
 
 
-class StudentList(LoginRequiredMixin, UserPassesTestMixin, View):
+class StudentList(LoginRequiredMixin, UserPassesTestMixin, FormView):
     """
-    Renders a form for searching a student and displays all matching results
-    on submission.
+    View that renders a form for searching a student and displays all matching
+    results on submission for Admin Users.
     """
     login_url = reverse_lazy('login')
-    template = 'jobportal/Admin/student_list.html'
+    # render login page instead of error 403
+    form_class = StudentSearchForm
+    raise_exception = False
+    template_name = 'jobportal/Admin/student_list.html'
 
     def test_func(self):
         return self.request.user.user_type == 'admin'
 
-    def get(self, request):
-        form = StudentSearchForm()
-        args = dict(form=form)
-        return render(request, self.template, args)
-
-    def post(self, request):
-        form = StudentSearchForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            username = form.cleaned_data['username']
-            roll_no = form.cleaned_data['roll_no']
-            stud_list = Student.objects.all()
-            if name is not None:
-                stud_list = stud_list.filter(name__icontains=name)
-            if username != '' and username is not None:
-                stud_list = stud_list.filter(user__username=username)
-            if roll_no is not None:
-                stud_list = stud_list.filter(roll_no=roll_no)
-            args = dict(form=form, stud_list=stud_list)
-            return render(request, self.template, args)
-        else:
-            return render(request, self.template, dict(form=form))
+    def form_valid(self, form):
+        name = form.cleaned_data.get('name', None)
+        username = form.cleaned_data.get('username', None)
+        roll_no = form.cleaned_data.get('roll_no', None)
+        stud_list = Student.objects.all()
+        if name is not None:
+            stud_list = stud_list.filter(name__icontains=name)
+        if username != '' and username is not None:
+            stud_list = stud_list.filter(user__username=username)
+        if roll_no is not None:
+            stud_list = stud_list.filter(roll_no=roll_no)
+        args = dict(form=form, stud_list=stud_list)
+        return render(self.request, self.template_name, args)
 
 
 class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -550,6 +559,8 @@ class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     All details of student.
     """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Student
     template_name = 'jobportal/Admin/student_detail.html'
     context_object_name = 'student'
@@ -558,12 +569,13 @@ class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user.user_type == 'admin'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Student, id=self.kwargs['pk'])
+        return Student.objects.get(id=self.kwargs.get('pk', None))
     
     def get_context_data(self, **kwargs):
         context = super(StudentDetail, self).get_context_data(**kwargs)
         context['job_list'] = StudentJobRelation.objects.filter(stud__id=
                                                                 self.object.id)
+        # Add cv, avatar, sign, rel_list to context
         try:
             context['cv'] = CV.objects.get(stud__id=self.object.id)
         except CV.DoesNotExist:
@@ -573,14 +585,11 @@ class StudentDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         except Avatar.DoesNotExist:
             context['avatar'] = None
         try:
-            context['signature'] = Signature.objects.get(stud__id=
-                                                         self.object.id)
+            context['sign'] = Signature.objects.get(stud__id=self.object.id)
         except Signature.DoesNotExist:
-            context['signature'] = None
-
+            context['sign'] = None
         context['rel_list'] = StudentJobRelation.objects.filter(
             stud__id=self.object.id)
-
         return context
 
 
@@ -618,12 +627,11 @@ class JobRelListDebarred(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request):
         form = StudentDebarForm(request.POST)
         if form.is_valid():
-            roll_no = form.cleaned_data.get('roll_no')
+            roll_no = form.cleaned_data.get('roll_no', None)
             stud = Student.objects.get(roll_no=roll_no)
+            job = form.cleaned_data.get('job', None)
             studjobrel, created = StudentJobRelation.objects.get_or_create(
-                stud=stud,
-                job=form.cleaned_data.get('job')
-            )
+                stud=stud, job=job)
             if not studjobrel.is_debarred:
                 studjobrel.is_debarred = True
                 studjobrel.save()
@@ -682,7 +690,7 @@ class StudJobRelPlaceApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     """
-    List all events posted by Companies.
+    View class that renders all Events for Admin Users.
     """
     login_url = reverse_lazy('login')
     model = Event
@@ -697,6 +705,9 @@ class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View class that renders details of an Event instance for Admin Users.
+    """
     login_url = reverse_lazy('login')
     model = Event
     template_name = 'jobportal/Admin/event_detail.html'
@@ -832,9 +843,9 @@ class UploadStudentData(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request):
         form = StudentProfileUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            job_candidate = form.cleaned_data['job_candidate']
-            intern_candidate = form.cleaned_data['intern_candidate']
-            csvfile = form.cleaned_data['csv']
+            job_candidate = form.cleaned_data.get('job_candidate', None)
+            intern_candidate = form.cleaned_data.get('intern_candidate', None)
+            csvfile = form.cleaned_data.get('csv', None)
             reader = csv.reader(csvfile, delimiter=',')
             error_rows = error_msg = []
             rowcount = 0
@@ -1109,7 +1120,7 @@ class DownloadCompanyList(LoginRequiredMixin, UserPassesTestMixin, View):
                     headers.append(k)
             wr.writerow(headers)
 
-            # queyset for all companies
+            # queryset for all companies
             all_companies = Company.objects.all()
             # iterate over queryset
             for company in all_companies:
@@ -1117,7 +1128,7 @@ class DownloadCompanyList(LoginRequiredMixin, UserPassesTestMixin, View):
                 # only add fields asked in form
                 for k, v in cleaned_data.iteritems():
                     if v:
-                        row.append(getattr(company, k).encode('utf8'))
+                        row.append(smart_str(getattr(company, k)))
                 # write company details to as row to csv
                 wr.writerow(row)
             return response

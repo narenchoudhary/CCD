@@ -16,7 +16,7 @@ from django.shortcuts import (get_object_or_404, get_list_or_404, render,
                               redirect)
 from django.utils import timezone
 from django.utils.encoding import smart_str
-from django.views.generic import (View, TemplateView, RedirectView, CreateView,
+from django.views.generic import (View, TemplateView, FormView, CreateView,
                                   UpdateView, ListView, DetailView)
 
 from .models import (UserProfile, Job, Company, StudentJobRelation,
@@ -84,36 +84,32 @@ def download_cvs(request, jobid):
     return response
 
 
-class CompanySignUpView(View):
+class CompanySignUpView(FormView):
+    """
+    View that handles Company signup and renders the confirmation page.
+    """
+    form_class = CompanySignup
+    template_name = 'jobportal/Company/signup2.html'
+    confirm_template = 'jobportal/Company/signupconfirm.html'
 
-    template = 'jobportal/Company/signup.html'
-
-    def get(self, request):
-        form = CompanySignup()
-        args = dict(form=form)
-        return render(request, self.template, args)
-
-    def post(self, request):
-        form = CompanySignup(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.pop('username')
-            password1 = form.cleaned_data.pop('password1')
-            user = UserProfile(username=username,
-                               password=make_password(password1),
-                               user_type='company',
-                               is_active=False)
-            user.save()
-            company = form.save(commit=False)
-            company.user = user
-            company.save()
-            return render(request, 'jobportal/Company/signupconfirm.html',
-                          dict(email=company.head_hr_email))
-        else:
-            args = dict(form=form)
-            return render(request, self.template, args)
+    def form_valid(self, form):
+        username = form.cleaned_data.pop('username')
+        password1 = form.cleaned_data.pop('password1')
+        user = UserProfile(username=username,
+                           password=make_password(password1),
+                           user_type='company', is_active=False)
+        user.save()
+        company = form.save(commit=False)
+        company.user = user
+        company.save()
+        context = dict(company=company)
+        return render(self.request, self.confirm_template, context)
 
 
 class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    """
+    View class that handles rendering Home page to Company users.
+    """
     login_url = reverse_lazy('login')
     template_name = 'jobportal/Company/home.html'
 
@@ -127,7 +123,12 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
 
 class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View class that handles displaying profile to Company users.
+    """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Company
     template_name = 'jobportal/Company/profile_detail.html'
     context_object_name = 'company'
@@ -136,12 +137,29 @@ class ProfileDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user.user_type == 'company'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Company,
-                                 id=self.request.session['company_instance_id'])
+        """
+        Return Company instance
+
+        ``select_related`` used for fetching ``user`` in one query.
+        Check ``select_related`` documentation.
+        https://docs.djangoproject.com/en/dev/ref/models/querysets/#select-related
+
+        :param queryset: None
+        :return: Company instance
+        """
+        return Company.objects.select_related('user').get(
+            id=self.request.session['company_instance_id']
+        )
 
 
 class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    View class that renders profile Company profile update form and updates
+    the Company instance.
+    """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = CompanyProfileEdit
     template_name = 'jobportal/Company/profile_update.html'
     success_url = reverse_lazy('company-profile-detail')
@@ -155,8 +173,12 @@ class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class PasswordChangeView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    View class that renders
+    """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Company/password_update.html'
 
     def test_func(self):
@@ -178,6 +200,8 @@ class PasswordChangeView(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Company/job_list.html'
     context_object_name = 'job_list'
 
@@ -196,6 +220,8 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class JobCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = CompanyJobForm
     template_name = 'jobportal/Company/job_create.html'
 
@@ -216,6 +242,8 @@ class JobCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Job
     template_name = 'jobportal/Company/job_detail.html'
     context_object_name = 'job'
@@ -231,13 +259,10 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             return False
         return True
 
-    def get_object(self, queryset=None):
-        return self.job
-
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
         context['rel_list'] = ProgrammeJobRelation.objects.filter(
-            job=self.object, prog__open_for_placement=True)
+            job=self.object).select_related('prog')
         now = timezone.now()
         context['deadline_over'] = self.job.application_deadline < now
         return context
@@ -245,6 +270,8 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = CompanyJobForm
     template_name = 'jobportal/Company/job_update.html'
     context_object_name = 'job'
@@ -271,7 +298,8 @@ class JobUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class JobRelList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     template_name = 'jobportal/Company/jobrel_list.html'
     context_object_name = 'rel_list'
     job = None
@@ -309,6 +337,7 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
     View class which handles downloading list of candidates for a Job
     """
     login_url = reverse_lazy('login')
+    # render login page instead of raising 403 error
     raise_exception = False
 
     def test_func(self):
@@ -372,7 +401,8 @@ class JobRelListCSV(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class JobRelUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = CompanyJobRelForm
     template_name = 'jobportal/Company/jobrel_update.html'
 
@@ -395,6 +425,7 @@ class JobRelUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class JobRelUpdateRound(LoginRequiredMixin, UserPassesTestMixin, View):
+    # TODO: Delete this View and related urls and template
     login_url = reverse_lazy('login')
     raise_exception = True
     template_name = 'jobportal/Company/jobrel_list.html'
@@ -448,6 +479,7 @@ class JobRelUpdateRound(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class ProgrammeList(View):
+    # TODO: Delete this view and related urls and templates
     template_name = 'jobportal/Company/programme_list.html'
 
     def get(self, request):
@@ -462,7 +494,8 @@ class ProgrammeList(View):
 
 class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Event
     template_name = 'jobportal/Company/event_list.html'
     context_object_name = 'event_list'
@@ -476,28 +509,35 @@ class EventList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 class EventCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """
+    View class that handles rendering EventForm to Company Users and creating
+    Event instance on submission.
+    """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = EventForm
     template_name = 'jobportal/Company/event_create.html'
 
     def test_func(self):
         return self.request.user.user_type == 'company'
 
-    def get_success_url(self):
-        return reverse_lazy('company-event-detail', args=(self.object.id,))
-
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.company_owner = get_object_or_404(
             Company, id=self.request.session['company_instance_id'])
         instance.save()
-        return super(EventCreate, self).form_valid(form)
+        return redirect('company-event-detail', pk=instance.id)
 
 
 class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """
+    View class that handles rendering details of Event instance for Company
+    users.
+    """
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     model = Event
     template_name = 'jobportal/Company/event_detail.html'
     context_object_name = 'event'
@@ -507,16 +547,17 @@ class EventDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self, queryset=None):
         event = get_object_or_404(Event, id=self.kwargs['pk'])
-        if event.company_owner.pk is self.request.session['company_instance_id']:
+        company_id = self.request.session['company_instance_id']
+        if event.company_owner.pk == company_id:
             return event
         else:
-            # HTTP ERROR 403
             return HttpResponseForbidden()
 
 
 class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('login')
-    raise_exception = True
+    # render login page instead of raising 403 error
+    raise_exception = False
     form_class = EventForm
     template_name = 'jobportal/Company/event_update.html'
 
@@ -664,7 +705,11 @@ class StudJobRelPlace(LoginRequiredMixin, UserPassesTestMixin, View):
 
 # TODO: This function is untested
 class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    View that handles creating and validating JobProgrammeRelation instances.
+    """
     login_url = reverse_lazy('login')
+    raise_exception = False
     template_name = 'jobportal/Company/jobprog_create.html'
     job = None
 
@@ -672,13 +717,18 @@ class JobProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         is_company = self.request.user.user_type == 'company'
         if not is_company:
             return False
-        self.job = get_object_or_404(Job, id=self.kwargs['jobpk'])
+        # get Job instance and related Company instance in one query
+        self.job = Job.objects.select_related('company_owner').get(
+            id=self.kwargs['jobpk']
+        )
         session_id = self.request.session['company_instance_id']
+        # check if Company is company_owner of Job instance
         is_owner = self.job.company_owner.id == session_id
         if not is_owner:
             return False
-        deadline_ok = self.job.application_deadline > timezone.now()
-        if not deadline_ok:
+        # check if deadline has passed
+        deadline_passed = self.job.application_deadline < timezone.now()
+        if deadline_passed:
             return False
         return True
 
@@ -768,7 +818,8 @@ class DownloadBondDocument(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(request, pk):
         job = get_object_or_404(Job, id=pk)
         response = HttpResponse(job.bond_link, content_type='application/pdf')
-        download_name = job.company_owner.user.username + '_' + job.designation
+        username = job.company_owner.user.username
+        download_name = username + '_' + job.designation + '.pdf'
         response['Content-Disposition'] = 'attachment; filename=%s' % \
                                           smart_str(download_name)
         return response
