@@ -21,6 +21,26 @@
 <div class="container">
     <div class="row">
         <div class="col l8 m8 s12">
+            {% if not company.user.is_active %}
+                <div class="section">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">
+                                <i class="material-icons left red-text" style="font-size: 3rem">info</i> Approval Pending
+                            </span>
+                            <p>
+                                This signup request needs administrator approval. Read the information carefully and
+                                approve this signup request by clicking the following button.
+                            </p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'admin-company-approve' company.id %}" class="btn">
+                                Approve
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <div id="company-info" class="section scrollspy">
                 <h4>Company Information</h4>
                 <div class="divider bottom10"></div>
@@ -188,16 +208,30 @@
                         {{ company.signup_datetime }}
                     </div>
                 </div>
-                {% if company.user.is_active %}
-                    <div class="row model-field">
-                        <div class="col l2 m3 s4 field-name">
-                            Approval Date
-                        </div>
-                        <div class="col l10 m9 s8 field-value">
-                            {{ company.approval_date }}
-                        </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Date
                     </div>
-                {% endif %}
+                    <div class="col l10 m9 s8 field-value">
+                        {% if company.user.is_active %}
+                            {{ company.approval_date }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {% if company.user.is_active %}
+                            Approved
+                        {% else %}
+                            Approval Pending
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             <div id="update-profile" class="section scrollspy">
                 <h4>Update Profile</h4>

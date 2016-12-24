@@ -10,11 +10,16 @@
     <meta name="description" content="Centre for Career Development IIT Guwahati">
     <title>Recruiter | Register </title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
     <style>
         .toc-wrapper {
             position: relative;
+        }
+        .error {
+            line-height: 12px;
+            position: relative;
+            top: -10px;
+            color: #F44336;
         }
     </style>
 </head>
@@ -57,7 +62,7 @@
                         {% if form.non_field_errors %}
                             <ul>
                                 {% for error in form.non_field_errors %}
-                                    <li>{{ error }}</li>
+                                    <li class="error">{{ error }}</li>
                                 {% endfor %}
                             </ul>
                         {% else %}

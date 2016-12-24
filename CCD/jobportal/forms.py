@@ -1,7 +1,5 @@
 from django import forms
-from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm
-from django.forms import ModelForm
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,7 +20,7 @@ class LoginForm(forms.Form):
     )
 
 
-class EditStudProfileForm(ModelForm):
+class EditStudProfileForm(forms.ModelForm):
     """
     Modelform that handles profile update for Students.
 
@@ -55,7 +53,7 @@ class EditStudProfileForm(ModelForm):
         }
 
 
-class CompanyJobForm(ModelForm):
+class CompanyJobForm(forms.ModelForm):
     """
     Job ModelForm for Company Users to create Job instances.
     """
@@ -90,7 +88,7 @@ class CompanyJobForm(ModelForm):
         return minimum_cpi
 
 
-class AdminJobEditForm(ModelForm):
+class AdminJobEditForm(forms.ModelForm):
     """
     Job ModelForm for Admin Users to create Job instances.
     """
@@ -141,7 +139,7 @@ class CompanyEventForm(forms.Form):
         fields = ['title', 'event_type', 'event_date1', 'event_date2']
 
 
-class CompanyProfileEdit(ModelForm):
+class CompanyProfileEdit(forms.ModelForm):
     """
     Company ModelForm for Company Users to update Company instance.
     """
@@ -182,7 +180,7 @@ class StudentSearchForm(forms.Form):
         return cleaned_data
 
 
-class AddCompany(ModelForm):
+class AddCompany(forms.ModelForm):
     """
     Company ModelForm (with username and password fields for related
     UserProfile) for Admin Users to create Company instances.
@@ -202,7 +200,7 @@ class AddCompany(ModelForm):
         super(AddCompany, self).__init__(*args, **kwargs)
 
 
-class EditCompany(ModelForm):
+class EditCompany(forms.ModelForm):
     """
     Company ModelForm for Admin Users to update Company instances.
     """
@@ -237,7 +235,7 @@ class EditCompany(ModelForm):
         super(EditCompany, self).__init__(*args, **kwargs)
 
 
-class EditStudentAdmin(ModelForm):
+class EditStudentAdmin(forms.ModelForm):
     """
     Student ModelForm for Admin Users to update Student instances.
     """

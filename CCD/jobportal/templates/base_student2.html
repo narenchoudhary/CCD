@@ -26,22 +26,11 @@
 			</p>
 		</li>
         <li><a href="{% url 'stud-profile-detail' %}">Profile</a></li>
-		<li class="no-padding">
-            <ul class="collapsible collapsible-accordion">
-                <li>
-                    <a class="collapsible-header">
-                        Jobs<i class="material-icons">arrow_drop_down</i>
-                    </a>
-                    <div class="collapsible-body">
-                        <ul>
-                            <li><a href="{% url 'stud-all-job-list' %}">All Jobs</a></li>
-                            <li><a href="{% url 'stud-job-list' %}">Eligible Jobs</a></li>
-                            <li><a href="{% url 'stud-jobrel-list' %}">Applied Jobs</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </li>
+        <li><div class="divider"></div></li>
+        <li><a href="{% url 'stud-all-job-list' %}">All Jobs</a></li>
+        <li><a href="{% url 'stud-job-list' %}">Eligible Jobs</a></li>
+        <li><a href="{% url 'stud-jobrel-list' %}">Applied Jobs</a></li>
+        <li><div class="divider"></div></li>
         <li><a href="{% url 'stud-cv-detail' %}">CV</a></li>
         <li><a href="{% url 'stud-avatar-detail' %}">Avatar</a></li>
         <li><a href="{% url 'stud-sign-detail' %}">Signature</a></li>
