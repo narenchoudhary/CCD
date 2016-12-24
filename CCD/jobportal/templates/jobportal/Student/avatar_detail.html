@@ -1,43 +1,45 @@
-{% extends 'base_student.html' %}
-{% load staticfiles %}
+{% extends 'base_student2.html' %}
+{% load static %}
 {% load jobportal_tags %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Student | Avatar {% endblock %}
+{% block page_title %} Avatar {% endblock %}
 
-{% endblock%}
-
-{% block title %}
-    Student | Avatar
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Avatar</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-avatar-detail' %}">Avatar</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Avatar</span>
-                    {% if avatar.avatar %}
+        <div class="col s12">
+            <div class="section">
+                <h4>Avatar</h4>
+                <div class="divider bottom10"></div>
+                {% if avatar.avatar %}
                         <p>
                             <img class="responsive-img"
                                  src="{{avatar.avatar.thumbnail.300x300}}">
                         </p>
-                    {% else %}
-                        <p>No avatar found for this profile.</p>
-                    {% endif %}
-                </div>
-                <div class="card-action">
-                    {% is_allowed 'job_stud_photo' as photo_allowed %}
-                    {% if photo_allowed %}
+                {% else %}
+                    <p><strong>No avatar found for this profile.</strong></p>
+                {% endif %}
+            </div>
+            <div class="section">
+                <h4>Upload Avatar</h4>
+                <div class="divider bottom10"></div>
+                {% is_allowed 'job_stud_photo' as photo_allowed %}
+
+                {% if photo_allowed %}
                     {% if avatar and avatar.avatar %}
                         <a class="btn" href="{% url 'stud-avatar-update' %}">
                             Upload new avatar
@@ -51,16 +53,12 @@
                             Upload avatar
                         </a>
                     {% endif %}
-                    {% else %}
-                        <p class="red-text">Avatar uploading has been disabled temporarily.</p>
-                        <a class="btn disabled" href="">
-                            Upload avatar
-                        </a>
-                    {% endif %}
-                </div>
+                {% else %}
+                    <p class="red-text"><strong>Avatar uploading has been disabled temporarily.</strong></p>
+                    <a class="btn disabled" href="">Upload avatar</a>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

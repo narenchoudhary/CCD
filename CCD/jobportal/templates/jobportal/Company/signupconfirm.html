@@ -1,32 +1,251 @@
-{% extends 'base_company.html' %}
+{% extends 'base_jobportal2.html' %}
+{% load static %}
 
-{% block title %}
-    Recruiter | Confirmation
+{% block title %}Recruiter | Confirm Registration{% endblock %}
+
+{% block custom_styles %}
+<style>
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex: 1 0 auto;
+}
+header, main, footer {
+    padding-left: 0;
+}
+</style>
 {% endblock %}
 
-{% block menu %}
-<a href="{% url 'login' %}"><li>Login</li></a>
-<a href="{% url 'company-signup' %}"><li>Recruiters Registration Form</li></a>
+{% block nav %}
+<nav>
+    <div class="container">
+        <div class="nav-wrapper">
+            <a href="{% url 'login' %}" class="brand-logo">CCD</a>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
+{% block main %}
 <div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class=" card green lighten-5">
-                <div class="green-text card-content">
-                    <span class="card-title">Registration Successful</span>
-                    <h6>Signup request has been received by CCD, IIT Guwahati. You can login once your profile
-                    is approved by CCD administrator. You will receive a confirmation mail on
-                    {{email}}.</h6>
+        <div class="col l8 m8 s12">
+            <div id="confirm" class="section scrollspy">
+                <h4>Registration Confirmed.</h4>
+                <div class="divider bottom10"></div>
+                <p>
+                    Your signup request has been received by CCD, IIT Guwahati. You can login once your
+                    credentials are approved by CCD administrator.
+                </p>
+                <p>
+                    You will receive a confirmation mail on {{ company.head_hr_email }} regarding your
+                    approval status.
+                </p>
+            </div>
+            <div id="login-credentials" class="section scrollspy">
+                <h4>Login Credentials</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Username
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.user.username }}
+                    </div>
                 </div>
-                <div class="card-action">
-                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Password
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        Password hash cannot be reconverted to plain text.
+                    </div>
                 </div>
+            </div>
+            <div id="company" class="section scrollspy">
+                <h4>Company Information</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Name of Company
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.company_name }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.description | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Postal Address
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.postal_address | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Website
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.website }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Office Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.office_contact_no }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Organization Type
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.organization_type }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Industry Sector
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.industry_sector }}
+                    </div>
+                </div>
+            </div>
+            <div id="poc1" class="section scrollspy">
+                <h4>First Point of Contact</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Full Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Email
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_email }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_mobile }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_designation }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Fax
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_fax }}
+                    </div>
+                </div>
+            </div>
+            <div id="poc2" class="section scrollspy">
+                <h4>Second Point of Contact</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Full Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Email
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_email }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_mobile }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_designation }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Fax
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_fax }}
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="divider"></div>
+                <p>
+                    If you've made any error in filling the registration form,
+                    you can correct it later.
+                </p>
+                <p>
+                    We usually send the confirmation mail within 6 hours. If you don't receive
+                    a confirmation mail, drop a mail to <mark>ccd@iitg.ernet.in</mark>.
+                </p>
+            </div>
+        </div>
+        <div class="col l4 m4 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <ul class="section table-of-contents">
+                    <li><a href="#confirm">Registration Confirmation</a></li>
+                    <li><a href="#login-credentials">Login Credentials</a></li>
+                    <li><a href="#company">Company Information</a></li>
+                    <li><a href="#poc1">First Point of Contact</a></li>
+                    <li><a href="#poc2">Second Point of Contact</a></li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block end_scripts %}
+<script>
+$(document).ready(function(){
+    $('.toc-wrapper').pushpin({
+        top: 50
+    });
+});
+</script>
 {% endblock %}

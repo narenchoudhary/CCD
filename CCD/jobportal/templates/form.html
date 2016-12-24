@@ -7,7 +7,7 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Please correct the errors as shown in the form.</p>
+            <p class="red-text">Please correct the errors as shown in the form.</p>
         {% endif %}
     {% endif %}
 </div>
@@ -22,7 +22,7 @@
                 <span class="red-text">{{ field.errors }}</span>
                 {{ field }}
                 {{ field.label_tag }}
-                {% if field.help_text %}<p>{{ field.help_text | safe }}</p>{% endif %}
+                {% if field.help_text %}<small>{{ field.help_text | safe }}</small>{% endif %}
             </div>
         </div>
     {% endfor %}

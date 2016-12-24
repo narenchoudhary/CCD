@@ -1,20 +1,208 @@
-{% extends 'base_admin.html' %}
-{% load staticfiles %}
-{% load material_form %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Admin | Student Data Upload {% endblock %}
+{% block page_title %} Student Data Upload {% endblock %}
 
-{% block custom_styles %}
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Upload Student Data</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Upload Student Data</h4>
+                <div class="divider bottom10"></div>
+                <div class="error-alert">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li class="error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">Please correct the errors as shown in the form.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% include 'field_mdl.html' with field=form.job_candidate %}
+                    {% include 'field_mdl.html' with field=form.intern_candidate %}
+                    <div class="row">
+                        <div class="file-field input-field col s12">
+                            <span class="red-text">{{ form.csv.errors}}</span>
+                            <div class="btn">
+                                <span><i class="material-icons left">file_upload</i>CSV</span>
+                                <input type="file" name="csv">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path" id="{{ form.csv.id_for_label }}" type="text">
+                            </div>
+                            <small>{{ form.csv.help_text }}</small>
+                        </div>
+                    </div>
+                    <input class="btn" type="submit" value="Upload">
+                </form>
+                <br>
+                <div class="divider"></div>
+            </div>
+
+
+            <div class="section">
+                {% if form.is_bound and not form.errors %}
+                    <h4>Errors</h4>
+                    <div class="bottom10 divider"></div>
+                    {% if zipped_data.count < 1 %}
+                        <p>
+                            <strong>No errors encountered. All records updated successfully.</strong>
+                        </p>
+                    {% else %}
+                        <table class="centered">
+                            <thead>
+                                <tr>
+                                    <th>Row Number (in CSV)</th>
+                                    <th>Error</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i, j in zipped_data %}
+                                    <tr>
+                                        <td>{{i}}</td>
+                                        <td>{{j}}</td>
+                                        <td>Not Saved</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+
+            <div class="section">
+                <h4>Student Data CSV Format</h4>
+                <div class="divider bottom10"></div>
+                <table class="centered bordered striped">
+                    <thead>
+                        <tr>
+                            <th>Column Number</th>
+                            <th>Column Data</th>
+                            <th>Data Format</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Webmail</td>
+                            <td>No validation; Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Roll No</td>
+                            <td>Must be a number; Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Full Name</td>
+                            <td>No Validation; Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Year (Major)</td>
+                            <td>Must be present in Database; Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Department Name (Major)</td>
+                            <td>Major department name; Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Programme (Major)</td>
+                            <td>
+                                Programme name in all caps and no periods. Eg. BTECH, MDES, MSR
+                                (M.Tech. would fail).
+                                Cannot be left blank
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Discipline (Major)</td>
+                            <td>
+                                Exact name of discipline as present in database.
+                                In most cases, it will be same as Department name.
+                                Cannot be left blank.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Year (Minor)</td>
+                            <td>Must be present in Database; Optional</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Department Code (Minor)</td>
+                            <td>Department name; Optional</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Programme (Minor)</td>
+                            <td>
+                                Minor programme name in all caps and no periods.
+                                Eg. BTECH, MDES, MSR (M.Tech. would fail).</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>Discipline (Minor)</td>
+                            <td>
+                                Exact name of discipline as present in database.
+                                In most cases, it will be same as Department name.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>Category</td>
+                            <td>Must belong to (GEN, OBC, SC, ST, PD, Foreign); Cannot be left blank</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>CPI</td>
+                            <td>Must be a decimal/floating point number. Cannot be left blank.</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>Nationality</td>
+                            <td>No verfication; Cannot be left blank.</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>Gender</td>
+                            <td>Must be in (M, F). Cannot be left blank.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 
 {% block content %}
 
@@ -32,8 +220,6 @@
                     <form method="post" accept-charset="utf-8" enctype="multipart/form-data"
                           action="{% url 'admin-student-create' %}">
                         {% csrf_token %}
-                        {% form %}
-                        {% endform %}
                         <div class="right-align">
                            <input type="submit" class="btn" value="Upload">
                         </div>
@@ -89,105 +275,7 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">CSV Details</span>
-                    <table class="table bordered">
-                        <thead>
-                            <tr>
-                                <th>Column Number</th>
-                                <th>Column Data</th>
-                                <th>Data Format</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Webmail</td>
-                                <td>No validation; Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Roll No</td>
-                                <td>Must be a number; Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Full Name</td>
-                                <td>No Validation; Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Year (Major)</td>
-                                <td>Must be present in Database; Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Department Name (Major)</td>
-                                <td>Major department name; Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>Programme (Major)</td>
-                                <td>
-                                    Programme name in all caps and no periods. Eg. BTECH, MDES, MSR
-                                    (M.Tech. would fail).
-                                    Cannot be left blank
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>Discipline (Major)</td>
-                                <td>
-                                    Exact name of discipline as present in database.
-                                    In most cases, it will be same as Department name.
-                                    Cannot be left blank.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>Year (Minor)</td>
-                                <td>Must be present in Database; Optional</td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Department Code (Minor)</td>
-                                <td>Department name; Optional</td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Programme (Minor)</td>
-                                <td>
-                                    Minor programme name in all caps and no periods.
-                                    Eg. BTECH, MDES, MSR (M.Tech. would fail).</td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td>Discipline (Minor)</td>
-                                <td>
-                                    Exact name of discipline as present in database.
-                                    In most cases, it will be same as Department name.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>12</td>
-                                <td>Category</td>
-                                <td>Must belong to (GEN, OBC, SC, ST, PD, Foreign); Cannot be left blank</td>
-                            </tr>
-                            <tr>
-                                <td>13</td>
-                                <td>CPI</td>
-                                <td>Must be a decimal/floating point number. Cannot be left blank.</td>
-                            </tr>
-                            <tr>
-                                <td>14</td>
-                                <td>Nationality</td>
-                                <td>No verfication; Cannot be left blank.</td>
-                            </tr>
-                            <tr>
-                                <td>15</td>
-                                <td>Gender</td>
-                                <td>Must be in (M, F). Cannot be left blank.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
                 </div>
             </div>
         </div>

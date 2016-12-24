@@ -65,6 +65,13 @@ nav.top-nav a.page-title {
     margin-bottom: 10px;
 }
 
+.disabled-button {
+    background-color: #DFDFDF !important;
+    color: #9F9F9F !important;
+    box-shadow: none;
+    cursor: default;
+}
+
 @media screen and (max-width: 992px) {
     header, main, footer {
         padding-left: 0;
@@ -76,4 +83,12 @@ nav.top-nav a.page-title {
         line-height: 122px;
         font-size: 30px;
     }
+}
+
+.error {
+    line-height: 12px;
+    position: relative;
+    top: -10px;
+    color: #F44336;
+    font-weight: bold;
 }

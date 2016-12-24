@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="input-field col s12">
+        {% if icon %}<i class="material-icons prefix">{{ icon }}</i>{% endif %}
+        {{ field }}
+        {{ field.label_tag }}
+        <div class="form-error-list">
+            {% for error in field.errors %}
+                <small class="error">{{ error }}</small>
+            {% endfor %}
+        </div>
+        <small>{{ field.help_text }}</small>
+    </div>
+</div>

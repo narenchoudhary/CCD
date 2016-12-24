@@ -1,60 +1,108 @@
-{% extends 'base_jobportal.html' %}
-{% load material_form %}
+{% load static %}
 
-{% block title %}
-Login
-{% endblock %}
-
-{% block menu %}
-<a href="{% url 'login' %}">
-    <li>Login</li>
-</a>
-<a href="{% url 'company-signup' %}">
-    <li>Recruiters Registration Form</li>
-</a>
-{% endblock %}
-
-{% block level_0 %}
-
-<div class="breadcrumbs">
-    <div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col s12 offset-m2 m8" style="margin-top: 4%;">
-        <div class="card">
-            <div class="card-content">
-                <span class="card-title black-text">Log in</span>
-                <form action="{% url 'login' %}" method="POST" accept-charset="utf-8"
-                      class="viewform">
-                    {% csrf_token %}
-                    {% if error %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="description" content="Centre for Career Development IIT Guwahati">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+<header></header>
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col l4 m2 hide-on-small-and-down"></div>
+            <div class="col l4 m8 s12 center-align">
+                <img id="center-logo" class="responsive-img" src="{% static 'img/logo3.png' %}">
+                <h5 id="login-heading" class="indigo-text">
+                    Sign in to CCD Portal
+                </h5>
+                <div class="card-panel grey lighten-5">
+                    <div class="error-alert">
+                        {% if form.errors %}
+                            {% if form.non_field_errors %}
+                                <ul>
+                                    {% for error in form.non_field_errors %}
+                                        <li class="red-text">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="red-text">Please correct the errors as shown in the form.</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
                         <div class="row">
-                            <div class=" card red lighten-5">
-                                <div class="red-text card-content">
-                                    <i class="mdi-alert-error"></i>
-                                    <p> {{error}}</p>
-                                </div>
+                            <div class="input-field col s12 left-align">
+                                <span class="red-text">{{ form.username.errors }}</span>
+                                {{ form.username }}
+                                {{ form.username.label_tag }}
+                                {% if form.username.help_text %}<p>{{ form.username.help_text | safe }}</p>{% endif %}
                             </div>
                         </div>
-                    {% endif %}
-                    {% form %}
-                        {% part form.username prefix %}
-                            <i class="material-icons prefix">account_box</i>
-                        {% endpart %}
-                        {% part form.password prefix %}
-                            <i class="material-icons prefix">lock_open</i>
-                        {% endpart %}
-                    {% endform %}
-                    <div class="right-align">
-                           <button type="submit" name="_submit"
-                                   class="waves-effect waves-light btn btn-primary btn-lg">
-                               Log In</button>
+                        <div class="row">
+                            <div class="input-field col s12 left-align">
+                                <span class="red-text">{{ form.password.errors }}</span>
+                                {{ form.password }}
+                                {{ form.password.label_tag }}
+                                {% if form.password.help_text %}<p>{{ form.password.help_text | safe }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12 left-align">
+                                <span class="red-text">{{ form.remember_me.errors }}</span>
+                                {{ form.remember_me }}
+                                {{ form.remember_me.label_tag }}
+                                {% if form.remember_me.help_text %}<p>{{ form.remember_me.help_text | safe }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class='row center'>
+                            <div class="input-field col s12">
+                                <button class='btn waves-effect indigo'
+                                    type='submit' name='btn_login' style="width: 80%">
+                                    Login
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <a href="#" class="indigo-text">
+                            <u>Help</u>
+                        </a>
                     </div>
-                </form>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <a href="{% url 'company-signup' %}" class="indigo-text">
+                            <u>Recruiters Signup</u>
+                        </a>
+                    </div>
+                </div>
             </div>
+            <div class="col l4 m2 hide-on-small-and-down"></div>
         </div>
     </div>
-</div>
-{% endblock %}
+</main>
+<footer></footer>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+<script>
+    $(document).ready(function(){
+        $('select').material_select();
+    });
+</script>
+</body>
+</html>

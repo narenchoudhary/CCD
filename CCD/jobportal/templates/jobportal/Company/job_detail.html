@@ -1,289 +1,383 @@
-{% extends 'base_company.html' %}
+{% extends 'base_company2.html' %}
 {% load humanize %}
 
-{% block title %}
-    Recruiter | Job Application
+{% block title %} Recruiter | Job Application {% endblock %}
+{% block page_title %} Job Application Detail {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'company-job-list' %}" class="breadcrumb">All Job Applications</a>
+                <a class="breadcrumb">Job Details</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-<a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
-
-{% block content %}
-
-<div class="breadcrumbs">
-    <div>
-        <a href="{% url 'company-home' %}">Home</a> ⟩
-        <a href="{% url 'company-job-detail' job.id %}">Job Details</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Job Application Details</span>
+        <div class="col l8 m8 s12">
+            {% if rel_list.count < 1 %}
+                <div class="section">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">
+                                <i class="material-icons left red-text" style="font-size: 3rem">info</i> Add Programmes
+                            </span>
+                            <p>
+                                <br>
+                                Job application has been successfully submitted. Please add target programmes
+                                by clicking the button below. Job applications with no target programmes
+                                will not be considered for further processing.
+                            </p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'company-job-jobprog-create' job.id %}" class="btn">
+                                <i class="material-icons left">add</i> Add Programmes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div id="basic-info" class="section scrollspy">
+                <h4>Basic Information</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.designation }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-small-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.description | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Profile Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.profile_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Number of Openings
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.num_openings }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Opening Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.opening_datetime | date:"d M Y h:i A"}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Closing date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.application_deadline | date:"d M Y h:i A"}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.approved | yesno:"Approved, Rejected, Approval Pending"}}
+                    </div>
+                </div>
+            </div>
+            <div id="eligibility" class="section scrollspy">
+                <h4>Eligibility</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CPI Shortlist
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.cpi_shortlist | yesno | capfirst }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Minimum CPI
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {% if job.cpi_shortlist %}
+                            {{ job.minimum_cpi }}
+                        {% else %}
+                            No CPI shortlisting
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage X
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.percentage_x }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage XII
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.percentage_xii }}
+                    </div>
+                </div>
+            </div>
+            <div id="salary" class="section scrollspy">
+                <h4>Salary Breakdown</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Currency
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.currency }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC B.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_btech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross B.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_btech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_mtech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_mtech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.A
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_ma }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.A.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_ma }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.Sc.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_msc }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.Sc.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_msc }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC Ph.D.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_phd }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross Ph.D.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_phd }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Additional Information
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.additional_info }}
+                    </div>
+                </div>
+            </div>
+            <div id="legal" class="section scrollspy">
+                <h4>Legal Document</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Legal Document
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {% if job.bond_link %}
+                            <a href="{% url 'company-job-download-bond' job.id %}" target="_blank" rel="noreferrer">
+                                Download Bond Document
+                            </a>
+                        {% else %}
+                            No bond document uploaded
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div id="update-job" class="section scrollspy">
+                <h4>Update Job Details</h4>
+                <div class="divider bottom10"></div>
+                {% if job.approved == None %}
+                    <p>
+                        <a class="btn" href="{% url 'company-job-update' job.id %}">
+                            <i class="material-icons left">mode_edit</i>Edit Job
+                        </a>
+                    </p>
+                {% else %}
+                    <p>
+                        <a class="btn tooltipped grey-text lighten-5 black-text" data-position="bottom"
+                           data-tooltip="This job has been already approved. No changes can be made now.">
+                            <i class="material-icons left">mode_edit</i>Edit Job
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+            <div id="candidates" class="section scrollspy">
+                <h4>Candidates</h4>
+                <div class="divider bottom10"></div>
+                {% if job.deadline_passed %}
+                    <p>Candidates can be viewed now.</p>
+                    <p>
+                        <a href="{% url 'company-jobrel-list' job.id %}" class="btn btn-primary">
+                            View Candidates
+                        </a>
+                    </p>
+                {% else %}
+                    <p>Candidates can be viewed only after application deadline ({{job.application_deadline}}).</p>
+                    <p>
+                        <a class="btn tooltipped disabled-button" data-position="bottom"
+                       data-tooltip="Candidates can be viewed after {{job.application_deadline}} only.">
+                            View Candidates
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+            <div id="programmes" class="section scrollspy">
+                <h4>Open Programmes</h4>
+                <div class="divider bottom10"></div>
+                {% if rel_list.count < 1 %}
+                    <p class="red-text">
+                        <i class="material-icons left red-text">info</i>
+                        <strong>You have not selected any programme for this Job application.</strong>
+                    </p>
+                    <p>Job applications with no target programmes will not be considered for further processing.</p>
+                    <p>Please add target programmes by clicking the button below.</p>
+                    <p>
+                        <a href="{% url 'company-job-jobprog-create' job.id %}" class="btn">
+                            <i class="material-icons left">add</i> Add Programmes
+                        </a>
+                    </p>
+                {% else %}
+                    <p><strong>
+                        This Job application is open for {{ rel_list.count }} programmes.
+                    </strong></p>
+                    <p>
+                        <a href="{% url 'company-job-jobprog-create' job.id %}" class="btn">
+                            <i class="material-icons left">add</i> Add Programmes
+                        </a>
+                    </p>
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Year of Passing</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                                <th>Minor/Major</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ rel.prog.year_passing }}</td>
+                                    <td>{{ rel.prog.dept }}</td>
+                                    <td>{{ rel.prog.name }}</td>
+                                    <td>{{ rel.prog.minor_status | yesno:"Minor, Major" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col l4 m4 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <div class="section table-of-contents">
                     <ul>
-                        <li>All details related to Job application is available on this page.</li>
-                        <li></li>
+                        <li><a href="#basic-info">Basic Information</a></li>
+                        <li><a href="#eligibility">Eligibility</a></li>
+                        <li><a href="#salary">Salary Breakdown</a></li>
+                        <li><a href="#legal">Legal Document</a></li>
+                        <li><a href="#update-job">Edit Job Details</a></li>
+                        <li><a href="#candidates">View Candidate List</a></li>
+                        <li><a href="#programmes">
+                            {% if rel_list.count < 1 %}<i class="material-icons left red-text">info</i>{% endif %}
+                            Open Programmes
+                        </a></li>
                     </ul>
                 </div>
             </div>
         </div>
-
-        {% if rel_list.count  == 0%}
-        <div class="row">
-            <div class="col s12 m12 l9">
-                <div class=" card red lighten-5">
-                    <div class="red-text card-content">
-                        <i class="mdi-alert-error"></i>
-                        <h6>Job application has been successfully submitted. Now add target programmes
-                        by clicking the button below. Job applications with no target programmes
-                        will not be considered for further processing.</h6>
-                    </div>
-                    <div class="card-action">
-                         <a href="{% url 'company-job-jobprog-create' job.id %}"
-                            class="btn btn-primary">Add Programmes</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="col s12 m12 l9">
-            <ul class="tabs z-depth-1">
-                <li class="tab col s3">
-                    <a class="teal-text" href="#basicinfo">Basic Information</a>
-                </li>
-                <li class="tab col s3 m3 l3">
-                    <a href="#requirements" class="teal-text">Requirements</a>
-                </li>
-                <li class="tab col s3 m3 l3">
-                    <a href="#salary" class="teal-text">Salary Breakdown</a>
-                </li>
-                <li class="tab col s3 m3 l3">
-                    <a href="#bond" class="teal-text">Legal Document</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="col s12 m12 l9">
-
-            <div class="col s12 m12 l12  white" id="basicinfo">
-                <table class="table bordered">
-                    <tr>
-                        <td>Description</td>
-                        <td>{{job.description | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Designation</td>
-                        <td>{{job.designation}}</td>
-                    </tr>
-                    <tr>
-                        <td>Profile Name</td>
-                        <td>{{job.profile_name}}</td>
-                    </tr>
-                    <tr>
-                        <td>Number of openings</td>
-                        <td>{{job.num_openings}}</td>
-                    </tr>
-                    <tr>
-                        <td>Approval Status</td>
-                        <td>
-                            {% if job.approved == True %}
-                                <p>
-                                    <a href="#" class="btn light-green">Approved</a>
-                                </p>
-                            {% elif job.approved = False %}
-                                <p>
-                                    <a href="#" class="btn red lighten-2">Rejected</a>
-                                </p>
-                            {% else %}
-                                <p>
-                                    <a href="#" class="btn orange lighten-2">Approval Pending</a>
-                                </p>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Opening DateTime</td>
-                        <td>{{job.opening_datetime}}</td>
-                    </tr>
-                    <tr>
-                        <td>Application Deadline</td>
-                        <td>{{job.application_deadline}}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div  class="col s12 m12 l12  white" id="requirements">
-                <table class="table bordered">
-                <tr>
-                    <td>CPI Shortlist</td>
-                    <td>{{job.cpi_shortlist|yesno}}</td>
-                </tr>
-                <tr>
-                    <td>Minimum CPI</td>
-                    <td>
-                        {% if job.cpi_shortlist %}
-                            {{job.minimum_cpi}}
-                        {% else %}
-                            No CPI shortlisting
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Percentage X</td>
-                    <td>{{job.percentage_x}}</td>
-                </tr>
-                <tr>
-                    <td>Percentage XII</td>
-                    <td>{{job.percentage_xii}}</td>
-                </tr>
-                </table>
-            </div>
-
-            <div class="col s12 m12 l12  white" id="salary">
-                <table class="table bordered">
-                    <tr>
-                        <td>Currency</td>
-                        <td>{{job.currency}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC B.Tech.</td>
-                        <td>{{job.ctc_btech | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross B.Tech.</td>
-                        <td>{{job.gross_btech | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC M.Tech.</td>
-                        <td>{{job.ctc_mtech | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross M.Tech.</td>
-                        <td>{{job.gross_mtech | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC M.Sc.</td>
-                        <td>{{job.ctc_msc | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross M.Sc.</td>
-                        <td>{{job.gross_msc | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC M.A.</td>
-                        <td>{{job.ctc_ma | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross M.A.</td>
-                        <td>{{job.gross_ma | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>CTC Ph.D.</td>
-                        <td>{{job.ctc_phd | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Gross Ph.D.</td>
-                        <td>{{job.gross_phd | intcomma}}</td>
-                    </tr>
-                    <tr>
-                        <td>Additional Information</td>
-                        <td>{{job.additional_info}}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="col s12 m12 l12  white" id="bond">
-                <table class="table bordered">
-                    <tr>
-                        <td>Bond Document URL</td>
-                        <td>
-                            {% if job.bond_link %}
-                                <a href="{% url 'company-job-download-bond' job.id %}" target="_blank"
-                                class="btn btn-info btn-xs">Download Bond Document</a>
-                            {% else %}
-                                No bond document uploaded
-                            {% endif %}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Actions</span>
-                    <p>Candidates can be viewed only after application deadline is over.</p>
-                    <p>Once approved, Job entry cannot be edited. For any further edits,
-                    please contact the administrator.</p>
-                </div>
-                <div class="card-action">
-                    {% if job.deadline_passed %}
-                        <a href="{% url 'company-jobrel-list' job.id %}"
-                       class="btn btn-primary">View Candidates</a>
-                    {% else %}
-                        <a href="{% url 'company-jobrel-list' job.id %}"
-                       class="btn disabled tooltipped" data-position="bottom"
-                           data-tooltip="Candidates cab be viewed after application deadline
-                           ({{job.application_deadline}}) only.">View Candidates</a>
-                    {% endif %}
-                    {% if job.approved == None %}
-                        <a href="{% url 'company-job-update' job.id %}"
-                       class="btn btn-primary ">Edit Job</a>
-                    {% else %}
-                        <a href='#' class="btn disabled tooltipped" data-tooltip="This job has been already
-                       approved. No changes can be made now." data-position="bottom">Edit Job</a>
-                    {% endif %}
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                 <div class="card-content">
-                     <span class="card-title">Programmes</span>
-                     {% if rel_list.count > 0 %}
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Year of Passing</th>
-                                    <th>Dept</th>
-                                    <th>Prog</th>
-                                    <th>Minor/Major</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for prog in rel_list %}
-                                    <tr>
-                                        <td>{{prog.prog.year_passing}}</td>
-                                        <td>{{prog.prog.dept}}</td>
-                                        <td>{{prog.prog}}</td>
-                                        <td>{{prog.prog.minor_status | yesno:"Minor, Major"}}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                     {% else %}
-                        <h5>You have not selected any programme for this Job application.</h5>
-                     {% endif %}
-                </div>
-                <div class="card-action">
-                    <a href="{% url 'company-job-jobprog-create' job.id %}"
-                   class="btn btn-primary">Add Programmes</a>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block end_scripts %}
+<script>
+    $(document).ready(function () {
+        $('.toc-wrapper').pushpin({
+			top: 210
+		});
+		$('.scrollspy').scrollSpy();
+    })
+</script>
 {% endblock %}

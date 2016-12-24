@@ -1,51 +1,63 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Admin | Unapproved Jobs {% endblock %}
+{% block page_title %} Unapproved Jobs {% endblock %}
 
-{% block content %}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Unapproved Jobs</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-<div class="row">
-
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Unapporved Job Applications</span>
-                    {% if job_list.count > 0 %}
-                    <table id="job-table" class="table table-striped tablesorter table-hover">
+        <div class="col s12">
+            <div class="section">
+                <h4>Unapproved Job Applications</h4>
+                <div class="divider bottom10"></div>
+                {% if job_list.count < 1 %}
+                    <p>
+                        <strong>No unapproved Job (FTE) application.</strong>
+                    </p>
+                    <p>
+                        All approved Job applications are available <a href="{% url 'admin-job-list' %}">here</a>
+                    </p>
+                {% else %}
+                    <table class="responsive-table centered">
                         <thead>
                             <tr>
-                                <th>Posted By</th>
-                                <th>Job Designation</th>
-                                <th>Openings</th>
-                                <th>Posted On</th>
+                                <th>Designation</th>
+                                <th>Profile</th>
+                                <th>Opening Date</th>
+                                <th>Deadline</th>
                                 <th>Details</th>
                             </tr>
                         </thead>
-                        <tbody class="searchable">
-                            {% for job in  job_list %}
+                        <tbody>
+                            {% for job in job_list %}
                                 <tr>
-                                    <td>{{ job.company_owner }}</td>
                                     <td>{{ job.designation }}</td>
-                                    <td>{{ job.num_openings }}</td>
-                                    <td>{{ job.posted_on }}</td>
+                                    <td>{{ job.profile_name }}</td>
+                                    <td>{{ job.opening_datetime }}</td>
+                                    <td>{{ job.application_deadline }}</td>
                                     <td>
-                                        <a href = "{% url 'admin-job-detail' job.id %}"
-                                           class="btn">Details</a>
+                                        <a href="{% url 'admin-job-detail' job.id %}" class="btn">Details</a>
                                     </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
-                    {% else %}
-                        <h5>No unapproved Job application requests.</h5>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

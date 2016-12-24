@@ -1,58 +1,92 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Admin | Event Detail {% endblock %}
+{% block page_title %} Event Detail {% endblock %}
 
-{% endblock%}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Event List</a>
+                <a class="breadcrumb">Event Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-{% block content %}
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Event Details</span>
-                    <table class="table table-responsive bordered">
-                        <tr>
-                            <td>Title</td>
-                            <td>{{event.title}}</td>
-                        </tr>
-                        <tr>
-                            <td>Event Type</td>
-                            <td>{{event.event_type}}</td>
-                        </tr>
-                        <tr>
-                            <td>Event Duration</td>
-                            <td>{{event.duration}} hour</td>
-                        </tr>
-                        <tr>
-                            <td>Logistics</td>
-                            <td>{{event.logistics}}</td>
-                        </tr>
-                        <tr>
-                            <td>Remark</td>
-                            <td>{{event.remark}}</td>
-                        </tr>
-                        <tr>
-                            <td>Approval Status</td>
-                            <td>{{event.is_approved}}</td>
-                        </tr>
-                        <tr>
-                            <td>Approved Date</td>
-                            <td>{{event.final_date}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="card-action">
-                     <div class="right-align">
-                        <a class="btn btn-primary pull-right"
-                                href="{% url 'admin-event-update' event.id %}">Edit Event</a>
+        <div class="col s12">
+            <div class="section">
+                <h4>Event Details</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Title
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.title }}
                     </div>
                 </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Event Type
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.event_type }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Event Duration
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.duration }} hour(s)
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Logistics
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.logistics | linebreaksbr}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Remark
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.remark | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.is_approved | yesno:"Approved, Rejected, Approval Pending" }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approved Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.final_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h4>Update Event</h4>
+                <div class="divider bottom10"></div>
+                <p><a href="{% url 'admin-event-update' event.id %}" class="btn">Update Event</a></p>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

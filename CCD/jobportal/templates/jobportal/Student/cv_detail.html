@@ -7,7 +7,7 @@
 {% block page_title %}CV{% endblock %}
 
 {% block breadcrumb %}
-<nav>
+<nav class="hide-on-small-and-down">
     <div class="container">
         <div class="nav-wrapper left">
             <div class="col s12">
@@ -25,14 +25,14 @@
         <div class="col s12">
             <div class="section">
                 <h4>CV</h4>
-                <div class="divider"></div>
-                {% if cv or not cv.cv1 and not cv.cv2 %}
+                <div class="divider bottom10"></div>
+                {% if not cv or not cv.cv1 and not cv.cv2 %}
                     <p><strong>You have not uploaded any CV.</strong></p>
                 {% else %}
                     {% if cv.cv1 %}
                         <div class="row model-field">
                             <div class="col l2 m3 s4 field-name">
-                                CV1 (Technical CV)
+                                <i class="material-icons left">insert_drive_file</i>CV1
                             </div>
                             <div class="col l10 m9 s8 field-value">
                                 <a href="{% url 'stud-cv-download' 1 %}">CV1</a>
@@ -42,10 +42,10 @@
                     {% if cv.cv2 %}
                         <div class="row model-field">
                             <div class="col l2 m3 s4 field-name">
-                                CV2 (Other CV)
+                                <i class="material-icons left">insert_drive_file</i>CV2
                             </div>
                             <div class="col l10 m9 s8 field-value">
-                                <a href="{% url 'stud-cv-download' 2 %}">CV1</a>
+                                <a href="{% url 'stud-cv-download' 2 %}">CV2</a>
                             </div>
                         </div>
                     {% endif %}

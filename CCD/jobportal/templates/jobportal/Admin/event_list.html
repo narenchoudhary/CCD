@@ -1,52 +1,62 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Admin | Event List {% endblock %}
+{% block page_title %} Event List {% endblock %}
 
-{% block content %}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Event List</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Event List</span>
-                    {% if event_list.count > 0 %}
-                        <table class="table bordered">
-                            <thead>
-                                <tr>
-                                    <th>Event Title</th>
-                                    <th>Company</th>
-                                    <th>Event Type</th>
-                                    <th>Duration</th>
-                                    <th>Approved</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for event in event_list %}
-                                <tr>
-                                    <td>{{event.title}}</td>
-                                    <td>{{event.company_owner}}</td>
-                                    <td>{{event.event_type}}</td>
-                                    <td>{{event.duration}}</td>
-                                    <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
-                                    <td>
-                                        <a href="{% url 'admin-event-detail' event.id %}"
-                                           class="btn">detail</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p>Bummer. There isn't anything here right now.</p>
-                    {% endif %}
-                </div>
+        <div class="col s12">
+            <div class="section">
+                <h4>Events</h4>
+                <div class="divider bottom10"></div>
+
+                {% if event_list.count < 1 %}
+                    <p><strong>No event has been added by any recruiter yet.</strong></p>
+                {% else %}
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Event Title</th>
+                                <th>Company</th>
+                                <th>Event Type</th>
+                                <th>Duration</th>
+                                <th>Approved</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in event_list %}
+                            <tr>
+                                <td>{{event.title}}</td>
+                                <td>{{event.company_owner}}</td>
+                                <td>{{event.event_type}}</td>
+                                <td>{{event.duration}}</td>
+                                <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
+                                <td>
+                                    <a href="{% url 'admin-event-detail' event.id %}"
+                                       class="btn">detail</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

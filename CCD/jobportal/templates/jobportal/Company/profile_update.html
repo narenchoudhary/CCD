@@ -1,80 +1,85 @@
-{% extends 'base_company.html' %}
-{% load material_form %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-    Recruiter | Update Profile
-{% endblock %}
+{% block title %} Recruiter | Update Profile {% endblock %}
 
-{% block custom_styles %}
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
-{% endblock %}
+{% block page_title %} Update Profile {% endblock %}
 
-{% block account_setting%}
-   <a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
-
-{% block content %}
-
-<div class="breadcrumbs">
-  <div>
-      <a href="{% url 'company-home' %}">Home</a> ⟩
-      <a href="{% url 'company-profile-detail' %}">ACCOUNT INFORMATION</a> ⟩
-      <a href="#">Update Profile</a>
-  </div>
-</div>
-
-<div class="row">
-   <div class="col s12 m12 l9">
-      <div class="card">
-        <div class="card-content">
-            <form method="post" accept-charset="utf-8"
-                  action="{% url 'company-profile-update' %}">
-                {% csrf_token %}
-                {% form %}
-                    {% part form.company_name prefix %}
-                        <i class="material-icons prefix">business</i>
-                    {% endpart %}
-                    {% part form.description prefix %}
-                        <i class="material-icons prefix">subject</i>
-                    {% endpart %}
-                    {% part form.postal_address prefix %}
-                        <i class="material-icons prefix">subject</i>
-                    {% endpart %}
-                    {% part form.website prefix %}
-                        <i class="material-icons prefix">web</i>
-                    {% endpart %}
-                    {% part form.office_contact_no prefix %}
-                        <i class="material-icons prefix">call</i>
-                    {% endpart %}
-                    {% part form.head_hr_name prefix %}
-                        <i class="material-icons prefix">account_box</i>
-                    {% endpart %}
-                    {% part form.head_hr_email prefix %}
-                        <i class="material-icons prefix">email</i>
-                    {% endpart %}
-                    {% part form.head_hr_mobile prefix %}
-                        <i class="material-icons prefix">phone_android</i>
-                    {% endpart %}
-                    {% part form.first_hr_name prefix %}
-                        <i class="material-icons prefix">account_box</i>
-                    {% endpart %}
-                    {% part form.first_hr_email prefix %}
-                        <i class="material-icons prefix">email</i>
-                    {% endpart %}
-                    {% part form.first_hr_mobile prefix %}
-                        <i class="material-icons prefix">phone_android</i>
-                    {% endpart %}
-                {% endform %}
-                <input type="submit" class="right-align btn btn-primary" value="Save">
-            </form>
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'company-profile-detail' %}" class="breadcrumb">Profile Detail</a>
+                <a class="breadcrumb">Update Profile</a>
+            </div>
         </div>
-      </div>
-   </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <form method="post" accept-charset="utf-8" class="col l8 m8 s12">
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            <div id="company" class="section scrollspy">
+                <h5>Company Information</h5>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.company_name icon='business' %}
+                {% include 'field_mdl.html' with field=form.description icon='subject' %}
+                {% include 'field_mdl.html' with field=form.postal_address icon='location_city' %}
+                {% include 'field_mdl.html' with field=form.website icon='web' %}
+                {% include 'field_mdl.html' with field=form.office_contact_no icon='call' %}
+                <div class="row">
+                    <div class="input-field col s6">
+                        <span class="red-text">{{ form.organization_type.errors }}</span>
+                        {{ form.organization_type }}
+                        {{ form.organization_type.label_tag }}
+                        <small>{{ form.organization_type.help_text }}</small>
+                    </div>
+                    <div class="input-field col s6">
+                        <span class="red-text">{{ form.industry_sector.errors }}</span>
+                        {{ form.industry_sector }}
+                        {{ form.industry_sector.label_tag }}
+                        <small>{{ form.industry_sector.help_text }}</small>
+                    </div>
+                </div>
+            </div>
+            <div id="poc1" class="section scrollspy">
+                <h5>First Point of Contact</h5>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.head_hr_name icon='account_box' %}
+                {% include 'field_mdl.html' with field=form.head_hr_email icon='email' %}
+                {% include 'field_mdl.html' with field=form.head_hr_mobile icon='phone_android' %}
+                {% include 'field_mdl.html' with field=form.head_hr_designation %}
+                {% include 'field_mdl.html' with field=form.head_hr_fax %}
+            </div>
+            <div id="poc2" class="section scrollspy">
+                <h5>Second Point of Contact</h5>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.first_hr_name icon='account_box' %}
+                {% include 'field_mdl.html' with field=form.first_hr_email icon='email' %}
+                {% include 'field_mdl.html' with field=form.first_hr_mobile icon='phone_android' %}
+                {% include 'field_mdl.html' with field=form.first_hr_designation %}
+                {% include 'field_mdl.html' with field=form.first_hr_fax %}
+            </div>
+            <button class="waves-effect waves-light btn " type="submit" name="_submit" >
+                Update
+            </button>
+        </form>
+        <div class="col l4 m4 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top" style="margin-left: 30px">
+                <ul class="section table-of-contents">
+                    <li><a href="#company">Company Information</a></li>
+                    <li><a href="#poc1">First Point of Contact</a></li>
+                    <li><a href="#poc2">Second Point of Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

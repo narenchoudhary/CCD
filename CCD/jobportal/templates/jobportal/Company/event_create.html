@@ -1,22 +1,55 @@
-{% extends 'base_company.html' %}
-{% load material_form %}
+{% extends 'base_company2.html' %}
 
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
+{% block title %} Recruiter | New Event {% endblock %}
+{% block page_title %} New Event {% endblock %}
 
-{% block title %}
-    Recruiter | New Event
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">New event</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-<a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
-
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>New Event Form</h4>
+                <p>
+                    <strong>
+                        If you are planning to do any Screening Test, Talk, seminar, Workshop,
+                        Promotional Event or any other Placements/Internships related Event at
+                        IIT Guwahati campus, you can submit an Event request by filling the form below.
+                    </strong>
+                </p>
+                <p>
+                    <strong>CCD representative will get in touch with you to confirm some other details.</strong>
+                </p>
+                <div class="divider bottom10"></div>
+                <form class="col l6 m6 s12" method="post" accept-charset="utf-8" action="">
+                    {% csrf_token %}
+                    {% for hidden in  forms.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% include 'field_mdl.html' with field=form.title %}
+                    {% include 'field_mdl.html' with field=form.event_type %}
+                    {% include 'field_mdl.html' with field=form.duration %}
+                    {% include 'field_mdl.html' with field=form.logistics %}
+                    {% include 'field_mdl.html' with field=form.remark %}
+                    <input class="btn" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 {% block content %}
 
 <div class="breadcrumbs">
@@ -43,9 +76,6 @@
                 <span class="card-title">Create event</span>
                 <form method="post" accept-charset="utf-8">
                     {% csrf_token %}
-                    {% form %}
-                        
-                    {% endform %}
                     <div class="card-action">
                         <div class="right-align">
                             <button class="btn btn-primary pull-right"

@@ -1,40 +1,150 @@
-{% extends 'base_admin.html' %}
-{% load material_form %}
+{% extends 'base_admin2.html' %}
 
-{% block custom_styles %}
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
+{% block title %} Admin | Students Details Download {% endblock %}
+{% block page_title %} Students Details Download {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Students Details Download</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
-
-{% block content %}
-<div class="row">
-    <div class="col s12 m8 l9">
-        <div class="card">
-            <div class="card-content">
-                <span class="card-title">Download Student Details</span>
-                <form method="post" accept-charset="utf-8"
-                      enctype="multipart/form-data"
-                      action="{% url 'admin-stud-list-download'%}">
-                    {% csrf_token %}
-                    {% form %}
-                    {% endform %}
-                    <div class="right-align">
-                        <button type="submit" name="_submit"
-                            class="waves-effect waves-light btn">
-                            Download</button>
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Download Student Details</h4>
+                <div class="divider bottom10"></div>
+                <form method="post" class="col l6 m8 s12">
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                <div id="basic-info" class="section scrollspy">
+                    <h5 class="subheader">Basic Information</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.name %}
+                        {% include 'field_mdl_col6.html' with field=form.roll_no %}
                     </div>
-                </form>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.iitg_webmail %}
+                        {% include 'field_mdl_col6.html' with field=form.sex %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.dob %}
+                        {% include 'field_mdl_col6.html' with field=form.category %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.hostel %}
+                        {% include 'field_mdl_col6.html' with field=form.room_no %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.nationality %}
+                        {% include 'field_mdl_col6.html' with field=form.pd_status %}
+                    </div>
+                </div>
+                <div id="contact" class="section scrollspy">
+                    <h5 class="subheader">Contact Information</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.alternative_email %}
+                        {% include 'field_mdl_col6.html' with field=form.mobile_campus %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.mobile_campus_alternative %}
+                        {% include 'field_mdl_col6.html' with field=form.mobile_home %}
+                    </div>
+                </div>
+                <div id="programmes" class="section scrollspy">
+                    <h5 class="subheader">Programmes</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.year %}
+                        {% include 'field_mdl_col6.html' with field=form.minor_year %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.dept %}
+                        {% include 'field_mdl_col6.html' with field=form.minor_dept %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.prog %}
+                        {% include 'field_mdl_col6.html' with field=form.minor_prog %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.discipline %}
+                        {% include 'field_mdl_col6.html' with field=form.minor_discipline %}
+                    </div>
+                </div>
+                <div id="schooling-academics" class="section scrollspy">
+                    <h5 class="subheader">Schooling Academics</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.board_x %}
+                        {% include 'field_mdl_col6.html' with field=form.board_xii %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.medium_x %}
+                        {% include 'field_mdl_col6.html' with field=form.medium_xii %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.passing_year_x %}
+                        {% include 'field_mdl_col6.html' with field=form.passing_year_xii %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.percentage_x %}
+                        {% include 'field_mdl_col6.html' with field=form.percentage_xii %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.jee_air_rank %}
+                        {% include 'field_mdl_col6.html' with field=form.rank_category %}
+                    </div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.gap_in_study %}
+                    </div>
+                </div>
+                <div id="grades" class="section scrollspy">
+                    <h5 class="subheader">Grades</h5>
+                    <div class="divider bottom10"></div>
+                    <div class="row">
+                        {% include 'field_mdl_col6.html' with field=form.cpi %}
+                        {% include 'field_mdl_col6.html' with field=form.active_backlogs %}
+                    </div>
+                    {% include 'field_mdl.html' with field=form.spi_1_sem %}
+                    {% include 'field_mdl.html' with field=form.spi_2_sem %}
+                    {% include 'field_mdl.html' with field=form.spi_3_sem %}
+                    {% include 'field_mdl.html' with field=form.spi_4_sem %}
+                    {% include 'field_mdl.html' with field=form.spi_5_sem %}
+                    {% include 'field_mdl.html' with field=form.spi_6_sem %}
+                </div>
+                <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                    <i class="material-icons left">file_download</i>Download
+                </button>
+            </form>
+                <div class="col l6 m4 hide-on-small-and-down fixed">
+                    <div class="toc-wrapper pin-top">
+                        <div class="section table-of-contents">
+                            <ul>
+                                <li><a href="#basic-info">Basic Information</a></li>
+                                <li><a href="#contact">Contact Information</a></li>
+                                <li><a href="#programmes">Programmes</a></li>
+                                <li><a href="#schooling-academics">Schooling & Academics</a></li>
+                                <li><a href="#grades">Grades</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+

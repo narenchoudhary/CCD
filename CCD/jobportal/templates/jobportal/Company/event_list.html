@@ -1,35 +1,57 @@
-{% extends 'base_company.html' %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-    Recruiter | All Events
+{% block title %} Recruiter | All Events {% endblock %}
+{% block page_title %} All Events {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">All Events</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-   <a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
-
-{% block content %}
-
-<div class="breadcrumbs">
-  <div>
-      <a href="{% url 'company-home' %}">Home</a>
-      <a href="#">Events and Status</a>
-  </div>
-</div>
-
-<div class="row">
-	<div class="col s12 m9 l9">
-    	<div class="card">
-    	    <div class="card-content">
-               {% if event_list.count > 0 %}
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>All Events</h4>
+                <p>
+                    <strong>
+                        If you are planning to do any Screening Test, Talk, seminar, Workshop,
+                        Promotional Event or any other Placements/Internships related Event at
+                        IIT Guwahati campus, you can submit an Event request
+                        <a href="{% url 'company-event-create' %}">here</a>.
+                    </strong>
+                </p>
+                <p>
+                    <strong>CCD representative will get in touch with you to confirm some other details.</strong>
+                </p>
+            </div>
+            <div class="divider bottom10"></div>
+            {% if event_list.count < 1 %}
+                <p>
+                    <strong>
+                        No Event request has been created from this account.
+                    </strong>
+                </p>
+            {% else %}
                 <table class="table bordered" id="result_list" role="grid">
                     <thead>
-                        <th>Event Title</th>
-                        <th>Event Type</th>
-                        <th>Estimated Duration</th>
-                        <th>Approval Status</th>
-                        <th>Details</th>
-                        <th>Update</th>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Event Type</th>
+                            <th>Estimated Duration</th>
+                            <th>Approval Status</th>
+                            <th>Details</th>
+                            <th>Update</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for event in event_list %}
@@ -39,8 +61,7 @@
                             <td>{{event.duration}} hour(s)</td>
                             <td>{{event.is_approved | yesno:"Approved, Rejected, Pending"}}</td>
                             <td>
-                                <a style="color:white;" class="btn btn-xs btn-info" role="button"
-                                   href="{% url 'company-event-detail' event.id %}">Details</a>
+                                <a class="btn" href="{% url 'company-event-detail' event.id %}">Details</a>
                             </td>
                             <td>
                                 {% if event.is_approved == None %}
@@ -48,15 +69,28 @@
                                        href="{% url 'company-event-update' event.id %}">
                                         Update</a>
                                 {% else %}
-                                    <button class="btn disabled"
-                                            title="Event has been approved. No changes possible now.">Update
-                                    </button>
+                                    <span class="tooltipped" data-positon="bottom"
+                                          data-tooltip="Event has been approved. No changes possible now.">Approved
+                                    </span>
                                 {%endif%}
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="row">
+	<div class="col s12 m9 l9">
+    	<div class="card">
+    	    <div class="card-content">
+               {% if event_list.count > 0 %}
+
                 {% else %}
                     <h5>
                         Bummer. There isn't anything here yet.

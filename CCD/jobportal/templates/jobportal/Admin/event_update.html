@@ -1,31 +1,58 @@
-{% extends 'base_admin.html' %}
-{% load material_form %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Admin | Update Event {% endblock %}
+{% block page_title %} Update Event {% endblock %}
 
-{% endblock%}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'admin-event-list' %}" class="breadcrumb">All Events</a>
+                <a href="{% url 'admin-event-detail' form.instance.id %}" class="breadcrumb">Event Detail</a>
+                <a class="breadcrumb">Update Event</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-{% block content %}
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <form action="{% url 'admin-event-update' event.id %}"
-                          method="post" accept-charset="utf-8">
-                    <div class="card-content">
-                        <span class="card-title">Event Update</span>
-                            {% csrf_token %}
-                            {% form %}
-                            {% endform %}
-                    </div>
-                    <div class="card-action">
-                        <div class="right-align">
-                            <button class="btn btn-primary pull-right"
-                                    type="submit">Save changes</button>
-                        </div>
-                    </div>
+        <div class="col s12">
+            <div class="section">
+                <h4>Update Event</h4>
+                <div class="divider bottom10"></div>
+                <div class="error-list">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li class="error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">
+                                <strong>Please correct the errors in the form below.</strong>
+                            </p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form class="col l6 m6 s12" accept-charset="utf-8" method="post" action="">
+                    {% csrf_token %}
+                    {% for hidden in  forms.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% include 'field_mdl.html' with field=form.title %}
+                    {% include 'field_mdl.html' with field=form.event_type %}
+                    {% include 'field_mdl.html' with field=form.duration %}
+                    {% include 'field_mdl.html' with field=form.logistics %}
+                    {% include 'field_mdl.html' with field=form.remark %}
+                    {% include 'field_mdl.html' with field=form.final_date %}
+                    {% include 'field_mdl.html' with field=form.is_approved %}
+                    <input class="btn" type="submit" value="Submit">
                 </form>
             </div>
         </div>

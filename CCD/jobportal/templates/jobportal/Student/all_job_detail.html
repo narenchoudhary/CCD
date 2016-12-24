@@ -6,7 +6,7 @@
 {% block page_title %} Job Application Detail {% endblock %}
 
 {% block breadcrumb %}
-<nav>
+<nav class="hide-on-small-and-down">
     <div class="container">
         <div class="nav-wrapper left">
             <div class="col s12">
@@ -226,7 +226,7 @@
                     </thead>
                     <tbody>
                         {% for prog in prog_list %}
-                            <tr {% if prog.minor_status %} class="orange lighten-3" {% endif %}>
+                            <tr {% if prog.prog.minor_status %} class="orange lighten-3" {% endif %}>
                                 <td>{{ prog.prog.year }}</td>
                                 <td>{{ prog.prog.name }}</td>
                                 <td>{{ prog.prog.dept }}</td>

@@ -1,10 +1,319 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 {% load humanize %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Admin | Job Detail {% endblock %}
+{% block page_title %} Job Detail {% endblock %}
 
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Jobs Applications</a>
+                <a class="breadcrumb">Job Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col l8 m8 s12">
+            <div id="basic-info" class="section scrollspy">
+                <h4>Basic Information</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.designation }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-small-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.description | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Profile Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.profile_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Number of Openings
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.num_openings }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Opening Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.opening_datetime | date:"d M Y h:i A"}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Closing date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.application_deadline | date:"d M Y h:i A"}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{job.approved | yesno:"Approved, Rejected, Approval Pending"}}
+                    </div>
+                </div>
+            </div>
+            <div id="eligibility" class="section scrollspy">
+                <h4>Eligibility</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CPI Shortlist
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.cpi_shortlist | yesno | capfirst }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Minimum CPI
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {% if job.cpi_shortlist %}
+                            {{ job.minimum_cpi }}
+                        {% else %}
+                            No CPI shortlisting
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage X
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.percentage_x }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage XII
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.percentage_xii }}
+                    </div>
+                </div>
+            </div>
+            <div id="salary" class="section scrollspy">
+                <h4>Salary Breakdown</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Currency
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.currency }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC B.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_btech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross B.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_btech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_mtech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.Tech.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_mtech }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.A
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_ma }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.A.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_ma }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC M.Sc.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_msc }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross M.Sc.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_msc }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CTC Ph.D.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.ctc_phd }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gross Ph.D.
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.gross_phd }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Additional Information
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.additional_info }}
+                    </div>
+                </div>
+            </div>
+            <div id="legal" class="section scrollspy">
+                <h4>Legal Document</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Legal Document
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {% if job.bond_link %}
+                            <a href="{% url 'company-job-download-bond' job.id %}" target="_blank" rel="noreferrer">
+                                Download Bond Document
+                            </a>
+                        {% else %}
+                            No bond document uploaded
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div id="update-job" class="section scrollspy">
+                <h4>Update Job Details</h4>
+                <div class="divider bottom10"></div>
+                <p><a class="btn" href="{% url 'admin-job-update' job.id %}">Update</a></p>
+            </div>
+            <div id="candidates" class="section scrollspy">
+                <h4>Candidates</h4>
+                <div class="divider bottom10"></div>
+                <p><a href="{% url 'admin-jobrel-list' job.id %}" class="btn btn-primary">View Candidates</a></p>
+            </div>
+            <div id="programmes" class="section scrollspy">
+                <h4>Open Programmes</h4>
+                <div class="divider bottom10"></div>
+                {% if rel_list.count < 1 %}
+                    <p class="red-text">
+                        <strong>No programme has been selected by Recruiter for this Job application yet.</strong>
+                    </p>
+                    <p>
+                        <a href="{% url 'company-job-jobprog-create' job.id %}" class="btn">
+                            <i class="material-icons left">add</i> Add Programmes
+                        </a>
+                    </p>
+                {% else %}
+                    <p><strong>
+                        This Job application is open for {{ rel_list.count }} programmes.
+                    </strong></p>
+                    <p>
+                        <a href="{% url 'company-job-jobprog-create' job.id %}" class="btn">
+                            <i class="material-icons left">add</i> Add Programmes
+                        </a>
+                    </p>
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Year of Passing</th>
+                                <th>Department</th>
+                                <th>Programme</th>
+                                <th>Minor/Major</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ rel.prog.year_passing }}</td>
+                                    <td>{{ rel.prog.dept }}</td>
+                                    <td>{{ rel.prog.name }}</td>
+                                    <td>{{ rel.prog.minor_status | yesno:"Minor, Major" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col l4 m4 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <div class="section table-of-contents">
+                    <ul>
+                        <li><a href="#basic-info">Basic Information</a></li>
+                        <li><a href="#eligibility">Eligibility</a></li>
+                        <li><a href="#salary">Salary Breakdown</a></li>
+                        <li><a href="#legal">Legal Document</a></li>
+                        <li><a href="#update-job">Edit Job Details</a></li>
+                        <li><a href="#candidates">View Candidate List</a></li>
+                        <li><a href="#programmes">Open Programmes</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 {% block content %}
 
 <div class="row">

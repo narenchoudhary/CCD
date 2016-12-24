@@ -1,52 +1,66 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Admin | Signup Requests {% endblock %}
+{% block page_title %} Signup Requests {% endblock %}
 
-{% block content %}
-
-<div class="row">
-
-    <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Signup Requests</span>
-                    {% if company_list.count > 0 %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Company Name</th>
-                                    <th>Username</th>
-                                    <th>Head HR Email</th>
-                                    <th>Head HR Mobile</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody class="searchable">
-                                {% for company in company_list %}
-                                    <tr>
-                                        <td>{{ company.company_name }}</td>
-                                        <td>{{ company.user.username}}</td>
-                                        <td>{{ company.head_hr_email }}</td>
-                                        <td>{{ company.head_hr_mobile }}</td>
-                                        <td>
-                                            <a class="btn btn-info btn-xs"
-                                               href = "{% url 'admin-company-detail' company.id %}">
-                                                Request Profile</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <h5>No new signup request.</h5>
-                    {% endif %}
-                </div>
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Signup Requests</a>
             </div>
         </div>
     </div>
+</nav>
+{% endblock %}
 
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Recruiter Signup Requests</h4>
+                <div class="divider bottom10"></div>
+                {% if company_list.count < 1 %}
+                    <p>
+                        <strong>
+                            No pending signup requests.
+                        </strong>
+                    </p>
+                {% else %}
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Username</th>
+                                <th>Name</th>
+                                <th>1st Poc Name</th>
+                                <th>1st Poc Mobile</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in company_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ company.user.username }}</td>
+                                    <td>{{ company.company_name }}</td>
+                                    <td>{{ company.head_hr_name }}</td>
+                                    <td>{{ company.head_hr_mobile }}</td>
+                                    <td>
+                                        <a class="btn" href="{% url 'admin-company-detail' company.id %}">
+                                            Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

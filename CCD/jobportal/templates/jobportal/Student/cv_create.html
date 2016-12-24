@@ -4,7 +4,7 @@
 {% block page_title %}Upload CVs{% endblock %}
 
 {% block breadcrumb %}
-<nav>
+<nav class="hide-on-small-and-down">
     <div class="container">
         <div class="nav-wrapper left">
             <div class="col s12">
@@ -24,23 +24,50 @@
             <div class="section">
                 <h4>Upload CVs</h4>
                 <div class="divider bottom10"></div>
+                <div class="error-alert">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li class="error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">Please correct the errors as shown in the form.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
                 <form enctype="multipart/form-data" method="post" accept-charset="utf-8" action="">
                     {% csrf_token %}
-                    {% for field in  form %}
-                        <div class="row">
-                            <div class="input-field file-field col s12">
-                                <span class="red-text">{{ field.error }}</span>
-                                <label for="{{ field.id_for_label }}"></label>
-                                    <div class="btn">
-                                        <span>{{ field.label }}</span>
-                                        <input type="file">
-                                    </div>
-                                <div class="file-path-wrapper">
-                                    <input id="{{ field.id_for_label }}" class="file-path validate" type="text">
-                                </div>
-                            </div>
-                        </div>
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
                     {% endfor %}
+                    <div class="row">
+                        <div class="file-field input-field col s12">
+                            <span class="red-text">{{ form.cv1.errors}}</span>
+                            <div class="btn">
+                                <span><i class="material-icons left">file_upload</i>CV1</span>
+                                <input type="file" name="cv1">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path" id="{{ form.cv1.id_for_label }}" type="text">
+                            </div>
+                            <small>{{ form.cv1.help_text }}</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="file-field input-field col s12">
+                            <span class="red-text">{{ form.cv1.errors}}</span>
+                            <div class="btn">
+                                <span><i class="material-icons left">file_upload</i>CV2</span>
+                                <input type="file" name="cv2">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path" id="{{ form.cv2.id_for_label }}" type="text">
+                            </div>
+                            <small>{{ form.cv1.help_text }}</small>
+                        </div>
+                    </div>
                     <input type="submit" class="btn" value="Upload">
                 </form>
             </div>

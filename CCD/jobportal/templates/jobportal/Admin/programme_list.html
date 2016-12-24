@@ -1,53 +1,70 @@
-{% extends 'base_admin.html' %}
+{% extends 'base_admin2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Admin | Programme List {% endblock %}
+{% block page_title %} All Programmes {% endblock %}
 
-{% endblock%}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Programmes</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-{% block content %}
-
-<div class="row">
-
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">All programmes</span>
-                    {% if programme_list.count > 0 %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Department</th>
-                                    <th>Programme</th>
-                                    <th>Minor</th>
-                                    <th>Edit</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for programme in programme_list %}
+        <div class="col s12">
+            <div class="section">
+                <h4>All Programmes</h4>
+                <div class="divider bottom10"></div>
+
+                {% if programme_list.count < 1 %}
+                    <p>
+                        <strong>
+                            No programme has been added yet.
+                        </strong>
+                    </p>
+                {% else %}
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Year of Admission</th>
+                                <th>Programme</th>
+                                <th>Department</th>
+                                <th>Discipline</th>
+                                <th>Major/Minor</th>
+                                <th>Open for Placement</th>
+                                <th>Open for Internship</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for programme in programme_list %}
                                 <tr>
                                     <td>{{ programme.year }}</td>
-                                    <td>{{ programme.dept }}</td>
                                     <td>{{ programme.name }}</td>
-                                    <td>{{ programme.minor_status | yesno }}</td>
-                                    <td>
-                                        <a href="{% url 'programme-update' programme.id %}"
-                                           class="btn" >Edit</a>
-                                    </td>
+                                    <td>{{ programme.dept }}</td>
+                                    <td>{{ programme.discipline }}</td>
+                                    <td>{{ programme.minor_status | yesno:"Minor, Major" }}</td>
+                                    <td>{{ programme.open_for_placement | yesno | capfirst }}</td>
+                                    <td>{{ programme.open_for_internship | yesno | capfirst }}</td>
                                 </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <h5>No programme added yet.</h5>
-                    {% endif %}
-                </div>
-                <div class="card-action">
-                    <a class="btn"
-                       href="{% url 'programme-create' %}">Add a new Programme</a>
-                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+            <div class="section">
+                <h4>Create New Programme</h4>
+                <div class="divider bottom10"></div>
+                <p>
+                    <a class="btn" href="{% url 'programme-create' %}">Add a New Programme</a>
+                </p>
             </div>
         </div>
     </div>

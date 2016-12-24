@@ -5,7 +5,7 @@
 {% block page_title %} Update Profile {% endblock %}
 
 {% block breadcrumb %}
-<nav>
+<nav class="hide-on-small-and-down">
     <div class="container">
         <div class="nav-wrapper left">
             <div class="col s12">
@@ -27,7 +27,7 @@
             <ol>
                 <li>
                     <strong>
-                        This is a lengthy form. So please make sure you fill all the fields.
+                        This form is slightly lengthy so please make sure you don't miss any field.
                     </strong>
                 </li>
                 <li>
@@ -44,11 +44,18 @@
                 </li>
             </ol>
             <div class="divider bottom10"></div>
-            {% if form.errors %}
-                <p class="red-text">Please correct the errors in the form.</p>
-            {% endif %}
-            <div>
-                {{ form.non_field_errors }}
+            <div class="error-alert">
+                {% if form.errors %}
+                    {% if form.non_field_errors %}
+                        <ul>
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="red-text">Please correct the errors as shown in the form.</p>
+                    {% endif %}
+                {% endif %}
             </div>
             <form method="post" class="col l8 m8 s12">
                 {% csrf_token %}
@@ -58,209 +65,48 @@
                 <div id="basic-info" class="section scrollspy">
                     <h5 class="subheader">Basic Information</h5>
                     <div class="divider bottom10"></div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.dob.errors }}</span>
-                            {{ form.dob }}
-                            {{ form.dob.label_tag }}
-                            {% if form.dob.help_text %}<p>{{ form.dob.help_text }}</p>{% endif %}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.hostel.errors }}</span>
-                            {{ form.hostel }}
-                            {{ form.hostel.label_tag }}
-                            {% if form.hostel.help_text %}<p>{{ form.hostel.help_text }}</p>{% endif %}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.room_no.errors }}</span>
-                            {{ form.room_no }}
-                            {{ form.room_no.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.alternative_email.errors }}</span>
-                            {{ form.alternative_email }}
-                            {{ form.alternative_email.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.mobile_campus.errors }}</span>
-                            {{ form.mobile_campus }}
-                            {{ form.mobile_campus.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.mobile_campus_alternative.errors }}</span>
-                            {{ form.mobile_campus_alternative }}
-                            {{ form.mobile_campus_alternative.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.mobile_home.errors }}</span>
-                            {{ form.mobile_home }}
-                            {{ form.mobile_home.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.linkedin_link.errors }}</span>
-                            {{ form.linkedin_link }}
-                            {{ form.linkedin_link.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.pd_status.errors }}</span>
-                            {{ form.pd_status }}
-                            {{ form.pd_status.label_tag }}
-                        </div>
-                    </div>
+                    {% include 'field_mdl.html' with field=form.dob %}
+                    {% include 'field_mdl.html' with field=form.hostel %}
+                    {% include 'field_mdl.html' with field=form.room_no %}
+                    {% include 'field_mdl.html' with field=form.alternative_email %}
+                    {% include 'field_mdl.html' with field=form.mobile_campus %}
+                    {% include 'field_mdl.html' with field=form.mobile_campus_alternative %}
+                    {% include 'field_mdl.html' with field=form.mobile_home %}
+                    {% include 'field_mdl.html' with field=form.linkedin_link %}
+                    {% include 'field_mdl.html' with field=form.pd_status %}
                 </div>
                 <div id="address" class="section scrollspy">
                     <h5 class="subheader">Address</h5>
                     <div class="divider bottom10"></div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.address_line1.errors }}</span>
-                            {{ form.address_line1 }}
-                            {{ form.address_line1.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.address_line2.errors }}</span>
-                            {{ form.address_line2 }}
-                            {{ form.address_line2.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.address_line3.errors }}</span>
-                            {{ form.address_line3 }}
-                            {{ form.address_line3.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                        <span class="red-text">{{ form.pin_code.errors }}</span>
-                            {{ form.pin_code }}
-                            {{ form.pin_code.label_tag }}
-                        </div>
-                    </div>
+                    {% include 'field_mdl.html' with field=form.address_line1 %}
+                    {% include 'field_mdl.html' with field=form.address_line2 %}
+                    {% include 'field_mdl.html' with field=form.address_line3 %}
+                    {% include 'field_mdl.html' with field=form.pin_code %}
                 </div>
                 <div id="schooling" class="section scrollspy">
                     <h5 class="subheader">Schooling</h5>
                     <div class="divider bottom10"></div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.board_x.errors }}</span>
-                            {{ form.board_x }}
-                            {{ form.board_x.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.medium_x.errors }}</span>
-                            {{ form.medium_x }}
-                            {{ form.medium_x.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.passing_year_x.errors }}</span>
-                            {{ form.passing_year_x }}
-                            {{ form.passing_year_x.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.percentage_x.errors }}</span>
-                            {{ form.percentage_x }}
-                            {{ form.percentage_x.label_tag }}
-                            {% if form.percentage_x.help_text %}<p>{{ form.percentage_x.help_text }}</p>{% endif %}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.board_xii.errors }}</span>
-                            {{ form.board_xii }}
-                            {{ form.board_xii.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.medium_xii.errors }}</span>
-                            {{ form.medium_xii }}
-                            {{ form.medium_xii.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.passing_year_xii.errors }}</span>
-                            {{ form.passing_year_xii }}
-                            {{ form.passing_year_xii.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.percentage_xii.errors }}</span>
-                            {{ form.percentage_xii }}
-                            {{ form.percentage_xii.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.gap_in_study.errors }}</span>
-                            {{ form.gap_in_study }}
-                            {{ form.gap_in_study.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.gap_reason.errors }}</span>
-                            {{ form.gap_reason }}
-                            {{ form.gap_reason.label_tag }}
-                        </div>
-                    </div>
+                    {% include 'field_mdl.html' with field=form.board_x %}
+                    {% include 'field_mdl.html' with field=form.medium_x %}
+                    {% include 'field_mdl.html' with field=form.passing_year_x %}
+                    {% include 'field_mdl.html' with field=form.percentage_x %}
+                    {% include 'field_mdl.html' with field=form.board_xii %}
+                    {% include 'field_mdl.html' with field=form.medium_xii %}
+                    {% include 'field_mdl.html' with field=form.passing_year_xii %}
+                    {% include 'field_mdl.html' with field=form.percentage_xii %}
+                    {% include 'field_mdl.html' with field=form.gap_in_study %}
+                    {% include 'field_mdl.html' with field=form.gap_reason %}
                 </div>
                 <div id="academics" class="section scrollspy">
                     <h5 class="subheader">Academics</h5>
                     <div class="divider bottom10"></div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.active_backlogs.errors }}</span>
-                            {{ form.active_backlogs }}
-                            {{ form.active_backlogs.label_tag }}
-                            {% if form.active_backlogs.help_text %}<p>{{ form.dob.help_text }}</p>{% endif %}
-                        </div>
-                    </div>
+                    {% include 'field_mdl.html' with field=form.active_backlogs %}
                 </div>
                 <div id="clearance" class="section scrollspy">
                     <h5 class="subheader">Clearance Exam</h5>
                     <div class="divider bottom10"></div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.jee_air_rank.errors }}</span>
-                            {{ form.jee_air_rank }}
-                            {{ form.jee_air_rank.label_tag }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <span class="red-text">{{ form.rank_category.errors }}</span>
-                            {{ form.rank_category }}
-                            {{ form.rank_category.label_tag }}
-                            {% if form.rank_category.help_text %}<p>{{ form.rank_category.help_text }}</p>{% endif %}
-                        </div>
-                    </div>
+                    {% include 'field_mdl.html' with field=form.jee_air_rank %}
+                    {% include 'field_mdl.html' with field=form.rank_category %}
                 </div>
                 <div id="grades" class="section scrollspy">
                     <h5 class="subheader">Grades</h5>

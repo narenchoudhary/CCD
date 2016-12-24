@@ -1,11 +1,514 @@
-{% extends 'base_admin.html' %}
-{% load staticfiles %}
+{% extends 'base_admin2.html' %}
+{% load static %}
 
+{% block title %} Admin | Stduent Detail {% endblock %}
+{% block page_title %} Student Detail {% endblock %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Search Students</a>
+                <a class="breadcrumb">Student Detail</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col l8 m9 s12">
+            <div id="basic-info" class="section scrollspy">
+                <h4 class="header">Basic Information</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Web Mail
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.iitg_webmail }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Roll No
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.roll_no }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gender
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.sex }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Date Of Birth
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.dob | default_if_none:"" }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Nationality
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.nationality }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Category
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.category }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Hostel
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.hostel }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Room No
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.room_no }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Alternate Email
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.alternative_email }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Mobile (Campus)
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.mobile_campus }}
+                    </div>
+                </div><div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Mobile (Campus Alternative)
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.mobile_campus_alternative }}
+                    </div>
+                </div><div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Mobile (Home)
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.mobile_home }}
+                    </div>
+                </div><div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        LinkedIn Account Public URL
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.linkedin_link }}
+                    </div>
+                </div><div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Public Disability Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.pd_status }}
+                    </div>
+                </div>
+            </div>
+            <div id="address" class="section scrollspy">
+                <h4 class="header">Address</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Permanent Address Line1
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.address_line1 }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Permanent Address Line2
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.address_line2 }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Permanent Address Line3
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.address_line3 }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        PIN Code
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.pin_code }}
+                    </div>
+                </div>
+            </div>
+            <div id="schooling" class="section scrollspy">
+                <h4>Schooling</h4>
+                <div class="divider"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage X / CGPA X
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.percentage_x }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        X Examination Board
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.board_x }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        X Examination Medium
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.medium_x }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Percentage XII / CGPA XII
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.percentage_xii }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        XII Examination Board
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.board_xii }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        XII Examination Medium
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.medium_xii }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Gap In Study
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.gap_in_study | yesno }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Reason for Gap in Study
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.gap_reason }}
+                    </div>
+                </div>
+            </div>
+            <div id="academic" class="section scrollspy">
+                <h4 class="header">Academics</h4>
+                <div class="divider"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Major Year (Year of Admission)
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.year }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Major Department
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.dept }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Major Programme
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.prog }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Major Discipline
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.discipline }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Minor Department
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.minor_dept | default_if_none:""}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Minor Programme
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.minor_prog | default_if_none:""}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Minor Discipline
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.minor_discipline|default_if_none:""}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Number of Active Backlogs
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.active_backlogs }}
+                    </div>
+                </div>
+            </div>
+            <div id="clearance" class="section scrollspy">
+                <h4>Clearance Exam</h4>
+                <div class="divider"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        JEE/MA Exam Rank:
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.jee_air_rank }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Rank Category:
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.rank_category }}
+                    </div>
+                </div>
+            </div>
+            <div id="grades" class="section scrollspy">
+                <h4>CPI</h4>
+                <div class="divider"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        CPI
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.cpi }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 1st Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_1_sem }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 2nd Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_2_sem }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 3rd Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_3_sem }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 4th Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_4_sem }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 5th Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_5_sem }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        SPI 6th Sem
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.spi_6_sem }}
+                    </div>
+                </div>
+            </div>
+            <div id="cv" class="section scrollspy">
+                <h4>CV</h4>
+                <div class="divider bottom10"></div>
+                {% if not cv or not cv.cv1 and not cv.cv2 %}
+                    <p><strong>Student has not uploaded any CV yet.</strong></p>
+                {% else %}
+                    {% if cv.cv1 %}
+                        <div class="row model-field">
+                            <div class="col l2 m3 s4 field-name">
+                                <i class="material-icons left">insert_drive_file</i>CV1
+                            </div>
+                            <div class="col l10 m9 s8 field-value">
+                                <a href="{% url 'stud-cv-download' 1 %}">CV1</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if cv.cv2 %}
+                        <div class="row model-field">
+                            <div class="col l2 m3 s4 field-name">
+                                <i class="material-icons left">insert_drive_file</i>CV2
+                            </div>
+                            <div class="col l10 m9 s8 field-value">
+                                <a href="{% url 'stud-cv-download' 2 %}">CV2</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div id="avatar" class="section scrollspy">
+                <h4>Avatar</h4>
+                <div class="divider bottom10"></div>
+                {% if avatar.avatar %}
+                    <p><img class="responsive-img" src="{{avatar.avatar.thumbnail.400x400}}"></p>
+                {% else %}
+                    <p><strong>Not avatar found for this profile.</strong></p>
+                {% endif %}
+            </div>
+            <div id="sign" class="section scrollspy">
+                <h4>Signature</h4>
+                <div class="divider bottom10"></div>
+                {% if sign.signature %}
+                    <p><img class="responsive-img" src="{{ sign.signature.url }}"></p>
+                {% else %}
+                    <p>No signature found for this profile.</p>
+                {% endif %}
+            </div>
+            <div id="account-status" class="section scrollspy">
+                <h4>Account Status</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ student.user.is_active | yesno | capfirst }}
+                    </div>
+                </div>
+            </div>
+            <div id="applications" class="section scrollspy">
+                <h4>Job Applications</h4>
+                <div class="divider bottom10"></div>
+                {% if rel_list.count < 1 %}
+                    <p><strong>Student has not applied for any Job application yet.</strong></p>
+                {% else %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recruiter</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                                <th>CV1/CV2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{rel.job.company_owner}}</td>
+                                    <td>{{rel.job.designation}}</td>
+                                    <td>Status</td>
+                                    <td>
+                                        {% if rel.cv1 %}
+                                            CV1
+                                        {% elif rel.cv2 %}
+                                            CV2
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col l4 m3 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <div class="section table-of-contents">
+                    <ul>
+                        <li><a href="#basic-info">Basic Information</a></li>
+                        <li><a href="#address">Address</a></li>
+                        <li><a href="#schooling">Schooling</a></li>
+                        <li><a href="#academic">Academics</a></li>
+                        <li><a href="#clearance">Clearance Exam</a></li>
+                        <li><a href="#grades">Grades</a></li>
+                        <li><a href="#cv">CV</a></li>
+                        <li><a href="#avatar">Avatar</a></li>
+                        <li><a href="#sign">Signature</a></li>
+                        <li><a href="#account-status">Account Status</a></li>
+                        <li><a href="#applications">Job Applications</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 {% block content %}
 
 <div class="row">

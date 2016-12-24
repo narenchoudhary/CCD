@@ -1,0 +1,201 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="description" content="Centre for Career Development IIT Guwahati">
+    <title>Recruiter | Register </title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <style>
+        .toc-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav>
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="{% url 'login' %}" class="brand-logo">CCD</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="section">
+                    <h4>Recruiters' Registration Form</h4>
+                    <p><strong>Notes</strong></p>
+                    <ol>
+                        <li>
+                            <strong>
+                                This form is slightly lengthy so please make sure you don't miss
+                                any field.
+                            </strong>
+                        </li>
+                        <li>
+                            <strong>
+                                We review the registration information before approving the login credentials.
+                                You will receive a mail from us regarding your login approval status.
+                            </strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="error-alert">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">Please correct the errors as shown in the form.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form method="post" accept-charset="utf-8"
+                      action="{% url 'company-signup' %}" class="col l8 m8 s12">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div id="login-credentials" class="section scrollspy">
+                        <h5>Login Credentials</h5>
+                        <div class="divider bottom10"></div>
+                        {% include 'field_mdl.html' with field=form.username icon='account_circle' %}
+                        {% include 'field_mdl.html' with field=form.password1 icon='lock' %}
+                        {% include 'field_mdl.html' with field=form.password2 icon='lock' %}
+                    </div>
+                    <div id="company" class="section scrollspy">
+                        <h5>Company Information</h5>
+                        <div class="divider bottom10"></div>
+                        {% include 'field_mdl.html' with field=form.company_name icon='business' %}
+                        {% include 'field_mdl.html' with field=form.description icon='subject' %}
+                        {% include 'field_mdl.html' with field=form.postal_address icon='location_city' %}
+                        {% include 'field_mdl.html' with field=form.website icon='web' %}
+                        {% include 'field_mdl.html' with field=form.office_contact_no icon='call' %}
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <span class="red-text">{{ form.organization_type.errors }}</span>
+                                {{ form.organization_type }}
+                                {{ form.organization_type.label_tag }}
+                                <small>{{ form.organization_type.help_text }}</small>
+                            </div>
+                            <div class="input-field col s6">
+                                <span class="red-text">{{ form.industry_sector.errors }}</span>
+                                {{ form.industry_sector }}
+                                {{ form.industry_sector.label_tag }}
+                                <small>{{ form.industry_sector.help_text }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="poc1" class="section scrollspy">
+                        <h5>First Point of Contact</h5>
+                        <div class="divider bottom10"></div>
+                        {% include 'field_mdl.html' with field=form.head_hr_name icon='account_box' %}
+                        {% include 'field_mdl.html' with field=form.head_hr_email icon='email' %}
+                        {% include 'field_mdl.html' with field=form.head_hr_mobile icon='phone_android' %}
+                        {% include 'field_mdl.html' with field=form.head_hr_designation %}
+                        {% include 'field_mdl.html' with field=form.head_hr_fax %}
+                    </div>
+                    <div id="poc2" class="section scrollspy">
+                        <h5>Second Point of Contact</h5>
+                        <div class="divider bottom10"></div>
+                        {% include 'field_mdl.html' with field=form.first_hr_name icon='account_box' %}
+                        {% include 'field_mdl.html' with field=form.first_hr_email icon='email' %}
+                        {% include 'field_mdl.html' with field=form.first_hr_mobile icon='phone_android' %}
+                        {% include 'field_mdl.html' with field=form.first_hr_designation %}
+                        {% include 'field_mdl.html' with field=form.first_hr_fax %}
+                    </div>
+                    <button class="waves-effect waves-light btn " type="submit" name="_submit" >
+                        Register
+                    </button>
+                </form>
+                <div class="col l4 m4 hide-on-small-and-down fixed">
+                    <div class="toc-wrapper pin-top" style="margin-left: 30px">
+                        <ul class="section table-of-contents">
+                            <li><a href="#login-credentials">Login Credentials</a></li>
+                            <li><a href="#company">Company Information</a></li>
+                            <li><a href="#poc1">First Point of Contact</a></li>
+                            <li><a href="#poc2">Second Point of Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer fixed grey darken-1">
+	<div class="container">
+		<div class="row">
+			<div class="col l6 s12">
+				<h5 class="white-text">CCD, IIT Guwahati</h5>
+				<p class="white-text">
+                    Lorem ipsum dolor sit amet, duis congue eligendi et eum,
+                    doctus timeam fabellas an pri, augue molestie reformidans
+                    nec ut. Vix solet detraxit te. Sit ne zril invidunt.
+                    Fabellas sapientem neglegentur vel te. Tacimates sensibus
+                    mediocritatem qui ut, eu per porro erroribus percipitur,
+                    eius mediocrem id has. Antiopam vulputate inciderint ex.
+				</p>
+			</div>
+			<div class="col l3 s12">
+				<h5 class="white-text">Header</h5>
+				<ul>
+					<li><a class="white-text" href="#">Link1</a></li>
+					<li><a class="white-text" href="#">Link2</a></li>
+				</ul>
+			</div>
+			<div class="col l3 s12">
+				<h5 class="white-text">Connect</h5>
+				<ul>
+					<li><a class="white-text" href="#">Link1</a></li>
+					<li><a class="white-text" href="#">Link2</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="divider"></div>
+		<div class="row">
+			<div class="col l12 m12 s12">
+				<p class="grey-text darken-4">Designed and built by
+					<span class="white-text">Narendra Choudhary</span>
+					and maintained by the
+                    <span class="white-text">Academic Initiatives Club.</span>
+			</div>
+		</div>
+	</div>
+	<div class="footer-copyright grey darken-4">
+		<div class="container">
+			&copy; 2016 IIT Guwahati.
+		</div>
+	</div>
+</footer>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+<script>
+    $(document).ready(function(){
+	    $('select').material_select();
+		$('.toc-wrapper').pushpin({
+			top: 250
+		});
+		$('.scrollspy').scrollSpy();
+	});
+</script>
+</body>
+</html>

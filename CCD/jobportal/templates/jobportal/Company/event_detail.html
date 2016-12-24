@@ -1,12 +1,89 @@
-{% extends 'base_company.html' %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-Recruiter | Event
+{% block title %} Recruiter | Event {% endblock %}
+{% block page_title %} Event Details {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'company-event-list' %}" class="breadcrumb">Event List</a>
+                <a class="breadcrumb">Event Details</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-<a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Event Details</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Title
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.title }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Event Type
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.event_type }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Event Duration
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.duration }} hour(s)
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Logistics
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.logistics | linebreaksbr}}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Remark
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ event.remark }}
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h4>Update Event</h4>
+                <div class="divider bottom10"></div>
+                {% if event.is_approved != None %}
+                    <p>
+                        <strong>
+                            This event has already been approved by CCD administrator.
+                            No change can be made now.
+                        </strong>
+                    </p>
+                {% else %}
+                    <p><a href="{% url 'company-event-update' event.id %}" class="btn">Update Event</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 
 {% block content %}
 

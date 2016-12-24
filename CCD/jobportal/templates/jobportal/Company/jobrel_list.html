@@ -1,22 +1,106 @@
-{% extends 'base_company.html' %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-    Recruiter | Candidate List
+{% block title %} Recruiter | Candidate List {% endblock %}
+
+{% block page_title %} Candidate List {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'company-job-list' %}" class="breadcrumb">All Job Applications</a>
+                <a class="breadcrumb">Job Details</a>
+                <a class="breadcrumb">Candidate Details</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-
-{% endblock%}
-
-{% block content %}
-<div class="breadcrumbs">
-    <div>
-        <a href="{% url 'company-home' %}">Home</a> ⟩
-        <a href="{% url 'company-job-detail' jobid %}">Job Details</a> ⟩
-        <a href="{% url 'company-jobrel-list' jobid %}">Candidate List</a>
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Candidate Details</h4>
+                <div class="divider bottom10"></div>
+                {% if rel_list.count < 1 %}
+                    <p>
+                        <strong>
+                            No student has yet applied for this position.
+                        </strong>
+                    </p>
+                {% else %}
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Programme</th>
+                                <th>Department</th>
+                                <th>Shortlist</th>
+                                <th>Place</th>
+                                <th>Placement Status</th>
+                                <th>CV</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rel in rel_list %}
+                                <tr>
+                                    <td>{{ rel.student.name }}</td>
+                                    <td>{{ rel.stud.prog }}</td>
+                                    <td>{{ rel.stud.dept}}</td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            <button class="btn tooltipped disabled-button" data-position="bottom"
+                                                    data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
+                                                Shortlist
+                                            </button>
+                                        {% else %}
+                                            {% if rel.stud.placed %}
+                                                NOT AVAILABLE
+                                            {% else %}
+                                                {% if rel.shortlist_init %}
+                                                    <button class="btn disabled tooltipped" data-position="bottom"
+                                                            data-tooltip="Candidate was shortlisted on {{rel.shortlist_init_datetime}}">
+                                                        Shortlisted</button>
+                                                {% else %}
+                                                    <a class="btn tooltipped" data-position="bottom"
+                                                       href="{% url 'company-jobrel-shortlist' rel.job.id rel.id %}"
+                                                       data-tooltip="Shortlist this candidate">
+                                                        Shortlist</a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rel.placed_init %}
+                                            <a class="btn disabled tooltipped" data-position="bottom"
+                                               data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
+                                                Selected
+                                            </a>
+                                        {% else %}
+                                            {% if rel.stud.placed %}
+                                                NOT AVAILABLE
+                                            {% else %}
+                                                <a href="{% url 'company-jobrel-place' rel.job.id rel.id %}"
+                                               class="btn" >Place</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block content %}
 <div class="row">
     <div class="row">
         <div class="col s12 m12 l12">
@@ -55,27 +139,7 @@
                                         <td>{{ rel.stud.prog }}</td>
                                         <td>{{ rel.stud.dept}}</td>
                                         <td>
-                                            {% if rel.placed_init %}
-                                                <button class="btn disabled tooltipped" data-position="bottom"
-                                                        data-tooltip="Candidate was selected on {{rel.placed_init_datetime}}">
-                                                    Shortlist
-                                                </button>
-                                            {% else %}
-                                                {% if rel.stud.placed %}
-                                                    NOT AVAILABLE
-                                                {% else %}
-                                                    {% if rel.shortlist_init %}
-                                                        <button class="btn disabled tooltipped" data-position="bottom"
-                                                                data-tooltip="Candidate was shortlisted on {{rel.shortlist_init_datetime}}">
-                                                            Shortlisted</button>
-                                                    {% else %}
-                                                        <a class="btn tooltipped" data-position="bottom"
-                                                           href="{% url 'company-jobrel-shortlist' rel.job.id rel.id %}"
-                                                           data-tooltip="Shortlist this candidate">
-                                                            Shortlist</a>
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endif %}
+
                                         </td>
                                         <td>
                                             {% if rel.placed_init %}

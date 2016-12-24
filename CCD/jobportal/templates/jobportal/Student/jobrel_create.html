@@ -1,16 +1,64 @@
-{% extends 'base_student.html' %}
-{% load material_form %}
+{% extends 'base_student2.html' %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
-{% endblock%}
+{% block title %} Student | Apply {% endblock %}
+{% block page_title %} Apply {% endblock %}
 
-{% block title %}
-    Student | Apply
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-job-list' %}" class="breadcrumb">Eligible Jobs</a>
+                <a href="{% url 'stud-job-detail' job.id %}" class="breadcrumb">Job Application Detail</a>
+                <a class="breadcrumb">Apply</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s6">
+            <div class="section">
+                <h4>Select CV</h4>
+                <p><strong>Select exactly one CV to attach with application.</strong></p>
+                <p><strong>The CV you select here will be sent to the recruiter. If you have uploaded
+                    2 CVs, please select carefully.</strong></p>
+                <div class="divider bottom10"></div>
+                <div class="error-alert">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li class="error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">Please correct the errors as shown in the form.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                        {% include 'field_mdl.html' with field=field %}
+                    {% endfor %}
+                    <input class="btn" type="submit" value="Apply">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+
+{% block content %}
 <div class="breadcrumbs">
     <div class="valign-wrapper">
         <a href="{% url 'stud-home' %}">Home</a> ⟩
@@ -26,15 +74,8 @@
             <div class="card">
                 <form method="post" action="{% url 'stud-jobrel-create' job.id %}">
                     <div class="card-content">
-                        <span class="card-title">Select one CV to attach with application.</span>
+                        <span class="card-title"></span>
                         <p>You must select exactly <strong>one</strong> CV.</p>
-                        <p>The CV you select here will be sent to the recruiter. If you have uploaded
-                        2 CVs, please select carefully.</p>
-
-
-                        {% csrf_token %}
-                        {% form %}
-                        {% endform %}
 
                     </div>
                     <div class="card-action">

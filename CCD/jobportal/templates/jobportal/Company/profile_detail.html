@@ -1,139 +1,219 @@
-{% extends 'base_company.html' %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-    Recruiter | Profile
-{% endblock %}
+{% block title %} Recruiter | Profile {% endblock %}
 
-{% block account_setting%}
-  <a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
+{% block page_title %} Profile Details {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-  <div>
-      <a href="{% url 'company-home' %}">Home</a> ⟩
-      <a href="#">Account Information</a>
-  </div>
-</div>
-
-<div class="row">
-
-    <div class="row">
-
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <div class="card-title">Recruiter Profile Details</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col s12 m12 l9">
-            <ul class="tabs z-depth-1">
-                <li class="tab col s6 m6 l6">
-                    <a class="teal-text" href="#profile">Basic Information</a>
-                </li>
-                <li class="tab col s6 m6 l6">
-                    <a href="#hrdetails" class="teal-text">HR Details</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="col s12 m12 l9">
-            <div class="col s12 m12 l12  white" id="profile">
-                <table class="table bordered highlight centered responsive-table">
-                    <tr>
-                        <td> Username:</td>
-                        <td> {{ company.user.username }}</td>
-                    </tr>
-                    <tr>
-                        <td> Company Name:</td>
-                        <td> {{ company.company_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>Description:</td>
-                        <td> {{ company.description | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Postal Address:</td>
-                        <td> {{ company.postal_address | linebreaksbr}}</td>
-                    </tr>
-                    <tr>
-                        <td>Website:</td>
-                        <td> {{ company.website }}</td>
-                    </tr>
-                    <tr>
-                        <td>Office Contact Number:</td>
-                        <td> {{ company.office_contact_no }}</td>
-                    </tr>
-                    <tr>
-                        <td>Organization Type:</td>
-                        <td> {{ company.organization_type }}</td>
-                    </tr>
-                    <tr>
-                        <td>Industry Sector:</td>
-                        <td> {{ company.industry_sector }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="col s12 m12 l12  white" id="hrdetails">
-                <table class="table bordered highlight centered responsive-table">
-                    <tr>
-                        <td>1st PoC Name</td>
-                        <td> {{ company.head_hr_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>1st PoC Email</td>
-                        <td> {{ company.head_hr_email }}</td>
-                    </tr>
-                    <tr>
-                        <td>1st PoC Designation</td>
-                        <td> {{ company.head_hr_designation }}</td>
-                    </tr>
-                    <tr>
-                        <td>1st PoC Mobile</td>
-                        <td> {{ company.head_hr_mobile }}</td>
-                    </tr>
-                    <tr>
-                        <td>1st PoC Fax</td>
-                        <td> {{ company.head_hr_fax }}</td>
-                    </tr>
-                    <tr>
-                        <td>2nd PoC Name</td>
-                        <td> {{ company.first_hr_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>2nd PoC Designation</td>
-                        <td> {{ company.first_hr_designation }}</td>
-                    </tr>
-                    <tr>
-                        <td>2nd PoC Mobile</td>
-                        <td> {{ company.first_hr_mobile }}</td>
-                    </tr>
-                    <tr>
-                        <td>2nd PoC Email</td>
-                        <td> {{ company.first_hr_email }}</td>
-                    </tr>
-                    <tr>
-                        <td>2nd PoC Fax</td>
-                        <td> {{ company.first_hr_fax }}</td>
-                    </tr>
-                </table>
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Profile Detail</a>
             </div>
         </div>
     </div>
+</nav>
+{% endblock %}
 
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Edit Profile</span>
+        <div class="col l8 m8 s12">
+            <div id="company-info" class="section scrollspy">
+                <h4>Company Information</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Account Username
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.user.username }}
+                    </div>
                 </div>
-                <div class="card-action">
-                    <a class="btn btn-info" href="{% url 'company-profile-update' %}">Edit Profile</a>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Company Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.company_name }}
+                    </div>
                 </div>
+                <div class="row model-field hide-on-small-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Description
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.description | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Postal Address
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.postal_address | linebreaksbr }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Website
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.website }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Office Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.office_contact_no }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Organization Type
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.organization_type }}
+                    </div>
+                </div>
+                <div class="row model-field hide-on-sm-and-down">
+                    <div class="col l2 m3 s4 field-name">
+                        Industry Sector
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.industry_sector }}
+                    </div>
+                </div>
+            </div>
+            <div id="poc1" class="section scrollspy">
+                <h4>First Point of Contact</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Full Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Email
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_email }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_mobile }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_designation }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Fax
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.head_hr_fax }}
+                    </div>
+                </div>
+            </div>
+            <div id="poc2" class="section scrollspy">
+                <h4>Second Point of Contact</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Full Name
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_name }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Email
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_email }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Contact Number
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_mobile }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Designation
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_designation }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Fax
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.first_hr_fax }}
+                    </div>
+                </div>
+            </div>
+            <div id="approve" class="section scrollspy">
+                <h4>Account Status</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Registration Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ company.signup_datetime }}
+                    </div>
+                </div>
+                {% if company.user.is_active %}
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Approval Date
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ company.approval_date }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="update-profile" class="section scrollspy">
+                <h4>Update Profile</h4>
+                <div class="divider bottom10"></div>
+                <p><a href="{% url 'company-profile-update' %}" class="btn">Update Profile</a></p>
+            </div>
+        </div>
+        <div class="col l4 m4 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top">
+                <ul class="section table-of-contents">
+                    <li><a href="#company-info">Company Information</a></li>
+                    <li><a href="#poc1">First Point of Contact</a></li>
+                    <li><a href="#poc2">Second Point of Contact</a></li>
+                    <li><a href="#approve">Account Status</a></li>
+                    <li><a href="#update-profile">Update Profile</a></li>
+                </ul>
             </div>
         </div>
     </div>

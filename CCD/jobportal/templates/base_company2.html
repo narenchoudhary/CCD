@@ -1,0 +1,39 @@
+{% extends 'base_jobportal2.html' %}
+{% load static %}
+
+{% block nav %}
+<nav class="top-nav">
+    <div class="container">
+        <div class="nav-wrapper">
+            <a class="page-title">
+                {% block page_title %}{% endblock %}
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <a href="#" data-activates="slide-out"
+       class="button-collapse top-nav full hide-on-large-only">
+        <i class="material-icons">menu</i>
+    </a>
+</div>
+
+<ul class="side-nav fixed" id="slide-out">
+    <li class="logo">
+        <p id="logo-container" class="brand-logo">
+            <img id="institute-logo" src="{% static 'img/logo.png' %}">
+        </p>
+    </li>
+    <li><a href="{% url 'company-profile-detail' %}">Profile</a></li>
+    <li><a href="{% url 'company-password-update' %}">Change Password</a></li>
+    <li><div class="divider"></div></li>
+    <li><a href="{% url 'company-job-create' %}">Job Application Form</a></li>
+    <li><a href="{% url 'company-job-list' %}">Job Application List</a></li>
+    <li><div class="divider"></div></li>
+    <li><a href="{% url 'company-event-create' %}">Event Dates Form</a></li>
+    <li><a href="{% url 'company-event-list' %}">All Events</a></li>
+    <li><div class="divider"></div></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul>
+{% endblock %}

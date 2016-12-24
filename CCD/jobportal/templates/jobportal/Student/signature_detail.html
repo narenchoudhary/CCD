@@ -1,66 +1,86 @@
-{% extends 'base_student.html' %}
-{% load staticfiles %}
+{% extends 'base_student2.html' %}
+{% load static %}
 {% load jobportal_tags %}
 
-{% block account_setting%}
-    <p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Student | Signature {% endblock %}
+{% block page_title %} Signature {% endblock %}
 
-{% endblock%}
-
-{% block title %}
-    Student | Signature
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Signature</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
 
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-sign-detail' %}">Signature</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m9 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Signature</span>
-                    {% if signature.signature %}
-                        <p>
-                            <img class="responsive-img"
-                                 src="{{ signature.signature.thumbnail.300x300 }}">
-                        </p>
+        <div class="col s12">
+            <div class="section">
+                <h4>Signature</h4>
+                <div class="divider bottom10"></div>
+                {% if signature.signature %}
+                    <p>
+                        <img class="materialboxed"
+                             data-caption="{{ signature.stud.name }}"
+                             width="300"
+                             src="{{ signature.signature.thumbnail.300x300 }}">
+                    </p>
+                {% else %}
+                    <p><strong>No signature found for this profile.</strong></p>
+                {% endif %}
+            </div>
+            <div class="section">
+                <h4 class="Upload Signature"></h4>
+                <div class="divider bottom10"></div>
+
+                {% is_allowed 'job_stud_sign' as sign_allowed %}
+
+                {% if sign_allowed %}
+                    {% if signature and signature.signature %}
+                        <a class="btn" href="{% url 'stud-sign-update' %}">
+                            Update signature
+                        </a>
+                    {% elif signature %}
+                        <a class="btn" href="{% url 'stud-sign-update' %}">
+                            Update signature
+                        </a>
                     {% else %}
-                        <p>No signature found for this profile.</p>
-                    {% endif %}
-                </div>
-                <div class="card-action">
-                    {% is_allowed 'job_stud_sign' as sign_allowed %}
-                    {% if sign_allowed %}
-                        {% if signature and signature.signature %}
-                            <a class="btn" href="{% url 'stud-sign-update' %}">
-                                Upload new signature
-                            </a>
-                        {% elif signature %}
-                            <a class="btn" href="{% url 'stud-sign-update' %}">
-                                Upload signature
-                            </a>
-                        {% else %}
-                            <a class="btn" href="{% url 'stud-sign-create' %}">
-                                Upload signature
-                            </a>
-                        {% endif %}
-                    {% else %}
-                        <p class="red-text">Signature uploading has been disabled temporarily.</p>
-                        <a class="btn disabled" href="">
+                        <a class="btn" href="{% url 'stud-sign-create' %}">
                             Upload signature
                         </a>
                     {% endif %}
-                </div>
+                {% else %}
+                    <p class="red-text">
+                        <strong>Signature uploading has been disabled temporarily.</strong>
+                    </p>
+                    <a class="btn disabled">Upload signature</a>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
+<div class="row" style="display: none">
+    <div class="row">
+        <div class="col s12 m9 l9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Signature</span>
+
+                </div>
+                <div class="card-action">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,39 +1,53 @@
-{% extends 'base_student.html' %}
-{% load material_form %}
+{% extends 'base_student2.html' %}
 
-{% block account_setting%}
-<p><a href="{% url 'logout' %}" title="logout">Logout</a></p>
+{% block title %} Student | Upload Signature {% endblock %}
+{% block page_title %} Upload Signature {% endblock %}
 
-{% endblock%}
-
-{% block title %}
-    Student | Update Signature
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'stud-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'stud-sign-detail' %}" class="breadcrumb">Signature</a>
+                <a class="breadcrumb">Update Signature</a>
+            </div>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
-{% block content %}
-
-<div class="breadcrumbs">
-    <div class="valign-wrapper">
-        <a href="{% url 'stud-home' %}">Home</a> ⟩
-        <a href="{% url 'stud-sign-detail' %}">Signature</a> ⟩
-        <a href="{% url 'stud-sign-update' %}">Update Signature</a>
-    </div>
-</div>
-
-<div class="row">
+{% block main %}
+<div class="container">
     <div class="row">
-        <div class="col s12 m12 l9">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Upload Avatar</span>
-                     <form enctype="multipart/form-data" action="{% url 'stud-sign-update' %}"
-                           method="post" accept-charset="utf-8">
-                         {% csrf_token %}
-                         {% form %}
-                         {% endform %}
-                         <input type="submit" class="btn" value="Upload">
-                     </form>
-                </div>
+        <div class="col s12 l6 m6">
+            <div class="section">
+                <h4>Update Signature</h4>
+                <div class="divider bottom10"></div>
+                <form method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <div class="row">
+                        <div class="file-field input-field col s12">
+                            <div class="btn">
+                                <span>JPEG/PNG</span>
+                                <input type="file" name="signature">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path" id="{{ form.signature.id_for_label }}" type="text" value="{{ form.signature.value }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

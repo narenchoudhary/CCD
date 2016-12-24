@@ -1,0 +1,88 @@
+{% extends 'base_jobportal2.html' %}
+{% load static %}
+
+{% block nav %}
+<nav class="top-nav">
+    <div class="container">
+        <div class="nav-wrapper">
+            <a class="page-title">
+                {% block page_title %}{% endblock %}
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <a href="#" data-activates="slide-out"
+       class="button-collapse top-nav full hide-on-large-only">
+        <i class="material-icons">menu</i>
+    </a>
+</div>
+
+<ul class="side-nav fixed" id="slide-out">
+    <li class="logo">
+        <p id="logo-container" class="brand-logo">
+            <img id="institute-logo" src="{% static 'img/logo.png' %}">
+        </p>
+    </li>
+    <li><a href="{% url 'admin-company-list' %}">Approved Companies</a></li>
+    <li><a href="{% url 'admin-company-signup-list' %}">Company Signup Requests</a></li>
+
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li>
+                <a class="collapsible-header">
+                    Jobs<i class="material-icons">arrow_drop_down</i>
+                </a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="{% url 'admin-job-list' %}">Jobs: Approved</a></li>
+                        <li><a href="{% url 'admin-job-list-unapproved' %}">Jobs: Unapproved</a></li>
+                        <li><div class="divider"></div></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li><a href="{% url 'admin-jobrel-list-unapproved' %}">Hiring Requests</a></li>
+    <li><a href="{% url 'programme-list' %}">Programme List</a></li>
+    <li><a href="{% url 'admin-event-list' %}">All Events</a></li>
+    <li><a href="{% url 'admin-student-list' %}">Search Students</a></li>
+    <li><a href="{% url 'admin-jobrel-list-debarred' %}">Debarred Students</a></li>
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li>
+                <a class="collapsible-header">
+                    Upload<i class="material-icons">arrow_drop_down</i>
+                </a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="{% url 'admin-student-create' %}">Students CSVs</a></li>
+                        <li><a href="{% url 'admin-student-fee-update' %}">Fee CSV</a></li>
+                        <li><a href="{% url 'admin-jobrel-shortlist-csv' %}">Job Shortlist Upload</a></li>
+                        <li><div class="divider"></div></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li>
+                <a class="collapsible-header">
+                    Dowload<i class="material-icons">arrow_drop_down</i>
+                </a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="{% url 'admin-stud-list-download' %}">Students Data</a></li>
+                        <li><a href="{% url 'admin-company-list-download' %}">Company Data</a></li>
+                        <li><a href="{% url 'admin-job-list-download' 'page' %}">Job Data</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li><div class="divider"></div></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul>
+{% endblock %}

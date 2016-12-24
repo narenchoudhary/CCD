@@ -1,67 +1,129 @@
-{% extends 'base_company.html' %}
-{% load material_form %}
+{% extends 'base_company2.html' %}
 
-{% block title %}
-    Recruiter | Update Job Application
-{% endblock %}
+{% block title %} Recruiter | Update Job {% endblock %}
 
-{% block custom_styles %}
-<style type="text/css">
-    .section h5 {
-        font-size: 1.2rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 3px solid black;
-    }
-</style>
-{% endblock %}
+{% block page_title %} Update Job Application {% endblock %}
 
-{% block account_setting%}
-<a href="{% url 'logout' %}" title="logout">Logout</a>
-{% endblock%}
-
-{% block content %}
-
-<div class="breadcrumbs">
-    <div>
-        <a href="{% url 'company-home' %}">Home</a> ⟩
-        <a href="#">Update Job</a>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col s12 m8 l9">
-        {% if job.approved == True %}
-            <div class=" card red lighten-5">
-                <div class="red-text card-content">
-                    <i class="mdi-alert-error"></i>
-                    <h6>Job application has been already approved. It cannot be edited now.</h6>
-                </div>
-                <div class="card-action">
-                     <a href="{% url 'company-job-detail' job.id %}"
-                        class="btn btn-primary">Back to Job details</a>
-                </div>
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'company-home' %}" class="breadcrumb">Home</a>
+                <a href="{% url 'company-job-detail' form.instance.id %}" class="breadcrumb">Job Detail</a>
+                <a class="breadcrumb">Update Job</a>
             </div>
-        {% else %}
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Job Application Form</span>
-                    <form method="post" accept-charset="utf-8"
-                          enctype="multipart/form-data"
-                          action="{% url 'company-job-update' job.id %}">
-                        {% csrf_token %}
+        </div>
+    </div>
+</nav>
+{% endblock %}
 
-                        {% form %}
-                        {% endform %}
-                        <div class="right-align">
-                            <button type="submit" name="_submit"
-                                class="waves-effect waves-light btn btn-primary btn-lg">
-                                Save changes</button>
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="error-list">
+            {% if form.errors %}
+                {% if form.no_field_errors %}
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="red-text">
+                        <strong>Please correct the errors in the form below.</strong>
+                    </p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <form class="col l8 m9 s12" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for hidden in form.hidde_fields %}
+                {{ hidden }}
+            {% endfor %}
+            <div id="basic-info" class="section scrollspy">
+                <h4>Basic Information</h4>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.designation %}
+                {% include 'field_mdl.html' with field=form.profile_name %}
+                {% include 'field_mdl.html' with field=form.description %}
+                {% include 'field_mdl.html' with field=form.num_openings %}
+            </div>
+            <div id="eligibility" class="section scrollspy">
+                <h4>Eligibility</h4>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.cpi_shortlist %}
+                {% include 'field_mdl.html' with field=form.minimum_cpi %}
+                {% include 'field_mdl.html' with field=form.percentage_x %}
+                {% include 'field_mdl.html' with field=form.percentage_xii %}
+            </div>
+            <div id="salary" class="section scrollspy">
+                <h4>Salary Breakdown</h4>
+                <h6>Only fill salary details for programmes you will be hiring.</h6>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.currency %}
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_btech %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_btech %}
+                </div>
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_mtech %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_mtech %}
+                </div>
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_msc %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_msc %}
+                </div>
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_ma %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_ma %}
+                </div>
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_phd %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_phd %}
+                </div>
+                <div class="row">
+                    {% include 'field_mdl_col6.html' with field=form.ctc_msr %}
+                    {% include 'field_mdl_col6.html' with field=form.gross_msr %}
+                </div>
+                {% include 'field_mdl.html' with field=form.additional_info %}
+            </div>
+            <div id="legal" class="section scrollspy">
+                <h4>Legal Document</h4>
+                <div class="divider bottom10"></div>
+                <div class="row">
+                    <div class="file-field input-field col s12">
+                        <div class="btn">
+                            <span>PDF</span>
+                            <input type="file" name="bond_link">
                         </div>
-                    </form>
+                        <div class="file-path-wrapper">
+                            <input class="file-path" id="{{ form.bond_link.id_for_label }}" type="text">
+                        </div>
+                    </div>
                 </div>
             </div>
-        {% endif %}
+            <div>
+                <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                    Add Job
+                </button>
+            </div>
+        </form>
+        <div class="col l4 m3 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top" style="margin-left: 30px">
+                <ul class="section table-of-contents">
+                    <li><a href="#basic-info">Basic Information</a></li>
+                    <li><a href="#eligibility">Eligibility/Requirements</a></li>
+                    <li><a href="#salary">Salary Breakdown</a></li>
+                    <li><a href="#legal">Legal Document</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
-
 {% endblock %}
