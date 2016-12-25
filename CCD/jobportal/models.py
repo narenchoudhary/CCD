@@ -237,8 +237,6 @@ class Company(models.Model):
     # status
     approver = models.ForeignKey(Admin, null=True,
                                  verbose_name='Profile Approver')
-    approved = models.NullBooleanField(default=None,
-                                       verbose_name='Approval Status')
     approval_date = models.DateTimeField(null=True, blank=True,
                                          verbose_name='Approval DateTime')
     signup_datetime = models.DateTimeField(null=True, blank=True,
@@ -246,6 +244,11 @@ class Company(models.Model):
 
     def __unicode__(self):
         return str(self.company_name)
+
+    def approved(self):
+        return self.user.is_active
+    approved.boolean = True
+    approved = property(approved)
 
     def save(self, *args, **kwargs):
         if not self.id:

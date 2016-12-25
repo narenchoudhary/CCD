@@ -24,10 +24,11 @@ from .models import (UserProfile, Job, Company, StudentJobRelation,
 from .forms import (CompanyProfileEdit, CompanyJobForm, CompanySignup,
                     CompanyJobRelForm, EventForm)
 
+# TODO: delete this view
 COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
-# Change password
+# TODO: Delete this view
 @login_required(login_url=COMPANY_LOGIN_URL)
 def password_change_company(request):
 
@@ -49,10 +50,7 @@ def password_change_company(request):
         return render(request, 'jobportal/Company/passwordchange.html', args)
 
 
-# Issue: Not working as intended; Most probably it's not using relative path
-# SO solution isn't working
-# TODO: Debug; Think of some workaround
-# TODO: Download CVs as zip
+# TODO: Delete this view
 @login_required(login_url=COMPANY_LOGIN_URL)
 def download_cvs(request, jobid):
     job_instance = get_object_or_404(Job, id=jobid)

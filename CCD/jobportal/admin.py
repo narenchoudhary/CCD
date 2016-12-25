@@ -44,10 +44,9 @@ class CompanyAdmin(admin.ModelAdmin):
     """
     Class that represents Company model in the admin interface.
     """
-    list_display = ('company_name', 'website', 'head_hr_name',
+    list_display = ('company_name', 'approved', 'website', 'head_hr_name',
                     'head_hr_mobile')
     list_display_links = ('company_name', 'website')
-    list_filter = ('approved',)
     search_fields = ('company_name', 'website')
 
 

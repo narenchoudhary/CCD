@@ -24,7 +24,7 @@ from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Programme, ProgrammeJobRelation,
                      UserProfile, Event)
 from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
-                    EditCompany, ProgrammeForm, AdminEventForm,
+                    ProgrammeForm, AdminEventForm,
                     StudentProfileUploadForm, StudentFeeCSVForm,
                     StudentDetailDownloadForm, CompanyDetailDownloadForm,
                     ShortlistCSVForm, CompanyProfileEdit)
@@ -107,7 +107,7 @@ class ProgrammeInternshipList(LoginRequiredMixin, UserPassesTestMixin,
 
 class CompanySignupList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    queryset = Company.objects.filter(approved=None)
+    queryset = Company.objects.filter(user__is_active=False)
     template_name = 'jobportal/Admin/company_signup_list.html'
     context_object_name = 'company_list'
 
@@ -117,7 +117,7 @@ class CompanySignupList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class CompanyList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
-    queryset = Company.objects.filter(approved=True)
+    queryset = Company.objects.filter(user__is_active=True)
     template_name = 'jobportal/Admin/company_list.html'
     context_object_name = 'company_list'
 
@@ -177,14 +177,11 @@ class CompanyApprove(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request, pk):
         company = Company.objects.get(id=pk)
-        user = company.user
-        if user is not None and user.is_active is False:
-            user.is_active = True
-            user.save()
-        if company.approved is not True:
-            company.approved = True
-            company.approver = Admin.objects.get(
-                id=self.request.session['admin_instance_id'])
+        if company.user is not None and company.user.is_active is False:
+            company.user.is_active = True
+            company.user.save()
+            admin_id = self.request.session['admin_instance_id']
+            company.approver = Admin.objects.get(id=admin_id)
             company.approval_date = timezone.now()
             company.save()
         return redirect('admin-company-detail', pk=company.id)
