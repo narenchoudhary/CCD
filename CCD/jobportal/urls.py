@@ -1,8 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
 
-from . import (views, views_admin, views_company, views_alumni, views_print,
-               views_verifier)
+from . import (views, views_admin, views_company, views_print, views_verifier)
 
 urlpatterns = [
     # url(r'^$', TemplateView.as_view(template_name='jobportal/index.html'),
@@ -39,11 +38,6 @@ urlpatterns = [
     url(r'^stud/cv/update/$', views.CVUpdate.as_view(), name='stud-cv-update'),
     url(r'^stud/cv/(?P<cvno>\d+)/download/$', views.DownloadCV.as_view(),
         name='stud-cv-download'),
-
-    url(r'^stud/event/list/$', views.EventList.as_view(),
-        name='stud-event-list'),
-    url(r'^stud/event/<?pk>/detail$', views.EventDetail.as_view(),
-        name='stud-event-detail'),
 
     url(r'^stud/avatar/detail/$', views.AvatarDetail.as_view(),
         name='stud-avatar-detail'),
@@ -83,9 +77,6 @@ urlpatterns = [
     url(r'^company/profile/update/$', views_company.ProfileUpdate.as_view(),
         name='company-profile-update'),
 
-    url(r'^company/programme/list/$', views_company.ProgrammeList.as_view(),
-        name='company-programme-list'),
-
     url(r'^company/job/list/$', views_company.JobList.as_view(),
         name='company-job-list'),
     url(r'^company/job/create/$', views_company.JobCreate.as_view(),
@@ -123,10 +114,6 @@ urlpatterns = [
         views_company.EventUpdate.as_view(), name='company-event-update'),
     url(r'^company/event/(?P<pk>\d+)/detail/$',
         views_company.EventDetail.as_view(), name='company-event-detail'),
-
-    # File Downloads
-    url(r'^download_cvs/(?P<jobid>\d+)$', views_company.download_cvs,
-        name="download_cvs"),
 
     url(r'^admin/home/$', views_admin.HomeView.as_view(), name="admin-home"),
 
@@ -209,17 +196,6 @@ urlpatterns = [
 
     url(r'^admin/programme/list/$', views_admin.ProgrammeList.as_view(),
         name="programme-list"),
-    url(r'^admin/programme/create/$', views_admin.ProgrammeCreate.as_view(),
-        name="programme-create"),
-    url(r'^admin/programme/(?P<pk>\d+)/update/$',
-        views_admin.ProgrammeUpdate.as_view(), name='programme-update'),
-
-    url(r'^admin/programme/placement/list/$',
-        views_admin.ProgrammePlacementList.as_view(),
-        name='admin-programme-placement-list'),
-    url(r'^admin/programme/internship/list/$',
-        views_admin.ProgrammeInternshipList.as_view(),
-        name='admin-programme-internship-list'),
 
     url(r'^printcsv/(?P<jobid>\d+)$', views_print.candidates_stud_csv,
         name='printcsv'),

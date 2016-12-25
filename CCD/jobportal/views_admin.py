@@ -5,9 +5,8 @@ import string
 import StringIO
 import zipfile
 
-from sqlite3.dbapi2 import IntegrityError
+from django.db import IntegrityError
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -17,17 +16,18 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.encoding import smart_str
-from django.views.generic import (View, ListView, CreateView, DetailView,
-                                  TemplateView, UpdateView, FormView)
+from django.views.generic import (View, ListView, DetailView, TemplateView,
+                                  UpdateView, FormView)
 
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Programme, ProgrammeJobRelation,
                      UserProfile, Event)
 from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
-                    ProgrammeForm, AdminEventForm,
-                    StudentProfileUploadForm, StudentFeeCSVForm,
-                    StudentDetailDownloadForm, CompanyDetailDownloadForm,
-                    ShortlistCSVForm, CompanyProfileEdit)
+                    AdminEventForm, StudentProfileUploadForm,
+                    StudentFeeCSVForm, StudentDetailDownloadForm,
+                    CompanyDetailDownloadForm, ShortlistCSVForm,
+                    CompanyProfileEdit)
+
 from .constants import CATEGORY
 
 
@@ -53,56 +53,6 @@ class ProgrammeList(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def test_func(self):
         return self.request.user.user_type == 'admin'
-
-
-class ProgrammeCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    login_url = reverse_lazy('login')
-    form_class = ProgrammeForm
-    template_name = 'jobportal/Admin/programme_create.html'
-    success_url = reverse_lazy('programme-list')
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-
-class ProgrammeUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    login_url = reverse_lazy('login')
-    model = Programme
-    fields = '__all__'
-    template_name = 'jobportal/Admin/programme_update.html'
-    success_url = reverse_lazy('programme-list')
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get_object(self, queryset=None):
-        return Programme.objects.get(id=self.kwargs['pk'])
-
-
-class ProgrammePlacementList(LoginRequiredMixin, UserPassesTestMixin,
-                             ListView):
-    login_url = reverse_lazy('login')
-    template_name = 'jobportal/Admin/programme_placement_list.html'
-    context_object_name = 'programme_list'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get_queryset(self):
-        return Programme.objects.filter(open_for_placement=True)
-
-
-class ProgrammeInternshipList(LoginRequiredMixin, UserPassesTestMixin,
-                              ListView):
-    login_url = reverse_lazy('login')
-    template_name = 'jobportal/Admin/programme_internship_list.html'
-    context_object_name = 'programme_list'
-
-    def test_func(self):
-        return self.request.user.user_type == 'admin'
-
-    def get_queryset(self):
-        return Programme.objects.filter(open_for_internship=True)
 
 
 class CompanySignupList(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -529,8 +479,8 @@ class StudentList(LoginRequiredMixin, UserPassesTestMixin, FormView):
     """
     login_url = reverse_lazy('login')
     # render login page instead of error 403
-    form_class = StudentSearchForm
     raise_exception = False
+    form_class = StudentSearchForm
     template_name = 'jobportal/Admin/student_list.html'
 
     def test_func(self):

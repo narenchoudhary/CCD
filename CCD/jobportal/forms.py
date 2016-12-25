@@ -28,7 +28,7 @@ class EditStudProfileForm(forms.ModelForm):
     """
     class Meta:
         model = Student
-        fields = ['dob', 'hostel', 'room_no', 'alternative_email',
+        fields = ('dob', 'hostel', 'room_no', 'alternative_email',
                   'mobile_campus', 'mobile_campus_alternative',
                   'mobile_home', 'address_line1', 'address_line2',
                   'address_line3', 'pin_code', 'percentage_x',
@@ -37,7 +37,7 @@ class EditStudProfileForm(forms.ModelForm):
                   'gap_in_study', 'gap_reason', 'jee_air_rank',
                   'linkedin_link', 'spi_1_sem', 'spi_2_sem',
                   'spi_3_sem', 'spi_4_sem', 'spi_5_sem', 'spi_6_sem',
-                  'active_backlogs', 'rank_category', 'pd_status']
+                  'active_backlogs', 'rank_category', 'pd_status')
 
         widgets = {
             # add 'materialize-textarea' for materialize.css
@@ -180,71 +180,6 @@ class StudentSearchForm(forms.Form):
         return cleaned_data
 
 
-class AddCompany(forms.ModelForm):
-    """
-    Company ModelForm (with username and password fields for related
-    UserProfile) for Admin Users to create Company instances.
-    """
-    username = forms.CharField(max_length=20, required=True)
-    password = forms.CharField(max_length=30)
-
-    class Meta:
-        model = Company
-        fields = '__all__'
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'postal_address': forms.Textarea(attrs={'rows': 4})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(AddCompany, self).__init__(*args, **kwargs)
-
-
-class EditCompany(forms.ModelForm):
-    """
-    Company ModelForm for Admin Users to update Company instances.
-    """
-
-    layout = Layout(
-        Fieldset('Company Details',
-                 'company_name', 'description', 'postal_address',
-                 'website', 'office_contact_no',
-                 Row(Span6('organization_type'), Span6('industry_sector'))),
-        Fieldset('First Point of Contact',
-                 'head_hr_name', 'head_hr_email', 'head_hr_mobile',
-                 'head_hr_designation', 'head_hr_fax'),
-        Fieldset('Second Point of Contact',
-                 'first_hr_name', 'first_hr_email', 'first_hr_mobile',
-                 'first_hr_designation', 'first_hr_fax')
-    )
-
-    class Meta:
-        model = Company
-        fields = ['company_name', 'description', 'postal_address', 'website',
-                  'organization_type', 'industry_sector', 'head_hr_name',
-                  'head_hr_email', 'head_hr_designation', 'head_hr_mobile',
-                  'head_hr_fax', 'first_hr_name', 'first_hr_email',
-                  'first_hr_designation', 'first_hr_mobile', 'first_hr_fax',
-                  'office_contact_no']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'postal_address': forms.Textarea(attrs={'rows': 4})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(EditCompany, self).__init__(*args, **kwargs)
-
-
-class EditStudentAdmin(forms.ModelForm):
-    """
-    Student ModelForm for Admin Users to update Student instances.
-    """
-
-    class Meta:
-        model = Student
-        exclude = ['username', 'password']
-
-
 class SelectCVForm(forms.Form):
     """
     CV ModelForm for Student Users to create and update CVs.
@@ -384,61 +319,6 @@ class CompanySignup(forms.ModelForm):
         return username
 
 
-class CustomPasswordChangeForm(PasswordChangeForm):
-
-    def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
-        super(CustomPasswordChangeForm, self).__init__(request.user, *args,
-                                                       **kwargs)
-
-
-class CompanyJobRelForm(forms.ModelForm):
-    class Meta:
-        model = StudentJobRelation
-        fields = ['shortlist_init', 'placed_init',
-                  'placed_approved']
-
-    def __init__(self, *args, **kwargs):
-        super(CompanyJobRelForm, self).__init__(*args, **kwargs)
-        self.fields['shortlist_approved'].disabled = True
-        self.fields['placed_approved'].disabled = True
-        instance = getattr(self, 'instance', None)
-
-        # disable fields based on what approvals are pending
-        if instance and instance.pk:
-            if instance.shortlist_init is True:
-                if instance.shortlist_approved is None:
-                    self.fields['placed_init'].disabled = True
-                elif instance.shortlist_approved is True:
-                    self.fields['shortlist_init'].disabled = True
-                elif instance.shortlist_approved is False:
-                    self.fields['shortlist_init'].disabled = True
-                    self.fields['placed_init'].disabled = True
-            else:
-                self.fields['placed_init'].disabled = True
-            if instance.placed_init is True:
-                self.fields['shortlist_init'].disabled = True
-                if instance.placed_approved is not None:
-                    self.fields['placed_init'].disabled = True
-
-    def save(self, commit=True):
-        instance = super(CompanyJobRelForm, self).save(commit=False)
-        # unset dropped value only if
-        # 1. current value of 'dropped' is True
-        # 2. form has changed, i.e. recruiter has tried to reshortlist student
-
-        if self.has_changed() and instance.dropped is True:
-            # Optimized version of above code can be this
-            # Instead of checking all fields, only check the
-            # shortlist_init field
-            # self.fields['shortlist_init].has_changed()
-            instance.dropped = False
-        # save the changes
-        if commit:
-            instance.save()
-        return instance
-
-
 class EventForm(forms.ModelForm):
 
     class Meta:
@@ -454,7 +334,7 @@ class EventForm(forms.ModelForm):
                     })
                 }
         help_texts = {
-            'logistics': 'Please note that not all requested logistics might '
+            'logistics': 'Please note that all requested logistics might '
                          'not be available.'
         }
 
@@ -608,89 +488,6 @@ class CompanyDetailDownloadForm(forms.Form):
             )
         self.fields['company_name'].required = True
         self.fields['company_name'].initial = True
-
-
-class JobDetailDownloadForm(forms.Form):
-    """
-    Forms class for downloading Job Details.
-    """
-
-    layout = Layout(
-        Fieldset(
-            'Basic Details',
-            Row('company_name', 'designation'),
-            Row('profile_name', 'num_openings'),
-            Row('backlog_filter', 'num_backlogs_allowed'),
-            Row('cpi_shortlist', 'minimum_cpi'),
-            Row('percentage_x', 'percentage_xii'),
-        ),
-        Fieldset(
-            'Salary Breakdown',
-            Row('currency'),
-            Row('ctc_btech', 'gross_btech'),
-            Row('ctc_mtech', 'gross_mtech'),
-            Row('ctc_msc', 'gross_msc'),
-            Row('ctc_ma', 'gross_ma'),
-            Row('ctc_msr', 'gross_msr'),
-            Row('ctc_phd', 'gross_phd'),
-        ),
-        Fieldset(
-            'Status',
-            Row('approved'),
-            Row('opening_datetime', 'application_deadline'),
-        )
-    )
-
-    company_owner = forms.BooleanField(initial=True, label='Company')
-    designation = forms.BooleanField(initial=True, label='Designation')
-    profile_name = forms.BooleanField(initial=True, label='Profile Name')
-    num_openings = forms.BooleanField(initial=False, required=False,
-                                      label='Openings')
-    backlog_filter = forms.BooleanField(initial=False, required=False,
-                                        label='Backlog Filter')
-    num_backlogs_allowed = forms.BooleanField(initial=False, required=False,
-                                              label='Backlogs Allowed')
-    cpi_shortlist = forms.BooleanField(initial=False, required=False,
-                                       label='CPI Shortlist')
-    minimum_cpi = forms.BooleanField(initial=False, required=False,
-                                     label='Minimum CPI')
-    percentage_x = forms.BooleanField(initial=False, required=False,
-                                      label='Percentage X')
-    percentage_xii = forms.BooleanField(initial=False, required=False,
-                                        label='Percentage XII')
-    currency = forms.BooleanField(initial=False, required=False,
-                                  label='Currency')
-    ctc_btech = forms.BooleanField(initial=False, required=False,
-                                   label='CTC BTECH')
-    ctc_mtech = forms.BooleanField(initial=False, required=False,
-                                   label='CTC MTECH')
-    ctc_msc = forms.BooleanField(initial=False, required=False,
-                                 label='CTC MSC')
-    ctc_ma = forms.BooleanField(initial=False, required=False, label='CTC MA')
-    ctc_msr = forms.BooleanField(initial=False, required=False,
-                                 label='CTC MSR')
-    ctc_phd = forms.BooleanField(initial=False, required=False,
-                                 label='CTC PHD')
-    gross_btech = forms.BooleanField(initial=False, required=False,
-                                     label='Gross BTECH')
-    gross_mtech = forms.BooleanField(initial=False, required=False,
-                                     label='Gross MTECH')
-    gross_msc = forms.BooleanField(initial=False, required=False,
-                                   label='Gross MSC')
-    gross_ma = forms.BooleanField(initial=False, required=False,
-                                  label='Gross MA')
-    gross_msr = forms.BooleanField(initial=False, required=False,
-                                   label='Gross MSR')
-    gross_phd = forms.BooleanField(initial=False, required=False,
-                                   label='Gross PHD')
-    approved = forms.BooleanField(initial=False, required=False,
-                                  label='Approval Status')
-    opening_datetime = forms.BooleanField(
-        initial=False, required=False, label='Opening Date'
-    )
-    application_deadline = forms.BooleanField(
-        initial=False, required=False, label='Application deadline'
-    )
 
 
 class StudentDebarForm(forms.Form):

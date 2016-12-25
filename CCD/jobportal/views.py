@@ -4,8 +4,6 @@ from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.forms import FileInput
-from django.forms.models import modelform_factory
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
@@ -15,16 +13,12 @@ from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, TemplateView, DetailView,
                                   CreateView, UpdateView)
 
-from weasyprint import HTML, CSS, images
+from weasyprint import HTML, CSS
 
 from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
                      Avatar, Signature, CV, SiteManagement, Announcement)
 from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
-
-STUD_LOGIN_URL = reverse_lazy('login')
-ALUM_LOGIN_URL = reverse_lazy('login')
-COMPANY_LOGIN_URL = reverse_lazy('login')
 
 
 def handler400(request):
@@ -833,19 +827,6 @@ class JobRelDelete(LoginRequiredMixin, UserPassesTestMixin, View):
         if self.jobrel.placed_init or self.jobrel.placed_approved:
             return False
         return True
-
-
-class EventList(LoginRequiredMixin, ListView):
-    login_url = reverse_lazy('login')
-    queryset = Event.objects.all()
-    template_name = 'jobportal/Student/event_list.html'
-    context_object_name = 'event_list'
-
-
-class EventDetail(LoginRequiredMixin, DetailView):
-    login_url = reverse_lazy('login')
-    model = Event
-    template_name = 'jobportal/Student/event_detail.html'
 
 
 class AvatarDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):

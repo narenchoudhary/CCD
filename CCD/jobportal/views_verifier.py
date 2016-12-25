@@ -6,9 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.encoding import smart_str
 from django.views.generic import View, UpdateView
 
-from material import *
-
-from .models import Student, UserProfile, CV, Avatar, Signature
+from .models import Student, CV, Avatar, Signature
 
 
 class StudentSearchForm(forms.Form):
@@ -16,41 +14,6 @@ class StudentSearchForm(forms.Form):
 
 
 class StudentProfileForm(forms.ModelForm):
-    layout = Layout(
-        Fieldset(
-            'Basic Information',
-            Row('dob'),
-            Row('hostel', 'room_no'),
-            Row('mobile_campus'),
-            Row('mobile_campus_alternative'),
-            Row('mobile_home'),
-            Row('alternative_email'),
-            Row('linkedin_link'),
-        ),
-        Fieldset(
-            'Permanent Address',
-            'address_line1', 'address_line2', 'address_line3', 'pin_code'
-        ),
-        Fieldset(
-            'Academic Performance',
-            Row(
-                Column('percentage_x', 'board_x', 'passing_year_x',
-                       'medium_x',),
-                Column('percentage_xii', 'board_xii', 'passing_year_xii',
-                       'medium_xii'),
-            ),
-            Row('jee_air_rank'),
-            Row('gap_in_study'),
-            Row('gap_reason'),
-        ),
-        Fieldset(
-            'IITG Academic Performance',
-            Row('spi_1_sem', 'spi_2_sem', 'spi_3_sem'),
-            Row('spi_4_sem', 'spi_5_sem', 'spi_6_sem'),
-            Row('active_backlogs')
-        )
-    )
-
     class Meta:
         model = Student
         fields = ['dob', 'hostel', 'room_no', 'alternative_email',
