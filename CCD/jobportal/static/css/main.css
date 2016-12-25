@@ -92,3 +92,7 @@ nav.top-nav a.page-title {
     color: #F44336;
     font-weight: bold;
 }
+
+.nav-breadcrumb {
+    background-color: #1976d2;
+}
