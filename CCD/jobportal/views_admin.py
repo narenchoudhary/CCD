@@ -260,7 +260,7 @@ class JobDetail(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(JobDetail, self).get_context_data(**kwargs)
-        context['prog_list'] = ProgrammeJobRelation.objects.filter(
+        context['rel_list'] = ProgrammeJobRelation.objects.filter(
             job=self.object)
         return context
 
