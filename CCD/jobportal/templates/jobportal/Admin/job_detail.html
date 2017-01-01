@@ -275,7 +275,7 @@
                         <thead>
                             <tr>
                                 <th>Sr. No.</th>
-                                <th>Year of Passing</th>
+                                <th>Year of Admission</th>
                                 <th>Department</th>
                                 <th>Programme</th>
                                 <th>Minor/Major</th>
@@ -285,7 +285,7 @@
                             {% for rel in rel_list %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ rel.prog.year_passing }}</td>
+                                    <td>{{ rel.prog.year }}</td>
                                     <td>{{ rel.prog.dept }}</td>
                                     <td>{{ rel.prog.name }}</td>
                                     <td>{{ rel.prog.minor_status | yesno:"Minor, Major" }}</td>
