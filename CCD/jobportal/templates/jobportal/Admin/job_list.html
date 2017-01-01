@@ -35,6 +35,7 @@
                     <table class="responsive-table centered">
                         <thead>
                             <tr>
+                                <th>Company</th>
                                 <th>Designation</th>
                                 <th>Profile</th>
                                 <th>Opening Date</th>
@@ -45,6 +46,7 @@
                         <tbody>
                             {% for job in job_list %}
                                 <tr>
+                                    <td>{{ job.company_owner.company_name }}</td>
                                     <td>{{ job.designation }}</td>
                                     <td>{{ job.profile_name }}</td>
                                     <td>{{ job.opening_datetime }}</td>

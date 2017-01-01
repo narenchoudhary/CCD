@@ -144,7 +144,7 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     # render login page instead of raising 403 error
     raise_exception = False
-    queryset = Job.objects.filter(approved=True)
+    queryset = Job.objects.select_related('company_owner').filter(approved=True)
     template_name = 'jobportal/Admin/job_list.html'
     context_object_name = 'job_list'
 
@@ -236,7 +236,8 @@ class JobListUnapproved(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = reverse_lazy('login')
     # render login page instead of raising 403 error
     raise_exception = False
-    queryset = Job.objects.all().exclude(approved=True)
+    queryset = Job.objects.select_related('company_owner').exclude(
+        approved=True)
     template_name = 'jobportal/Admin/job_list_unapproved.html'
     context_object_name = 'job_list'
 
