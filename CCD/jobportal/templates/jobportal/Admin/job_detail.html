@@ -121,6 +121,22 @@
                         {{ job.percentage_xii }}
                     </div>
                 </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Backlog Filtering
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.backlog_filter | yesno | capfirst }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Allowed Backlogs
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.num_backlogs_allowed }}
+                    </div>
+                </div>
             </div>
             <div id="salary" class="section scrollspy">
                 <h4>Salary Breakdown</h4>
