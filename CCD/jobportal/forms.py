@@ -107,7 +107,7 @@ class AdminJobEditForm(forms.ModelForm):
                   'gross_mtech', 'gross_ma', 'gross_msc', 'gross_phd',
                   'bond_link', 'opening_datetime', 'application_deadline',
                   'backlog_filter', 'num_backlogs_allowed', 'additional_info',
-                  'ctc_msr', 'gross_msr']
+                  'ctc_msr', 'gross_msr', 'approved']
 
         widgets = {
             'description': forms.Textarea(attrs={
@@ -122,7 +122,11 @@ class AdminJobEditForm(forms.ModelForm):
                 'placeholder': 'Junior Developer'
             }),
             'profile_name': forms.TextInput(attrs={'placeholder': 'SDE'}),
-            'num_openings': forms.NumberInput(attrs={'placeholder': '15'})
+            'num_openings': forms.NumberInput(attrs={'placeholder': '15'}),
+            'opening_datetime': forms.DateTimeInput(
+                attrs={'class': 'datepicker'}),
+            'application_deadline': forms.DateTimeInput(
+                attrs={'class': 'datepicker'}),
         }
 
     def clean_minimum_cpi(self):

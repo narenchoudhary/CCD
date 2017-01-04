@@ -240,6 +240,34 @@
                     </div>
                 </div>
             </div>
+            <div id="status" class="section scrollspy">
+                <h4>Status and Dates</h4>
+                <div class="divider bottom10"></div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Approval Status
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.approved | yesno:"Approved, Rejected, Approval Pending" }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Opening Date
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.opening_datetime }}
+                    </div>
+                </div>
+                <div class="row model-field">
+                    <div class="col l2 m3 s4 field-name">
+                        Application Deadline
+                    </div>
+                    <div class="col l10 m9 s8 field-value">
+                        {{ job.application_deadline }}
+                    </div>
+                </div>
+            </div>
             <div id="update-job" class="section scrollspy">
                 <h4>Update Job Details</h4>
                 <div class="divider bottom10"></div>
@@ -304,6 +332,7 @@
                         <li><a href="#eligibility">Eligibility</a></li>
                         <li><a href="#salary">Salary Breakdown</a></li>
                         <li><a href="#legal">Legal Document</a></li>
+                        <li><a href="#status">Status and Dates</a></li>
                         <li><a href="#update-job">Edit Job Details</a></li>
                         <li><a href="#candidates">View Candidate List</a></li>
                         <li><a href="#programmes">Open Programmes</a></li>

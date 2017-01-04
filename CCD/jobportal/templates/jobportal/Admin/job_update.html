@@ -105,6 +105,13 @@
                     </div>
                 </div>
             </div>
+            <div id="status" class="section scrollspy">
+                <h4>Status and Dates</h4>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=form.approved %}
+                {% include 'field_mdl.html' with field=form.opening_datetime %}
+                {% include 'field_mdl.html' with field=form.application_deadline %}
+            </div>
             <div>
                 <button type="submit" name="_submit" class="waves-effect waves-light btn">
                     Update Job
@@ -118,6 +125,7 @@
                     <li><a href="#eligibility">Eligibility/Requirements</a></li>
                     <li><a href="#salary">Salary Breakdown</a></li>
                     <li><a href="#legal">Legal Document</a></li>
+                    <li><a href="#status">Status and Dates</a></li>
                 </ul>
             </div>
         </div>
