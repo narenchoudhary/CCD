@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
+from django.forms import formset_factory
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 
@@ -516,3 +517,18 @@ class ShortlistCSVForm(forms.Form):
     )
     csv = forms.FileField(required=True, allow_empty_file=False,
                           label='Upload CSV')
+
+
+class SelectJobForm(forms.Form):
+    job = forms.ModelChoiceField(
+        queryset=Job.objects.filter(approved=True),
+        required=True
+    )
+
+
+class StudentRollNoForm(forms.Form):
+    roll_no = forms.DecimalField(label='Roll No', max_digits=15,
+                                 decimal_places=0, required=True)
+
+
+StudentRollNoFormSet = formset_factory(form=StudentRollNoForm)

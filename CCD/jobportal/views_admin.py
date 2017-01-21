@@ -26,7 +26,7 @@ from .forms import (AdminJobEditForm, StudentSearchForm, StudentDebarForm,
                     AdminEventForm, StudentProfileUploadForm,
                     StudentFeeCSVForm, StudentDetailDownloadForm,
                     CompanyDetailDownloadForm, ShortlistCSVForm,
-                    CompanyProfileEdit)
+                    CompanyProfileEdit, SelectJobForm, StudentRollNoFormSet)
 
 from .constants import CATEGORY
 
@@ -1178,3 +1178,64 @@ class ShortlistCSV(LoginRequiredMixin, UserPassesTestMixin, FormView):
         errors = zip(error_rows, error_msgs)
         context = dict(form=form, errors=errors)
         return render(self.request, self.template_name, context)
+
+
+class PlaceStudentView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = False
+    template_name = 'jobportal/Admin/place_students.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get(self, request):
+        job_form = SelectJobForm()
+        roll_no_formset = StudentRollNoFormSet()
+        context = dict(job_form=job_form, roll_no_formset=roll_no_formset)
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        job_form = SelectJobForm(request.POST)
+        roll_no_formset = StudentRollNoFormSet(request.POST)
+        status_list = []
+        if job_form.is_valid() and roll_no_formset.is_valid():
+            job = job_form.cleaned_data.get('job', None)
+            formset_data = roll_no_formset.cleaned_data
+            for form_data in formset_data:
+                roll_no = form_data.get('roll_no', None)
+                if roll_no is None:
+                    continue
+                try:
+                    stud = Student.objects.get(roll_no=roll_no)
+                except Student.DoesNotExist:
+                    status_message = 'Student not found.'
+                    status_list.append((roll_no, None, status_message, 'error'))
+                    continue
+                try:
+                    stud_rel = StudentJobRelation.objects.select_related(
+                        'stud').get(stud=stud, job=job)
+                    if not stud_rel.shortlist_init:
+                        status_message = 'Student has not been shortlisted.'
+                        status_list.append((roll_no, stud, status_message, 'error'))
+                    elif not stud.placed:
+                        stud_rel.placed_init = True
+                        stud_rel.placed_init_datetime = timezone.now()
+                        stud_rel.placed_approved = True
+                        stud_rel.placed_approved_datetime = timezone.now()
+                        stud_rel.save()
+                        stud.placed = True
+                        stud.save()
+                        status_message = 'Student has been successfully placed.'
+                        status_list.append((roll_no, stud, status_message, 'success'))
+                    else:
+                        status_message = 'Student has been already placed.'
+                        status_list.append((roll_no, stud, status_message, 'error'))
+                except StudentJobRelation.DoesNotExist:
+                    status_message = 'Student has not applied for this Job'
+                    status_list.append((roll_no, stud, status_message, 'error'))
+            context = dict(job_form=job_form, roll_no_formset=roll_no_formset,
+                           status_list=status_list)
+            return render(request, self.template_name, context)
+        else:
+            context = dict(job_form=job_form, roll_no_formset=roll_no_formset)
+            return render(request, self.template_name, context)

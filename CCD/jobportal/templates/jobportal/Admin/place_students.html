@@ -1,0 +1,138 @@
+{% extends 'base_admin2.html' %}
+
+{% block title %} Admin | Place Students {% endblock %}
+{% block page_title %} Place Students {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down nav-breadcrumb">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Place Students</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="error-list">
+            {% if job_form.errors %}
+                {% if job_form.no_field_errors %}
+                    <ul>
+                        {% for error in job_form.non_field_errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="red-text">
+                        <strong>Please correct the errors in the form below.</strong>
+                    </p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <form class="col l8 m9 s12" method="post" accept-charset="utf-8"
+              action="{% url 'admin-place-students' %}">
+            {% csrf_token %}
+            {% for hidden in job_form.hidde_fields %}
+                {{ hidden }}
+            {% endfor %}
+            <div id="job" class="Job">
+                <h4>Select Job</h4>
+                <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=job_form.job %}
+            </div>
+
+            <div id="form-set">
+                <h4>Add Roll Number</h4>
+                <div class="divider bottom10"></div>
+                {{ roll_no_formset.management_form }}
+                {% for form in roll_no_formset %}
+                    <div class="row">
+                        <div class="input-field col l12 m12 s12">
+                            {{ form.roll_no }}
+                            {{ form.roll_no.label_tag }}
+                            <div class="form-error-list">
+                                {% for error in form.roll_no.errors %}
+                                    <small class="error">{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            <small>{{ form.roll_no.help_text }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col l12 s12 input-field">
+                    <button id="add-form" type="button">
+                        <i class="material-icons" style="font-size: 3rem !important;">add_box</i>
+                    </button>
+                </div>
+            </div>
+            <div id="empty_form" class="row" style="display:none">
+                <div class="row">
+                    <div class="input-field col l12 m12 s12">
+                        {{ roll_no_formset.empty_form.roll_no }}
+                        {{ roll_no_formset.empty_form.roll_no.label_tag }}
+                        <div class="form-error-list">
+                            {% for error in roll_no_formset.empty_form.roll_no.errors %}
+                                <small class="error">{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        <small>{{ roll_no_formset.empty_form.roll_no.help_text }}</small>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                    Place Students
+                </button>
+            </div>
+        </form>
+        <div class="col l8 m9 s12">
+            <div class="section">
+                <h4>Status Messages</h4>
+            </div>
+            {% if status_list %}
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th>RollNo</th>
+                            <th>Name</th>
+                            <th>Status Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for status in status_list %}
+                            <tr>
+                                <td>{{ status.0 }}</td>
+                                <td>{{ status.1.name }}</td>
+                                <th>{{ status.2 }}</th>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div class="col l4 m3 hide-on-small-and-down fixed">
+            <div class="toc-wrapper pin-top" style="margin-left: 30px">
+                <ul class="section table-of-contents">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block end_scripts %}
+<script>
+    $('#add-form').click(function() {
+        var form_idx = $('#id_form-TOTAL_FORMS').val();
+        $('#form-set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
+{% endblock %}

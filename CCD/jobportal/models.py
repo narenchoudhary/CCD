@@ -657,6 +657,27 @@ class StudentJobRelation(models.Model):
             self.creation_datetime = timezone.now()
         return super(StudentJobRelation, self).save(*args, **kwargs)
 
+    @property
+    def status_for_admin(self):
+        if self.placed_approved:
+            return 'Placed & Approved'
+        elif self.placed_init:
+            return 'Placed & Approval Pending'
+        elif self.shortlist_init:
+            return 'Shortlisted'
+        return 'Unknown'
+
+    @property
+    def status_for_student(self):
+        if self.placed_approved:
+            return 'Placed'
+        elif self.placed_init:
+            status = 'shortlisted' if self.shortlist_init else '---'
+            return status
+        elif self.shortlist_init:
+            return 'shortlisted'
+        return '---'
+
 
 class Event(models.Model):
     company_owner = models.ForeignKey(Company, null=True, blank=True)
