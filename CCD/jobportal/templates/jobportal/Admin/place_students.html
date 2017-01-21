@@ -66,9 +66,9 @@
                 {% endfor %}
             </div>
             <div class="row">
-                <div class="col l12 s12 input-field">
-                    <button id="add-form" type="button">
-                        <i class="material-icons" style="font-size: 3rem !important;">add_box</i>
+                <div class="col l12 s12 right">
+                    <button id="add-form" type="button" class="btn-floating btn-large waves-effect waves-light right">
+                        <i class="material-icons left">add</i>
                     </button>
                 </div>
             </div>
@@ -87,36 +87,38 @@
                 </div>
             </div>
             <div>
-                <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                <button type="submit" name="_submit" class="waves-effect waves-light btn btn-large">
                     Place Students
                 </button>
             </div>
         </form>
         <div class="col l8 m9 s12">
             <div class="section">
-                <h4>Status Messages</h4>
-            </div>
-            {% if status_list %}
-                <table class="responsive-table">
-                    <thead>
-                        <tr>
-                            <th>RollNo</th>
-                            <th>Name</th>
-                            <th>Status Message</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for status in status_list %}
+                {% if status_list %}
+                    <h4>Status Messages</h4>
+                    <div class="divider bottom10"></div>
+                    <table class="responsive-table">
+                        <thead>
                             <tr>
-                                <td>{{ status.0 }}</td>
-                                <td>{{ status.1.name }}</td>
-                                <th>{{ status.2 }}</th>
+                                <th>RollNo</th>
+                                <th>Name</th>
+                                <th>Status Message</th>
                             </tr>
-                        {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for status in status_list %}
+                                <tr>
+                                    <td>{{ status.0 }}</td>
+                                    <td>{{ status.1.name }}</td>
+                                    <th>{{ status.2 }}</th>
+                                </tr>
+                            {% endfor %}
 
-                    </tbody>
-                </table>
-            {% endif %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+
         </div>
         <div class="col l4 m3 hide-on-small-and-down fixed">
             <div class="toc-wrapper pin-top" style="margin-left: 30px">
