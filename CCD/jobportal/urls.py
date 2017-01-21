@@ -116,6 +116,8 @@ urlpatterns = [
         views_company.EventDetail.as_view(), name='company-event-detail'),
 
     url(r'^admin/home/$', views_admin.HomeView.as_view(), name="admin-home"),
+    url(r'^admin/history/$', views_admin.LastLoginList.as_view(),
+        name="last-login-list"),
 
     url(r'^admin/student/create/', views_admin.UploadStudentData.as_view(),
         name='admin-student-create'),

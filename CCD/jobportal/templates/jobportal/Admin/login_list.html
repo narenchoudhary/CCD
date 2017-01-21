@@ -1,0 +1,58 @@
+{% extends 'base_admin2.html' %}
+{% load jobportal_tags %}
+
+{% block title %} Admin | Login History {% endblock %}
+{% block page_title %} Login History {% endblock %}
+
+{% block breadcrumb %}
+<nav class="hide-on-small-and-down nav-breadcrumb">
+    <div class="container">
+        <div class="nav-wrapper left">
+            <div class="col s12">
+                <a href="{% url 'admin-home' %}" class="breadcrumb">Home</a>
+                <a class="breadcrumb">Login History</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <div class="section">
+                <h4>Login History</h4>
+                <div class="divider bottom10"></div>
+
+                {% if login_list.count < 1 %}
+                    <p>
+                        <strong>No data login data available right now. Please visit later.</strong>
+                    </p>
+                {% else %}
+                    <table class="responsive-table centered">
+                        <thead>
+                            <tr>
+                                <th>Start Time</th>
+                                <th>Time On Site</th>
+                                <th>IP Address</th>
+                                <th>Browser</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for login in login_list %}
+                                <tr>
+                                    <td>{{ login.start_time }}</td>
+                                    <td>{{ login.time_on_site | sec_to_time }}</td>
+                                    <td>{{ login.ip_address }}</td>
+                                    <td>{{ login.user_agent }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

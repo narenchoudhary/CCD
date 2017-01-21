@@ -1,5 +1,7 @@
+from datetime import timedelta
+
 from django import template
-from django.utils import timezone, dateparse
+from django.utils import timezone
 
 from jobportal.models import SiteManagement
 
@@ -45,3 +47,8 @@ def is_allowed(value):
         return site_management.job_stud_sign_allowed
     else:
         return False
+
+
+@register.filter
+def sec_to_time(value):
+    return timedelta(seconds=int(value))

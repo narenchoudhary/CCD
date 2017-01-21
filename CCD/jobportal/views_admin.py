@@ -19,6 +19,8 @@ from django.utils.encoding import smart_str
 from django.views.generic import (View, ListView, DetailView, TemplateView,
                                   UpdateView, FormView)
 
+from tracking.models import Visitor
+
 from .models import (Admin, Student, Company, Job, StudentJobRelation, CV,
                      Avatar, Signature, Programme, ProgrammeJobRelation,
                      UserProfile, Event)
@@ -1178,3 +1180,16 @@ class ShortlistCSV(LoginRequiredMixin, UserPassesTestMixin, FormView):
         errors = zip(error_rows, error_msgs)
         context = dict(form=form, errors=errors)
         return render(self.request, self.template_name, context)
+
+
+class LastLoginList(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name = 'jobportal/Admin/login_list.html'
+    raise_exception = False
+    context_object_name = 'login_list'
+
+    def test_func(self):
+        return self.request.user.user_type == 'admin'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Visitor.objects.filter(user=user).order_by('start_time')[:10]
