@@ -521,7 +521,7 @@ class ShortlistCSVForm(forms.Form):
 
 class SelectJobForm(forms.Form):
     job = forms.ModelChoiceField(
-        queryset=Job.objects.filter(approved=True),
+        queryset=Job.objects.filter(approved=True).order_by('designation'),
         required=True
     )
 
