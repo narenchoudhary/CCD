@@ -520,6 +520,10 @@ class ShortlistCSVForm(forms.Form):
 
 
 class SelectJobForm(forms.Form):
+    shortlist_action = forms.BooleanField(
+        required=False, initial=False, label=_('Force Shortlist'),
+        widget=forms.CheckboxInput(attrs={'class': 'filled-in'})
+    )
     job = forms.ModelChoiceField(
         queryset=Job.objects.filter(approved=True).order_by('designation'),
         required=True

@@ -43,6 +43,7 @@
             <div id="job" class="Job">
                 <h4>Select Job</h4>
                 <div class="divider bottom10"></div>
+                {% include 'field_mdl.html' with field=job_form.shortlist_action %}
                 {% include 'field_mdl.html' with field=job_form.job %}
             </div>
 

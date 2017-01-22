@@ -1200,6 +1200,7 @@ class PlaceStudentView(LoginRequiredMixin, UserPassesTestMixin, View):
         status_list = []
         if job_form.is_valid() and roll_no_formset.is_valid():
             job = job_form.cleaned_data.get('job', None)
+            shortlist_action = job_form.cleaned_data.get('shortlist_action', False)
             formset_data = roll_no_formset.cleaned_data
             for form_data in formset_data:
                 roll_no = form_data.get('roll_no', None)
@@ -1215,8 +1216,21 @@ class PlaceStudentView(LoginRequiredMixin, UserPassesTestMixin, View):
                     stud_rel = StudentJobRelation.objects.select_related(
                         'stud').get(stud=stud, job=job)
                     if not stud_rel.shortlist_init:
-                        status_message = 'Student has not been shortlisted.'
-                        status_list.append((roll_no, stud, status_message, 'error'))
+                        if shortlist_action:
+                            stud_rel.shortlist_init = True
+                            stud_rel.shortlist_init_datetime = timezone.now()
+                            stud_rel.placed_init = True
+                            stud_rel.placed_init_datetime = timezone.now()
+                            stud_rel.placed_approved = True
+                            stud_rel.placed_approved_datetime = timezone.now()
+                            stud_rel.save()
+                            stud.placed = True
+                            stud.save()
+                            status_message = 'Student has been force shortlisted and placed.'
+                            status_list.append((roll_no, stud, status_message, 'success'))
+                        else:
+                            status_message = 'Student has not been shortlisted.'
+                            status_list.append((roll_no, stud, status_message, 'error'))
                     elif not stud.placed:
                         stud_rel.placed_init = True
                         stud_rel.placed_init_datetime = timezone.now()
