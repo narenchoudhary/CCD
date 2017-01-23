@@ -608,7 +608,7 @@ class Job(models.Model):
 
     def __unicode__(self):
         try:
-            return str(self.designation) + " (" + str(self.company_owner.company_name) + ")"
+            return str(self.designation) + " " + str(self.profile_name) + " (" + str(self.company_owner.company_name) + ")"
         except UnicodeEncodeError:
             return str(self.company_owner.company_name)
 
