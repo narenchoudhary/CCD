@@ -1201,6 +1201,7 @@ class PlaceStudentView(LoginRequiredMixin, UserPassesTestMixin, View):
         if job_form.is_valid() and roll_no_formset.is_valid():
             job = job_form.cleaned_data.get('job', None)
             shortlist_action = job_form.cleaned_data.get('shortlist_action', False)
+            apply_action = job_form.cleaned_data.get('apply_action', False)
             formset_data = roll_no_formset.cleaned_data
             for form_data in formset_data:
                 roll_no = form_data.get('roll_no', None)
@@ -1245,8 +1246,15 @@ class PlaceStudentView(LoginRequiredMixin, UserPassesTestMixin, View):
                         status_message = 'Student has been already placed.'
                         status_list.append((roll_no, stud, status_message, 'error'))
                 except StudentJobRelation.DoesNotExist:
-                    status_message = 'Student has not applied for this Job'
-                    status_list.append((roll_no, stud, status_message, 'error'))
+                    if apply_action:
+                        stud_rel = StudentJobRelation.objects.create(
+                            stud=stud, job=job
+                        )
+                        status_message = 'Student has been added to candidate list.'
+                        status_list.append((roll_no, stud, status_message, 'success'))
+                    else:
+                        status_message = 'Student has not applied for this Job'
+                        status_list.append((roll_no, stud, status_message, 'error'))
             context = dict(job_form=job_form, roll_no_formset=roll_no_formset,
                            status_list=status_list)
             return render(request, self.template_name, context)

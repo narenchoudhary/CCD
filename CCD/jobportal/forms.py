@@ -524,6 +524,10 @@ class SelectJobForm(forms.Form):
         required=False, initial=False, label=_('Force Shortlist'),
         widget=forms.CheckboxInput(attrs={'class': 'filled-in'})
     )
+    apply_action = forms.BooleanField(
+        required=False, initial=False, label=_('Force Apply'),
+        widget=forms.CheckboxInput(attrs={'class': 'filled-in'})
+    )
     job = forms.ModelChoiceField(
         queryset=Job.objects.filter(approved=True).order_by('designation'),
         required=True
