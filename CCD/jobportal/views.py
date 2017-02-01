@@ -530,6 +530,9 @@ class JobList(LoginRequiredMixin, UserPassesTestMixin, ListView):
         if stud.ppo:
             return None
 
+        if stud.placed:
+            return None
+
         # fix for filtering is CGPA is filled
         # multiply CGPA by 10 before filtering
         stud_percentage_x = stud.percentage_x
@@ -712,6 +715,9 @@ class JobRelCreate(LoginRequiredMixin, UserPassesTestMixin, View):
         stud_id = self.request.session['student_instance_id']
         self.stud = get_object_or_404(Student, id=stud_id)
         self.job = get_object_or_404(Job, id=self.kwargs['pk'])
+
+        if self.stud.placed:
+            return False
 
         stud_cv_check = self.check_stud_cv()
         if not stud_cv_check:
