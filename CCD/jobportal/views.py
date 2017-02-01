@@ -18,7 +18,8 @@ from weasyprint import HTML, CSS
 from .models import (UserProfile, Admin, Student, Company, Programme,
                      StudentJobRelation, Event, Job, ProgrammeJobRelation,
                      Avatar, Signature, CV, SiteManagement, Announcement)
-from .forms import LoginForm, EditStudProfileForm, SelectCVForm, CVForm
+from .forms import (LoginForm, EditStudProfileForm, SelectCVForm, CVForm,
+                    StudentPlacementConfirm)
 
 
 def handler400(request):
@@ -214,14 +215,22 @@ class Login(View):
                                     user = auth.authenticate(username=username,
                                                              password=username)
                                     if user is not None:
-                                        auth.login(request, user)
                                         stud = Student.objects.get(
                                             user=user_profile
                                         )
-                                        request.session[
-                                            'student_instance_id'] = stud.id
+                                        if stud.placed:
+                                            site_management = SiteManagement.objects.all()[0]
+                                            disabled_login = site_management.disable_placed_login
+                                            place_confirm = stud.placed_confirm
+                                            error = 'Your login has been disabled as you are no longer ' \
+                                                    'part of placement process.'
+                                            if disabled_login or place_confirm:
+                                                form.add_error(None, error)
+                                                args = dict(form=form)
+                                                return render(request, self.template_name, args)
+                                        auth.login(request, user)
+                                        request.session['student_instance_id'] = stud.id
                                         if self.next != "":
-                                            print(self.next)
                                             return HttpResponseRedirect(self.next)
                                         return redirect('stud-home')
                                 # if saved server did not work
@@ -239,10 +248,10 @@ class Login(View):
                                         user = auth.authenticate(
                                             username=username,
                                             password=username)
-                                        auth.login(request, user)
                                         stud = Student.objects.get(
                                             user=user_profile
                                         )
+                                        auth.login(request, user)
                                         request.session[
                                             'student_instance_id'] = stud.id
                                         return redirect('stud-home')
@@ -327,7 +336,10 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['stud'] = Student.objects.get(user=self.request.user)
+        stud = Student.objects.get(user=self.request.user)
+        if stud.placed:
+            context['form'] = StudentPlacementConfirm()
+        context['stud'] = stud
         return context
 
 
@@ -1142,3 +1154,30 @@ class DownloadDeclaration(LoginRequiredMixin, UserPassesTestMixin, View):
         http_response = HttpResponse(pdf_file, content_type='application/pdf')
         http_response['Content-Disposition'] = 'filename="declaration.pdf"'
         return http_response
+
+
+class StudentPlacementFormHandler(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = reverse_lazy('login')
+    raise_exception = False
+    template_name = 'jobportal/Student/home.html'
+
+    def test_func(self):
+        return self.request.user.user_type == 'student'
+
+    def get(self, request):
+        return redirect('stud-home')
+
+    def post(self, request):
+        form = StudentPlacementConfirm(request.POST)
+        if form.is_valid():
+            confirm = form.cleaned_data['confirm']
+            if confirm:
+                stud = Student.objects.get(id=request.session['student_instance_id'])
+                stud.placed_confirm = True
+                stud.save()
+                return redirect('logout')
+            else:
+                return render(request, self.template_name, dict(form=form))
+        else:
+            return render(request, self.template_name, dict(form=form))
+

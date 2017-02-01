@@ -32,6 +32,8 @@ urlpatterns = [
         name='stud-jobrel-create'),
     url(r'^stud/job/(?P<pk>\d+)/deapply$', views.JobRelDelete.as_view(),
         name='stud-jobrel-delete'),
+    url(r'stud/status/confirm/$', views.StudentPlacementFormHandler.as_view(),
+        name='stud-placement-confirm'),
 
     url(r'^stud/cv/$', views.CVDetail.as_view(), name='stud-cv-detail'),
     url(r'^stud/cv/create/$', views.CVCreate.as_view(), name='stud-cv-create'),

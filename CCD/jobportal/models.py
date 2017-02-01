@@ -62,6 +62,8 @@ class SiteManagement(models.Model):
         default=False, verbose_name='Allow Avatar Upload for Job Candidates')
     job_stud_sign_allowed = models.BooleanField(
         default=False, verbose_name='Allow Sign Upload for Intern Candidates')
+    disable_placed_login = models.BooleanField(
+        default=False, verbose_name='Disable login for Placed Candidates')
     intern_student_profile_update_deadline = models.DateTimeField(
         null=True, blank=True)
     intern_student_cv_update_deadline = models.DateTimeField(
@@ -443,6 +445,8 @@ class Student(models.Model):
     # status
     placed = models.BooleanField(default=False, blank=True,
                                  verbose_name='Placement Status')
+    placed_confirm = models.BooleanField(default=False, blank=True,
+                                         verbose_name='Placement Confirmation')
     intern2 = models.BooleanField(default=False, blank=True,
                                   verbose_name='Second Year Internship Status')
     intern3 = models.BooleanField(default=False, blank=True,

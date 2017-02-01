@@ -540,3 +540,17 @@ class StudentRollNoForm(forms.Form):
 
 
 StudentRollNoFormSet = formset_factory(form=StudentRollNoForm)
+
+
+class StudentPlacementConfirm(forms.Form):
+    confirm = forms.BooleanField(
+        required=True, initial=False,
+        label=_('I have carefully checked through Applied Jobs and I confirm that my placement details are correct.'),
+        widget=forms.CheckboxInput(attrs={'class': 'filled-in'}),
+    )
+
+    def clean(self):
+        confirm = self.cleaned_data.get('confirm', False)
+        if confirm is False:
+            raise ValidationError('Please check the checkbox before submitting the form.')
+        return self.cleaned_data

@@ -23,6 +23,57 @@
             <div class="section">
                 <h4 class="header">Home</h4>
                 <div class="divider bottom10"></div>
+                {% if form %}
+                <p><strong>Important Announcement:</strong></p>
+                <p>
+                    Student who have got placed through Campus Placement in placement session 2016-2017
+                    are requested to confirm their placement status. Please go through
+                    <strong><a href="{% url 'stud-jobrel-list' %}">Applied Jobs</a></strong> listing and check if your placement status
+                    has been updated to <span class="green-text">Placed</span>. If you feel, there is
+                    some error, please contact CCD Team.
+                </p>
+                <p>
+                    Please note that once you confirm your status, your login will be disabled
+                    and you will not be able to make any changes.
+                    So please double check before confirming.
+                </p>
+                <div class="error-alert">
+                    {% if form.errors %}
+                        {% if form.non_field_errors %}
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="red-text">Please correct the errors as shown in the form.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form method="post" class="col l8 m8 s12" action="{% url 'stud-placement-confirm' %}">
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% endif %}
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <div class="form-error-list">
+                                {% for error in form.confirm.errors %}
+                                    <small class="error">{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {{ form.confirm }}
+                            {{ form.confirm.label_tag }}
+                            <br>
+                            <small>{{ field.help_text }}</small>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" name="_submit" class="waves-effect waves-light btn">
+                        Confirm
+                    </button>
+                </form>
             </div>
         </div>
     </div>
