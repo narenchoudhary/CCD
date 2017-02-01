@@ -545,7 +545,8 @@ StudentRollNoFormSet = formset_factory(form=StudentRollNoForm)
 class StudentPlacementConfirm(forms.Form):
     confirm = forms.BooleanField(
         required=True, initial=False,
-        label=_('I have carefully checked through Applied Jobs and I confirm that my placement details are correct.'),
+        label=_('I hereby confirm that my Placement Status is correct '
+                'and does not need any modifications.'),
         widget=forms.CheckboxInput(attrs={'class': 'filled-in'}),
     )
 

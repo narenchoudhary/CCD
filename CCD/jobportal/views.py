@@ -215,20 +215,10 @@ class Login(View):
                                     user = auth.authenticate(username=username,
                                                              password=username)
                                     if user is not None:
+                                        auth.login(request, user)
                                         stud = Student.objects.get(
                                             user=user_profile
                                         )
-                                        if stud.placed:
-                                            site_management = SiteManagement.objects.all()[0]
-                                            disabled_login = site_management.disable_placed_login
-                                            place_confirm = stud.placed_confirm
-                                            error = 'Your login has been disabled as you are no longer ' \
-                                                    'part of placement process.'
-                                            if disabled_login or place_confirm:
-                                                form.add_error(None, error)
-                                                args = dict(form=form)
-                                                return render(request, self.template_name, args)
-                                        auth.login(request, user)
                                         request.session['student_instance_id'] = stud.id
                                         if self.next != "":
                                             return HttpResponseRedirect(self.next)
@@ -338,7 +328,12 @@ class HomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         stud = Student.objects.get(user=self.request.user)
         if stud.placed:
-            context['form'] = StudentPlacementConfirm()
+            stud_id = self.request.session['student_instance_id']
+            context['jobrel'] = StudentJobRelation.objects.select_related('job').get(
+                stud__id=stud_id, placed_approved=True
+            )
+            if not stud.placed_confirm:
+                context['form'] = StudentPlacementConfirm()
         context['stud'] = stud
         return context
 
@@ -1181,9 +1176,8 @@ class StudentPlacementFormHandler(LoginRequiredMixin, UserPassesTestMixin, View)
                 stud = Student.objects.get(id=request.session['student_instance_id'])
                 stud.placed_confirm = True
                 stud.save()
-                return redirect('logout')
+                return redirect('stud-home')
             else:
-                return render(request, self.template_name, dict(form=form))
+                return redirect('stud-home')
         else:
-            return render(request, self.template_name, dict(form=form))
-
+            return redirect('stud-home')

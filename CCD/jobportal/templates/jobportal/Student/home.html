@@ -26,17 +26,17 @@
                 {% if form %}
                 <p><strong>Important Announcement:</strong></p>
                 <p>
-                    Student who have got placed through Campus Placement in placement session 2016-2017
-                    are requested to confirm their placement status. Please go through
-                    <strong><a href="{% url 'stud-jobrel-list' %}">Applied Jobs</a></strong> listing and check if your placement status
-                    has been updated to <span class="green-text">Placed</span>. If you feel, there is
-                    some error, please contact CCD Team.
+                    Students who have been placed in the Campus Placement session
+                    of 2016-2017 are hereby requested to confirm their placement
+                    status. In case of any discrepancy, please contact the CCD
+                    Team at placement@iitg.ernet.in. Please note that once you
+                    confirm your status, your login will be disabled and you
+                    will not be able to make any changes.
                 </p>
-                <p>
-                    Please note that once you confirm your status, your login will be disabled
-                    and you will not be able to make any changes.
-                    So please double check before confirming.
-                </p>
+                <p><strong>Company Name: </strong> {{ jobrel.job.company_owner }} </p>
+                <p><strong>Job Profile: </strong> {{ jobrel.job.profile_name }} </p>
+                <p><strong>Job Designation: </strong> {{ jobrel.job.designation }} </p>
+                <div class="divider bottom10 col s12"></div>
                 <div class="error-alert">
                     {% if form.errors %}
                         {% if form.non_field_errors %}
@@ -55,7 +55,7 @@
                     {% for hidden in form.hidden_fields %}
                         {{ hidden }}
                     {% endfor %}
-                    {% endif %}
+
                     <div class="row">
                         <div class="input-field col s12">
                             <div class="form-error-list">
@@ -74,6 +74,13 @@
                         Confirm
                     </button>
                 </form>
+                {% elif jobrel %}
+                    <p><strong>You have confirmed your placement status.</strong></p>
+                    <p><strong>Company Name: </strong> {{ jobrel.job.company_owner }} </p>
+                    <p><strong>Job Profile: </strong> {{ jobrel.job.profile_name }} </p>
+                    <p><strong>Job Designation: </strong> {{ jobrel.job.designation }} </p>
+                    <div class="bottom10 divider"></div>
+                {% endif %}
             </div>
         </div>
     </div>
