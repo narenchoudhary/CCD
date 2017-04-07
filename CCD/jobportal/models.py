@@ -45,6 +45,15 @@ def get_bond_link_name(instance, filename):
 
 
 class SiteManagement(models.Model):
+    """
+    Model for storing feature flipper settings.
+
+    Only one instance of this model can be created.
+    Application will throw errors if this object has not been defined.
+
+    ``site_id`` has been restricted to only one value, that is, 1. Because
+    of which two instances of this class cannot be created.
+    """
     site_id = models.DecimalField(
         max_digits=1, decimal_places=0, blank=False, null=False, default=0.00,
         validators=[MaxValueValidator(1.0), MinValueValidator(1.0)],
@@ -85,6 +94,12 @@ class SiteManagement(models.Model):
 
 
 class UserProfile(AbstractUser):
+    """
+    Model class which serves as common UserProfile for all users.
+
+    This Model class is used as AUTH_USER_MODEL. It is used in
+    authentication.
+    """
     user_type = models.CharField(max_length=20, choices=USER_TYPE,
                                  default='admin')
     login_server = models.CharField(max_length=30, default='dikrong',
@@ -175,6 +190,9 @@ class Programme(models.Model):
 
 
 class Admin(models.Model):
+    """
+    Admin model class.
+    """
     user = models.OneToOneField(UserProfile, blank=True, null=True,
                                 limit_choices_to={'user_type': 'admin'})
     admin_username = models.CharField(max_length=50, null=True, blank=True,
@@ -190,6 +208,9 @@ class Admin(models.Model):
 
 
 class Company(models.Model):
+    """
+    Company model class.
+    """
     user = models.OneToOneField(UserProfile, blank=True, null=True,
                                 limit_choices_to={'user_type': 'company'})
     company_name = models.CharField(blank=False, null=True, max_length=50,
@@ -259,6 +280,9 @@ class Company(models.Model):
 
 
 class Alumni(models.Model):
+    """
+    Alumni model class.
+    """
     user = models.OneToOneField(UserProfile, blank=True, null=True,
                                 limit_choices_to={'user_type': 'alumni'})
     iitg_webmail = models.CharField(max_length=50, blank=True,
@@ -274,6 +298,9 @@ class Alumni(models.Model):
 
 
 class Student(models.Model):
+    """
+    Student model class.
+    """
     user = models.OneToOneField(UserProfile, blank=False, null=False,
                                 limit_choices_to={'user_type': 'student'})
     iitg_webmail = models.CharField(max_length=50, blank=False,
@@ -499,6 +526,9 @@ class Student(models.Model):
 
 
 class Job(models.Model):
+    """
+    Model class representing full time Job offers posted by Company user.
+    """
     company_owner = models.ForeignKey(Company, blank=True, null=True,
                                       verbose_name='Company Owner')
     # Fields Needed
@@ -600,15 +630,21 @@ class Job(models.Model):
 
     @property
     def deadline_passed(self):
-        if self.application_deadline < timezone.now():
-            return True
-        return False
+        """
+        Property for checking if ``application_deadline`` has passed.
+        :return: True if ``application_deadline`` has passed
+        :rtype: bool
+        """
+        return True if self.application_deadline < timezone.now() else False
 
     @property
     def job_opened(self):
-        if self.opening_datetime < timezone.now():
-            return True
-        return False
+        """
+        Property for checking if ``opening_datetime`` has passed.
+        :return: True if ``opening_datetime`` has passed.
+        :rtype: bool
+        """
+        return True if self.opening_datetime < timezone.now() else False
 
     def __unicode__(self):
         try:
@@ -617,6 +653,17 @@ class Job(models.Model):
             return str(self.company_owner.company_name)
 
     def save(self, *args, **kwargs):
+        """
+        Custom save method.
+
+        If object is being created, set default ``opening_datetime`` equal to
+        30 days from now and default ``application_deadline`` to 45 days from now.
+
+        :param args: arguments
+        :param kwargs: keywords arguments
+        :return: Job instance
+        :rtype: Job
+        """
         if not self.id:
             self.posted_on = timezone.now()
             self.opening_datetime = timezone.now() + timedelta(days=30)
@@ -628,6 +675,10 @@ class Job(models.Model):
 
 
 class StudentJobRelation(models.Model):
+    """
+    Model class for storing a Student instance's relationship
+    with a Job object.
+    """
     shortlist_init = models.BooleanField(default=False)
     shortlist_init_datetime = models.DateTimeField(null=True, blank=True)
     # shortlist_approved = models.NullBooleanField(default=None)
@@ -650,6 +701,7 @@ class StudentJobRelation(models.Model):
     creation_datetime = models.DateTimeField(null=True)
 
     class Meta:
+        # TODO: Enforce unique_together contraint for stud and job fields
         verbose_name = 'StudentJobRelation'
         verbose_name_plural = 'StudentsJobRelations'
 
@@ -684,6 +736,11 @@ class StudentJobRelation(models.Model):
 
 
 class Event(models.Model):
+    """
+    Model class which represents Event instances.
+
+    Events are created by Companies.
+    """
     company_owner = models.ForeignKey(Company, null=True, blank=True)
     title = models.CharField(max_length=50, null=True,
                              verbose_name='Event Title')
@@ -720,6 +777,12 @@ class Event(models.Model):
 
 
 class Avatar(models.Model):
+    """
+    Model class for representing Avatars of Students.
+
+    Avatar is stored as a separate model because it is accessed
+    very rarely.
+    """
     stud = models.OneToOneField(Student, null=True,
                                 on_delete=models.CASCADE)
     avatar = VersatileImageField(upload_to=get_avatar_name,
@@ -735,6 +798,13 @@ class Avatar(models.Model):
         super(Avatar, self).save(*args, **kwargs)
 
     def image_tag(self):
+        """
+        By default, admin panel only shows the path of the image file.
+        This function is used to show image preview in admin panel.
+        Check admin.py for usage.
+        :return: HTML Snippet
+        :rtype: str
+        """
         return format_html(
             '<img src="%s" width="200" height="200" />' % self.avatar.url)
 
@@ -745,6 +815,12 @@ class Avatar(models.Model):
 
 
 class Signature(models.Model):
+    """
+    Model class for representing Signatures of Students.
+
+    Signature is stored as a separate model because it is accessed
+    very rarely.
+    """
     stud = models.OneToOneField(Student, on_delete=models.CASCADE,
                                 null=True)
     signature = VersatileImageField(upload_to=get_sign_name, blank=False,
@@ -760,6 +836,13 @@ class Signature(models.Model):
         super(Signature, self).save(*args, **kwargs)
 
     def image_tag(self):
+        """
+        By default, admin panel only shows the path of the image file.
+        This function is used to show image preview in admin panel.
+        Check admin.py for usage.
+        :return: HTML Snippet
+        :rtype: str
+        """
         return format_html(
             '<img src="%s" width="200" height="200" />' % self.signature.url)
 
@@ -770,6 +853,9 @@ class Signature(models.Model):
 
 
 class CV(models.Model):
+    """
+    Model class representing Curriculum Vitae of Students.
+    """
     stud = models.OneToOneField(Student, null=True, on_delete=models.CASCADE)
     cv1 = models.FileField(upload_to=get_cv1_name, blank=True, null=True)
     cv2 = models.FileField(upload_to=get_cv2_name, blank=True, null=True)
@@ -785,6 +871,10 @@ class CV(models.Model):
 
 
 class ProgrammeJobRelation(models.Model):
+    """
+    This model is used to keep track of programmes for
+    which a particular job has been opened.
+    """
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     prog = models.ForeignKey(Programme, null=True,
                              on_delete=models.CASCADE)
@@ -811,6 +901,9 @@ class ProgrammeJobRelation(models.Model):
 
 
 class Announcement(models.Model):
+    """
+    Announcement model class.
+    """
     title = models.CharField(max_length=200, verbose_name='Title', null=True,
                              blank=True)
     category = models.CharField(max_length=25, verbose_name='Category',
