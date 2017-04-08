@@ -1,28 +1,30 @@
-from django.forms import ModelForm, inlineformset_factory, Textarea
+from django import forms
 
-from models import *
-
-
-InternProgFormSet = inlineformset_factory(
-    IndInternship,
-    ProgrammeInternRelation,
-    fields=('prog',),
-    extra=10
-)
+from .models import IndustrialInternship
 
 
-class RecruiterAddInternShip(ModelForm):
+class CompanyInternshipForm(forms.ModelForm):
+    """
+    ``IndustrialInternship`` modelform for Company users.
+    """
+
     class Meta:
-        model = IndInternship
-        fields = ['designation', 'description', 'stipend', 'profile',
-                  'duration']
-        widgets = {
-            'description': Textarea(attrs=dict(rows=4, cols=15))
-        }
+        model = IndustrialInternship
+        fields = ['description', 'designation', 'profile', 'currency',
+                  'stipend', 'duration', 'start_date', 'end_date',
+                  'backlog_filter', 'max_backlog_allowed', 'cpi_shortlist',
+                  'minimum_cpi', 'percentage_x', 'percentage_xii']
 
 
-class AdminEditInternShip(ModelForm):
+class AdminInternshipForm(forms.ModelForm):
+    """
+    ``IndustrialInternship`` modelform for Admin users.
+    """
+
     class Meta:
-        model = IndInternship
-        exclude = ['company_owner', 'posted_on', 'last_updated',
-                   'approved_on']
+        model = IndustrialInternship
+        fields = ['description', 'designation', 'profile', 'currency',
+                  'stipend', 'duration', 'start_date', 'end_date',
+                  'backlog_filter', 'max_backlog_allowed', 'cpi_shortlist',
+                  'minimum_cpi', 'percentage_x', 'percentage_xii',
+                  'opening_datetime', 'closing_datetime']
